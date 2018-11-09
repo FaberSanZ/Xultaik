@@ -9,9 +9,8 @@
 
 * ### [00 - First Window](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B00%5D%20First%20Window)
 
-This example shows how to create the first window in<b>Windows Form</b>
-
-
+This example shows how to create the first window in Windows Form.<br>
+<b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/02.PNG" width="150px" align="right">
 
