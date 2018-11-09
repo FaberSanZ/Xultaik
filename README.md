@@ -3,7 +3,7 @@
 
 <hr>
 
-# [Samples](./Samples/Source%20Files/)
+# [Samples](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src)
 
 <img src="/IMG/01.PNG" width="150px" align="right">
 
