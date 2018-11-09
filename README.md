@@ -19,5 +19,18 @@ Sample showing how to implement a diffuse lighting algorithm calculated only at 
 Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
 <b>Left mouse button:</b> rotate the scene
 
+<img src="/IMG/03.PNG" width="150px" align="right">
+
+* ### [00 - First Window](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B00%5D%20First%20Window)
+
+Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
+<b>Left mouse button:</b> rotate the scene
+
+<img src="/IMG/04.PNG" width="150px" align="right">
+
+* ### [00 - First Window](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B00%5D%20First%20Window)
+
+Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
+<b>Left mouse button:</b> rotate the scene
 
 <hr>
