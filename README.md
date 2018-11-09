@@ -1,2 +1,2 @@
-# DirectX-11-tutorials-SharpDX-C-
+# DirectX 11 tutorials (SharpDX-C#)
 Samples
