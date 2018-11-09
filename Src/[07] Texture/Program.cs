@@ -10,7 +10,7 @@ namespace _07__Texture
     {
         static void Main(string[] args)
         {
-            //Main 1
+            //Main 1s
             using(var App = new CoreEngine())
             {
                 App.Initialize();
