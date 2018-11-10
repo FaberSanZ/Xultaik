@@ -56,14 +56,16 @@ In this example we will learn about the world, the view and local spaces in a 3D
 
 * ### [06 - Render states](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B06%5D%20Render%20states)
 
-Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
-<b>Left mouse button:</b> rotate the scene
+Here is a nice little lesson which will teach you about Direct3D's render states.<br>
+</br>
+<b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/08.PNG" width="150px" align="right">
 
 * ### [07 - Texture](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B07%5D%20Texture)
 
-Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
-<b>Left mouse button:</b> rotate the scene
+In this example we will learn about how to load a texture of a file (DDS-BMP) and assign it to geometry!<br>
+</br>
+<b>Esc mouse button:</b> Close Windows
 
 <hr>
