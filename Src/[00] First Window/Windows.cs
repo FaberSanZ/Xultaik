@@ -35,7 +35,7 @@ namespace _00__First_Window
 
 
 
-        public Windows() : this ("Primera Ventana", 720, 510) { }
+        public Windows() : this ("First Window", 720, 510) { }
 
         public Windows(string Title, int Width, int Height)
         {
