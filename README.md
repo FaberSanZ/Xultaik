@@ -41,15 +41,16 @@ In this example the color is specified for each vertex will be "interpolated" th
 
 * ### [04 -  Indices](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B04%5D%20Indices)
 
-Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
-<b>Left mouse button:</b> rotate the scene
+In this example, we are going to create the index buffer.<br>
+</br>
+<b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/06.PNG" width="150px" align="right">
 
 * ### [05 - 3D Rendering and static camera](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B05%5D%203D%20Rendering%20and%20static%20camera)
 
-Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
-<b>Left mouse button:</b> rotate the scene
+In this example we will learn about the world, the view and local spaces in a 3D world, which will allow us to create a camera.<br>
+<b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/07.PNG" width="150px" align="right">
 
