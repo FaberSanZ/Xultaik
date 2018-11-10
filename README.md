@@ -43,21 +43,21 @@ Sample showing how to implement a diffuse lighting algorithm calculated only at 
 
 <img src="/IMG/06.PNG" width="150px" align="right">
 
-* ### [03 - 3D Rendering and static camera](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B05%5D%203D%20Rendering%20and%20static%20camera)
+* ### [05 - 3D Rendering and static camera](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B05%5D%203D%20Rendering%20and%20static%20camera)
 
 Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
 <b>Left mouse button:</b> rotate the scene
 
 <img src="/IMG/07.PNG" width="150px" align="right">
 
-* ### [03 - Color!](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B00%5D%20First%20Window)
+* ### [06 - Render states](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B06%5D%20Render%20states)
 
 Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
 <b>Left mouse button:</b> rotate the scene
 
 <img src="/IMG/08.PNG" width="150px" align="right">
 
-* ### [03 - Color!](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B00%5D%20First%20Window)
+* ### [07 - Texture](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B07%5D%20Texture)
 
 Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
 <b>Left mouse button:</b> rotate the scene
