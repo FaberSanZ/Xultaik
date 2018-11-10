@@ -17,7 +17,7 @@ This example shows how to create the first window in Windows Form.<br>
 
 * ### [01 - Initialize DirectX11](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B01%5D%20Initialize%20DirectX11)
 
-Este ejemplo muestra cómo configurar el dispositivo Direct3D<br>
+This example shows how to configure the Direct3D device<br>
 </br>
 <b>Esc mouse button:</b> Close Windows
 
