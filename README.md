@@ -17,8 +17,9 @@ This example shows how to create the first window in Windows Form.<br>
 
 * ### [01 - Initialize DirectX11](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B01%5D%20Initialize%20DirectX11)
 
-Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
-<b>Left mouse button:</b> rotate the scene
+Este ejemplo muestra cómo configurar el dispositivo Direct3D<br>
+</br>
+<b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/03.PNG" width="150px" align="right">
 
