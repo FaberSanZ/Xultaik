@@ -65,7 +65,6 @@ Here is a nice little lesson which will teach you about Direct3D's render states
 * ### [07 - Texture](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B07%5D%20Texture)
 
 In this example we will learn about how to load a texture of a file (DDS-BMP) and assign it to geometry!<br>
-</br>
 <b>Esc mouse button:</b> Close Windows
 
 <hr>
