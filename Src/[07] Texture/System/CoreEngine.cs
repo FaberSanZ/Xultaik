@@ -16,11 +16,11 @@ namespace _07__Texture
 
         public Input Input { get; set; }
         public Windows Windows { get; set; }
-        DX11 DXE { get; set; }
-        Shader Shader { get; set; }
-        Cuad Cuad { get; set; }
-        Cuad Cuad2 { get; set; }
-        Camera Camera { get; set; }
+        public DX11 DXE { get; set; }
+        public Shader Shader { get; set; }
+        public Cuad Cuad { get; set; }
+        public Cuad Cuad2 { get; set; }
+        public Camera Camera { get; set; }
 
 
         public CoreEngine() { }
