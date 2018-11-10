@@ -1,5 +1,6 @@
 # DirectX 11 tutorials (SharpDX-C#)
 
+This is the code repository for [Vulkan Cookbook](https://www.packtpub.com/game-development/vulkan-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786468154), published by [Packt](https://www.packtpub.com/). All the example workflows that are mentioned in the book are present in the package.
 
 <hr>
 
