@@ -1,6 +1,6 @@
 # DirectX 11 tutorials (SharpDX-C#)
 
-This is the code repository for SharpDX-DirectX 11, the examples are executed: in Visual Studio 2017
+This is the code repository for SharpDX-DirectX 11, the examples are executed:
 
 - Visual Studio 2017
 - .NET Framework 4.7.2
