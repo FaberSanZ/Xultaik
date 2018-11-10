@@ -11,7 +11,7 @@
 
 This example shows how to create the first window in Windows Form.<br>
 <b>Esc mouse button:</b> Close Windows
-
+<b></b>
 
 <img src="/IMG/02.PNG" width="150px" align="right">
 
