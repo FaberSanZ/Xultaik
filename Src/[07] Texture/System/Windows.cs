@@ -35,7 +35,7 @@ namespace _07__Texture
 
 
 
-        public Windows() : this ("Texture", 720, 510) { }
+        public Windows() : this ("Texture ", 720, 510) { }
 
         public Windows(string Title, int Width, int Height)
         {
