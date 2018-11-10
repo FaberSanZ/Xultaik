@@ -25,8 +25,9 @@ This example shows how to configure the Direct3D device<br>
 
 * ### [02 - First Drawing!](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B02%5D%20First%20Drawing!)
 
-Sample showing how to implement a diffuse lighting algorithm calculated only at geometry's verices using vertex shaders.<br>
-<b>Left mouse button:</b> rotate the scene
+In this example, we will learn about the representation channel and draw a triangle.<br>
+</br>
+<b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/04.PNG" width="150px" align="right">
 
