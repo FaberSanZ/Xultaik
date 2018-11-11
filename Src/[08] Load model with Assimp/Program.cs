@@ -10,6 +10,11 @@ namespace _08__Load_model_with_Assimp
     {
         static void Main(string[] args)
         {
+            using(var App = new CoreEngine())
+            {
+                App.Initialize();
+                App.Run();
+            }
         }
     }
 }
