@@ -11,7 +11,10 @@ namespace _00__First_Window
         static void Main(string[] args)
         {
             using (var App = new CoreEngine())
+            {
                 App.Initialize();
+                App.Run();
+            }
         }
     }
 }

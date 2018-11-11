@@ -6,15 +6,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _02__First_Drawing_
+namespace _08__Load_model_with_Assimp
 {
     class CoreEngine : IDisposable
     {
+        public float RX { get; set; }
+        public float RY { get; set; }
+        public float RZ { get; set; }
+
         public Input Input { get; set; }
         public Windows Windows { get; set; }
         public DX11 DXE { get; set; }
         public Shader Shader { get; set; }
-        public Triangle Triangle { get; set; }
+        public LoadMesh Dragon { get; set; }
+        public Camera Camera { get; set; }
 
 
         public CoreEngine() { }
@@ -44,17 +49,27 @@ namespace _02__First_Drawing_
             }
 
 
-            if (Triangle == null)
+            if (Dragon == null)
             {
-                Triangle = new Triangle();
-                Triangle.InitializeBuffer(DXE.Device);
+                Dragon = new LoadMesh();
+                Dragon.InitializeBuffer(DXE.Device, @"Models/dragon.obj", @"Textures/WoodCrate01.dds");
             }
-
+            
 
             if (Shader == null)
             {
                 Shader = new Shader();
                 Shader.Initialize(DXE.Device, @"Shaders/VertexShader.hlsl", @"Shaders/PixelShader.hlsl");
+            }
+
+
+            if (Camera == null)
+            {
+                Camera = new Camera();
+                Camera.Initialize(Windows.Form);
+
+                // Set the initial position of the camera.
+                Camera.SetPosition(0, 0, -18);
             }
         }
 
@@ -65,12 +80,30 @@ namespace _02__First_Drawing_
 
         public void Render()
         {
+            RX = RX + 0.8F * 0.0174532925f;
+            RY = RY + 0.0F * 0.0174532925f;
+            RZ = RZ + 0.0F * 0.0174532925f;
+
             //Clear color
             DXE.Clear(0.0F, 0.2F, 0.4F);
 
-            Triangle.RenderBuffers(DXE.DeviceContext);
+            // Generate the view matrix based on the camera position.
+            Camera.Render();
 
-            Shader.Render(DXE.DeviceContext, Triangle.VertexCount);
+            // Get the world, view, and projection matrices from camera and d3d objects.
+            Matrix View = Camera.View;
+            Matrix World = Camera.World;
+            Matrix Projection = Camera.Projection;
+            Matrix Translation;
+
+
+            Matrix.RotationYawPitchRoll(RX, RY, RZ, out World);
+            Matrix.Translation(0.0f, -3.5f, 0.0f, out Translation);
+            World = World * Translation;
+            Dragon.RenderBuffers(DXE.DeviceContext);
+            Shader.SetParameters(DXE.DeviceContext, World, View, Projection);
+            Shader.Render(DXE.DeviceContext, Dragon.IndexCount);
+            Shader.LoadTexture(DXE.DeviceContext, Dragon.Texture);
 
             //Present
             DXE.Present();

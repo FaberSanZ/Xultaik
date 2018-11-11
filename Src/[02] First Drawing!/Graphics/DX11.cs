@@ -9,8 +9,6 @@ using SharpDX.Direct3D11;
 using SharpDX.Direct3D;
 using SharpDX;
 using Device = SharpDX.Direct3D11.Device;
-using SharpDX.Mathematics.Interop;
-using System.Drawing;
 
 namespace _02__First_Drawing_
 {
@@ -30,6 +28,7 @@ namespace _02__First_Drawing_
         public SwapChain SwapChain { get; set; }
 
         public RenderTargetView RenderTargetView { get; set; }
+
         private Viewport Viewport;
 
         public DX11() { }

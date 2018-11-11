@@ -65,7 +65,7 @@ namespace _02__First_Drawing_
             deviceContext.VertexShader.Set(VertexShader);
             deviceContext.PixelShader.Set(PixelShader);
 
-            // Draw the triangle
+            // Draw Geometry
             deviceContext.Draw(indexCount, 0);
         }
 

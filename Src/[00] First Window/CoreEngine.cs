@@ -10,11 +10,11 @@ namespace _00__First_Window
 {
     class CoreEngine : IDisposable
     {
-        public Input Input { get; private set; }
-        public Windows Windows { get; private set; }
+        public Input Input { get; set; }
+        public Windows Windows { get; set; }
 
 
-        internal CoreEngine() { }
+        public CoreEngine() { }
 
         public void Initialize()
         {
@@ -34,18 +34,17 @@ namespace _00__First_Window
                 Input.Initialize();
                 Input.CreateInput(Windows.Form);
             }
+        }
 
 
+        public void Run()
+        {
+            Windows.Run(render: Render, update: Update);
+        }
 
+        public void Render()
+        {
 
-
-            Windows.Run(() => {
-
-
-
-
-
-            }, Update);
         }
 
 

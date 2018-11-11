@@ -5,20 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Device = SharpDX.Direct3D11.Device;
+using Buffer = SharpDX.Direct3D11.Buffer;
 using SharpDX.D3DCompiler;
 using SharpDX.Direct3D11;
-using SharpDX.DXGI;
+using SharpDX;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-namespace _03__Color_
+namespace _08__Load_model_with_Assimp
 {
     public class Shader
     {
         public VertexShader VertexShader { get; set; }
         public PixelShader PixelShader { get; set; }
         public InputLayout Layout { get; set; }
+        public Buffer ConstantMatrixB { get; set; }
 
-
-        public bool Initialize(Device device, string vsFileName, string psFileName)
+        public void Initialize(Device device, string vsFileName, string psFileName)
         {
             // Compile the vertex shader code.
             ShaderBytecode vertexShaderByteCode = ShaderBytecode.CompileFromFile(vsFileName, "VS", "vs_4_0", ShaderFlags.None, EffectFlags.None);
@@ -39,7 +42,7 @@ namespace _03__Color_
                     {
                         SemanticName = "POSITION",
                         SemanticIndex = 0,
-                        Format = Format.R32G32B32_Float,
+                        Format = SharpDX.DXGI.Format.R32G32B32_Float,
                         Slot = 0,
                         AlignedByteOffset = 0,
                         Classification = InputClassification.PerVertexData,
@@ -47,9 +50,9 @@ namespace _03__Color_
                     },
                     new InputElement()
                     {
-                        SemanticName = "COLOR",
+                        SemanticName = "TEXCOORD",
                         SemanticIndex = 0,
-                        Format = Format.R32G32B32A32_Float,
+                        Format = SharpDX.DXGI.Format.R32G32_Float,
                         Slot = 0,
                         AlignedByteOffset = InputElement.AppendAligned,
                         Classification = InputClassification.PerVertexData,
@@ -63,10 +66,54 @@ namespace _03__Color_
             // Release the vertex and pixel shader buffers, since they are no longer needed.
             vertexShaderByteCode.Dispose();
             pixelShaderByteCode.Dispose();
-            return true;
 
+            // Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+            BufferDescription MBufDesc = new BufferDescription();
+            MBufDesc.Usage = ResourceUsage.Dynamic;
+            MBufDesc.SizeInBytes = SharpDX.Utilities.SizeOf<MatrixB>(); // was Matrix
+            MBufDesc.BindFlags = BindFlags.ConstantBuffer;
+            MBufDesc.CpuAccessFlags = CpuAccessFlags.Write;
+            MBufDesc.OptionFlags = ResourceOptionFlags.None;
+            MBufDesc.StructureByteStride = 0;
+
+            // Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+            ConstantMatrixB = new Buffer(device, MBufDesc);
         }
 
+        public void SetParameters(DeviceContext deviceContext, Matrix World, Matrix View, Matrix Projection)
+        {
+
+            // Transpose the matrices to prepare them for shader.
+            World.Transpose();
+            View.Transpose();
+            Projection.Transpose();
+
+            // Lock the constant buffer so it can be written to.
+            DataStream mappedResource;
+            deviceContext.MapSubresource(ConstantMatrixB, MapMode.WriteDiscard, MapFlags.None, out mappedResource);
+
+            // Copy the matrices into the constant buffer.
+            MatrixB MatrixBuffer = new MatrixB();
+            MatrixBuffer.World = World;
+            MatrixBuffer.View = View;
+            MatrixBuffer.Projection = Projection;
+
+            mappedResource.Write<MatrixB>(MatrixBuffer);
+
+            // Unlock the constant buffer.
+            deviceContext.UnmapSubresource(ConstantMatrixB, 0);
+
+            // Set the position of the constant buffer in the vertex shader.
+            int Slot = 0;
+
+            // Finally set the constant buffer in the vertex shader with the updated values.
+            deviceContext.VertexShader.SetConstantBuffer(Slot, ConstantMatrixB);
+        }
+
+        public void LoadTexture(DeviceContext deviceContext, ShaderResourceView texture)
+        {
+            deviceContext.PixelShader.SetShaderResource(0, texture);
+        }
 
         public void Render(DeviceContext deviceContext, int indexCount)
         {
@@ -75,11 +122,9 @@ namespace _03__Color_
             deviceContext.VertexShader.Set(VertexShader);
             deviceContext.PixelShader.Set(PixelShader);
 
-            // Draw the Geometry
-            deviceContext.Draw(indexCount, 0);
+            // Draw the triangle
+            deviceContext.DrawIndexed(indexCount, 0, 0);
         }
-
-
 
 
         public void ShutDown()

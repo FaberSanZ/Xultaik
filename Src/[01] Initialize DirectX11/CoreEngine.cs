@@ -12,7 +12,7 @@ namespace _01__Initialize_DirectX11
     {
         public Input Input { get; set; }
         public Windows Windows { get; set; }
-        DX11 DXE { get; set; }
+        public DX11 DXE { get; set; }
 
 
         public CoreEngine() { }

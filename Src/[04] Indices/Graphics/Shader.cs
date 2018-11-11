@@ -75,7 +75,7 @@ namespace _04__Indices
             deviceContext.VertexShader.Set(VertexShader);
             deviceContext.PixelShader.Set(PixelShader);
 
-            // Draw the triangle
+            // Draw the Geometry
             deviceContext.DrawIndexed(indexCount, 0, 0);
         }
 

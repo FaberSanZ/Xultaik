@@ -30,6 +30,7 @@ namespace _04__Indices
         public SwapChain SwapChain { get; set; }
 
         public RenderTargetView RenderTargetView { get; set; }
+
         private Viewport Viewport;
 
         public DX11() { }

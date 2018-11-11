@@ -12,9 +12,9 @@ namespace _04__Indices
     {
         public Input Input { get; set; }
         public Windows Windows { get; set; }
-        DX11 DXE { get; set; }
-        Shader Shader { get; set; }
-        Triangle Triangle { get; set; }
+        public DX11 DXE { get; set; }
+        public Shader Shader { get; set; }
+        public Triangle Triangle { get; set; }
 
 
         public CoreEngine() { }
