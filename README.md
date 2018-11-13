@@ -5,6 +5,7 @@ This is the code repository for SharpDX-DirectX 11, the examples are executed:
 - Visual Studio 2017
 - .NET Framework 4.7.2
 - Windows 10
+- [Samples](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src)
 
 <hr>
 
