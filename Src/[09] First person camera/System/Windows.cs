@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _08__Load_model_with_Assimp
+namespace _09__First_person_camera
 {
     public class Windows
     {
@@ -35,7 +35,7 @@ namespace _08__Load_model_with_Assimp
 
 
 
-        public Windows() : this ("Load model with Assimp ", 720, 510) { }
+        public Windows() : this ("First person camera ", 720, 510) { }
 
         public Windows(string Title, int Width, int Height)
         {

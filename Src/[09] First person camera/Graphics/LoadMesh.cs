@@ -10,7 +10,7 @@ using System.Linq;
 using Buffer = SharpDX.Direct3D11.Buffer;
 using Device = SharpDX.Direct3D11.Device;
 
-namespace _08__Load_model_with_Assimp
+namespace _09__First_person_camera
 {
     public class LoadMesh
     {

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _08__Load_model_with_Assimp
+namespace _09__First_person_camera
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct Vertex

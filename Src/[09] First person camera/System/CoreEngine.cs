@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Point = System.Drawing.Point;
 
-namespace _08__Load_model_with_Assimp
+
+namespace _09__First_person_camera
 {
     class CoreEngine : IDisposable
     {
@@ -19,7 +21,8 @@ namespace _08__Load_model_with_Assimp
         public DX11 DXE { get; set; }
         public Shader Shader { get; set; }
         public LoadMesh Dragon { get; set; }
-        public Camera Camera { get; set; }
+        public CameraFP Camera { get; set; }
+        public Point LastMousePos = new Point();
 
 
         public CoreEngine() { }
@@ -52,7 +55,7 @@ namespace _08__Load_model_with_Assimp
             if (Dragon == null)
             {
                 Dragon = new LoadMesh();
-                Dragon.InitializeBuffer(DXE.Device, @"Models/dragon.obj", @"Textures/WoodCrate01.dds");
+                Dragon.InitializeBuffer(DXE.Device, @"Models/bunny.obj", @"Textures/WoodCrate01.dds");
             }
             
 
@@ -65,11 +68,14 @@ namespace _08__Load_model_with_Assimp
 
             if (Camera == null)
             {
-                Camera = new Camera();
-                Camera.Initialize(Windows.Form);
+
+                // Create the camera object
+                Camera = new CameraFP();
 
                 // Set the initial position of the camera.
-                Camera.SetPosition(0, 0, -18);
+                Camera.Position = new Vector3(0, 0, -18);
+                Camera.SetLens(0.25f * (float)Math.PI, 1.2f, 1.0f, 1000.0f);
+
             }
         }
 
@@ -88,12 +94,12 @@ namespace _08__Load_model_with_Assimp
             DXE.Clear(0.0F, 0.2F, 0.4F);
 
             // Generate the view matrix based on the camera position.
-            Camera.Render();
+            Camera.UpdateViewMatrix();
 
             // Get the world, view, and projection matrices from camera and d3d objects.
             Matrix View = Camera.View;
-            Matrix World = Camera.World;
-            Matrix Projection = Camera.Projection;
+            Matrix World = Camera.ViewProj;
+            Matrix Projection = Camera.Proj;
             Matrix Translation;
 
 
@@ -111,11 +117,64 @@ namespace _08__Load_model_with_Assimp
 
         public void Update()
         {
+
+            // Check if the user pressed escape and wants to exit the application.
+            if (Input.IsKeyDown(Keys.W))
+            {
+                Camera.Walk(10.0f * 0.01F);
+            }
+
+            if (Input.IsKeyDown(Keys.S))
+            {
+                Camera.Walk(-10.0f * 0.01F);
+            }
+
+            if (Input.IsKeyDown(Keys.A))
+            {
+                Camera.Strafe(-10.0f * 0.01F);
+            }
+
+            if (Input.IsKeyDown(Keys.D))
+            {
+                Camera.Strafe(10.0f * 0.01F);
+            }
+
+            // The form must be showing in order for the handle to be used in Input and Graphics objects.
+            Windows.Form.MouseUp += (o, e) =>
+            {
+                Windows.Form.Capture = true;
+            };
+
+            Windows.Form.MouseDown += (o, e) =>
+            {
+                Windows.Form.Capture = false;
+                LastMousePos = e.Location;
+            };
+
+            Windows.Form.MouseMove += (o, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    float X = ToRadians(0.25f * (e.X - LastMousePos.X));
+                    float Y = ToRadians(0.25f * (e.Y - LastMousePos.Y));
+
+                    Camera.Pitch(Y);
+                    Camera.Yaw(X);
+                    LastMousePos = e.Location;
+                }
+            };
+
+
             if (Input.IsKeyDown(Keys.Escape))
             {
                 Windows.AppPaused = true;
                 Windows.Running = false;
             }
+        }
+
+        public static float ToRadians(float degrees)
+        {
+            return (float)Math.PI * degrees / 180.0f;
         }
 
 

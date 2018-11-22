@@ -10,6 +10,11 @@ namespace _10__Simple_terrain
     {
         static void Main(string[] args)
         {
+            using(var App = new CoreEngine())
+            {
+                App.Initialize();
+                App.Run();
+            }
         }
     }
 }

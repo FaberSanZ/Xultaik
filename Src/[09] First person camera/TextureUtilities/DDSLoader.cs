@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using SharpDX.DXGI;
 
-namespace _08__Load_model_with_Assimp
+namespace _09__First_person_camera
 {
     using SharpDX;
     using SharpDX.Direct3D11;

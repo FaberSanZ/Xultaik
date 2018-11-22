@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _08__Load_model_with_Assimp
+namespace _09__First_person_camera
 {
     class Input
     {

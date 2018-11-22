@@ -12,7 +12,7 @@ using Device = SharpDX.Direct3D11.Device;
 using SharpDX.Mathematics.Interop;
 using System.Drawing;
 
-namespace _08__Load_model_with_Assimp
+namespace _09__First_person_camera
 {
     public class DX11
     {
