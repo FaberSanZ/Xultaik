@@ -5,6 +5,8 @@ This is the code repository for SharpDX-DirectX 11, the examples are executed:
 - Visual Studio 2017
 - .NET Framework 4.7.2
 - Windows 10
+- [SharpDX](http://sharpdx.org/)
+- [AssimpNet](https://bitbucket.org/Starnick/assimpnet)
 
 <hr>
 
