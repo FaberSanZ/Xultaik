@@ -82,4 +82,20 @@ Load Model with Assimp (.OBJ, .FBX...)<br>
 
 <b>Esc mouse button:</b> Close Windows
 
+<img src="/IMG/10.PNG" width="150px" align="right">
+
+* ### [08 - Load Mesh](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B08%5D%20Load%20model%20with%20Assimp)
+
+Load Model with Assimp (.OBJ, .FBX...)<br>
+
+<b>Esc mouse button:</b> Close Windows
+
+<img src="/IMG/11.PNG" width="150px" align="right">
+
+* ### [08 - Load Mesh](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B08%5D%20Load%20model%20with%20Assimp)
+
+Load Model with Assimp (.OBJ, .FBX...)<br>
+
+<b>Esc mouse button:</b> Close Windows
+
 <hr>
