@@ -56,14 +56,14 @@ In this example, we are going to create the index buffer.<br>
 
 * ### [06 - Depth Testing](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B05%5D%203D%20Rendering%20and%20static%20camera)
 
-In this example we will learn about the world, the view and local spaces in a 3D world, which will allow us to create a camera.<br>
+In this lesson we will learn how to impliment the depth of a 3D.<br>
 <b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/IMG07.PNG" width="150px" align="right">
 
 * ### [07 - World, View and Projection](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B06%5D%20Render%20states)
 
-Here is a nice little lesson which will teach you about Direct3D's render states.<br>
+In this example we will learn about the world, the view and local spaces in a 3D world, which will allow us to create a camera.<br>
 
 <b>Esc mouse button:</b> Close Windows
 
@@ -71,14 +71,14 @@ Here is a nice little lesson which will teach you about Direct3D's render states
 
 * ### [08 - Transformations](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B07%5D%20Texture)
 
-In this example we will learn about how to load a texture of a file (DDS-BMP) and assign it to geometry!<br>
+Here we will learn how to transform geometry in a 3D scene.<br>
 <b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/IMG09.PNG" width="150px" align="right">
 
 * ### [09 - Render states](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B08%5D%20Load%20model%20with%20Assimp)
 
-Load Model with Assimp (.OBJ, .FBX...)<br>
+Here is a nice little lesson which will teach you about Direct3D's render states.<br>
 
 <b>Esc mouse button:</b> Close Windows
 
