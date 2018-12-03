@@ -82,4 +82,20 @@ Load Model with Assimp (.OBJ, .FBX...)<br>
 
 <b>Esc mouse button:</b> Close Windows
 
+<img src="/IMG/10.PNG" width="150px" align="right">
+
+* ### [09 - First person camera](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B09%5D%20First%20person%20camera)
+
+Load Model with Assimp (.OBJ, .FBX...)<br>
+
+<b>Esc mouse button:</b> Close Windows
+
+<img src="/IMG/11.PNG" width="150px" align="right">
+
+* ### [10 - Simple terrain](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B10%5D%20Simple%20terrain)
+
+Load Model with Assimp (.OBJ, .FBX...)<br>
+
+<b>Esc mouse button:</b> Close Windows
+
 <hr>
