@@ -99,7 +99,6 @@ namespace _09__Render_states
         public float rot = 0.01f;
 
 
-
         //----New------
 
         private RasterizerState RasterState { get; set; }
