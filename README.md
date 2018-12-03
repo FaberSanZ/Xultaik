@@ -82,6 +82,4 @@ Load Model with Assimp (.OBJ, .FBX...)<br>
 
 <b>Esc mouse button:</b> Close Windows
 
-<img src="/IMG/IMG10.PNG" width="150px" align="right">
-
 <hr>
