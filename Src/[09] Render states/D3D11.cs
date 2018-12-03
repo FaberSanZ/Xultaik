@@ -100,7 +100,6 @@ namespace _09__Render_states
 
 
         //----New------
-
         private RasterizerState RasterState { get; set; }
 
 
@@ -184,16 +183,9 @@ namespace _09__Render_states
             ///////////////**************new**************////////////////////
             // Setup the raster description which will determine how and what polygon will be drawn.
             RasterizerStateDescription rasterDesc = new RasterizerStateDescription();
-            rasterDesc.IsAntialiasedLineEnabled = false;
             rasterDesc.CullMode = CullMode.None;
-            rasterDesc.DepthBias = 0;
-            rasterDesc.DepthBiasClamp = 0.0f;
-            rasterDesc.IsDepthClipEnabled = true;
             rasterDesc.FillMode = FillMode.Wireframe;
-            rasterDesc.IsFrontCounterClockwise = false;
-            rasterDesc.IsMultisampleEnabled = false;
-            rasterDesc.IsScissorEnabled = false;
-            rasterDesc.SlopeScaledDepthBias = 0.0f;
+
 
             // Create the rasterizer state from the description we just filled out.
             RasterState = new RasterizerState(Device, rasterDesc);
@@ -202,8 +194,6 @@ namespace _09__Render_states
             DeviceContext.Rasterizer.State = RasterState;
 
             ///////////////**************new**************////////////////////
-
-
 
 
 
@@ -219,8 +209,6 @@ namespace _09__Render_states
 
             // Setup and create the viewport for rendering.
             DeviceContext.Rasterizer.SetViewport(Viewport);
-
-
         }
 
 
@@ -231,7 +219,7 @@ namespace _09__Render_states
             Model();
         }
 
-        ///////////////**************new**************////////////////////
+        
         public void InitCamera()
         {
             ObjectBuffer = Shaders.CreateBuffer<ObjectConstants>(Device);
@@ -365,7 +353,7 @@ namespace _09__Render_states
             B = 0.4f;
 
             //Keep the cubes rotating
-            rot += .008f;
+            rot += .01f;
 
 
 
@@ -385,7 +373,7 @@ namespace _09__Render_states
             Rotation = Matrix.RotationYawPitchRoll(-rot, -rot, -rot);
             Translation = Matrix.Translation(-1.5f, 0.0f, 0.0f);
             //Set cube2's world space using the transformations
-            cube2World = Rotation * cube1World;
+            cube2World = Rotation * Translation;
         }
 
 
@@ -427,36 +415,6 @@ namespace _09__Render_states
             DeviceContext.DrawIndexed(IndexCount, 0, 0);
             ///////////////**************new**************////////////////////
 
-
-
-
-
-
-
-
-
-
-
-
-            ///////////////**************new**************////////////////////
-
-            ////Set the World/View/Projection matrix, then send it to constant buffer in effect file
-            //World = Matrix.Identity;
-
-            //WVP = World * View * Projection;
-
-            //ObjectCB.WVP = Matrix.Transpose(WVP);
-
-            //DeviceContext.UpdateSubresource<ObjectConstants>(ref ObjectCB, ObjectBuffer);
-
-            ////Pass constant buffer to shader
-            //DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
-
-            ///////////////**************new**************////////////////////
-
-
-            // Draw Geometry
-            //DeviceContext.DrawIndexed(IndexCount, 0, 0); 
         }
 
 
@@ -478,9 +436,10 @@ namespace _09__Render_states
             ShaderByte["VS"].Dispose();
             ShaderByte["PS"].Dispose();
             IndexBuffer.Dispose();
+            ObjectBuffer.Dispose();
 
             //----New----
-            ObjectBuffer.Dispose();
+            RasterState.Dispose();
         }
     }
 }

@@ -400,37 +400,6 @@ namespace _08__Transformations
             ////Draw the second cube
             DeviceContext.DrawIndexed(IndexCount, 0, 0);
             ///////////////**************new**************////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-            ///////////////**************new**************////////////////////
-
-            ////Set the World/View/Projection matrix, then send it to constant buffer in effect file
-            //World = Matrix.Identity;
-
-            //WVP = World * View * Projection;
-
-            //ObjectCB.WVP = Matrix.Transpose(WVP);
-
-            //DeviceContext.UpdateSubresource<ObjectConstants>(ref ObjectCB, ObjectBuffer);
-
-            ////Pass constant buffer to shader
-            //DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
-
-            ///////////////**************new**************////////////////////
-
-
-            // Draw Geometry
-            //DeviceContext.DrawIndexed(IndexCount, 0, 0); 
         }
 
 
