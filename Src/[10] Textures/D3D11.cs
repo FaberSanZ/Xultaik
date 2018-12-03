@@ -14,18 +14,19 @@ using SharpDX.DXGI;
 using Device = SharpDX.Direct3D11.Device;
 using Buffer = SharpDX.Direct3D11.Buffer;
 
-namespace _09__Render_states
+namespace _10__Textures
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct Vertex
     {
         public Vector3 Position { get; set; }
-        public Color4 Color { get; set; }
+        public Vector2 TexC { get; set; }
 
-        public Vertex(Vector3 vector3, Color color)
+        public Vertex(Vector3 pos, Vector2 uv)
+            : this()
         {
-            Position = vector3;
-            Color = color;
+            Position = pos;
+            TexC = uv;
         }
     }
 
@@ -98,9 +99,14 @@ namespace _09__Render_states
 
         public float rot = 0.01f;
 
+        private RasterizerState RasterState { get; set; }
+
+
 
         //----New------
-        private RasterizerState RasterState { get; set; }
+        public ShaderResourceView CubesTexture1;
+        public ShaderResourceView CubesTexture2;
+        public SamplerState SamplerState { get; set; }
 
 
 
@@ -179,25 +185,54 @@ namespace _09__Render_states
             DeviceContext.OutputMerger.SetTargets(DepthStencilView, RenderTargetView);
 
 
-
-            ///////////////**************new**************////////////////////
             // Setup the raster description which will determine how and what polygon will be drawn.
             RasterizerStateDescription rasterDesc = new RasterizerStateDescription();
             rasterDesc.CullMode = CullMode.None;
-            rasterDesc.FillMode = FillMode.Wireframe;
-
+            rasterDesc.FillMode = FillMode.Solid;
 
             // Create the rasterizer state from the description we just filled out.
             RasterState = new RasterizerState(Device, rasterDesc);
 
+
+
+
+
+
+
+
+
+
+            // Create a texture sampler state description.
+            SamplerStateDescription samplerDesc = new SamplerStateDescription()
+            {
+                Filter = Filter.MinMagMipLinear,
+                AddressU = TextureAddressMode.Wrap,
+                AddressV = TextureAddressMode.Wrap,
+                AddressW = TextureAddressMode.Wrap,
+                MipLodBias = 0,
+                MaximumAnisotropy = 1,
+                ComparisonFunction = Comparison.Always,
+                BorderColor = new Color4(0, 0, 0, 0),  // Black Border.
+                MinimumLod = 0,
+                MaximumLod = float.MaxValue
+            };
+
+            // Create the texture sampler state.
+            SamplerState = new SamplerState(Device, samplerDesc);
+
+
+            //-----new------------
+
+            //--------------------
+
+
+
+
+
+
+
             // Now set the rasterizer state.
             DeviceContext.Rasterizer.State = RasterState;
-
-            ///////////////**************new**************////////////////////
-
-
-
-
 
             Viewport Viewport = new Viewport();
             Viewport.Width = Con.ClientSize.Width;
@@ -225,7 +260,7 @@ namespace _09__Render_states
             ObjectBuffer = Shaders.CreateBuffer<ObjectConstants>(Device);
 
             //Camera information
-            Position = new Vector3(0.0f, 0.0f, -7.0f);
+            Position = new Vector3(0.0f, 0.0f, -7.5f);
             Target = new Vector3(0.0f, 0.0f, 0.0f);
             Up = new Vector3(0.0f, 1.0f, 0.0f);
 
@@ -259,7 +294,7 @@ namespace _09__Render_states
                 },
                 new InputElement()
                 {
-                    SemanticName = "COLOR",
+                    SemanticName = "TEXCOORD",
                     SemanticIndex = 0,
                     Format = Format.R32G32B32A32_Float,
                     Slot = 0,
@@ -282,47 +317,67 @@ namespace _09__Render_states
 
         public void Model()
         {
-            VertexCount = 8;
+            VertexCount = 80;
             IndexCount = 36;
 
             Vertex[] Vertices = new Vertex[VertexCount];
-            Vertices[0] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Color(1.0F, 0.0f, 0.0f, 1.0f));
-            Vertices[1] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f));
-            Vertices[2] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f));
-            Vertices[3] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Color(1.0f, 1.0f, 0.0f, 1.0f));
+            Vertices[0] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector2(0.0F, 1.0f));
+            Vertices[1] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Vector2(0.0F, 0.0f));
+            Vertices[2] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Vector2(1.0F, 0.0f));
+            Vertices[3] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Vector2(1.0F, 1.0f));
 
-            Vertices[4] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f));
-            Vertices[5] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f));
-            Vertices[6] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Color(1.0f, 0.0f, 0.0f, 1.0f));
-            Vertices[7] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Color(0.0f, 1.0f, 1.0f, 1.0f));
+            Vertices[4] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(1.0F, 1.0f));
+            Vertices[5] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Vector2(0.0F, 1.0f));
+            Vertices[6] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Vector2(0.0F, 0.0f));
+            Vertices[7] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Vector2(1.0F, 0.0f));
+
+            Vertices[8] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Vector2(0.0F, 1.0f));
+            Vertices[9] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Vector2(0.0F, 0.0f));
+            Vertices[10] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Vector2(1.0F, 0.0f));
+            Vertices[11] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Vector2(1.0F, 1.0f));
+
+            Vertices[12] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector2(1.0F, 1.0f));
+            Vertices[13] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Vector2(0.0F, 1.0f));
+            Vertices[14] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Vector2(0.0F, 0.0f));
+            Vertices[15] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(1.0F, 0.0f));
+
+            Vertices[16] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(0.0F, 1.0f));
+            Vertices[17] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Vector2(0.0F, 0.0f));
+            Vertices[18] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Vector2(1.0F, 0.0f));
+            Vertices[19] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector2(1.0F, 1.0f));
+
+            Vertices[20] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Vector2(0.0F, 1.0f));
+            Vertices[21] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Vector2(0.0F, 0.0f));
+            Vertices[22] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Vector2(1.0F, 0.0f));
+            Vertices[23] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Vector2(1.0F, 1.0f));
 
 
 
             int[] Indices = new int[] 
             {
-                // front face
-                0, 1, 2,
-                0, 2, 3,
-
-                // back face
-                4, 6, 5,
-                4, 7, 6,
-
-                // left face
-                4, 5, 1,
-                4, 1, 0,
-
-                // right face
-                3, 2, 6,
-                3, 6, 7,
-
-                // top face
-                1, 5, 6,
-                1, 6, 2,
-
-                // bottom face
-                4, 0, 3,
-                4, 3, 7
+                // Front Face
+                0,  1,  2,
+                0,  2,  3,
+    
+                // Back Face
+                4,  5,  6,
+                4,  6,  7,
+    
+                // Top Face
+                8,  9, 10,
+                8, 10, 11,
+    
+                // Bottom Face
+                12, 13, 14,
+                12, 14, 15,
+    
+                // Left Face
+                16, 17, 18,
+                16, 18, 19,
+    
+                // Right Face
+                20, 21, 22,
+                20, 22, 23
             };
 
 
@@ -341,6 +396,9 @@ namespace _09__Render_states
 
             // Set the type of the primitive that should be rendered from this vertex buffer, in this case triangles.
             DeviceContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
+
+            CubesTexture1 = BitmapLoader.LoadTextureFromFile(Device, "Texture.png");
+            CubesTexture2 = DDSLoader.LoadTextureFromFile(Device, DeviceContext, "WoodCrate01.dds");
         }
 
 
@@ -352,7 +410,7 @@ namespace _09__Render_states
             B = 0.4f;
 
             //Keep the cubes rotating
-            rot += .01f;
+            rot += .008f;
 
 
 
@@ -360,7 +418,7 @@ namespace _09__Render_states
             cube1World = Matrix.Identity;
             //Define cube1's world space matrix
             Rotation = Matrix.RotationYawPitchRoll(rot, rot, rot);
-            Translation = Matrix.Translation(1.5f, 0.0f, 0.0f);
+            Translation = Matrix.Translation(1.6f, 0.0f, 0.0f);
             //Set cube1's world space using the transformations
             cube1World = Rotation * Translation;
 
@@ -369,8 +427,8 @@ namespace _09__Render_states
             //Reset cube2 World
             cube2World = Matrix.Identity;
             //Define cube2's world space matrix
-            Rotation = Matrix.RotationYawPitchRoll(-rot, -rot, -rot);
-            Translation = Matrix.Translation(-1.5f, 0.0f, 0.0f);
+            Rotation = Matrix.RotationYawPitchRoll(-1, -rot, -rot);
+            Translation = Matrix.Translation(-1.6f, 0.0f, 0.0f);
             //Set cube2's world space using the transformations
             cube2World = Rotation * Translation;
         }
@@ -396,6 +454,11 @@ namespace _09__Render_states
             //Pass constant buffer to shader
             DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
 
+            DeviceContext.PixelShader.SetSampler(0, SamplerState);
+
+            DeviceContext.PixelShader.SetShaderResources(0, CubesTexture1);
+
+            // Set the sampler state in the pixel shader.
             //Draw the first cube
             DeviceContext.DrawIndexed(IndexCount, 0, 0);
 
@@ -409,6 +472,10 @@ namespace _09__Render_states
 
             //Pass constant buffer to shader
             DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
+
+            DeviceContext.PixelShader.SetSampler(0, SamplerState);
+
+            DeviceContext.PixelShader.SetShaderResources(0, CubesTexture2);
 
             ////Draw the second cube
             DeviceContext.DrawIndexed(IndexCount, 0, 0);
