@@ -57,6 +57,7 @@ In this example, we are going to create the index buffer.<br>
 * ### [06 - Depth Testing](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B05%5D%203D%20Rendering%20and%20static%20camera)
 
 In this lesson we will learn how to impliment the depth of a 3D.<br>
+
 <b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/IMG07.PNG" width="150px" align="right">
@@ -72,6 +73,7 @@ In this example we will learn about the world, the view and local spaces in a 3D
 * ### [08 - Transformations](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B07%5D%20Texture)
 
 Here we will learn how to transform geometry in a 3D scene.<br>
+
 <b>Esc mouse button:</b> Close Windows
 
 <img src="/IMG/IMG09.PNG" width="150px" align="right">
