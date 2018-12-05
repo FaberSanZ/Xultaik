@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[10] Textures", "[10] Textu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[11] Load Mesh with Assimp", "[11] Load Mesh with Assimp\[11] Load Mesh with Assimp.csproj", "{9F82A7DC-D09E-4953-B0FC-CA3AA1F640DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[12]  Iluminación Difusa", "[12]  Iluminación Difusa\[12]  Iluminación Difusa.csproj", "{17CBEC15-C6A1-463E-9939-E02F9C88C4F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[12]  Diffuse Lighting", "[12]  Iluminación Difusa\[12]  Diffuse Lighting.csproj", "{17CBEC15-C6A1-463E-9939-E02F9C88C4F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
