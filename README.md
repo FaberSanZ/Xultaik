@@ -92,4 +92,20 @@ Here we will learn how to map textures to our objects.<br>
 
 <b>Esc mouse button:</b> Close Windows
 
+<img src="/IMG/IMG11.PNG" width="150px" align="right">
+
+* ### [10 - Assimp](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B10%5D%20Textures)
+
+Here we will learn how to map textures to our objects.<br>
+
+<b>Esc mouse button:</b> Close Windows
+
+<img src="/IMG/IMG12.PNG" width="150px" align="right">
+
+* ### [10 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B10%5D%20Textures)
+
+Here we will learn how to map textures to our objects.<br>
+
+<b>Esc mouse button:</b> Close Windows
+
 <hr>
