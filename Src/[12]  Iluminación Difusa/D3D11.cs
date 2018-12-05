@@ -13,20 +13,24 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using Device = SharpDX.Direct3D11.Device;
 using Buffer = SharpDX.Direct3D11.Buffer;
+using Assimp;
+using System.IO;
 
-namespace _10__Textures
+namespace _12___Iluminación_Difusa
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct Vertex
     {
         public Vector3 Position { get; set; }
         public Vector2 TexC { get; set; }
+        public Vector3 Normal { get; set; }
 
-        public Vertex(Vector3 pos, Vector2 uv)
+        public Vertex(Vector3 pos,Vector3 norm, Vector2 uv)
             : this()
         {
             Position = pos;
             TexC = uv;
+            Normal = norm;
         }
     }
 
@@ -53,8 +57,6 @@ namespace _10__Textures
 
         public RenderTargetView RenderTargetView { get; set; }
 
-        public InputLayout Layout { get; set; }
-
         public Buffer VertexBuffer { get; set; }
 
         public Buffer IndexBuffer { get; set; }
@@ -62,8 +64,6 @@ namespace _10__Textures
         public int VertexCount { get; set; }
 
         public int IndexCount { get; set; }
-
-        public Dictionary<string, ShaderBytecode> ShaderByte = new Dictionary<string, ShaderBytecode>();
 
         public DepthStencilView DepthStencilView { get; set; }
 
@@ -87,9 +87,7 @@ namespace _10__Textures
 
         public ObjectConstants ObjectCB;
 
-        public Matrix cube1World;
-
-        public Matrix cube2World;
+        public Matrix DragonWorld;
 
         public Matrix Rotation;
 
@@ -101,16 +99,22 @@ namespace _10__Textures
 
         private RasterizerState RasterState { get; set; }
 
-
-
-        //----New------
         public ShaderResourceView CubesTexture1;
-
-        public ShaderResourceView CubesTexture2;
 
         public SamplerState SamplerState { get; set; }
 
 
+
+        public Shaders Shaders;
+
+        public struct Light
+        {
+            // Properties
+            public Vector4 DiffuseColour { get; set; }
+            public Vector3 Direction { get; set; }
+        }
+
+        public Light[] LightS { get; set; }
 
 
         public D3D11() { }
@@ -196,8 +200,6 @@ namespace _10__Textures
             RasterState = new RasterizerState(Device, rasterDesc);
 
 
-            //------------New--------------
-
             // Create a texture sampler state description.
             SamplerStateDescription SamplerDesc = new SamplerStateDescription();
             SamplerDesc.Filter = Filter.MinMagMipLinear;
@@ -213,8 +215,6 @@ namespace _10__Textures
 
             // Create the texture sampler state.
             SamplerState = new SamplerState(Device, SamplerDesc);
-
-
 
 
             // Now set the rasterizer state.
@@ -237,16 +237,14 @@ namespace _10__Textures
         {
             InitShaders();
             InitCamera();
-            Model();
+            Model("dragon.obj");
         }
 
         
         public void InitCamera()
         {
-            ObjectBuffer = Shaders.CreateBuffer<ObjectConstants>(Device);
-
             //Camera information
-            Position = new Vector3(0.0f, 0.0f, -7.5f);
+            Position = new Vector3(0.0f, 0.0f, -22.0f);
             Target = new Vector3(0.0f, 0.0f, 0.0f);
             Up = new Vector3(0.0f, 1.0f, 0.0f);
 
@@ -260,115 +258,83 @@ namespace _10__Textures
 
         public void InitShaders()
         {
-            ShaderByte["VS"] = Shaders.CompileShader("Shaders/VertexShader.hlsl", "VS", "vs_4_0");
-            ShaderByte["PS"] = Shaders.CompileShader("Shaders/PixelShader.hlsl", "PS", "ps_4_0");
-
-
-            // Now setup the layout of the data that goes into the shader.
-            // This setup needs to match the VertexType structure in the Model and in the shader.
-            InputElement[] inputElements = new InputElement[]
-            {
-                new InputElement()
-                {
-                    SemanticName = "POSITION",
-                    SemanticIndex = 0,
-                    Format = Format.R32G32B32_Float,
-                    Slot = 0,
-                    AlignedByteOffset = 0,
-                    Classification = InputClassification.PerVertexData,
-                    InstanceDataStepRate = 0
-                },
-                new InputElement()
-                {
-                    SemanticName = "TEXCOORD",
-                    SemanticIndex = 0,
-                    Format = Format.R32G32B32A32_Float,
-                    Slot = 0,
-                    AlignedByteOffset = InputElement.AppendAligned,
-                    Classification = InputClassification.PerVertexData,
-                    InstanceDataStepRate = 0
-                }
-            };
-
-            // Create the vertex input the layout.
-            Layout = new InputLayout(Device, ShaderByte["VS"].Data, inputElements);
-            
-
-            DeviceContext.InputAssembler.InputLayout = Layout;
-
-            DeviceContext.VertexShader.Set(new VertexShader(Device, ShaderByte["VS"]));
-            DeviceContext.PixelShader.Set(new PixelShader(Device, ShaderByte["PS"]));
+            Shaders = new Shaders();
+            // Initialize the color shader object.
+            Shaders.Initialize(Device);
         }
 
 
-        public void Model()
+        public void Model(string FileName, bool flipUv = false)
         {
-            VertexCount = 80;
-            IndexCount = 36;
 
-            Vertex[] Vertices = new Vertex[VertexCount];
-            Vertices[0] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[1] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[2] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Vector2(1.0F, 0.0f));
-            Vertices[3] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Vector2(1.0F, 1.0f));
+            AssimpContext importer = new AssimpContext();
 
-            Vertices[4] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(1.0F, 1.0f));
-            Vertices[5] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[6] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[7] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Vector2(1.0F, 0.0f));
-
-            Vertices[8] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[9] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[10] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Vector2(1.0F, 0.0f));
-            Vertices[11] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Vector2(1.0F, 1.0f));
-
-            Vertices[12] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector2(1.0F, 1.0f));
-            Vertices[13] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[14] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[15] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(1.0F, 0.0f));
-
-            Vertices[16] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[17] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[18] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Vector2(1.0F, 0.0f));
-            Vertices[19] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector2(1.0F, 1.0f));
-
-            Vertices[20] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[21] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[22] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Vector2(1.0F, 0.0f));
-            Vertices[23] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Vector2(1.0F, 1.0f));
-
-
-
-            int[] Indices = new int[] 
+            if (!importer.IsImportFormatSupported(Path.GetExtension(FileName)))
             {
-                // Front Face
-                0,  1,  2,
-                0,  2,  3,
-    
-                // Back Face
-                4,  5,  6,
-                4,  6,  7,
-    
-                // Top Face
-                8,  9, 10,
-                8, 10, 11,
-    
-                // Bottom Face
-                12, 13, 14,
-                12, 14, 15,
-    
-                // Left Face
-                16, 17, 18,
-                16, 18, 19,
-    
-                // Right Face
-                20, 21, 22,
-                20, 22, 23
-            };
+                throw new ArgumentException("Model format " + Path.GetExtension(FileName) + " is not supported!  Cannot load {1}", "filename");
+            }
 
 
-            VertexBuffer = Buffer.Create<Vertex>(Device, BindFlags.VertexBuffer, Vertices);
-            IndexBuffer = Buffer.Create<int>(Device, BindFlags.IndexBuffer, Indices); 
+            ConsoleLogStream logStream = new ConsoleLogStream();
+            logStream.Attach();
+
+            PostProcessSteps postProcessFlags = PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.CalculateTangentSpace;
+            if (flipUv)
+            {
+                postProcessFlags |= PostProcessSteps.FlipUVs;
+            }
+
+
+            Scene model = importer.ImportFile(FileName, postProcessFlags);
+
+            List<Vertex> Vertices = new List<Vertex>();
+            List<int> Indices = new List<int>();
+            int[] indices = new int[model.Meshes.Sum(m => m.FaceCount * 3)];
+
+            int vertexOffSet = 0;
+
+            int indexOffSet = 0;
+
+            foreach (Mesh mesh in model.Meshes)
+            {
+                List<Vertex> verts = new List<Vertex>();
+
+                List<Face> faces = mesh.Faces;
+
+                for (int i = 0; i < mesh.VertexCount; i++)
+                {
+                    Vector3 pos = mesh.HasVertices ? new Vector3(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z) : new Vector3();
+
+                    Vector3D norm = mesh.HasNormals ? mesh.Normals[i] : new Vector3D();
+                    Vector3D texC = mesh.HasTextureCoords(0) ? mesh.TextureCoordinateChannels[0][i] : new Vector3D();
+                    Vector3 nor = new Vector3(norm.X, norm.Y, norm.Z);
+                    Vector2 TeC = new Vector2(texC.X, texC.Y);
+                    Vertex v = new Vertex(pos, nor, TeC);
+                    verts.Add(v);
+                }
+
+                Vertices.AddRange(verts);
+
+                for (int i = 0; i < mesh.FaceCount; i++)
+                {
+                    indices[i * 3 + 0] = (int)faces[i].Indices[2];
+                    indices[i * 3 + 1] = (int)faces[i].Indices[1];
+                    indices[i * 3 + 2] = (int)faces[i].Indices[0];
+                    Indices.Add(indices[i * 3 + 2] + vertexOffSet);
+                    Indices.Add(indices[i * 3 + 1] + vertexOffSet);
+                    Indices.Add(indices[i * 3 + 0] + vertexOffSet);
+
+                }
+                vertexOffSet += mesh.VertexCount;
+                indexOffSet += mesh.FaceCount * 3;
+            }
+
+
+            IndexCount = Indices.Count();
+
+
+            VertexBuffer = Buffer.Create<Vertex>(Device, BindFlags.VertexBuffer, Vertices.ToArray());
+            IndexBuffer = Buffer.Create<int>(Device, BindFlags.IndexBuffer, Indices.ToArray()); 
 
 
             VertexBufferBinding vertexBuffer = new VertexBufferBinding();
@@ -383,8 +349,12 @@ namespace _10__Textures
             // Set the type of the primitive that should be rendered from this vertex buffer, in this case triangles.
             DeviceContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
 
-            CubesTexture1 = BitmapLoader.LoadTextureFromFile(Device, "Text/Texture.png");
-            CubesTexture2 = DDSLoader.LoadTextureFromFile(Device, DeviceContext, "Text/WoodCrate01.dds");
+            CubesTexture1 = BitmapLoader.LoadTextureFromFile(Device, "Text/Red.bmp");
+
+
+            LightS = new Light[1];
+            LightS[0].DiffuseColour = new Vector4(0.6f, 0.6f, 0.6f, 1.0f);
+            LightS[0].Direction = new Vector3(0, 0, 1.05f);
         }
 
 
@@ -396,26 +366,16 @@ namespace _10__Textures
             B = 0.4f;
 
             //Keep the cubes rotating
-            rot += .008f;
+            rot += .009f;
 
 
             //Reset cube1 World
-            cube1World = Matrix.Identity;
+            DragonWorld = Matrix.Identity;
             //Define cube1's world space matrix
-            Rotation = Matrix.RotationYawPitchRoll(rot, rot, rot);
-            Translation = Matrix.Translation(1.6f, 0.0f, 0.0f);
+            Rotation = Matrix.RotationYawPitchRoll(rot, 0, 0);
+            Translation = Matrix.Translation(0.0f, -3.0f, 0.0f);
             //Set cube1's world space using the transformations
-            cube1World = Rotation * Translation;
-
-
-
-            //Reset cube2 World
-            cube2World = Matrix.Identity;
-            //Define cube2's world space matrix
-            Rotation = Matrix.RotationYawPitchRoll(-1, -rot, -rot);
-            Translation = Matrix.Translation(-1.6f, 0.0f, 0.0f);
-            //Set cube2's world space using the transformations
-            cube2World = Rotation * Translation;
+            DragonWorld = Rotation * Translation;
         }
 
 
@@ -429,43 +389,14 @@ namespace _10__Textures
 
 
 
+
             //Set the WVP matrix and send it to the constant buffer in effect file
-            WVP = cube1World * View * Projection;
-            ObjectCB.WVP = Matrix.Transpose(WVP);
-
-            DeviceContext.UpdateSubresource<ObjectConstants>(ref ObjectCB, ObjectBuffer);
-
-            //Pass constant buffer to shader
-            DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
-
-            // Set the sampler state in the pixel shader.
-            DeviceContext.PixelShader.SetSampler(0, SamplerState);////**new**
-
-            DeviceContext.PixelShader.SetShaderResources(0, CubesTexture1);////**new**
-
-            //Draw the first cube
-            DeviceContext.DrawIndexed(IndexCount, 0, 0);
+            WVP = DragonWorld * View * Projection;
+            Shaders.SetShaderParameters(DeviceContext, DragonWorld, View, Projection, CubesTexture1);
+            Shaders.RenderShader(DeviceContext, IndexCount);
 
 
-            //-------------------------------------------
-
-            //WVP = (cube2World * cube1World) * View * Projection;
-            WVP = cube2World * View * Projection;
-
-            ObjectCB.WVP = Matrix.Transpose(WVP);
-            DeviceContext.UpdateSubresource<ObjectConstants>(ref ObjectCB, ObjectBuffer);
-
-            //Pass constant buffer to shader
-            DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
-
-            // Set the sampler state in the pixel shader.
-            DeviceContext.PixelShader.SetSampler(0, SamplerState);////**new**
-
-            DeviceContext.PixelShader.SetShaderResources(0, CubesTexture2);////**new**
-
-            ////Draw the second cube
-            DeviceContext.DrawIndexed(IndexCount, 0, 0);
-
+            Shaders.CreateLight(DeviceContext, LightS[0].Direction, LightS[0].DiffuseColour);
         }
 
 
@@ -482,19 +413,12 @@ namespace _10__Textures
             SwapChain.Dispose();
             Device.Dispose();
             DeviceContext.Dispose();
-            Layout.Dispose();
             VertexBuffer.Dispose();
-            ShaderByte["VS"].Dispose();
-            ShaderByte["PS"].Dispose();
             IndexBuffer.Dispose();
             ObjectBuffer.Dispose();
             RasterState.Dispose();
-
-
-            //----New----
             SamplerState.Dispose();
             CubesTexture1.Dispose();
-            CubesTexture2.Dispose();
         }
     }
 }

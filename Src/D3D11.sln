@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[09] Render states", "[09] 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[10] Textures", "[10] Textures\[10] Textures.csproj", "{4AB676C0-7339-4A21-996C-105C08878172}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[11] Load Mesh with Assimp", "[11] Load Mesh with Assimp\[11] Load Mesh with Assimp.csproj", "{9F82A7DC-D09E-4953-B0FC-CA3AA1F640DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[12]  Iluminación Difusa", "[12]  Iluminación Difusa\[12]  Iluminación Difusa.csproj", "{17CBEC15-C6A1-463E-9939-E02F9C88C4F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{4AB676C0-7339-4A21-996C-105C08878172}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AB676C0-7339-4A21-996C-105C08878172}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AB676C0-7339-4A21-996C-105C08878172}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F82A7DC-D09E-4953-B0FC-CA3AA1F640DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F82A7DC-D09E-4953-B0FC-CA3AA1F640DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F82A7DC-D09E-4953-B0FC-CA3AA1F640DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F82A7DC-D09E-4953-B0FC-CA3AA1F640DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17CBEC15-C6A1-463E-9939-E02F9C88C4F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17CBEC15-C6A1-463E-9939-E02F9C88C4F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17CBEC15-C6A1-463E-9939-E02F9C88C4F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17CBEC15-C6A1-463E-9939-E02F9C88C4F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

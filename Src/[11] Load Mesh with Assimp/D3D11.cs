@@ -13,8 +13,10 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using Device = SharpDX.Direct3D11.Device;
 using Buffer = SharpDX.Direct3D11.Buffer;
+using Assimp;
+using System.IO;
 
-namespace _10__Textures
+namespace _11__Load_Mesh_with_Assimp
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct Vertex
@@ -237,7 +239,7 @@ namespace _10__Textures
         {
             InitShaders();
             InitCamera();
-            Model();
+            Model("lara.obj");
         }
 
         
@@ -246,7 +248,7 @@ namespace _10__Textures
             ObjectBuffer = Shaders.CreateBuffer<ObjectConstants>(Device);
 
             //Camera information
-            Position = new Vector3(0.0f, 0.0f, -7.5f);
+            Position = new Vector3(0.0f, 0.0f, -3.0f);
             Target = new Vector3(0.0f, 0.0f, 0.0f);
             Up = new Vector3(0.0f, 1.0f, 0.0f);
 
@@ -301,74 +303,75 @@ namespace _10__Textures
         }
 
 
-        public void Model()
+        public void Model(string FileName, bool flipUv = false)
         {
-            VertexCount = 80;
-            IndexCount = 36;
 
-            Vertex[] Vertices = new Vertex[VertexCount];
-            Vertices[0] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[1] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[2] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Vector2(1.0F, 0.0f));
-            Vertices[3] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Vector2(1.0F, 1.0f));
+            AssimpContext importer = new AssimpContext();
 
-            Vertices[4] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(1.0F, 1.0f));
-            Vertices[5] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[6] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[7] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Vector2(1.0F, 0.0f));
-
-            Vertices[8] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[9] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[10] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Vector2(1.0F, 0.0f));
-            Vertices[11] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Vector2(1.0F, 1.0f));
-
-            Vertices[12] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector2(1.0F, 1.0f));
-            Vertices[13] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[14] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[15] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(1.0F, 0.0f));
-
-            Vertices[16] = new Vertex(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[17] = new Vertex(new Vector3(-1.0f, +1.0f, +1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[18] = new Vertex(new Vector3(-1.0f, +1.0f, -1.0f), new Vector2(1.0F, 0.0f));
-            Vertices[19] = new Vertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector2(1.0F, 1.0f));
-
-            Vertices[20] = new Vertex(new Vector3(+1.0f, -1.0f, -1.0f), new Vector2(0.0F, 1.0f));
-            Vertices[21] = new Vertex(new Vector3(+1.0f, +1.0f, -1.0f), new Vector2(0.0F, 0.0f));
-            Vertices[22] = new Vertex(new Vector3(+1.0f, +1.0f, +1.0f), new Vector2(1.0F, 0.0f));
-            Vertices[23] = new Vertex(new Vector3(+1.0f, -1.0f, +1.0f), new Vector2(1.0F, 1.0f));
-
-
-
-            int[] Indices = new int[] 
+            if (!importer.IsImportFormatSupported(Path.GetExtension(FileName)))
             {
-                // Front Face
-                0,  1,  2,
-                0,  2,  3,
-    
-                // Back Face
-                4,  5,  6,
-                4,  6,  7,
-    
-                // Top Face
-                8,  9, 10,
-                8, 10, 11,
-    
-                // Bottom Face
-                12, 13, 14,
-                12, 14, 15,
-    
-                // Left Face
-                16, 17, 18,
-                16, 18, 19,
-    
-                // Right Face
-                20, 21, 22,
-                20, 22, 23
-            };
+                throw new ArgumentException("Model format " + Path.GetExtension(FileName) + " is not supported!  Cannot load {1}", "filename");
+            }
 
 
-            VertexBuffer = Buffer.Create<Vertex>(Device, BindFlags.VertexBuffer, Vertices);
-            IndexBuffer = Buffer.Create<int>(Device, BindFlags.IndexBuffer, Indices); 
+            ConsoleLogStream logStream = new ConsoleLogStream();
+            logStream.Attach();
+
+            PostProcessSteps postProcessFlags = PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.CalculateTangentSpace;
+            if (flipUv)
+            {
+                postProcessFlags |= PostProcessSteps.FlipUVs;
+            }
+
+
+            Scene model = importer.ImportFile(FileName, postProcessFlags);
+
+            List<Vertex> Vertices = new List<Vertex>();
+            List<int> Indices = new List<int>();
+            int[] indices = new int[model.Meshes.Sum(m => m.FaceCount * 3)];
+
+            int vertexOffSet = 0;
+
+            int indexOffSet = 0;
+
+            foreach (Mesh mesh in model.Meshes)
+            {
+                List<Vertex> verts = new List<Vertex>();
+
+                List<Face> faces = mesh.Faces;
+
+                for (int i = 0; i < mesh.VertexCount; i++)
+                {
+                    Vector3 pos = mesh.HasVertices ? new Vector3(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z) : new Vector3();
+
+                    Vector3D texC = mesh.HasTextureCoords(0) ? mesh.TextureCoordinateChannels[0][i] : new Vector3D();
+                    Vector2 TeC = new Vector2(texC.X, texC.Y);
+                    Vertex v = new Vertex(pos, TeC);
+                    verts.Add(v);
+                }
+
+                Vertices.AddRange(verts);
+
+                for (int i = 0; i < mesh.FaceCount; i++)
+                {
+                    indices[i * 3 + 0] = (int)faces[i].Indices[2];
+                    indices[i * 3 + 1] = (int)faces[i].Indices[1];
+                    indices[i * 3 + 2] = (int)faces[i].Indices[0];
+                    Indices.Add(indices[i * 3 + 2] + vertexOffSet);
+                    Indices.Add(indices[i * 3 + 1] + vertexOffSet);
+                    Indices.Add(indices[i * 3 + 0] + vertexOffSet);
+
+                }
+                vertexOffSet += mesh.VertexCount;
+                indexOffSet += mesh.FaceCount * 3;
+            }
+
+
+            IndexCount = Indices.Count();
+
+
+            VertexBuffer = Buffer.Create<Vertex>(Device, BindFlags.VertexBuffer, Vertices.ToArray());
+            IndexBuffer = Buffer.Create<int>(Device, BindFlags.IndexBuffer, Indices.ToArray()); 
 
 
             VertexBufferBinding vertexBuffer = new VertexBufferBinding();
@@ -396,14 +399,14 @@ namespace _10__Textures
             B = 0.4f;
 
             //Keep the cubes rotating
-            rot += .008f;
+            rot += .009f;
 
 
             //Reset cube1 World
             cube1World = Matrix.Identity;
             //Define cube1's world space matrix
-            Rotation = Matrix.RotationYawPitchRoll(rot, rot, rot);
-            Translation = Matrix.Translation(1.6f, 0.0f, 0.0f);
+            Rotation = Matrix.RotationYawPitchRoll(rot, 0, 0);
+            Translation = Matrix.Translation(0.5f, -0.7f, 0.0f);
             //Set cube1's world space using the transformations
             cube1World = Rotation * Translation;
 
@@ -412,8 +415,8 @@ namespace _10__Textures
             //Reset cube2 World
             cube2World = Matrix.Identity;
             //Define cube2's world space matrix
-            Rotation = Matrix.RotationYawPitchRoll(-1, -rot, -rot);
-            Translation = Matrix.Translation(-1.6f, 0.0f, 0.0f);
+            Rotation = Matrix.RotationYawPitchRoll(rot, -0, -0);
+            Translation = Matrix.Translation(-0.5f, -0.7f, 0.0f);
             //Set cube2's world space using the transformations
             cube2World = Rotation * Translation;
         }
@@ -438,6 +441,11 @@ namespace _10__Textures
             //Pass constant buffer to shader
             DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
 
+            DeviceContext.Rasterizer.State = new RasterizerState(Device, new RasterizerStateDescription()
+            {
+                FillMode = FillMode.Wireframe,
+                CullMode = CullMode.None,
+            });
             // Set the sampler state in the pixel shader.
             DeviceContext.PixelShader.SetSampler(0, SamplerState);////**new**
 
@@ -457,6 +465,12 @@ namespace _10__Textures
 
             //Pass constant buffer to shader
             DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
+
+            DeviceContext.Rasterizer.State = new RasterizerState(Device, new RasterizerStateDescription()
+            {
+                FillMode = FillMode.Solid,
+                CullMode = CullMode.None,
+            });
 
             // Set the sampler state in the pixel shader.
             DeviceContext.PixelShader.SetSampler(0, SamplerState);////**new**
