@@ -84,4 +84,12 @@ Here is a nice little lesson which will teach you about Direct3D's render states
 
 <b>Esc mouse button:</b> Close Windows
 
+<img src="/IMG/IMG10.PNG" width="150px" align="right">
+
+* ### [10 - Textures](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B10%5D%20Textures)
+
+Here we will learn how to map textures to our objects.<br>
+
+<b>Esc mouse button:</b> Close Windows
+
 <hr>
