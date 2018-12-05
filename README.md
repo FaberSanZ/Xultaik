@@ -96,7 +96,7 @@ Here we will learn how to map textures to our objects.<br>
 
 * ### [10 - Assimp](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B10%5D%20Textures)
 
-Here we will learn how to map textures to our objects.<br>
+Load Mesh with Assimp.<br>
 
 <b>Esc mouse button:</b> Close Windows
 
@@ -104,7 +104,7 @@ Here we will learn how to map textures to our objects.<br>
 
 * ### [10 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B10%5D%20Textures)
 
-Here we will learn how to map textures to our objects.<br>
+In this tutorial I will cover how to light 3D objects using diffuse lighting .<br>
 
 <b>Esc mouse button:</b> Close Windows
 
