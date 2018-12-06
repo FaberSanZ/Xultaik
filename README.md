@@ -18,7 +18,7 @@ This is the code repository for SharpDX-DirectX 11, the examples are executed:
 
 This example shows how to create the first window in Windows Form.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG02.PNG" width="150px" align="right">
 
@@ -26,7 +26,7 @@ This example shows how to create the first window in Windows Form.<br>
 
 This example shows how to configure the Direct3D device<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG03.PNG" width="150px" align="right">
 
@@ -34,7 +34,7 @@ This example shows how to configure the Direct3D device<br>
 
 In this example, we will learn about the rendering pipeline and draw a triangle.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG04.PNG" width="150px" align="right">
 
@@ -42,7 +42,7 @@ In this example, we will learn about the rendering pipeline and draw a triangle.
 
 In this example the color is specified for each vertex will be "interpolated" through the triangle.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG05.PNG" width="150px" align="right">
 
@@ -50,7 +50,7 @@ In this example the color is specified for each vertex will be "interpolated" th
 
 In this example, we are going to create the index buffer.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG06.PNG" width="150px" align="right">
 
@@ -58,7 +58,7 @@ In this example, we are going to create the index buffer.<br>
 
 In this lesson we will learn how to impliment the depth of a 3D.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG07.PNG" width="150px" align="right">
 
@@ -66,7 +66,7 @@ In this lesson we will learn how to impliment the depth of a 3D.<br>
 
 In this example we will learn about the world, the view and local spaces in a 3D world, which will allow us to create a camera.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG08.PNG" width="150px" align="right">
 
@@ -74,7 +74,7 @@ In this example we will learn about the world, the view and local spaces in a 3D
 
 Here we will learn how to transform geometry in a 3D scene.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG09.PNG" width="150px" align="right">
 
@@ -82,7 +82,7 @@ Here we will learn how to transform geometry in a 3D scene.<br>
 
 Here is a nice little lesson which will teach you about Direct3D's render states.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG10.PNG" width="150px" align="right">
 
@@ -90,7 +90,7 @@ Here is a nice little lesson which will teach you about Direct3D's render states
 
 Here we will learn how to map textures to our objects.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG11.PNG" width="150px" align="right">
 
@@ -98,7 +98,7 @@ Here we will learn how to map textures to our objects.<br>
 
 Load Mesh with Assimp.<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <img src="/IMG/IMG12.PNG" width="150px" align="right">
 
@@ -106,6 +106,6 @@ Load Mesh with Assimp.<br>
 
 In this tutorial I will cover how to light 3D objects using diffuse lighting .<br>
 
-<b>Esc mouse button:</b> Close Windows
+<b>Esc button:</b> Close Windows
 
 <hr>
