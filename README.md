@@ -100,12 +100,4 @@ Load Mesh with Assimp.<br>
 
 <b>Esc button:</b> Close Windows
 
-<img src="/IMG/IMG12.PNG" width="150px" align="right">
-
-* ### [10 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B10%5D%20Textures)
-
-In this tutorial I will cover how to light 3D objects using diffuse lighting .<br>
-
-<b>Esc button:</b> Close Windows
-
 <hr>
