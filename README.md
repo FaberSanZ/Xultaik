@@ -94,7 +94,7 @@ Here we will learn how to map textures to our objects.<br>
 
 <img src="/IMG/IMG11.PNG" width="150px" align="right">
 
-* ### [10 - Assimp](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B10%5D%20Textures)
+* ### [10 - Assimp](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B11%5D%20Load%20Mesh%20with%20Assimp)
 
 Load Mesh with Assimp.<br>
 
