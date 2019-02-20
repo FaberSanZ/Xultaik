@@ -298,7 +298,7 @@ namespace _12___Iluminación_Difusa
         public void InitCamera()
         {
             //Camera information
-            Position = new Vector3(0.0f, 1.5f, -17.0f);
+            Position = new Vector3(0.0f, 1.5f, -18.0f);
             Target = new Vector3(0.0f, 0.0f, 0.0f);
             Up = new Vector3(0.0f, 1.0f, 0.0f);
 
@@ -472,7 +472,7 @@ namespace _12___Iluminación_Difusa
             DragonWorld = Matrix.Identity;
             //Define cube1's world space matrix
             Rotation = Matrix.RotationYawPitchRoll(rot, 0, 0);
-            Translation = Matrix.Translation(0.0f, -4.0f, 0.0f);
+            Translation = Matrix.Translation(0.0f, -5.0f, 0.0f);
             //Set cube1's world space using the transformations
             DragonWorld = Rotation * Translation;
         }
