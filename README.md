@@ -100,12 +100,6 @@ Load Mesh with Assimp.<br>
 
 <b>Esc button:</b> Close Windows
 
-<img src="/IMG/IMG12.PNG" width="150px" align="right">
 
-* ### [11 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B11%5D%20Load%20Mesh%20with%20Assimp)
-
-Add diffuse lighting. <br>
-
-<b>Esc button:</b> Close Windows
 
 <hr>
