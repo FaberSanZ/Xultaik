@@ -1,6 +1,8 @@
 ﻿cbuffer MatrixBuffer
 {
-	matrix WVP;
+	matrix W;
+	matrix V;
+    matrix P;
 };
 
 
@@ -25,7 +27,9 @@ PixelInputType VS(VertexInputType input)
 	input.Position.w = 1.0f;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.Position = mul(input.Position, WVP);
+	output.Position = mul(input.Position, W);
+	output.Position = mul(output.Position, V);
+    output.Position = mul(output.Position, P);
 
 	// Store the texture coordinates for the pixel shader to use.
 	output.Tex = input.Tex;

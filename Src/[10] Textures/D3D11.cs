@@ -32,9 +32,11 @@ namespace _10__Textures
 
     //Create effects constant buffer's structure//
     [StructLayout(LayoutKind.Sequential)]
-    public struct ObjectConstants
+    public struct MatrixBuffer
     {
-        public Matrix WVP;
+        public Matrix W;
+        public Matrix V;
+        public Matrix P;
     }
 
     public class D3D11
@@ -71,8 +73,6 @@ namespace _10__Textures
         
         public Buffer ObjectBuffer { get; set; }
 
-        public Matrix WVP;
-
         public Matrix World;
 
         public Matrix View;
@@ -85,7 +85,7 @@ namespace _10__Textures
 
         public Vector3 Up;
 
-        public ObjectConstants ObjectCB;
+        public MatrixBuffer ObjectCB;
 
         public Matrix cube1World;
 
@@ -243,7 +243,7 @@ namespace _10__Textures
         
         public void InitCamera()
         {
-            ObjectBuffer = Shaders.CreateBuffer<ObjectConstants>(Device);
+            ObjectBuffer = Shaders.CreateBuffer<MatrixBuffer>(Device);
 
             //Camera information
             Position = new Vector3(0.0f, 0.0f, -7.5f);
@@ -430,10 +430,11 @@ namespace _10__Textures
 
 
             //Set the WVP matrix and send it to the constant buffer in effect file
-            WVP = cube1World * View * Projection;
-            ObjectCB.WVP = Matrix.Transpose(WVP);
+            ObjectCB.W = Matrix.Transpose(cube1World);
+            ObjectCB.V = Matrix.Transpose(View);
+            ObjectCB.P = Matrix.Transpose(Projection);
 
-            DeviceContext.UpdateSubresource<ObjectConstants>(ref ObjectCB, ObjectBuffer);
+            DeviceContext.UpdateSubresource<MatrixBuffer>(ref ObjectCB, ObjectBuffer);
 
             //Pass constant buffer to shader
             DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
@@ -449,11 +450,11 @@ namespace _10__Textures
 
             //-------------------------------------------
 
-            //WVP = (cube2World * cube1World) * View * Projection;
-            WVP = cube2World * View * Projection;
+            ObjectCB.W = Matrix.Transpose(cube2World);
+            ObjectCB.V = Matrix.Transpose(View);
+            ObjectCB.P = Matrix.Transpose(Projection);
 
-            ObjectCB.WVP = Matrix.Transpose(WVP);
-            DeviceContext.UpdateSubresource<ObjectConstants>(ref ObjectCB, ObjectBuffer);
+            DeviceContext.UpdateSubresource<MatrixBuffer>(ref ObjectCB, ObjectBuffer);
 
             //Pass constant buffer to shader
             DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);

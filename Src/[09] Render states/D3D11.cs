@@ -33,7 +33,9 @@ namespace _09__Render_states
     [StructLayout(LayoutKind.Sequential)]
     public struct ObjectConstants
     {
-        public Matrix WVP;
+        public Matrix W;
+        public Matrix V;
+        public Matrix P;
     }
 
     public class D3D11
@@ -69,8 +71,6 @@ namespace _09__Render_states
         public Texture2D DepthStencilBuffer { get; set; }
         
         public Buffer ObjectBuffer { get; set; }
-
-        public Matrix WVP;
 
         public Matrix World;
 
@@ -239,8 +239,8 @@ namespace _09__Render_states
 
         public void InitShaders()
         {
-            ShaderByte["VS"] = Shaders.CompileShader("Effect.hlsl", "VS", "vs_4_0");
-            ShaderByte["PS"] = Shaders.CompileShader("Effect.hlsl", "PS", "ps_4_0");
+            ShaderByte["VS"] = Shaders.CompileShader("Shaders/VertexShader.hlsl", "VS", "vs_4_0");
+            ShaderByte["PS"] = Shaders.CompileShader("Shaders/PixelShader.hlsl", "PS", "ps_4_0");
 
 
             // Now setup the layout of the data that goes into the shader.
@@ -270,7 +270,7 @@ namespace _09__Render_states
             };
 
             // Create the vertex input the layout.
-            Layout = new InputLayout(Device, ShaderByte["VS"].Data, inputElements);
+            Layout = new InputLayout(Device, ShaderByte["VS"], inputElements);
             
 
             DeviceContext.InputAssembler.InputLayout = Layout;
@@ -385,11 +385,9 @@ namespace _09__Render_states
             DeviceContext.ClearDepthStencilView(DepthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
 
 
-
-            ///////////////**************new**************////////////////////
-            //Set the WVP matrix and send it to the constant buffer in effect file
-            WVP = cube1World * View * Projection;
-            ObjectCB.WVP = Matrix.Transpose(WVP);
+            ObjectCB.W = Matrix.Transpose(cube1World);
+            ObjectCB.V = Matrix.Transpose(View);
+            ObjectCB.P = Matrix.Transpose(Projection);
 
             DeviceContext.UpdateSubresource<ObjectConstants>(ref ObjectCB, ObjectBuffer);
 
@@ -402,9 +400,10 @@ namespace _09__Render_states
 
             //-------------------------------------------
 
-            WVP = cube2World * View * Projection;
+            ObjectCB.W = Matrix.Transpose(cube2World);
+            ObjectCB.V = Matrix.Transpose(View);
+            ObjectCB.P = Matrix.Transpose(Projection);
 
-            ObjectCB.WVP = Matrix.Transpose(WVP);
             DeviceContext.UpdateSubresource<ObjectConstants>(ref ObjectCB, ObjectBuffer);
 
             //Pass constant buffer to shader

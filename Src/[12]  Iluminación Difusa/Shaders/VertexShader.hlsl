@@ -3,7 +3,9 @@
 ///////////////////////
 cbuffer MatrixBuffer
 {
-	matrix WVP;
+	matrix W;
+	matrix V;
+    matrix P;
 
 };
 
@@ -35,14 +37,16 @@ PixelInputType VS(VertexInputType input)
 	input.position.w = 1.0f;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.position = mul(input.position, WVP);
+	output.position = mul(input.position, W);
+	output.position = mul(output.position, V);
+    output.position = mul(output.position, P);
 
 
 	// Store the texture coordinates for the pixel shader.
 	output.tex = input.tex;
 
 	// Calculate the normal vector against the world matrix only.
-	output.normal = mul(input.normal, (float3x3)WVP);
+	output.normal = mul(input.normal, (float3x3)W);
 
 	// Normalize the normal vector.
 	output.normal = normalize(output.normal);
