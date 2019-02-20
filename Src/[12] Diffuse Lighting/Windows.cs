@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _12___Iluminación_Difusa
+namespace _12__Diffuse_Lighting
 {
     public class Windows
     {

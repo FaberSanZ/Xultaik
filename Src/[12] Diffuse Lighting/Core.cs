@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _12___Iluminación_Difusa
+namespace _12__Diffuse_Lighting
 {
     public class Core : IDisposable
     {
@@ -22,7 +22,7 @@ namespace _12___Iluminación_Difusa
             if (Windows == null)
             {
                 // Create the Windows object.
-                Windows = new Windows("Iluminación Difusa ", 720, 510);
+                Windows = new Windows("Diffuse Lighting ", 720, 510);
                 // Initialize the Windows object.
                 Windows.Initialize();
             }

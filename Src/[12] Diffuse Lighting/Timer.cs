@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace _12___Iluminación_Difusa
+namespace _12__Diffuse_Lighting
 {
     public class Timer
     {

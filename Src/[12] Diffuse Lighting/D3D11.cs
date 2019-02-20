@@ -18,7 +18,7 @@ using Assimp;
 using System.IO;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 
-namespace _12___Iluminación_Difusa
+namespace _12__Diffuse_Lighting
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct Vertex
@@ -283,7 +283,7 @@ namespace _12___Iluminación_Difusa
         {
             InitShaders();
             InitCamera();
-            Model("chinesedragon.dae");
+            Model("dragon.obj");
 
             ConstantMatrixBuffer = new ConstantBuffer<MatrixBuffer>(Device);
 
@@ -298,7 +298,7 @@ namespace _12___Iluminación_Difusa
         public void InitCamera()
         {
             //Camera information
-            Position = new Vector3(0.0f, 1.5f, -18.0f);
+            Position = new Vector3(0.0f, 0.5f, -10.0f);
             Target = new Vector3(0.0f, 0.0f, 0.0f);
             Up = new Vector3(0.0f, 1.0f, 0.0f);
 
@@ -362,7 +362,6 @@ namespace _12___Iluminación_Difusa
 
             VertexShader = new VertexShader(Device, VertexShaderByte);
             PixelShader = new PixelShader(Device, PixelShaderByte);
-
         }
 
 
@@ -408,12 +407,13 @@ namespace _12___Iluminación_Difusa
                 for (int i = 0; i < mesh.VertexCount; i++)
                 {
                     Vector3 pos = mesh.HasVertices ? new Vector3(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z) : new Vector3();
-
                     Vector3D norm = mesh.HasNormals ? mesh.Normals[i] : new Vector3D();
                     Vector3D texC = mesh.HasTextureCoords(0) ? mesh.TextureCoordinateChannels[0][i] : new Vector3D();
+
                     Vector3 nor = new Vector3(norm.X, norm.Y, norm.Z);
                     Vector2 TeC = new Vector2(texC.X, texC.Y);
                     Vertex v = new Vertex(pos, nor, TeC);
+
                     verts.Add(v);
                 }
 
@@ -472,7 +472,7 @@ namespace _12___Iluminación_Difusa
             DragonWorld = Matrix.Identity;
             //Define cube1's world space matrix
             Rotation = Matrix.RotationYawPitchRoll(rot, 0, 0);
-            Translation = Matrix.Translation(0.0f, -5.0f, 0.0f);
+            Translation = Matrix.Translation(0.0f, 0.0f, 0.0f);
             //Set cube1's world space using the transformations
             DragonWorld = Rotation * Translation;
         }
@@ -496,7 +496,7 @@ namespace _12___Iluminación_Difusa
                 P = Matrix.Transpose(Projection),
             };
 
-            ConstantMatrixBuffer.UpdateShader(ShaderType.Pixel, DeviceContext, matrixBuffer);
+            ConstantMatrixBuffer.UpdateShader(ShaderType.Vertex, DeviceContext, matrixBuffer);
             SetTexture(CubesTexture1);
             SetInputLayout(Layout);
             SetVertexShader(VertexShader);
@@ -514,7 +514,7 @@ namespace _12___Iluminación_Difusa
             lightBuffer.LightDirection = LightS[0].Direction;
             lightBuffer.padding = 0;
 
-            ConstantLightBuffer.UpdateShader(ShaderType.Vertex, DeviceContext, lightBuffer);
+            ConstantLightBuffer.UpdateShader(ShaderType.Pixel, DeviceContext, lightBuffer);
 
         }
 

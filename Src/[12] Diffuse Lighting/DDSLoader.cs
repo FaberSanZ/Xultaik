@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using SharpDX.DXGI;
 
-namespace _12___Iluminación_Difusa
+namespace _12__Diffuse_Lighting
 {
     using SharpDX;
     using SharpDX.Direct3D11;

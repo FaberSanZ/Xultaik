@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _12___Iluminación_Difusa
+namespace _13__Framework
 {
-    public enum ShaderType
+    class Program
     {
-        Pixel,
-
-        Vertex,
+        static void Main(string[] args)
+        {
+        }
     }
 }

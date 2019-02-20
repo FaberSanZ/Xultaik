@@ -8,7 +8,7 @@ using SharpDX.Direct3D11;
 using Buffer = SharpDX.Direct3D11.Buffer;
 using Device = SharpDX.Direct3D11.Device;
 
-namespace _12___Iluminación_Difusa
+namespace _12__Diffuse_Lighting
 {
     public class ConstantBuffer<T> where T : struct
     {
@@ -41,7 +41,7 @@ namespace _12___Iluminación_Difusa
         {
             switch (shaderType)
             {
-                case ShaderType.Pixel:
+                case ShaderType.Vertex:
 
                     deviceContext.MapSubresource(Buffer, MapMode.WriteDiscard, MapFlags.None, out resource);
 
@@ -55,7 +55,7 @@ namespace _12___Iluminación_Difusa
                     deviceContext.VertexShader.SetConstantBuffer(0, Buffer);
                     break;
 
-                case ShaderType.Vertex:
+                case ShaderType.Pixel:
 
                     deviceContext.MapSubresource(Buffer, MapMode.WriteDiscard, MapFlags.None, out resource);
 

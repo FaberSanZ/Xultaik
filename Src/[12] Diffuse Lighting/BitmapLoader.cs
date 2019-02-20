@@ -8,7 +8,7 @@ using SharpDX.WIC;
 using Device = SharpDX.Direct3D11.Device;
 using PixelFormat = SharpDX.WIC.PixelFormat;
 
-namespace _12___Iluminación_Difusa
+namespace _12__Diffuse_Lighting
 {
     public class BitmapLoader
     {

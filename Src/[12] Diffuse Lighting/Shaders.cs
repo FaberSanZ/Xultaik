@@ -10,7 +10,7 @@ using Buffer = SharpDX.Direct3D11.Buffer;
 using SharpDX.Direct3D11;
 using System.Collections.Generic;
 
-namespace _12___Iluminación_Difusa
+namespace _12__Diffuse_Lighting
 {
 
     public static class ShadersUtil
