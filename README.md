@@ -12,7 +12,7 @@ This is the code repository for SharpDX-DirectX 11, the examples are executed:
 
 # [Samples](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src)
 
-<img src="/IMG/IMG01.PNG" width="150px" align="right">
+<img src="/IMG/IMG01.PNG" width="150px" align="left">
 
 * ### [01 - First Window](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B01%5D%20First%20Window)
 
