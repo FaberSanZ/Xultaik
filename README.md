@@ -20,7 +20,7 @@ This example shows how to create the first window in Windows Form.<br>
 
 <b>Esc button:</b> Close Windows
 <br><br>
-
+-----------------
 <img src="/IMG/IMG02.PNG" width="150px" align="left">
 
 * ### [02 - Initialize Direct3D 11](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B02%5D%20Initialize%20Direct3D%2011)
