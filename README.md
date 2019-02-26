@@ -113,7 +113,7 @@ Load Mesh with Assimp.<br>
 
 <img src="/IMG/IMG12.PNG" width="160px" align="left">
 
-* ### [11 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B11%5D%20Load%20Mesh%20with%20Assimp)
+* ### [11 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorial/tree/master/Src/%5B12%5D%20Diffuse%20Lighting)
 
 Add diffuse lighting. <br>
 
