@@ -1,4 +1,4 @@
-# DirectX 11 tutorial (SharpDX-C#)
+# DirectX 11 Tutorial (SharpDX-C#)
 
 This is the code repository for SharpDX-DirectX 11, the examples are executed:
 
