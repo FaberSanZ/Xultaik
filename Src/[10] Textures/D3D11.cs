@@ -246,7 +246,7 @@ namespace _10__Textures
             ObjectBuffer = Shaders.CreateBuffer<MatrixBuffer>(Device);
 
             //Camera information
-            Position = new Vector3(0.0f, 0.0f, -7.5f);
+            Position = new Vector3(0.0f, 0.0f, -6.3f);
             Target = new Vector3(0.0f, 0.0f, 0.0f);
             Up = new Vector3(0.0f, 1.0f, 0.0f);
 
@@ -383,8 +383,8 @@ namespace _10__Textures
             // Set the type of the primitive that should be rendered from this vertex buffer, in this case triangles.
             DeviceContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
 
-            CubesTexture1 = BitmapLoader.LoadTextureFromFile(Device, "Text/Texture.png");
-            CubesTexture2 = DDSLoader.LoadTextureFromFile(Device, DeviceContext, "Text/WoodCrate01.dds");
+            CubesTexture1 = BitmapLoader.LoadTextureFromFile(Device, "0v7g8007.bmp");
+            CubesTexture2 = BitmapLoader.LoadTextureFromFile(Device, "0v7g8007.bmp");
         }
 
 
@@ -403,7 +403,7 @@ namespace _10__Textures
             cube1World = Matrix.Identity;
             //Define cube1's world space matrix
             Rotation = Matrix.RotationYawPitchRoll(rot, rot, rot);
-            Translation = Matrix.Translation(1.6f, 0.0f, 0.0f);
+            Translation = Matrix.Translation(0.0f, 0.0f, 0.0f);
             //Set cube1's world space using the transformations
             cube1World = Rotation * Translation;
 
@@ -413,7 +413,7 @@ namespace _10__Textures
             cube2World = Matrix.Identity;
             //Define cube2's world space matrix
             Rotation = Matrix.RotationYawPitchRoll(-1, -rot, -rot);
-            Translation = Matrix.Translation(-1.6f, 0.0f, 0.0f);
+            Translation = Matrix.Translation(0.0f, 0.0f, 0.0f);
             //Set cube2's world space using the transformations
             cube2World = Rotation * Translation;
         }
@@ -430,21 +430,21 @@ namespace _10__Textures
 
 
             //Set the WVP matrix and send it to the constant buffer in effect file
-            ObjectCB.W = Matrix.Transpose(cube1World);
-            ObjectCB.V = Matrix.Transpose(View);
-            ObjectCB.P = Matrix.Transpose(Projection);
+            //ObjectCB.W = Matrix.Transpose(cube1World);
+            //ObjectCB.V = Matrix.Transpose(View);
+            //ObjectCB.P = Matrix.Transpose(Projection);
 
-            DeviceContext.UpdateSubresource<MatrixBuffer>(ref ObjectCB, ObjectBuffer);
+            //DeviceContext.UpdateSubresource<MatrixBuffer>(ref ObjectCB, ObjectBuffer);
 
-            //Pass constant buffer to shader
-            DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
+            ////Pass constant buffer to shader
+            //DeviceContext.VertexShader.SetConstantBuffer(0, ObjectBuffer);
 
-            // Set the sampler state in the pixel shader.
-            DeviceContext.PixelShader.SetSampler(0, SamplerState);////**new**
+            //// Set the sampler state in the pixel shader.
+            //DeviceContext.PixelShader.SetSampler(0, SamplerState);////**new**
 
-            DeviceContext.PixelShader.SetShaderResources(0, CubesTexture1);////**new**
+            //DeviceContext.PixelShader.SetShaderResources(0, CubesTexture1);////**new**
 
-            //Draw the first cube
+            ////Draw the first cube
             DeviceContext.DrawIndexed(IndexCount, 0, 0);
 
 

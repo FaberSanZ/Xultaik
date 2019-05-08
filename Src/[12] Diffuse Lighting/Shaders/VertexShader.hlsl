@@ -1,12 +1,11 @@
 ﻿///////////////////////
 ////   GLOBALS
 ///////////////////////
-cbuffer MatrixBuffer
+cbuffer MatrixBuffer 
 {
 	matrix W;
 	matrix V;
     matrix P;
-
 };
 
 //////////////////////

@@ -49,6 +49,9 @@ namespace _03__First_Drawing_
 
         public Dictionary<string, ShaderBytecode> ShaderByte = new Dictionary<string, ShaderBytecode>();
 
+        public ShaderBytecode VertexShader;    // Holding Vertex Shader bytecode
+
+        public ShaderBytecode PixelShader;     // Holding Pixel Shader bytecode
 
 
         public D3D11() { }
@@ -129,6 +132,9 @@ namespace _03__First_Drawing_
             ShaderByte["VS"] = Shaders.CompileShader("Effect.hlsl", "VS", "vs_4_0");
             ShaderByte["PS"] = Shaders.CompileShader("Effect.hlsl", "PS", "ps_4_0");
 
+            PixelShader = Shaders.CompileShader("Shaders/PixelShader.hlsl", "PS", "ps_5_0");
+            VertexShader = Shaders.CompileShader("Shaders/VertexShader.hlsl", "VS", "vs_5_0");
+
 
             // Now setup the layout of the data that goes into the shader.
             // This setup needs to match the VertexType structure in the Model and in the shader.
@@ -152,8 +158,8 @@ namespace _03__First_Drawing_
 
             DeviceContext.InputAssembler.InputLayout = Layout;
 
-            DeviceContext.VertexShader.Set(new VertexShader(Device, ShaderByte["VS"]));
-            DeviceContext.PixelShader.Set(new PixelShader(Device, ShaderByte["PS"]));
+            DeviceContext.VertexShader.Set(new VertexShader(Device, VertexShader));
+            DeviceContext.PixelShader.Set(new PixelShader(Device, PixelShader));
         }
 
 

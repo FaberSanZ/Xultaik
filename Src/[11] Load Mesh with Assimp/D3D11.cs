@@ -242,7 +242,7 @@ namespace _11__Load_Mesh_with_Assimp
         {
             InitShaders();
             InitCamera();
-            Model("lara.obj");
+            Model("suzanne.obj");
         }
 
         
@@ -251,7 +251,7 @@ namespace _11__Load_Mesh_with_Assimp
             ObjectBuffer = Shaders.CreateBuffer<MatrixBuffer>(Device);
 
             //Camera information
-            Position = new Vector3(0.0f, 0.0f, -3.0f);
+            Position = new Vector3(0.0f, 0.0f, -6.5f);
             Target = new Vector3(0.0f, 0.0f, 0.0f);
             Up = new Vector3(0.0f, 1.0f, 0.0f);
 
@@ -401,6 +401,8 @@ namespace _11__Load_Mesh_with_Assimp
             G = 0.2f;
             B = 0.4f;
 
+
+
             //Keep the cubes rotating
             rot += .009f;
 
@@ -409,7 +411,7 @@ namespace _11__Load_Mesh_with_Assimp
             cube1World = Matrix.Identity;
             //Define cube1's world space matrix
             Rotation = Matrix.RotationYawPitchRoll(rot, 0, 0);
-            Translation = Matrix.Translation(0.5f, -0.7f, 0.0f);
+            Translation = Matrix.Translation(1.6f, 0.0f, 0.0f);
             //Set cube1's world space using the transformations
             cube1World = Rotation * Translation;
 
@@ -419,7 +421,7 @@ namespace _11__Load_Mesh_with_Assimp
             cube2World = Matrix.Identity;
             //Define cube2's world space matrix
             Rotation = Matrix.RotationYawPitchRoll(rot, -0, -0);
-            Translation = Matrix.Translation(-0.5f, -0.7f, 0.0f);
+            Translation = Matrix.Translation(-1.6f, 0.0f, 0.0f);
             //Set cube2's world space using the transformations
             cube2World = Rotation * Translation;
         }

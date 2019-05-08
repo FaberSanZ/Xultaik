@@ -67,14 +67,12 @@ namespace _12__Diffuse_Lighting
             {
                 AppPaused = false;
                 Timer.Start();
-
             };
 
             Form.Deactivate += (sender, e) =>
             {
                 AppPaused = true;
                 Timer.Stop();
-
             };
 
             Form.HandleDestroyed += (sender, e) => Running = false;

@@ -14,7 +14,7 @@ namespace _03__First_Drawing_
 
         public Timer Timer { get; } = new Timer();
 
-        public string Title { get; set; } // Titulo de la ventana
+        public string Title { get; set; } 
 
         public int Width { get; set; }
         public int Height { get; set; }

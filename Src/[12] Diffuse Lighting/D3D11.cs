@@ -116,9 +116,6 @@ namespace _12__Diffuse_Lighting
         public SamplerState SamplerState { get; set; }
 
 
-
-        //---New---
-
         // Structures.
         [StructLayout(LayoutKind.Sequential)]
         public struct MatrixBuffer
@@ -202,8 +199,8 @@ namespace _12__Diffuse_Lighting
             SwapChain swapChain;
             Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, swapChainDesc, out device, out swapChain);
 
-            Device = device;
             SwapChain = swapChain;
+            Device = device;
 
             DeviceContext = Device.ImmediateContext;
 
@@ -298,7 +295,7 @@ namespace _12__Diffuse_Lighting
         public void InitCamera()
         {
             //Camera information
-            Position = new Vector3(0.0f, 0.5f, -10.0f);
+            Position = new Vector3(0.0f, 0.5f, -9.0f);
             Target = new Vector3(0.0f, 0.0f, 0.0f);
             Up = new Vector3(0.0f, 1.0f, 0.0f);
 
