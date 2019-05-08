@@ -6,11 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _03__First_Drawing_
+namespace Windows
 {
-    public class Windows
+    public class Window
     {
-        public Form Form { get; set; }    // Windows
+        public Form Form { get; set; } 
 
         public Timer Timer { get; } = new Timer();
 
@@ -25,19 +25,17 @@ namespace _03__First_Drawing_
         public bool Minimized { get; set; }
         public bool Maximized { get; set; }
 
-        private int FrameCount { get; set; }
-        private float TimeElapsed { get; set; }
-
-        private FormWindowState _lastWindowState = FormWindowState.Normal;
+        private FormWindowState lastWindowState = FormWindowState.Normal;
 
         public delegate void Render();
+
         public delegate void Update();
 
 
 
-        public Windows() : this ("First Window", 720, 510) { }
+        public Window() : this ("First Window", 720, 510) { }
 
-        public Windows(string Title, int Width, int Height)
+        public Window(string Title, int Width, int Height)
         {
             this.Title = Title;
             this.Width = Width;
@@ -86,9 +84,9 @@ namespace _03__First_Drawing_
                 Height = Form.ClientSize.Height;
 
 
-                if (Form.WindowState != _lastWindowState)
+                if (Form.WindowState != lastWindowState)
                 {
-                    _lastWindowState = Form.WindowState;
+                    lastWindowState = Form.WindowState;
 
                     if (Form.WindowState == FormWindowState.Maximized)
                     {
@@ -127,7 +125,7 @@ namespace _03__First_Drawing_
             Running = true;
         }
 
-        public void Run(Render render, Update update)
+        public void Run(Action Render)
         {
             Timer.Reset();
             while (Running)
@@ -136,8 +134,7 @@ namespace _03__First_Drawing_
                 Timer.Tick();
                 if (AppPaused != true)
                 {
-                    update();
-                    render();
+                    Render();
                 }
                 else
                 {

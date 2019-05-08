@@ -63,14 +63,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core.cs" />
-    <Compile Include="D3D11.cs" />
-    <Compile Include="Input.cs" />
+    <Compile Include="Graphics\Buffer.cs" />
+    <Compile Include="Graphics\CommandList.cs" />
+    <Compile Include="Graphics\GraphicsAdapter.cs" />
+    <Compile Include="Graphics\GraphicsDevice.cs" />
+    <Compile Include="Graphics\GraphicsSwapChain.cs" />
+    <Compile Include="Graphics\Mesh.cs" />
+    <Compile Include="Graphics\PresentationParameters.cs" />
+    <Compile Include="Graphics\ResourceInfo.cs" />
+    <Compile Include="Graphics\Texture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Shaders.cs" />
-    <Compile Include="Timer.cs" />
-    <Compile Include="Windows.cs" />
+    <Compile Include="Graphics\Shaders.cs" />
+    <Compile Include="Systems\Core.cs" />
+    <Compile Include="Systems\RenderSystem.cs" />
+    <Compile Include="Windows\Input.cs" />
+    <Compile Include="Windows\Timer.cs" />
+    <Compile Include="Windows\Windows.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

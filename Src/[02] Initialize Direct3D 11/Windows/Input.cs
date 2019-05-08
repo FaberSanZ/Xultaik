@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _02__Initialize_Direct3D_11
+namespace Windows
 {
     public class Input
     {

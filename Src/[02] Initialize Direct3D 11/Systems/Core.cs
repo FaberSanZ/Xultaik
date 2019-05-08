@@ -6,14 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Windows;
 
-namespace _02__Initialize_Direct3D_11
+namespace Systems
 {
     public class Core : IDisposable
     {
         public Input Input { get; set; }
 
-        public Windows Windows { get; set; }
+        public Window Windows { get; set; }
 
         public PresentationParameters parameters { get; set; }
 
@@ -29,7 +30,7 @@ namespace _02__Initialize_Direct3D_11
             if (Windows == null)
             {
                 // Create the Windows object.
-                Windows = new Windows("Initialize Direct3D 11", 720, 510);
+                Windows = new Window("Initialize Direct3D 11", 720, 510);
                 // Initialize the Windows object.
                 Windows.Initialize();
             }

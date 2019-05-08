@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace _02__Initialize_Direct3D_11
+namespace Windows
 {
     public class Timer
     {

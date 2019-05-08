@@ -6,9 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _02__Initialize_Direct3D_11
+namespace Windows
 {
-    public class Windows
+    public class Window
     {
         public Form Form { get; set; } 
 
@@ -33,9 +33,9 @@ namespace _02__Initialize_Direct3D_11
 
 
 
-        public Windows() : this ("First Window", 720, 510) { }
+        public Window() : this ("First Window", 720, 510) { }
 
-        public Windows(string Title, int Width, int Height)
+        public Window(string Title, int Width, int Height)
         {
             this.Title = Title;
             this.Width = Width;
