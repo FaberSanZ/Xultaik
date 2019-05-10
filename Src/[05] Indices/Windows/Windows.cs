@@ -6,15 +6,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _05__Indices
+namespace Windows
 {
-    public class Windows
+    public class Window
     {
-        public Form Form { get; set; }    // Windows
+        public Form Form { get; set; } 
 
         public Timer Timer { get; } = new Timer();
 
-        public string Title { get; set; } // Titulo de la ventana
+        public string Title { get; set; } 
 
         public int Width { get; set; }
         public int Height { get; set; }
@@ -25,19 +25,17 @@ namespace _05__Indices
         public bool Minimized { get; set; }
         public bool Maximized { get; set; }
 
-        private int FrameCount { get; set; }
-        private float TimeElapsed { get; set; }
-
-        private FormWindowState _lastWindowState = FormWindowState.Normal;
+        private FormWindowState lastWindowState = FormWindowState.Normal;
 
         public delegate void Render();
+
         public delegate void Update();
 
 
 
-        public Windows() : this ("First Window", 720, 510) { }
+        public Window() : this ("First Window", 720, 510) { }
 
-        public Windows(string Title, int Width, int Height)
+        public Window(string Title, int Width, int Height)
         {
             this.Title = Title;
             this.Width = Width;
@@ -86,9 +84,9 @@ namespace _05__Indices
                 Height = Form.ClientSize.Height;
 
 
-                if (Form.WindowState != _lastWindowState)
+                if (Form.WindowState != lastWindowState)
                 {
-                    _lastWindowState = Form.WindowState;
+                    lastWindowState = Form.WindowState;
 
                     if (Form.WindowState == FormWindowState.Maximized)
                     {
@@ -127,7 +125,7 @@ namespace _05__Indices
             Running = true;
         }
 
-        public void Run(Render render, Update update)
+        public void Run(Action Render)
         {
             Timer.Reset();
             while (Running)
@@ -136,8 +134,7 @@ namespace _05__Indices
                 Timer.Tick();
                 if (AppPaused != true)
                 {
-                    update();
-                    render();
+                    Render();
                 }
                 else
                 {

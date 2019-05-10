@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace _05__Indices
+namespace Windows
 {
     public class Timer
     {
