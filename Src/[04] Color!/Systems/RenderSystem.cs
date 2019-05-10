@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using _03__First_Drawing_;
 using Graphics;
 using SharpDX;
 using SharpDX.D3DCompiler;

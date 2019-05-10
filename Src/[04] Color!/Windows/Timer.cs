@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace _04__Color_
+namespace Windows
 {
     public class Timer
     {

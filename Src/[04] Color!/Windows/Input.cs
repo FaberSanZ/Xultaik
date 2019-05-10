@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _04__Color_
+namespace Windows
 {
     public class Input
     {

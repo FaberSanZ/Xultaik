@@ -13,10 +13,12 @@ namespace Graphics
     public struct Vertex
     {
         public Vector3 Position { get; set; }
+        public Color4 Color { get; set; }
 
-        public Vertex(Vector3 Pos)
+        public Vertex(Vector3 Pos, Color Col)
         {
             Position = Pos;
+            Color = Col;
         }
     }
 
@@ -40,9 +42,9 @@ namespace Graphics
         public Mesh()
         {
             Vertices = new Vertex[3];
-            Vertices[0] = new Vertex(new Vector3(+0.0f, +0.5f, +0.0F));
-            Vertices[1] = new Vertex(new Vector3(+0.5f, -0.5f, +0.0f));
-            Vertices[2] = new Vertex(new Vector3(-0.5f, -0.5f, +0.0f));
+            Vertices[0] = new Vertex(new Vector3(0.0f, 0.5f, 0.0f), new Color(1.0f, 0.0f, 0.0f, 1.0f));
+            Vertices[1] = new Vertex(new Vector3(0.5f, -0.5f, 0.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f));
+            Vertices[2] = new Vertex(new Vector3(-0.5f, -0.5f, 0.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f));
 
 
 

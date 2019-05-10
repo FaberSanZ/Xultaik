@@ -1,31 +1,40 @@
-﻿using System;
+﻿using Graphics;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Windows;
 
-namespace _04__Color_
+namespace Systems
 {
     public class Core : IDisposable
     {
         public Input Input { get; set; }
-        public Windows Windows { get; set; }
-        public D3D11 D3D11 { get; set; }
+
+        public Window Windows { get; set; }
+
+        public PresentationParameters parameters { get; set; }
+
+        public RenderSystem RenderSystem { get; set; }
+
 
 
         public Core() { }
 
         public void Initialize()
         {
+
             if (Windows == null)
             {
                 // Create the Windows object.
-                Windows = new Windows("Color! ", 720, 510);
+                Windows = new Window("Color", 720, 510);
                 // Initialize the Windows object.
                 Windows.Initialize();
             }
+
 
 
             if (Input == null)
@@ -38,39 +47,53 @@ namespace _04__Color_
             }
 
 
-            if (D3D11 == null)
+
+            if (parameters == null)
             {
-                // Create the D3D11 object.
-                D3D11 = new D3D11();
-                // Initialize the D3D11 object.
-                D3D11.InitializeD3D11(Windows.Form);
-                D3D11.InitScene();
-                D3D11.Model();
+                // Create the PresentationParameters object.
+                parameters = new PresentationParameters();
+
+                parameters.Height = Windows.Height;
+                parameters.Width = Windows.Width;
+                parameters.Handle = Windows.Form.Handle;
+                parameters.BackBufferFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm;
             }
+
+
+
+            if (RenderSystem == null)
+            {
+                // Create the RenderSystem object.
+                RenderSystem = new RenderSystem(parameters);
+            }
+
+
+            Console.WriteLine(RenderSystem.Adapters[0].Description);
+            Console.WriteLine(RenderSystem.Adapters[1].Description);
         }
 
 
         public void Run()
         {
-            Windows.Run(render: Render, update: Update);
+            Windows.Run(Render);
         }
 
 
         public void Render()
         {
+            Update();
+
+
             // Clear the buffer to begin the scene.
-            D3D11.DrawScene();
+            RenderSystem.Draw();
 
             // Present the rendered scene to the screen.
-            D3D11.EndScene();
+            RenderSystem.End();
         }
 
 
         public void Update()
         {
-            D3D11.UpdateScene();
-
-
             // Check if the user pressed escape and wants to exit the application.
             if (Input.IsKeyDown(Keys.Escape))
             {
