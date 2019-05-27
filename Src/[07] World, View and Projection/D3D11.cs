@@ -192,7 +192,7 @@ namespace _07__World__View_and_Projection
         ///////////////**************new**************////////////////////
         public void InitCamera()
         {
-            ObjectBuffer = Shaders.CreateBuffer<ObjectConstants>(Device);
+            //ObjectBuffer = Shaders.CreateBuffer<ObjectConstants>(Device);
 
             //Camera information
             Position = new Vector3(0.0f, 2.1f, -5.5f);
@@ -209,8 +209,8 @@ namespace _07__World__View_and_Projection
 
         public void InitShaders()
         {
-            ShaderByte["VS"] = Shaders.CompileShader("Effect.hlsl", "VS", "vs_4_0");
-            ShaderByte["PS"] = Shaders.CompileShader("Effect.hlsl", "PS", "ps_4_0");
+            //ShaderByte["VS"] = Shaders.CompileShader("Effect.hlsl", "VS", "vs_4_0");
+            //ShaderByte["PS"] = Shaders.CompileShader("Effect.hlsl", "PS", "ps_4_0");
 
 
             // Now setup the layout of the data that goes into the shader.
