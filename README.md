@@ -12,7 +12,7 @@ This is the code repository for SharpDX-DirectX 11, the examples are executed:
 
 # [Samples](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src)
 
-<img src="/IMG/IMG01.PNG" width="160px" align="left">
+<img src="/IMG/IMG01.PNG" width="200px" align="left">
 
 * ### [01 - First Window](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B01%5D%20First%20Window)
 
@@ -20,6 +20,7 @@ This example shows how to create the first window in Windows Form.<br>
 
 <b>Esc button:</b> Close Windows
 <br><br>
+<br>
 
 <img src="/IMG/IMG02.PNG" width="160px" align="left">
 
