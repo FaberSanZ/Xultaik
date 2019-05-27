@@ -1,18 +1,17 @@
-﻿using Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using Windows;
+using Graphics;
+using IzniteSoft.Desktop;
+
 
 namespace Systems
 {
     public class Core : IDisposable
     {
-        public Input Input { get; set; }
 
         public Window Windows { get; set; }
 
@@ -28,23 +27,9 @@ namespace Systems
         {
 
             if (Windows == null)
-            {
                 // Create the Windows object.
-                Windows = new Window("Indices", 720, 510);
-                // Initialize the Windows object.
-                Windows.Initialize();
-            }
+                Windows = new Window("Indices", 800, 600);
 
-
-
-            if (Input == null)
-            {
-                // Create the Input object.
-                Input = new Input();
-                // Initialize the Input object.
-                Input.Initialize();
-                Input.CreateInput(Windows.Form);
-            }
 
 
 
@@ -53,9 +38,9 @@ namespace Systems
                 // Create the PresentationParameters object.
                 parameters = new PresentationParameters();
 
-                parameters.Height = Windows.Height;
-                parameters.Width = Windows.Width;
-                parameters.Handle = Windows.Form.Handle;
+                parameters.Height = Windows.ClientSize.Height;
+                parameters.Width = Windows.ClientSize.Width;
+                parameters.Handle = Windows.Handle;
                 parameters.BackBufferFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm;
             }
 
@@ -75,7 +60,7 @@ namespace Systems
 
         public void Run()
         {
-            Windows.Run(Render);
+            RenderLoop.Run(Windows, Render);
         }
 
 
@@ -94,12 +79,7 @@ namespace Systems
 
         public void Update()
         {
-            // Check if the user pressed escape and wants to exit the application.
-            if (Input.IsKeyDown(Keys.Escape))
-            {
-                Windows.AppPaused = true;
-                Windows.Running = false;
-            }
+
         }
 
 
@@ -108,13 +88,10 @@ namespace Systems
 
             if (Windows != null)
             {
+                Windows.Dispose();
                 Windows = null;
             }
 
-            if (Input != null)
-            {
-                Input = null;
-            }
         }
     }
 }
