@@ -7,34 +7,39 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using IzniteSoft.Desktop;
 
-namespace _01__First_Window
+
+namespace Systems
 {
     public class Core : IDisposable
     {
 
+
         public Window Windows { get; set; }
-        public D3D11 D3D11 { get; set; }
+
+
+
+        public RenderSystem RenderSystem { get; set; }
+
 
 
         public Core() { }
 
         public void Initialize()
         {
+
             if (Windows == null)
                 // Create the Windows object.
-                Windows = new Window();
+                Windows = new Window("First Window", 800, 600);
+            
 
 
 
 
-            if (D3D11 == null)
-            {
-                // Create the D3D11 object.
-                D3D11 = new D3D11();
-                // Initialize the D3D11 object.
-                D3D11.InitializeD3D11(Windows.Handle, Windows.ClientSize.Width, Windows.ClientSize.Height);
-                D3D11.InitScene();
-            }
+            if (RenderSystem == null)
+                // Create the RenderSystem object.
+                RenderSystem = new RenderSystem();
+            
+
         }
 
 
@@ -48,17 +53,18 @@ namespace _01__First_Window
         {
             Update();
 
+
             // Clear the buffer to begin the scene.
-            D3D11.DrawScene(0.0f, 0.2f, 0.4f, 1.0f);
+            RenderSystem.Draw();
 
             // Present the rendered scene to the screen.
-            D3D11.EndScene();
+            RenderSystem.End();
         }
 
 
         public void Update()
         {
-            D3D11.UpdateScene();
+
         }
 
 
@@ -70,6 +76,8 @@ namespace _01__First_Window
                 Windows.Dispose();
                 Windows = null;
             }
+
+
         }
     }
 }

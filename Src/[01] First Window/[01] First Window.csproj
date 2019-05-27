@@ -45,10 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core.cs" />
-    <Compile Include="D3D11.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Systems\Core.cs" />
+    <Compile Include="Systems\RenderSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
