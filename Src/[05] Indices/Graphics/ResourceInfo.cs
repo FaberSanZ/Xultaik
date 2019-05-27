@@ -22,9 +22,9 @@ namespace Graphics
         }
 
 
-        public static ResourceInfo VertexBuffer() => new ResourceInfo(BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceUsage.Default);
+        public static ResourceInfo VertexBuffer => new ResourceInfo(BindFlags.VertexBuffer, CpuAccessFlags.None, ResourceUsage.Default);
 
-        public static ResourceInfo IndexBuffer() => new ResourceInfo(BindFlags.IndexBuffer, CpuAccessFlags.None, ResourceUsage.Default);
+        public static ResourceInfo IndexBuffer => new ResourceInfo(BindFlags.IndexBuffer, CpuAccessFlags.None, ResourceUsage.Default);
 
     }
 }

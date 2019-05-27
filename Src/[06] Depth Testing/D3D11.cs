@@ -139,7 +139,7 @@ namespace _06__Depth_Testing
             DepthStencilView = new DepthStencilView(device, DepthStencilBuffer);
 
             // Bind the render target view and depth stencil buffer to the output render pipeline.
-            DeviceContext.OutputMerger.SetTargets(DepthStencilView, RenderTargetView);
+            
 
 
             Viewport Viewport = new Viewport();
@@ -264,7 +264,7 @@ namespace _06__Depth_Testing
         public void DrawScene()
         {
             // Set back buffer as current render target view
-            //DeviceContext.OutputMerger.SetRenderTargets(RenderTargetView);
+            DeviceContext.OutputMerger.SetTargets(DepthStencilView, RenderTargetView);
 
             //----New----
             // Clear the depth buffer.

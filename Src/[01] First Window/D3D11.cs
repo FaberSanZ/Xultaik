@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace _01__First_Window
 {
@@ -11,7 +10,7 @@ namespace _01__First_Window
     {
         public D3D11() { }
 
-        public void InitializeD3D11(Control Con)
+        public void InitializeD3D11(IntPtr Handle, int Width, int Height)
         {
 
         }

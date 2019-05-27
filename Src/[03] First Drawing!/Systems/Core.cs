@@ -30,7 +30,7 @@ namespace Systems
             if (Windows == null)
             {
                 // Create the Windows object.
-                Windows = new Window("First Drawing", 720, 510);
+                Windows = new Window("First Drawing", 800, 600);
                 // Initialize the Windows object.
                 Windows.Initialize();
             }

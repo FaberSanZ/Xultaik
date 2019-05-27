@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IzniteSoft.Desktop;
 
 namespace _01__First_Window
 {
     public class Core : IDisposable
     {
-        public Input Input { get; set; }
-        public Windows Windows { get; set; }
+
+        public Window Windows { get; set; }
         public D3D11 D3D11 { get; set; }
 
 
@@ -20,22 +21,10 @@ namespace _01__First_Window
         public void Initialize()
         {
             if (Windows == null)
-            {
                 // Create the Windows object.
-                Windows = new Windows();
-                // Initialize the Windows object.
-                Windows.Initialize();
-            }
+                Windows = new Window();
 
 
-            if (Input == null)
-            {
-                // Create the Input object.
-                Input = new Input();
-                // Initialize the Input object.
-                Input.Initialize();
-                Input.CreateInput(Windows.Form);
-            }
 
 
             if (D3D11 == null)
@@ -43,7 +32,7 @@ namespace _01__First_Window
                 // Create the D3D11 object.
                 D3D11 = new D3D11();
                 // Initialize the D3D11 object.
-                D3D11.InitializeD3D11(Windows.Form);
+                D3D11.InitializeD3D11(Windows.Handle, Windows.ClientSize.Width, Windows.ClientSize.Height);
                 D3D11.InitScene();
             }
         }
@@ -51,12 +40,14 @@ namespace _01__First_Window
 
         public void Run()
         {
-            Windows.Run(render: Render, update: Update);
+            RenderLoop.Run(Windows, Render);
         }
 
 
         public void Render()
         {
+            Update();
+
             // Clear the buffer to begin the scene.
             D3D11.DrawScene(0.0f, 0.2f, 0.4f, 1.0f);
 
@@ -68,14 +59,6 @@ namespace _01__First_Window
         public void Update()
         {
             D3D11.UpdateScene();
-
-
-            // Check if the user pressed escape and wants to exit the application.
-            if (Input.IsKeyDown(Keys.Escape))
-            {
-                Windows.AppPaused = true;
-                Windows.Running = false;
-            }
         }
 
 
@@ -84,12 +67,8 @@ namespace _01__First_Window
 
             if (Windows != null)
             {
+                Windows.Dispose();
                 Windows = null;
-            }
-
-            if (Input != null)
-            {
-                Input = null;
             }
         }
     }

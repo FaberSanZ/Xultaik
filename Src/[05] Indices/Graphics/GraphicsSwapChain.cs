@@ -79,7 +79,7 @@ namespace Graphics
         }
 
 
-            public void Present(bool sync)
+        public void Present(bool sync)
         {
             SwapChain.Present(sync ? 1 : 0, PresentFlags.None);
         }

@@ -47,14 +47,17 @@
   <ItemGroup>
     <Compile Include="Core.cs" />
     <Compile Include="D3D11.cs" />
-    <Compile Include="Input.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Timer.cs" />
-    <Compile Include="Windows.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\iTz Fury Engine\iTz-Fury\Src\iTz Fury\Fury.SDL\Desktop.SDL.csproj">
+      <Project>{e750adf6-0dd3-4f36-a5a6-8f63211727eb}</Project>
+      <Name>Desktop.SDL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

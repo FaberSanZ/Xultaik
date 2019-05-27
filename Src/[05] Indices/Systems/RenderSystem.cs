@@ -53,9 +53,9 @@ namespace Systems
 
             Triangle = new Mesh();
 
-            VertexBuffer = new Buffer(Triangle.SizeInBytes, Triangle.Size, Device, ResourceInfo.VertexBuffer());
+            VertexBuffer = new Buffer(Triangle.SizeInBytes, Triangle.Size, Device, ResourceInfo.VertexBuffer);
 
-            IndexBuffer = new Buffer(Triangle.IndexSizeInBytes, Triangle.IndexSize, Device, ResourceInfo.IndexBuffer());
+            IndexBuffer = new Buffer(Triangle.IndexSizeInBytes, Triangle.IndexSize, Device, ResourceInfo.IndexBuffer);
         }
 
 

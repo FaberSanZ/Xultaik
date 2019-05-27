@@ -33,7 +33,7 @@ namespace Windows
 
 
 
-        public Window() : this ("First Window", 720, 510) { }
+        public Window() : this ("First Window", 800, 600) { }
 
         public Window(string Title, int Width, int Height)
         {
