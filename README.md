@@ -20,7 +20,7 @@ This example shows how to create the first window in Windows Form.<br>
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG02.PNG" width="215px" align="left">
 
@@ -30,7 +30,7 @@ This example shows how to configure the Direct3D device<br>
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG03.PNG" width="215px" align="left">
 
@@ -40,7 +40,7 @@ In this example, we will learn about the rendering pipeline and draw a triangle.
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG04.PNG" width="215px" align="left">
 
@@ -50,7 +50,7 @@ In this example the color is specified for each vertex will be "interpolated" th
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG05.PNG" width="215px" align="left">
 
@@ -60,7 +60,7 @@ In this example, we are going to create the index buffer.<br>
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG06.PNG" width="215px" align="left">
 
@@ -70,7 +70,7 @@ In this lesson we will learn how to impliment the depth of a 3D.<br>
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG07.PNG" width="215px" align="left">
 
@@ -80,7 +80,7 @@ In this example we will learn about the world, the view and local spaces in a 3D
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG08.PNG" width="215px" align="left">
 
@@ -90,7 +90,7 @@ Here we will learn how to transform geometry in a 3D scene.<br>
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG09.PNG" width="215px" align="left">
 
@@ -100,7 +100,7 @@ Here is a nice little lesson which will teach you about Direct3D's render states
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG10.PNG" width="215px" align="left">
 
@@ -110,7 +110,7 @@ Here we will learn how to map textures to our objects.<br>
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG11.PNG" width="215px" align="left">
 
@@ -120,7 +120,7 @@ Load Mesh with Assimp.<br>
 
 <b>Esc button:</b> Close Windows
 <br><br>
-<br>
+<br><br>
 
 <img src="/IMG/IMG12.PNG" width="215px" align="left">
 
