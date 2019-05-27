@@ -6,10 +6,6 @@ using System.Threading.Tasks;
 using _03__First_Drawing_;
 using Graphics;
 using SharpDX;
-using SharpDX.D3DCompiler;
-using SharpDX.Direct3D11;
-using SharpDX.DXGI;
-using Windows;
 using Buffer = Graphics.Buffer;
 using CommandList = Graphics.CommandList;
 

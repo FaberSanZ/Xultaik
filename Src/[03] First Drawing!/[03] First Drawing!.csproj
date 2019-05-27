@@ -77,9 +77,6 @@
     <Compile Include="Graphics\Shaders.cs" />
     <Compile Include="Systems\Core.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
-    <Compile Include="Windows\Input.cs" />
-    <Compile Include="Windows\Timer.cs" />
-    <Compile Include="Windows\Windows.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -92,6 +89,12 @@
     <Content Include="Shaders\VertexShader.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\iTz Fury Engine\iTz-Fury\Src\iTz Fury\Fury.SDL\Desktop.SDL.csproj">
+      <Project>{e750adf6-0dd3-4f36-a5a6-8f63211727eb}</Project>
+      <Name>Desktop.SDL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
