@@ -1,42 +1,37 @@
-﻿///////////////////////
-////   GLOBALS
-///////////////////////
-float4x4 W;
-float4x4 V;
-float4x4 P;
-
-//////////////////////
-////   TYPES
-//////////////////////
-struct VertexInputType
+﻿cbuffer MatrixBuffer : register(b0)
 {
-    float4 position : POSITION;
-    float4 color : COLOR;
+	matrix W;
+	matrix V;
+	matrix P;
 };
 
-struct PixelInputType
+
+struct VS_INPUT
 {
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
+	float4 pos : POSITION;
+	float4 color : COLOR;
 };
 
-/////////////////////////////////////
-/////   Vertex Shader
-/////////////////////////////////////
-PixelInputType VS(VertexInputType input)
+struct VS_OUTPUT
 {
-    PixelInputType output;
+	float4 pos : SV_POSITION;
+	float4 color : COLOR;
+};
 
-	// Change the position vector to be 4 units for proper matrix calculations.
-    input.position.w = 1.0f;
+VS_OUTPUT VS(VS_INPUT input)
+{
+	VS_OUTPUT output;
+
+	// Convert the position vector to homogeneous coordinates for matrix calculations.
+	input.pos.w = 1.0;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
-    output.position = mul(input.position, W);
-    output.position = mul(output.position, V);
-    output.position = mul(output.position, P);
+	output.pos = mul(input.pos, W);
+	output.pos = mul(output.pos, V);
+	output.pos = mul(output.pos, P);
 
 	// Store the input color for the pixel shader to use.
-    output.color = input.color;
+	output.color = input.color;
 
-    return output;
+	return output;
 }
