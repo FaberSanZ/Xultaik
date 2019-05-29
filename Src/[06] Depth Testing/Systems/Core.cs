@@ -41,8 +41,6 @@ namespace Systems
                 parameters.Height = Windows.ClientSize.Height;
                 parameters.Width = Windows.ClientSize.Width;
                 parameters.Handle = Windows.Handle;
-                //parameters.BackBufferFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm;
-                //parameters.DepthBufferFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm;
             }
 
 

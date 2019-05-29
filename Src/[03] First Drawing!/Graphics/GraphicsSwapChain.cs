@@ -44,7 +44,7 @@ namespace Graphics
                 ModeDescription BackBufferDesc = new ModeDescription();
                 BackBufferDesc.Width = PresentParameters.Width;
                 BackBufferDesc.Height = PresentParameters.Height;
-                BackBufferDesc.Format = PresentParameters.BackBufferFormat;
+                BackBufferDesc.Format = Format.R8G8B8A8_UNorm;
                 BackBufferDesc.RefreshRate = new Rational(60, 1);
                 BackBufferDesc.ScanlineOrdering = DisplayModeScanlineOrder.Unspecified;
                 BackBufferDesc.Scaling = DisplayModeScaling.Unspecified;

@@ -60,7 +60,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="D3D11.cs" />
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\CameraType.cs" />
     <Compile Include="Graphics\CommandList.cs" />
@@ -85,9 +84,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Effect.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Shaders\PixelShader.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

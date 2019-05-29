@@ -23,7 +23,7 @@ VS_OUTPUT VS(VS_INPUT input)
 	VS_OUTPUT output;
 
 	// Convert the position vector to homogeneous coordinates for matrix calculations.
-	input.pos.w = W;
+	input.pos.w = 1.0;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
 	output.pos = mul(input.pos, W);

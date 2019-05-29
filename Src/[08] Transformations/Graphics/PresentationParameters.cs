@@ -12,7 +12,7 @@ namespace Graphics
         public PresentationParameters() { }
 
 
-        public PresentationParameters(int width, int height, IntPtr handle)
+        public PresentationParameters(int width, int height, IntPtr handle, Format backBufferFomat, Format depthBufferFormat)
         {
             Width = width;
             Height = height;

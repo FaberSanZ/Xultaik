@@ -71,13 +71,15 @@ namespace Systems
 
             CommandList.SetViewPort(SwapChain.PresentParameters.Width, SwapChain.PresentParameters.Height, 0, 0);
 
-
-
-            //---Draw Triangle
             CommandList.SetVertexBuffer(VertexBuffer);
-            CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
+
             CommandList.SetVertexShader(Shaders.VertexShader);
+
             CommandList.SetPixelShader(Shaders.PixelShader);
+
+
+            //---Draw Mesh
+            CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
             CommandList.Draw(Triangle.VertexCount);
         }
 

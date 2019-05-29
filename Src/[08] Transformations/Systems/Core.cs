@@ -28,9 +28,7 @@ namespace Systems
 
             if (Windows == null)
                 // Create the Windows object.
-                Windows = new Window("First Drawing", 800, 600);
-
-
+                Windows = new Window("Transformations", 800, 600);
 
 
 
@@ -79,7 +77,7 @@ namespace Systems
 
         public void Update()
         {
-
+            RenderSystem.Update();
         }
 
 
@@ -91,7 +89,6 @@ namespace Systems
                 Windows.Dispose();
                 Windows = null;
             }
-
 
         }
     }

@@ -31,10 +31,23 @@ namespace Systems
 
         public Shaders  Shaders { get; set; }
 
+        public Camera Camera { get; set; }
+
+        public Buffer ConstantBuffer { get; set; }
+
+        public Matrix Rotation { get; set; }
+
+        public Matrix Translation { get; set; }
+
+        public Matrix[] World { get; set; }
+
+        public float R { get; set; } = 0.01f;
 
 
 
-        public RenderSystem(PresentationParameters parameters)
+
+
+    public RenderSystem(PresentationParameters parameters)
         {
             Adapters = GraphicsAdapter.EnumerateGraphicsAdapter();
 
@@ -47,12 +60,50 @@ namespace Systems
             Texture = new Texture(Device, SwapChain);
 
             Shaders = new Shaders(Device, "Shaders/VertexShader.hlsl", "Shaders/PixelShader.hlsl");
-
+            
             Triangle = new Mesh();
 
             VertexBuffer = new Buffer(Triangle.SizeInBytes, Triangle.Size, Device, ResourceInfo.VertexBuffer);
 
             IndexBuffer = new Buffer(Triangle.IndexSizeInBytes, Triangle.IndexSize, Device, ResourceInfo.IndexBuffer);
+
+            ConstantBuffer = new Buffer(Utilities.SizeOf<Transform>(), Utilities.SizeOf<Transform>(), Device, ResourceInfo.ConstantBuffer);
+
+            Camera = new Camera(CameraType.Static);
+
+            Camera.Position = new Vector3(0.0f, 0.0f, -3.5f);
+
+            Camera.SetLens((float)Math.PI / 4, 1.2f, 1.0f, 1000.0f);
+
+            World = new Matrix[2];
+        }
+
+
+        public void Update()
+        {
+            Camera.Update();
+
+            R += .025f;
+
+
+            // Reset World[0]
+            World[0] = Matrix.Identity;
+            // Define world space matrix
+            Rotation = Matrix.RotationYawPitchRoll(R, R, R);
+            Translation = Matrix.Translation(-0.45f, 0.0f, 0.0f);
+            // Set world space using the transformations
+            World[0] = Rotation * Translation;
+
+
+
+
+            // Reset World[1]
+            World[1] = Matrix.Identity;
+            // Define world space matrix
+            Rotation = Matrix.RotationYawPitchRoll(-R, -R, -R);
+            Translation = Matrix.Translation(0.45f, 0.0f, 0.0f);
+            // Set world space using the transformations
+            World[1] = Rotation * Translation;
         }
 
 
@@ -86,8 +137,15 @@ namespace Systems
             CommandList.SetPixelShader(Shaders.PixelShader);
 
 
+            //---Draw Mesh #1
+            ConstantBuffer.UpdateConstant<Transform>(ShaderType.VertexShader, 0, new Transform(World[0], Camera.View, Camera.Projection)); // cbuffer MatrixBuffer (W V P) : register(b0)
+            CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
+            CommandList.DrawIndexed(Triangle.IndexCount);
 
-            //---Draw Mesh
+
+
+            //---Draw Mesh #2
+            ConstantBuffer.UpdateConstant<Transform>(ShaderType.VertexShader, 0, new Transform(World[1], Camera.View, Camera.Projection)); // cbuffer MatrixBuffer (W V P) : register(b0)
             CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
             CommandList.DrawIndexed(Triangle.IndexCount);
         }
