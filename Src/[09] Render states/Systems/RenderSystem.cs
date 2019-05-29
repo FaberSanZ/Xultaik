@@ -69,7 +69,7 @@ namespace Systems
 
             StateSolid = new PipelineState(Device, FillMode.Solid, CullMode.None);
 
-            Grid = new Grid(1, 1, 6, 6);
+            Grid = new Grid(1, 1, 8, 8);
 
             VertexBuffer = new Buffer(Grid.SizeInBytes, Grid.Size, Device, ResourceInfo.VertexBuffer);
 
@@ -79,7 +79,7 @@ namespace Systems
 
             Camera = new Camera(CameraType.Static);
 
-            Camera.Position = new Vector3(0.0f, 0.8f, -2.5f);
+            Camera.Position = new Vector3(0.0f, 0.0f, -2.5f);
 
             Camera.SetLens((float)Math.PI / 4, 1.2f, 1.0f, 1000.0f);
 
@@ -91,7 +91,7 @@ namespace Systems
         {
             Camera.Update();
 
-            R += .012f;
+            R += .0f;
 
 
             // Reset World[0]
@@ -149,7 +149,7 @@ namespace Systems
             //---Draw Grid #2
             ConstantBuffer.UpdateConstant<Transform>(ShaderType.VertexShader, 0, new Transform(World[0], Camera.View, Camera.Projection)); // cbuffer MatrixBuffer (W V P) : register(b0)
             CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
-            CommandList.SetRasterizerState(StateWireframe);
+            CommandList.SetRasterizerState(StateSolid);
             CommandList.DrawIndexed(Grid.IndexCount);
 
 
@@ -158,7 +158,7 @@ namespace Systems
             //---Draw Grid #2
             ConstantBuffer.UpdateConstant<Transform>(ShaderType.VertexShader, 0, new Transform(World[1], Camera.View, Camera.Projection)); // cbuffer MatrixBuffer (W V P) : register(b0)
             CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
-            CommandList.SetRasterizerState(StateSolid);
+            CommandList.SetRasterizerState(StateWireframe);
             CommandList.DrawIndexed(Grid.IndexCount);
 
         }

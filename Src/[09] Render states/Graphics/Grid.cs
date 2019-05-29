@@ -59,7 +59,7 @@ namespace Graphics
                 {
                     float x = -halfWidth + j * dx;
 
-                    Vertices.Add(new Vertex(new Vector3(x, 0, z), new Color(NextFloat, NextFloat, NextFloat)));
+                    Vertices.Add(new Vertex(new Vector3(x, z, 0), new Color(NextFloat, NextFloat, NextFloat)));
                 }
             }
 
