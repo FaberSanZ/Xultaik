@@ -105,6 +105,9 @@
     <Content Include="Text\WoodCrate01.dds">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="UV_Grid_Lrg.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\iTz Fury Engine\iTz-Fury\Src\iTz Fury\Fury.SDL\Desktop.SDL.csproj">

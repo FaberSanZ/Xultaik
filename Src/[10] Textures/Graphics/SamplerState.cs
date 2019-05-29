@@ -33,14 +33,14 @@ namespace Graphics
 
 
             SamplerStateDescription SamplerDesc = new SamplerStateDescription();
-            SamplerDesc.Filter = Filter.MinMagMipLinear;
+            SamplerDesc.Filter = Filter;
             SamplerDesc.AddressU = AddressU;
             SamplerDesc.AddressV = AddressV;
             SamplerDesc.AddressW = AddressW;
             SamplerDesc.MipLodBias = 0;
             SamplerDesc.MaximumAnisotropy = 1;
             SamplerDesc.ComparisonFunction = Comparison.Always;
-            SamplerDesc.BorderColor = new  SharpDX.Mathematics.Interop.RawColor4(0, 0, 0, 0);  // Black Border.
+            SamplerDesc.BorderColor = new SharpDX.Mathematics.Interop.RawColor4(1, 1, 1, 1);
             SamplerDesc.MinimumLod = 0;
             SamplerDesc.MaximumLod = float.MaxValue;
 

@@ -92,7 +92,7 @@ namespace Systems
 
             World = new Matrix[2];
 
-            CubesTexture1 = Texture.LoadFromFile(Device, "Halo.jpg");
+            CubesTexture1 = Texture.LoadFromFile(Device, "UV_Grid_Lrg.jpg");
         }
 
 
@@ -100,7 +100,7 @@ namespace Systems
         {
             Camera.Update();
 
-            R += .012f;
+            R += .0f;
 
 
             // Reset World[0]
