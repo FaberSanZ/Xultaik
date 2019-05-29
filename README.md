@@ -16,9 +16,9 @@ This is the code repository for SharpDX-DirectX 11, the examples are executed:
 
 * ### [01 - First Window](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B01%5D%20First%20Window)
 
-This example shows how to create the first window in Windows Form.<br>
+This example shows how to create the first window in SDL.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -29,7 +29,7 @@ This example shows how to create the first window in Windows Form.<br>
 
 This example shows how to configure the Direct3D device<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -40,7 +40,7 @@ This example shows how to configure the Direct3D device<br>
 
 In this example, we will learn about the rendering pipeline and draw a triangle.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -51,7 +51,7 @@ In this example, we will learn about the rendering pipeline and draw a triangle.
 
 In this example the color is specified for each vertex will be "interpolated" through the triangle.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -62,7 +62,7 @@ In this example the color is specified for each vertex will be "interpolated" th
 
 In this example, we are going to create the index buffer.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -73,7 +73,7 @@ In this example, we are going to create the index buffer.<br>
 
 In this lesson we will learn how to impliment the depth of a 3D.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -84,7 +84,7 @@ In this lesson we will learn how to impliment the depth of a 3D.<br>
 
 In this example we will learn about the world, the view and local spaces in a 3D world, which will allow us to create a camera.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -95,7 +95,7 @@ In this example we will learn about the world, the view and local spaces in a 3D
 
 Here we will learn how to transform geometry in a 3D scene.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -106,7 +106,7 @@ Here we will learn how to transform geometry in a 3D scene.<br>
 
 Here is a nice little lesson which will teach you about Direct3D's render states.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -117,7 +117,7 @@ Here is a nice little lesson which will teach you about Direct3D's render states
 
 Here we will learn how to map textures to our objects.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -128,7 +128,7 @@ Here we will learn how to map textures to our objects.<br>
 
 Load Mesh with Assimp.<br>
 
-<b>Esc button:</b> Close Windows
+
 <br><br>
 <br><br>
 <br>
@@ -139,6 +139,5 @@ Load Mesh with Assimp.<br>
 
 Add diffuse lighting. <br>
 
-<b>Esc button:</b> Close Windows
 
 <hr>
