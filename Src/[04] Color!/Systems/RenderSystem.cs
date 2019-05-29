@@ -22,11 +22,9 @@ namespace Systems
 
         public Texture Texture { get; set; }
 
-
-        //---New---
         public Buffer VertexBuffer { get; set; }
 
-        public Mesh  Triangle { get; set; }
+        public Mesh Mesh { get; set; }
 
         public Shaders  Shaders { get; set; }
 
@@ -47,9 +45,9 @@ namespace Systems
 
             Shaders = new Shaders(Device, "Shaders/VertexShader.hlsl", "Shaders/PixelShader.hlsl");
 
-            Triangle = new Mesh();
+            Mesh = new Mesh();
 
-            VertexBuffer = new Buffer(Triangle.SizeInBytes, Triangle.Size, Device, ResourceInfo.VertexBuffer());
+            VertexBuffer = new Buffer(Mesh.SizeInBytes, Mesh.Size, Device, ResourceInfo.VertexBuffer());
         }
 
 
@@ -59,7 +57,7 @@ namespace Systems
         {
             Device.Reset();
 
-            VertexBuffer.Update<Vertex>(Triangle.Vertices);
+            VertexBuffer.Update<Vertex>(Mesh.Vertices);
 
             CommandList.SetRenderTarget(Texture);
 
@@ -79,7 +77,7 @@ namespace Systems
 
             //---Draw Mesh
             CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
-            CommandList.Draw(Triangle.VertexCount);
+            CommandList.Draw(Mesh.VertexCount);
         }
 
 

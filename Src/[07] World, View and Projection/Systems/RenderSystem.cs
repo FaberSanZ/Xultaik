@@ -27,7 +27,7 @@ namespace Systems
 
         public Buffer IndexBuffer { get; set; }
 
-        public Mesh  Triangle { get; set; }
+        public Mesh Mesh { get; set; }
 
         public Shaders  Shaders { get; set; }
 
@@ -52,12 +52,12 @@ namespace Systems
             Texture = new Texture(Device, SwapChain);
 
             Shaders = new Shaders(Device, "Shaders/VertexShader.hlsl", "Shaders/PixelShader.hlsl");
-            
-            Triangle = new Mesh();
 
-            VertexBuffer = new Buffer(Triangle.SizeInBytes, Triangle.Size, Device, ResourceInfo.VertexBuffer);
+            Mesh = new Mesh();
 
-            IndexBuffer = new Buffer(Triangle.IndexSizeInBytes, Triangle.IndexSize, Device, ResourceInfo.IndexBuffer);
+            VertexBuffer = new Buffer(Mesh.SizeInBytes, Mesh.Size, Device, ResourceInfo.VertexBuffer);
+
+            IndexBuffer = new Buffer(Mesh.IndexSizeInBytes, Mesh.IndexSize, Device, ResourceInfo.IndexBuffer);
 
             ConstantBuffer = new Buffer(Utilities.SizeOf<Transform>(), Utilities.SizeOf<Transform>(), Device, ResourceInfo.ConstantBuffer);
 
@@ -75,9 +75,9 @@ namespace Systems
 
             Device.Reset();
 
-            VertexBuffer.Update<Vertex>(Triangle.Vertices);
+            VertexBuffer.Update<Vertex>(Mesh.Vertices);
 
-            IndexBuffer.Update<int>(Triangle.Indices);
+            IndexBuffer.Update<int>(Mesh.Indices);
 
             ConstantBuffer.UpdateConstant<Transform>(ShaderType.VertexShader, 0, new Transform(Camera.World, Camera.View, Camera.Projection)); // cbuffer MatrixBuffer (W V P) : register(b0)
 
@@ -104,7 +104,7 @@ namespace Systems
 
             //---Draw Mesh
             CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
-            CommandList.DrawIndexed(Triangle.IndexCount);
+            CommandList.DrawIndexed(Mesh.IndexCount);
         }
 
 

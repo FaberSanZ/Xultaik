@@ -23,8 +23,6 @@ namespace Systems
 
         public Texture Texture { get; set; }
 
-
-        //---New---
         public Buffer VertexBuffer { get; set; }
 
         public Mesh  Triangle { get; set; }

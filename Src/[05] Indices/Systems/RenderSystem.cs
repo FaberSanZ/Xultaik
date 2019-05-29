@@ -26,7 +26,7 @@ namespace Systems
 
         public Buffer IndexBuffer { get; set; }
 
-        public Mesh  Triangle { get; set; }
+        public Mesh Mesh { get; set; }
 
         public Shaders  Shaders { get; set; }
 
@@ -47,11 +47,11 @@ namespace Systems
 
             Shaders = new Shaders(Device, "Shaders/VertexShader.hlsl", "Shaders/PixelShader.hlsl");
 
-            Triangle = new Mesh();
+            Mesh = new Mesh();
 
-            VertexBuffer = new Buffer(Triangle.SizeInBytes, Triangle.Size, Device, ResourceInfo.VertexBuffer);
+            VertexBuffer = new Buffer(Mesh.SizeInBytes, Mesh.Size, Device, ResourceInfo.VertexBuffer);
 
-            IndexBuffer = new Buffer(Triangle.IndexSizeInBytes, Triangle.IndexSize, Device, ResourceInfo.IndexBuffer);
+            IndexBuffer = new Buffer(Mesh.IndexSizeInBytes, Mesh.IndexSize, Device, ResourceInfo.IndexBuffer);
         }
 
 
@@ -61,9 +61,9 @@ namespace Systems
         {
             Device.Reset();
 
-            VertexBuffer.Update<Vertex>(Triangle.Vertices);
+            VertexBuffer.Update<Vertex>(Mesh.Vertices);
 
-            IndexBuffer.Update<int>(Triangle.Indices);
+            IndexBuffer.Update<int>(Mesh.Indices);
 
             CommandList.SetRenderTarget(Texture);
 
@@ -86,7 +86,7 @@ namespace Systems
 
             //---Draw Mesh
             CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
-            CommandList.DrawIndexed(Triangle.IndexCount);
+            CommandList.DrawIndexed(Mesh.IndexCount);
         }
 
 
