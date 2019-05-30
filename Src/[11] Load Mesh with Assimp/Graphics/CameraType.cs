@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _12__Diffuse_Lighting
+namespace Graphics
 {
-    public enum ShaderType
+    public enum CameraType
     {
-        Pixel,
+        Static = 0,
 
-        Vertex,
+        Firstperson = 1,
+
+        Lookat = 2
     }
 }
