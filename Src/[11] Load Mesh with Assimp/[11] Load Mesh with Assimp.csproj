@@ -89,7 +89,6 @@
     <Compile Include="Systems\Core.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
     <Compile Include="Systems\Transform.cs" />
-    <Compile Include="Timer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

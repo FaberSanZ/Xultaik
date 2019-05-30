@@ -4,7 +4,7 @@
 Texture2D shaderTexture;
 SamplerState SampleType;
 
-cbuffer LightBuffer
+cbuffer LightBuffer : register(b0)
 {
 	float4 diffuseColor;
 	float3 lightDirection;

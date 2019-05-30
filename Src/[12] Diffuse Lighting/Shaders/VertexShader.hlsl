@@ -1,7 +1,7 @@
 ﻿///////////////////////
 ////   GLOBALS
 ///////////////////////
-cbuffer MatrixBuffer 
+cbuffer MatrixBuffer : register(b0)
 {
 	matrix W;
 	matrix V;
