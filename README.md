@@ -8,7 +8,7 @@ This is the code repository for SharpDX-DirectX 11, the examples are executed:
 - [SharpDX](http://sharpdx.org/)
 - [AssimpNet](https://bitbucket.org/Starnick/assimpnet)
 
-<hr>
+
 
 # [Samples](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src)
 
@@ -18,10 +18,9 @@ This is the code repository for SharpDX-DirectX 11, the examples are executed:
 
 This example shows how to create the first window in SDL.<br>
 
-
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG02.PNG" width="195px" align="left">
 
@@ -32,7 +31,7 @@ This example shows how to configure the Direct3D device<br>
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG03.PNG" width="195px" align="left">
 
@@ -43,7 +42,7 @@ In this example, we will learn about the rendering pipeline and draw a triangle.
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG04.PNG" width="195px" align="left">
 
@@ -54,7 +53,7 @@ In this example the color is specified for each vertex will be "interpolated" th
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG05.PNG" width="195px" align="left">
 
@@ -65,7 +64,7 @@ In this example, we are going to create the index buffer.<br>
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG06.PNG" width="195px" align="left">
 
@@ -76,7 +75,7 @@ In this lesson we will learn how to impliment the depth of a 3D.<br>
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG07.PNG" width="195px" align="left">
 
@@ -87,7 +86,7 @@ In this example we will learn about the world, the view and local spaces in a 3D
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG08.PNG" width="195px" align="left">
 
@@ -98,7 +97,7 @@ Here we will learn how to transform geometry in a 3D scene.<br>
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG09.PNG" width="195px" align="left">
 
@@ -109,7 +108,7 @@ Here is a nice little lesson which will teach you about Direct3D's render states
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG10.PNG" width="195px" align="left">
 
@@ -120,7 +119,7 @@ Here we will learn how to map textures to our objects.<br>
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG11.PNG" width="195px" align="left">
 
@@ -131,7 +130,7 @@ Load Mesh with Assimp.<br>
 
 <br><br>
 <br><br>
-<br>
+<br><hr>
 
 <img src="/IMG/IMG12.PNG" width="195px" align="left">
 
