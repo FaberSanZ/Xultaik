@@ -27,8 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[11] Load Mesh with Assimp"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[12] Diffuse Lighting", "[12] Diffuse Lighting\[12] Diffuse Lighting.csproj", "{7D2E4C78-0760-4F01-9FEC-1A531BF23C15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[13] Framework", "[13] Framework\[13] Framework.csproj", "{02607B46-6B45-48CD-923C-BB82B8A0A33E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[14] Ambient Lighting", "[14] Ambient Lighting\[14] Ambient Lighting.csproj", "{82C59DC5-8488-4A1E-B1F8-061FAF6775ED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[15] Specular Lighting", "[15] Specular Lighting\[15] Specular Lighting.csproj", "{1C289452-81F9-41AA-87D3-191574A95FA4}"
@@ -36,6 +34,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Desktop.SDL", "..\..\iTz Fury Engine\iTz-Fury\Src\iTz Fury\Fury.SDL\Desktop.SDL.csproj", "{E750ADF6-0DD3-4F36-A5A6-8F63211727EB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{9187D8DB-F556-4F0A-91F9-2E7B83A42AAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[13] First Person Camera", "[13] First Person Camera\[13] First Person Camera.csproj", "{7E13AA52-0ECC-4C43-A7C1-AB6734E593D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,10 +91,6 @@ Global
 		{7D2E4C78-0760-4F01-9FEC-1A531BF23C15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D2E4C78-0760-4F01-9FEC-1A531BF23C15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D2E4C78-0760-4F01-9FEC-1A531BF23C15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{02607B46-6B45-48CD-923C-BB82B8A0A33E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{02607B46-6B45-48CD-923C-BB82B8A0A33E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{02607B46-6B45-48CD-923C-BB82B8A0A33E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{02607B46-6B45-48CD-923C-BB82B8A0A33E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{82C59DC5-8488-4A1E-B1F8-061FAF6775ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{82C59DC5-8488-4A1E-B1F8-061FAF6775ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82C59DC5-8488-4A1E-B1F8-061FAF6775ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -107,6 +103,10 @@ Global
 		{E750ADF6-0DD3-4F36-A5A6-8F63211727EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E750ADF6-0DD3-4F36-A5A6-8F63211727EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E750ADF6-0DD3-4F36-A5A6-8F63211727EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E13AA52-0ECC-4C43-A7C1-AB6734E593D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E13AA52-0ECC-4C43-A7C1-AB6734E593D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E13AA52-0ECC-4C43-A7C1-AB6734E593D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E13AA52-0ECC-4C43-A7C1-AB6734E593D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
