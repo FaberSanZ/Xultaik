@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Assimp;
+using Assimp.Configs;
 using SharpDX;
 
 
@@ -19,7 +20,6 @@ namespace Graphics
         public Vector3 Normal { get; set; }
 
         public Vertex(Vector3 pos, Vector3 norm, Vector2 uv)
-            : this()
         {
             Position = pos;
             Tex = uv;
@@ -66,7 +66,6 @@ namespace Graphics
             AssimpContext importer = new AssimpContext();
 
             Scene model = importer.ImportFile(FileName, Flags);
-
 
 
             foreach (Assimp.Mesh mesh in model.Meshes)
