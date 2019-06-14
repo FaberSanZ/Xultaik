@@ -17,7 +17,7 @@
 - [AssimpNet](https://bitbucket.org/Starnick/assimpnet)
 <br><br>
 
-## resources
+## Resources
 
 - [Braynzar Soft](https://www.braynzarsoft.net/viewtutorial/q16390-braynzar-soft-directx-11-tutorials)
 - [RasterTek](http://www.rastertek.com/tutindex.html)
