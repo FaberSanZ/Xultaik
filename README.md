@@ -8,7 +8,11 @@ This is the code repository for SharpDX-DirectX 11, the examples are executed:
 - [SharpDX](http://sharpdx.org/)
 - [AssimpNet](https://bitbucket.org/Starnick/assimpnet)
 
-
+<hr><hr>
+## resources
+- [Braynzar Soft](https://www.braynzarsoft.net/viewtutorial/q16390-braynzar-soft-directx-11-tutorials)
+- [RasterTek](http://www.rastertek.com/tutindex.html)
+<hr><hr>
 
 # [Samples](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src)
 
