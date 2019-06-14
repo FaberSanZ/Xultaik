@@ -77,7 +77,7 @@ namespace Graphics
                     Vector3D Normal = mesh.Normals[i];
                     Vector3D Tex = mesh.HasTextureCoords(0) ? mesh.TextureCoordinateChannels[0][i] : new Vector3D();
 
-                    Vertices.Add(new Vertex(new Vector3(Pos.X, Pos.Y, Pos.Z), new Vector3(Normal.X, -Normal.Y, Normal.Z), new Vector2(Tex.X, Tex.Y)));
+                    Vertices.Add(new Vertex(new Vector3(Pos.X, Pos.Y, Pos.Z), new Vector3(Normal.X, Normal.Y, Normal.Z), new Vector2(Tex.X, Tex.Y)));
                 }
 
 

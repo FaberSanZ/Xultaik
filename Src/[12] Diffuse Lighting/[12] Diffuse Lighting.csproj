@@ -92,28 +92,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="dragon.obj">
+    <None Include="Models\dragon.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="mitsuba-sphere.obj">
+    <None Include="Models\mitsuba-sphere.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="151.JPG">
+    <Content Include="Text\151.JPG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="cracked_c.png">
+    <Content Include="Text\cracked_c.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="mtl01_c.png">
+    <Content Include="Text\mtl01_c.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="mtl_floor01_s.png">
+    <Content Include="Text\mtl_floor01_s.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="mtl_O_s.png">
+    <Content Include="Text\mtl_O_s.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Shaders\PixelShader.hlsl">
@@ -128,14 +128,14 @@
     <Content Include="Text\UV_Grid_Sm.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="wall_stone04_c2.png">
+    <Content Include="Text\wall_stone04_c2.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\iTz Fury Engine\iTz-Fury\Src\iTz Fury\Fury.SDL\Desktop.SDL.csproj">
-      <Project>{e750adf6-0dd3-4f36-a5a6-8f63211727eb}</Project>
-      <Name>Desktop.SDL</Name>
+    <ProjectReference Include="..\Desktop\Desktop.csproj">
+      <Project>{777e6b90-8423-4111-bf1c-ef4c2bf96db8}</Project>
+      <Name>Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

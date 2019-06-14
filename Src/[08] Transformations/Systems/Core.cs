@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Graphics;
-using IzniteSoft.Desktop;
+using Desktop;
 
 
 namespace Systems
@@ -13,7 +13,7 @@ namespace Systems
     public class Core : IDisposable
     {
 
-        public Window Windows { get; set; }
+        public Windows Windows { get; set; }
 
         public PresentationParameters parameters { get; set; }
 
@@ -28,7 +28,7 @@ namespace Systems
 
             if (Windows == null)
                 // Create the Windows object.
-                Windows = new Window("Transformations", 800, 600);
+                Windows = new Windows("Transformations", 800, 600);
 
 
 

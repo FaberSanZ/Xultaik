@@ -46,7 +46,7 @@ namespace Systems
 
         public Matrix[] World { get; set; }
 
-        public float R { get; set; } = 0.0f;
+        public float R { get; set; } = 3.14f;
 
         public ShaderResourceView[] Textures;
 
@@ -70,7 +70,7 @@ namespace Systems
             StateSolid = new PipelineState(Device, FillMode.Solid, CullMode.None);
 
 
-            Mesh = new Mesh("mitsuba-sphere.obj");
+            Mesh = new Mesh("Models/mitsuba-sphere.obj");
 
             VertexBuffer = new Buffer[1];
             IndexBuffer = new Buffer[1];
@@ -85,9 +85,11 @@ namespace Systems
             ConstantBuffer[0] = new Buffer(Utilities.SizeOf<Transform>(), Utilities.SizeOf<Transform>(), Device, ResourceInfo.ConstantBuffer);
             ConstantBuffer[1] = new Buffer(Utilities.SizeOf<LightBuffer>(), Utilities.SizeOf<LightBuffer>(), Device, ResourceInfo.ConstantBuffer);
 
+
             TextureAddressMode Wrap = TextureAddressMode.Wrap;
 
             SamplerState = new SamplerState(Device, Wrap, Wrap, Wrap, Filter.MinMagMipLinear);
+
 
             Camera = new Camera(CameraType.Static);
 
@@ -95,12 +97,13 @@ namespace Systems
 
             Camera.SetLens((float)Math.PI / 4, 1.2f, 1.0f, 1000.0f);
 
+
             World = new Matrix[3];
 
             Textures = new ShaderResourceView[3];
-            Textures[0] = Texture.LoadFromFile(Device, "cracked_c.png");
-            Textures[1] = Texture.LoadFromFile(Device, "mtl01_c.png");
-            Textures[2] = Texture.LoadFromFile(Device, "wall_stone04_c2.png");
+            Textures[0] = Texture.LoadFromFile(Device, "Text/cracked_c.png");
+            Textures[1] = Texture.LoadFromFile(Device, "Text/mtl01_c.png");
+            Textures[2] = Texture.LoadFromFile(Device, "Text/wall_stone04_c2.png");
         }
 
 
@@ -108,13 +111,13 @@ namespace Systems
         {
             Camera.Update();
 
-            R += .015f;
+            R += .012f;
 
 
             // Reset World[0]
             World[0] = Matrix.Identity;
             // Define world space matrix
-            Rotation = Matrix.RotationYawPitchRoll(3.14f, 0.0f, 0.0f);
+            Rotation = Matrix.RotationYawPitchRoll(R, 0.0f, 0.0f);
             Translation = Matrix.Translation(-2.5f, -1.5f, 0.0f);
             // Set world space using the transformations
             World[0] = Rotation * Translation;
@@ -134,10 +137,10 @@ namespace Systems
 
 
 
-            // Reset World[1]
+            // Reset World[2]
             World[2] = Matrix.Identity;
             // Define world space matrix
-            Rotation = Matrix.RotationYawPitchRoll(3.14f, 0.0f, 0.0f);
+            Rotation = Matrix.RotationYawPitchRoll(-R, 0.0f, 0.0f);
             Translation = Matrix.Translation(2.5f, -1.5f, 0.0f);
             // Set world space using the transformations
             World[2] = Rotation * Translation;

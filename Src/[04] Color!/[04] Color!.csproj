@@ -91,9 +91,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\iTz Fury Engine\iTz-Fury\Src\iTz Fury\Fury.SDL\Desktop.SDL.csproj">
-      <Project>{e750adf6-0dd3-4f36-a5a6-8f63211727eb}</Project>
-      <Name>Desktop.SDL</Name>
+    <ProjectReference Include="..\Desktop\Desktop.csproj">
+      <Project>{777e6b90-8423-4111-bf1c-ef4c2bf96db8}</Project>
+      <Name>Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

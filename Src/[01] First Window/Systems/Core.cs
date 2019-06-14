@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using IzniteSoft.Desktop;
+using Desktop;
 
 
 namespace Systems
@@ -14,7 +14,7 @@ namespace Systems
     {
 
 
-        public Window Windows { get; set; }
+        public Windows Windows { get; set; }
 
 
 
@@ -29,7 +29,7 @@ namespace Systems
 
             if (Windows == null)
                 // Create the Windows object.
-                Windows = new Window("First Window", 800, 600);
+                Windows = new Windows("First Window", 800, 600);
             
 
 
@@ -70,14 +70,11 @@ namespace Systems
 
         public void Dispose()
         {
-
             if (Windows != null)
             {
                 Windows.Dispose();
                 Windows = null;
             }
-
-
         }
     }
 }
