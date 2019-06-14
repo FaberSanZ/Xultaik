@@ -1,10 +1,19 @@
-# DirectX 11 Tutorial (SharpDX-C#)
+
+<h1 align="center">
+  DirectX 11 Tutorial (SharpDX-C#)
+  <br><br>
+  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/IZNITE/DirectX-11-Tutorials/blob/master/LICENSE)
+
+</h1>
+
+<br>
+
 
 This is the code repository for SharpDX-DirectX 11, the examples are executed:
 
-- Visual Studio 2017
-- .NET Framework 4.7.2
-- Windows 10
+- [Visual Studio 2019 ](https://visualstudio.microsoft.com/es/vs/preview/)
+- [Windows 10](https://www.microsoft.com/es-es/software-download/windows10)
 - [SharpDX](http://sharpdx.org/)
 - [AssimpNet](https://bitbucket.org/Starnick/assimpnet)
 <br><br>
