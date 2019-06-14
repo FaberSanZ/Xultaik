@@ -147,7 +147,7 @@ Add diffuse lighting. <br>
 
 * ### [11 - First Person Camera](https://github.com/IZNITE/DirectX-11-Tutorials/tree/master/Src/%5B13%5D%20First%20Person%20Camera)
 
-Add First Person Camerag. <br>
+First Person Camera. <br>
 <br><br>
 <br><br>
 <br><hr>
