@@ -137,6 +137,17 @@ Load Mesh with Assimp.<br>
 * ### [11 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorial/tree/master/Src/%5B12%5D%20Diffuse%20Lighting)
 
 Add diffuse lighting. <br>
+<br><br>
+<br><br>
+<br><hr>
 
 
-<hr>
+
+<img src="/IMG/IMG13.PNG" width="195px" align="left">
+
+* ### [11 - First Person Camera](https://github.com/IZNITE/DirectX-11-Tutorials/tree/master/Src/%5B13%5D%20First%20Person%20Camera)
+
+Add First Person Camerag. <br>
+<br><br>
+<br><br>
+<br><hr>
