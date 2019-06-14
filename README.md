@@ -10,7 +10,6 @@
 <br>
 
 
-This is the code repository for SharpDX-DirectX 11, the examples are executed:
 
 - [Visual Studio 2019 ](https://visualstudio.microsoft.com/es/vs/preview/)
 - [Windows 10](https://www.microsoft.com/es-es/software-download/windows10)
