@@ -8,10 +8,8 @@ using System.Windows.Forms;
 using Graphics;
 using SharpDX;
 using SharpDX.Direct3D11;
-using SharpDX.DirectInput;
 using Buffer = Graphics.Buffer;
 using CommandList = Graphics.CommandList;
-using ResultCode = SharpDX.DirectInput.ResultCode;
 using SamplerState = Graphics.SamplerState;
 
 namespace Systems
@@ -67,7 +65,7 @@ namespace Systems
 
             StateSolid = new PipelineState(Device, FillMode.Solid, CullMode.None);
 
-            Mesh = new Mesh("Models/suzanne.obj");
+            Mesh = new Mesh("Models/dragon.obj");
 
             TextureAddressMode Wrap = TextureAddressMode.Wrap;
 
@@ -118,6 +116,8 @@ namespace Systems
 
                 Light = new LightBuffer()
                 {
+                    AmbientColor = new Vector4(0.15f, 0.15f, 0.15f, 1.0f),
+
                     Diffuse = new Vector4(1.0f, 1.0f, 1.0f, 1.0f),
                     LightDirection = new Vector3(0, -1, 0),
                 },
@@ -132,7 +132,7 @@ namespace Systems
                     new Buffer(Utilities.SizeOf<LightBuffer>(), Utilities.SizeOf<LightBuffer>(), Device, ResourceInfo.ConstantBuffer)
                 },
 
-                Texture = Texture.LoadFromFile(Device, "Text/G02.jpg")
+                Texture = Texture.LoadFromFile(Device, "Text/test.bmp")
             };
 
 
@@ -146,8 +146,9 @@ namespace Systems
 
                 Light = new LightBuffer()
                 {
-                    Diffuse = new Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-                    LightDirection = new Vector3(0, -1, 0),
+                    AmbientColor = new Vector4(0.18f, 0.18f, 0.18f, 1.0f),
+                    Diffuse = new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
+                    LightDirection = new Vector3(0, 0, -1.05f),
                 },
 
                 VertexBuffer = new Buffer(Mesh.Vertices.SizeInBytes, Mesh.Vertices.Size, Device, ResourceInfo.VertexBuffer),
@@ -160,7 +161,7 @@ namespace Systems
                     new Buffer(Utilities.SizeOf<LightBuffer>(), Utilities.SizeOf<LightBuffer>(), Device, ResourceInfo.ConstantBuffer)
                 },
 
-                Texture = Texture.LoadFromFile(Device, "Text/UV_Grid_Sm.jpg")
+                Texture = Texture.LoadFromFile(Device, "Text/UVCheckerMap08-512.png")
             };
         }
 
@@ -180,36 +181,15 @@ namespace Systems
             if (Input.IsKeyDown(Keys.D))
                 Camera.Strafe(10.0f * 0.022F);
 
+            r += 0.02f;
 
 
-
-            float XPos = -7.0f;
-            float ZPos = 7.0f;
-            float bxadd = 0.0f;
-            float bzadd = 0.0f;
-
-            r += 0.012f;
-
-            for (int i = 0; i < 8; i++)
-            {
-                bxadd++;
-
-                if (bxadd == 4)
-                {
-                    bzadd -= 1.0f;
-                    bxadd = 0.0f;
-                }
-
-                RMesh.Worlds[i] = Matrix.RotationYawPitchRoll(r, 0.0f, 0.0f) * Matrix.Translation(XPos + bxadd * 5.0f, 1.0f, ZPos + bzadd * 5.0f);
-
-            }
-
+            RMesh.Worlds[0] = Matrix.RotationYawPitchRoll(r, 0.0f, 0.0f) * Matrix.Translation(0, 1.0f, 0);
 
             RGrid.Worlds[0] = Matrix.RotationYawPitchRoll(3.14f, 0.0f, 0.0f) * Matrix.Translation(0.0f, -0.5f, 0.0f);
 
 
             Camera.UpdateViewMatrix();
-
         }
 
 
