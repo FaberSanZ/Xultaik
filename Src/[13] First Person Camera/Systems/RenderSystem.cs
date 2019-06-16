@@ -147,7 +147,7 @@ namespace Systems
                 Light = new LightBuffer()
                 {
                     Diffuse = new Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-                    LightDirection = new Vector3(0, -1, 0),
+                    LightDirection = new Vector3(0, 0, 1.05f),
                 },
 
                 VertexBuffer = new Buffer(Mesh.Vertices.SizeInBytes, Mesh.Vertices.Size, Device, ResourceInfo.VertexBuffer),
@@ -241,7 +241,7 @@ namespace Systems
                 RMesh.VertexBuffer.Update<Vertex>(Mesh.Vertices.Data.ToArray());
                 RMesh.IndexBuffer.Update<int>(Mesh.Indices.Data.ToArray());
                 RMesh.ConstantBuffer[0].UpdateConstant<Transform>(ShaderType.VertexShader, 0, new Transform(RMesh.Worlds[i], Camera.View, Camera.Proj)); // cbuffer MatrixBuffer (W V P) : register(b0)
-                RMesh.ConstantBuffer[1].UpdateConstant<LightBuffer>(ShaderType.PixelShader, 0, RGrid.Light);
+                RMesh.ConstantBuffer[1].UpdateConstant<LightBuffer>(ShaderType.PixelShader, 0, RMesh.Light);
                 CommandList.SetVertexBuffer(RMesh.VertexBuffer);
                 CommandList.SetIndexBuffer(RMesh.IndexBuffer);
                 CommandList.SetPrimitiveType(SharpDX.Direct3D.PrimitiveTopology.TriangleList);
