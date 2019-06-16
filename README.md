@@ -1,14 +1,27 @@
-# DirectX 11 Tutorial (SharpDX-C#)
 
-This is the code repository for SharpDX-DirectX 11, the examples are executed:
+<h1 align="center">
+  DirectX 11 Tutorial (SharpDX-C#)
+  <br><br>
+  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/IZNITE/DirectX-11-Tutorials/blob/master/LICENSE)
 
-- Visual Studio 2017
-- .NET Framework 4.7.2
-- Windows 10
+</h1>
+
+<br>
+
+
+
+- [Visual Studio 2019 ](https://visualstudio.microsoft.com/es/vs/preview/)
+- [Windows 10](https://www.microsoft.com/es-es/software-download/windows10)
 - [SharpDX](http://sharpdx.org/)
 - [AssimpNet](https://bitbucket.org/Starnick/assimpnet)
+<br><br>
 
+## Resources
 
+- [Braynzar Soft](https://www.braynzarsoft.net/viewtutorial/q16390-braynzar-soft-directx-11-tutorials)
+- [RasterTek](http://www.rastertek.com/tutindex.html)
+<br><br>
 
 # [Samples](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src)
 
@@ -137,6 +150,17 @@ Load Mesh with Assimp.<br>
 * ### [11 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorial/tree/master/Src/%5B12%5D%20Diffuse%20Lighting)
 
 Add diffuse lighting. <br>
+<br><br>
+<br><br>
+<br><hr>
 
 
-<hr>
+
+<img src="/IMG/IMG13.PNG" width="195px" align="left">
+
+* ### [11 - First Person Camera](https://github.com/IZNITE/DirectX-11-Tutorials/tree/master/Src/%5B13%5D%20First%20Person%20Camera)
+
+First Person Camera. <br>
+<br><br>
+<br><br>
+<br><hr>
