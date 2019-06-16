@@ -136,7 +136,7 @@ Here we will learn how to map textures to our objects.<br>
 
 <img src="/IMG/IMG11.PNG" width="195px" align="left">
 
-* ### [10 - Assimp](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B11%5D%20Load%20Mesh%20with%20Assimp)
+* ### [11 - Assimp](https://github.com/IZNITE/DirectX-11-tutorials-SharpDX/tree/master/Src/%5B11%5D%20Load%20Mesh%20with%20Assimp)
 
 Load Mesh with Assimp.<br>
 
@@ -147,7 +147,7 @@ Load Mesh with Assimp.<br>
 
 <img src="/IMG/IMG12.PNG" width="195px" align="left">
 
-* ### [11 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorial/tree/master/Src/%5B12%5D%20Diffuse%20Lighting)
+* ### [12 - Diffuse Lighting](https://github.com/IZNITE/DirectX-11-tutorial/tree/master/Src/%5B12%5D%20Diffuse%20Lighting)
 
 Add diffuse lighting. <br>
 <br><br>
@@ -158,9 +158,34 @@ Add diffuse lighting. <br>
 
 <img src="/IMG/IMG13.PNG" width="195px" align="left">
 
-* ### [11 - First Person Camera](https://github.com/IZNITE/DirectX-11-Tutorials/tree/master/Src/%5B13%5D%20First%20Person%20Camera)
+* ### [13 - First Person Camera](https://github.com/IZNITE/DirectX-11-Tutorials/tree/master/Src/%5B13%5D%20First%20Person%20Camera)
 
 First Person Camera. <br>
+<br><br>
+<br><br>
+<br><hr>
+
+
+
+
+<img src="/IMG/IMG14.PNG" width="195px" align="left">
+
+* ### [14 - Ambient Lighting](https://github.com/IZNITE/DirectX-11-Tutorials/tree/master/Src/%5B14%5D%20Ambient%20Lighting)
+
+Add Ambient Lighting. <br>
+<br><br>
+<br><br>
+<br><hr>
+
+
+
+
+
+<img src="/IMG/IMG15.PNG" width="195px" align="left">
+
+* ### [15 - Specular Lighting](https://github.com/IZNITE/DirectX-11-Tutorials/tree/master/Src/%5B15%5D%20Specular%20Lighting)
+
+Add Specular Lighting. <br>
 <br><br>
 <br><br>
 <br><hr>
