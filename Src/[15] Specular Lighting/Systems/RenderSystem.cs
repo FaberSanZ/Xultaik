@@ -134,7 +134,7 @@ namespace Systems
                     new Buffer(Utilities.SizeOf<CameraBuffer>(), Utilities.SizeOf<CameraBuffer>(), Device, ResourceInfo.ConstantBuffer)
                 },
 
-                Texture = Texture.LoadFromFile(Device, "Text/test.bmp")
+                Texture = DDSLoader.LoadTextureFromFile(Device.NativeDevice, Device.NativeDeviceContext, "Text/Test.dds") ,
             };
 
 

@@ -71,6 +71,7 @@
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\CameraType.cs" />
     <Compile Include="Graphics\CommandList.cs" />
+    <Compile Include="Graphics\DDSLoader.cs" />
     <Compile Include="Graphics\GraphicsAdapter.cs" />
     <Compile Include="Graphics\GraphicsDevice.cs" />
     <Compile Include="Graphics\GraphicsSwapChain.cs" />
@@ -114,6 +115,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Text\test.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Text\Test.dds">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
