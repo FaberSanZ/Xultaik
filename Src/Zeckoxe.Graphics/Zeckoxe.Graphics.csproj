@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="GraphicsSwapChain.cs~RF2cf522fd.TMP" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <PackageReference Include="Vortice.D3DCompiler" Version="1.2.0" />
+    <PackageReference Include="Vortice.Direct2D1" Version="1.2.0" />
+    <PackageReference Include="Vortice.Direct3D12" Version="1.2.0" />
+    <PackageReference Include="Vortice.DirectX" Version="1.2.0" />
+    <PackageReference Include="Vortice.Dxc" Version="1.2.0" />
+    <PackageReference Include="Vortice.DXGI" Version="1.2.0" />
+    <PackageReference Include="Vortice.Runtime.COM" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zeckoxe.Collections\Zeckoxe.Collections.csproj" />
+    <ProjectReference Include="..\Zeckoxe.Core\Zeckoxe.Core.csproj" />
+    <ProjectReference Include="..\Zeckoxe.Mathematics\Zeckoxe.Mathematics.csproj" />
+  </ItemGroup>
+
+</Project>
