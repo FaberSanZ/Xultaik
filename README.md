@@ -23,10 +23,8 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 ## Examples
 
-<img src="/IMG/01-ClearScreen.PNG" width="300px" align="left">
-
-### [Clear Screen](https://github.com/IZNITE/Zeckoxe/tree/master/Src/01-ClearScreen)
 
 
-
-
+| Example   | Screenshot  | Description          |
+|------------|-------------|----------------------|
+| [01 - Clear Screen](https://github.com/IZNITE/Zeckoxe/tree/master/Src/01-ClearScreen) | ![](https://github.com/FaberSan/Zeckoxe/blob/master/IMG/01-ClearScreen.PNG) | This example shows how to configure the device. |
