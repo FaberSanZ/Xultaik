@@ -26,9 +26,9 @@ namespace Zeckoxe.Graphics
 
         //public SwapChain NativeSwapChain { get; }
 
-        //public DescriptorAllocator DepthStencilViewAllocator { get; private set; }
+        public DescriptorAllocator DepthStencilViewAllocator { get; private set; }
 
-        //public DescriptorAllocator RenderTargetViewAllocator { get; private set; }
+        public DescriptorAllocator RenderTargetViewAllocator { get; private set; }
 
 
 

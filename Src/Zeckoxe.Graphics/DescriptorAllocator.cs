@@ -15,13 +15,14 @@ namespace Zeckoxe.Graphics
 {
     public class DescriptorAllocator : GraphicsResource
     {
-        public DescriptorHeapType HeapType { get; }
         public int Stride { get; }
-        public static int DescriptorsPerHeap = 256;
 
-        private ID3D12DescriptorHeap heap;
-        private CpuDescriptorHandle handle;
-        private int remaining;
+
+        internal int DescriptorsPerHeap = 256;
+        internal DescriptorHeapType HeapType;
+        internal ID3D12DescriptorHeap heap;
+        internal CpuDescriptorHandle handle;
+        internal int remaining;
 
         public DescriptorAllocator(GraphicsDevice device, DescriptorHeapType heapType) : base(device)
         {
@@ -43,6 +44,7 @@ namespace Zeckoxe.Graphics
                     Type = HeapType,
                     DescriptorCount = DescriptorsPerHeap,
                     NodeMask = 1,
+
                 };
 
                 heap = GraphicsDevice.NativeDevice.CreateDescriptorHeap(descriptorHeapDescription);
