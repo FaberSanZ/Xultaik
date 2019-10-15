@@ -103,22 +103,13 @@ namespace _01_ClearScreen
         public void Draw()
         {
             CommandList.Reset();
-
-            //Presenter.BeginDraw(CommandList);
-            //CommandList.ResourceTransition(Presenter.BackBuffer, Vortice.Direct3D12.ResourceStates.Present, Vortice.Direct3D12.ResourceStates.RenderTarget);
-
-            //context.SetRenderTargets(Presenter.BackBuffer, Presenter.DepthStencilBuffer);
-            //CommandList.SetViewport(0, 0, 800, 600);
-            //CommandList.SetScissor(0, 0, 800, 600);
-            //CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
-
-            //CommandList.EndDraw();
-
-
-            //CommandList.FinishFrame();
-            //SwapChain.Present();
-
-            //CommandList.Wait();
+            CommandList.SetViewport(0, 0, 800, 600);
+            CommandList.SetScissor(0, 0, 800, 600);
+            CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
+            CommandList.EndDraw();
+            CommandList.FinishFrame();
+            SwapChain.Present();
+            CommandList.Wait();
         }
 
         public void Dispose()
