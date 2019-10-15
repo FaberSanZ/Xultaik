@@ -88,8 +88,8 @@ namespace Zeckoxe.Desktop
 
             int atom = RegisterClassEx(ref wndClassEx);
 
-            //if (atom == 0)
-            //    throw new InvalidOperationException($"Failed to register window class. Error: {Marshal.GetLastWin32Error()}");
+            if (atom == 0)
+                throw new InvalidOperationException($"Failed to register window class. Error: {Marshal.GetLastWin32Error()}");
 
 
             //else
@@ -135,7 +135,7 @@ namespace Zeckoxe.Desktop
         public void Show()
         {
 
-            ShowWindow(HWND, ShowWindowCommand.Normal);
+            ShowWindow(HWND, ShowWindowCommand.Show);
         }
 
 

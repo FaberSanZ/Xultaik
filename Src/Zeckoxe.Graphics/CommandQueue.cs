@@ -71,9 +71,9 @@ namespace Zeckoxe.Graphics
             }
         }
 
-        public void Wait()
+        public void Wait(/*Fence fence*/)
         {
-            //ativeCommandQueue.Wait()
+            Queue.Wait(new ID3D12Fence(IntPtr.Zero), 20);
         }
 
 

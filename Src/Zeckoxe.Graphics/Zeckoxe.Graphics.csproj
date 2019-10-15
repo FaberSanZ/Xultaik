@@ -2,15 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="GraphicsSwapChain.cs~RF2cf522fd.TMP" />
-  </ItemGroup>
 
 
   <ItemGroup>
@@ -25,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Zeckoxe.Collections\Zeckoxe.Collections.csproj" />
     <ProjectReference Include="..\Zeckoxe.Core\Zeckoxe.Core.csproj" />
     <ProjectReference Include="..\Zeckoxe.Mathematics\Zeckoxe.Mathematics.csproj" />
   </ItemGroup>

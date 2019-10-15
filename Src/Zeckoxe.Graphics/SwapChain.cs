@@ -12,8 +12,9 @@ using System.Text;
 using Vortice.DirectX;
 using Vortice.DXGI;
 using static Vortice.DXGI.DXGI;
-using static Vortice.Direct3D12.D3D12;
 
+using static Vortice.Direct3D12.D3D12;
+using System.Runtime.InteropServices;
 
 namespace Zeckoxe.Graphics
 {
@@ -39,6 +40,7 @@ namespace Zeckoxe.Graphics
 
         private IDXGISwapChain CreateSwapChain()
         {
+
             //switch (Description.Settings.Platform)
             //{
             //    case Platform.Win32:
