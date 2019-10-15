@@ -15,18 +15,21 @@ using static Vortice.DXGI.DXGI;
 
 using static Vortice.Direct3D12.D3D12;
 using System.Runtime.InteropServices;
+using Vortice.Direct3D12;
 
 namespace Zeckoxe.Graphics
 {
     public class SwapChain
     {
-        internal IDXGISwapChain swapChain;
+        internal IDXGISwapChain3 swapChain;
 
         internal GraphicsDevice GraphicsDevice;
 
         public PresentationParameters Description { get; private set; }
 
+        public Texture BackBuffer { get; set; }
 
+        public int BackBufferIndex { get; private set; } = 0;
 
         public SwapChain(GraphicsDevice graphicsDevice)
         {
@@ -34,11 +37,17 @@ namespace Zeckoxe.Graphics
             Description = graphicsDevice.NativeParameters;
 
             swapChain = CreateSwapChain();
+
+            BackBufferIndex = swapChain.GetCurrentBackBufferIndex();
+
+
+            BackBuffer = new Texture(GraphicsDevice);
+            BackBuffer.InitializeFromImpl(swapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
         }
 
 
 
-        private IDXGISwapChain CreateSwapChain()
+        private IDXGISwapChain3 CreateSwapChain()
         {
 
             //switch (Description.Settings.Platform)
@@ -59,7 +68,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        private IDXGISwapChain CreateSwapChainForDesktop()
+        private IDXGISwapChain3 CreateSwapChainForDesktop()
         {
 
             ModeDescription BackBufferDesc = new ModeDescription();
