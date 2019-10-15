@@ -33,7 +33,7 @@ namespace _01_ClearScreen
 
         public Game()
         {
-            Window = new Window("Zeckoxe Engine - (Clear Screen)", 800, 600, BorderStyle.Sizable);
+            Window = new Window("Zeckoxe Engine - (Clear Screen)", 1000, 720, BorderStyle.Sizable);
 
 
             Parameters = new PresentationParameters()
