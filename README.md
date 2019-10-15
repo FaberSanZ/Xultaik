@@ -26,6 +26,6 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 
 | Example   | Screenshot  | Description          |
-|------------|-------------|----------------------|
+|---------------|-------------|----------------------|
 | [01 - Clear Screen](https://github.com/IZNITE/Zeckoxe/tree/master/Src/02-Triangle.PNG) | ![](https://github.com/FaberSan/Zeckoxe/blob/master/IMG/01-ClearScreen.PNG) | This example shows how to configure the device and clear TargetColor. |
 | [02 - Hello Triangle](https://github.com/IZNITE/Zeckoxe/tree/master/Src/02-Triangle) | ![](https://github.com/FaberSan/Zeckoxe/blob/master/IMG/02-Triangle.PNG) | This example shows how to render simple triangle using Zeckoxe Engine API |
