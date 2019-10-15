@@ -28,4 +28,4 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 | Example   | Screenshot  | Description          |
 |---------------|-------------|----------------------|
 | [01 - Clear Screen](https://github.com/FaberSan/Zeckoxe/tree/master/Src/01-ClearScreen) | <img src="https://github.com/FaberSan/Zeckoxe/blob/master/Screenshots/01-ClearScreen.PNG" width=220> | This example shows how to configure the device and clear the color using Zeckoxe Engine. |
-| [02 - Hello Triangle](https://github.com/IZNITE/Zeckoxe/tree/master/Src/02-Triangle) |  <img src="https://github.com/FaberSan/Zeckoxe/blob/master/Screenshots/02-Triangle.PNG" width=220> | This example shows how to render simple triangle using Zeckoxe Engine  |
+| [02 - Hello Triangle](https://github.com/FaberSan/Zeckoxe/tree/master/Src/01-ClearScreen) |  <img src="https://github.com/FaberSan/Zeckoxe/blob/master/Screenshots/02-Triangle.PNG" width=220> | This example shows how to render simple triangle using Zeckoxe Engine  |
