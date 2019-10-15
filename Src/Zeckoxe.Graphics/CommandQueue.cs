@@ -23,6 +23,9 @@ namespace Zeckoxe.Graphics
             Type = type;
 
             Recreate();
+
+            Queue = CreateCommandQueueDirect();
+
         }
 
 

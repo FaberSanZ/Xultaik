@@ -15,11 +15,11 @@ using static Vortice.DXGI.DXGI;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class GraphicsDevice : IDisposable
+    public sealed unsafe class GraphicsDevice : IDisposable
     {
         internal ID3D12Device NativeDevice { get; private set; }
 
-        public CommandQueue NativeCommandQueue { get; private set; }
+        public CommandQueue NativeDirectCommandQueue { get; private set; }
 
         public GraphicsAdapter NativeAdapter { get; }
         public PresentationParameters NativeParameters { get; internal set; }
@@ -32,25 +32,23 @@ namespace Zeckoxe.Graphics
 
 
 
-
-
-
         public GraphicsDevice()
         {
             NativeAdapter = new GraphicsAdapter();
             InitializeFromImpl();
         }
 
-        public GraphicsDevice(GraphicsAdapter graphicsAdapter)
+        public GraphicsDevice(GraphicsAdapter graphicsAdapter, PresentationParameters presentation)
         {
             NativeAdapter = graphicsAdapter;
+            NativeParameters = presentation;
             InitializeFromImpl();
         }
 
 
         public void InitializeFromImpl()
         {
-            InitializePlatformDevice(FeatureLevel.Level_12_0);
+            InitializePlatformDevice(FeatureLevel.Level_11_1);
         }
 
 
@@ -64,15 +62,17 @@ namespace Zeckoxe.Graphics
 
 
             // Create the NativeCommandQueue
-            NativeCommandQueue = CreateCommandQueueDirect();
+            NativeDirectCommandQueue = new CommandQueue(this, CommandListType.Direct); //CreateCommandQueueDirect();
+
+            CreateDescriptorAllocators();
 
         }
 
         public void CreateDescriptorAllocators()
         {
-            //RenderTargetViewAllocator = new DescriptorAllocator(this, DescriptorHeapType.RenderTargetView);
+            RenderTargetViewAllocator = new DescriptorAllocator(this, DescriptorHeapType.RenderTargetView);
 
-            //DepthStencilViewAllocator = new DescriptorAllocator(this, DescriptorHeapType.DepthStencilView);
+            DepthStencilViewAllocator = new DescriptorAllocator(this, DescriptorHeapType.DepthStencilView);
         }
 
         public CommandQueue CreateCommandQueueDirect()

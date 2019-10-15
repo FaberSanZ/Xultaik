@@ -23,9 +23,9 @@ namespace _01_ClearScreen
 
         public GraphicsDevice Device { get; set; }
 
-        //public Texture Texture { get; set; }
+        public SwapChain SwapChain { get; set; }
 
-        //public GraphicsContext Context { get; set; }
+        public CommandList CommandList { get; set; }
 
 
 
@@ -43,8 +43,8 @@ namespace _01_ClearScreen
                 DeviceHandle = Window.Handle,
                 Settings = new Settings()
                 {
-                    Validation = true,
-                    Fullscreen = true,
+                    Validation = false,
+                    Fullscreen = false,
                     VSync = false,
                 },
             };
@@ -55,11 +55,11 @@ namespace _01_ClearScreen
 
             Adapter = new GraphicsAdapter();
 
-            Device = new GraphicsDevice(Adapter);
+            Device = new GraphicsDevice(Adapter, Parameters);
 
-            //Texture = new Texture(Device);
+            SwapChain = new SwapChain(Device);
 
-            //Context = new GraphicsContext(Device);
+            CommandList = new CommandList(Device);
         }
 
 
@@ -90,10 +90,9 @@ namespace _01_ClearScreen
             foreach (var Description in Device.NativeAdapter.Description)
                 Console.WriteLine(Description);
 
-            
-            Console.WriteLine();
-            Console.WriteLine(Device.NativeAdapter.VendorId);
-            Console.WriteLine();
+            foreach (var VendorId in Device.NativeAdapter.VendorId)
+                Console.WriteLine(VendorId);
+
         }
 
         public void Update()
@@ -103,7 +102,23 @@ namespace _01_ClearScreen
 
         public void Draw()
         {
+            CommandList.Reset();
 
+            //Presenter.BeginDraw(CommandList);
+            //CommandList.ResourceTransition(Presenter.BackBuffer, Vortice.Direct3D12.ResourceStates.Present, Vortice.Direct3D12.ResourceStates.RenderTarget);
+
+            //context.SetRenderTargets(Presenter.BackBuffer, Presenter.DepthStencilBuffer);
+            //CommandList.SetViewport(0, 0, 800, 600);
+            //CommandList.SetScissor(0, 0, 800, 600);
+            //CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
+
+            //CommandList.EndDraw();
+
+
+            //CommandList.FinishFrame();
+            //SwapChain.Present();
+
+            //CommandList.Wait();
         }
 
         public void Dispose()

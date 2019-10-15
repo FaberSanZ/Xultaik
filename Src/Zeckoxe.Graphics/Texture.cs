@@ -56,7 +56,7 @@ namespace Zeckoxe.Graphics
         private CpuDescriptorHandle GetRenderTargetView()
         {
             var descriptorHandle = GraphicsDevice.RenderTargetViewAllocator.Allocate(1);
-            GraphicsDevice.NativeDevice.CreateRenderTargetView(Resource, null, NativeRenderTargetView);
+            GraphicsDevice.NativeDevice.CreateRenderTargetView(Resource, null, descriptorHandle);
             return descriptorHandle;
         }
 

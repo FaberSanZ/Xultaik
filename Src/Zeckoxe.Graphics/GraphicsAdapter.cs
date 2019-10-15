@@ -52,9 +52,9 @@ namespace Zeckoxe.Graphics
             {
                 AdapterDescription1 desc = adapter.Description1;
 
-                // Don't select the Basic Render Driver adapter.
-                if ((desc.Flags & AdapterFlags.Software) != AdapterFlags.None)
-                    continue;
+                //// Don't select the Basic Render Driver adapter.
+                //if ((desc.Flags & AdapterFlags.Software) != AdapterFlags.None)
+                //    continue;
 
 
                 Adapters.Add(adapter);

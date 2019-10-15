@@ -26,9 +26,9 @@ namespace Zeckoxe.Graphics
         private long fenceValue;
 
 
-        protected CommandList(GraphicsDevice device) : base(device)
+        public CommandList(GraphicsDevice device) : base(device)
         {
-
+            Initialize();
         }
 
 
@@ -72,7 +72,7 @@ namespace Zeckoxe.Graphics
         public void FinishFrame()
         {
             fenceValue++;
-            GraphicsDevice.NativeCommandQueue.Queue.Signal(fence, fenceValue);
+            GraphicsDevice.NativeDirectCommandQueue.Queue.Signal(fence, fenceValue);
         }
 
 
@@ -202,7 +202,7 @@ namespace Zeckoxe.Graphics
         public void EndDraw()
         {
             NativeCommandList.Close();
-            GraphicsDevice.NativeCommandQueue.Queue.ExecuteCommandList(NativeCommandList);
+            GraphicsDevice.NativeDirectCommandQueue.Queue.ExecuteCommandList(NativeCommandList);
         }
 
     }

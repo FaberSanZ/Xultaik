@@ -15,49 +15,48 @@ namespace Zeckoxe.Graphics
 {
     public class DescriptorAllocator : GraphicsResource
     {
-        public int Stride { get; }
+        private const int DescriptorPerHeap = 256;
 
+        private DescriptorHeapType DescriptorHeapType;
+        private ID3D12DescriptorHeap currentHeap;
+        private CpuDescriptorHandle currentHandle;
+        private int remainingHandles;
+        private readonly int DescriptorSize;
 
-        internal int DescriptorsPerHeap = 256;
-        internal DescriptorHeapType HeapType;
-        internal ID3D12DescriptorHeap heap;
-        internal CpuDescriptorHandle handle;
-        internal int remaining;
-
-        public DescriptorAllocator(GraphicsDevice device, DescriptorHeapType heapType) : base(device)
+        public DescriptorAllocator(GraphicsDevice device, DescriptorHeapType descriptorHeapType) : base(device)
         {
-            HeapType = heapType;
-            Stride = GraphicsDevice.NativeDevice.GetDescriptorHandleIncrementSize(heapType);
+            DescriptorHeapType = descriptorHeapType;
+            DescriptorSize = device.NativeDevice.GetDescriptorHandleIncrementSize(descriptorHeapType);
         }
 
-
+        public void Dispose()
+        {
+            currentHeap?.Dispose();
+            currentHeap = null;
+        }
 
         public CpuDescriptorHandle Allocate(int count)
         {
-
-
-            if (heap == null || remaining < count)
+            if (currentHeap == null || remainingHandles < count)
             {
+
                 DescriptorHeapDescription descriptorHeapDescription = new DescriptorHeapDescription()
                 {
                     Flags = DescriptorHeapFlags.None,
-                    Type = HeapType,
-                    DescriptorCount = DescriptorsPerHeap,
+                    Type = DescriptorHeapType,
+                    DescriptorCount = DescriptorPerHeap,
                     NodeMask = 1,
-
                 };
 
-                heap = GraphicsDevice.NativeDevice.CreateDescriptorHeap(descriptorHeapDescription);
-
-                remaining = DescriptorsPerHeap;
-
-                handle = heap.GetCPUDescriptorHandleForHeapStart();
+                currentHeap = GraphicsDevice.NativeDevice.CreateDescriptorHeap(descriptorHeapDescription);
+                remainingHandles = DescriptorPerHeap;
+                currentHandle = currentHeap.GetCPUDescriptorHandleForHeapStart();
             }
 
-            CpuDescriptorHandle result = handle;
+            CpuDescriptorHandle result = currentHandle;
 
-            handle.Ptr += Stride * count;
-            remaining -= count;
+            currentHandle.Ptr += DescriptorSize;
+            remainingHandles -= count;
 
             return result;
         }

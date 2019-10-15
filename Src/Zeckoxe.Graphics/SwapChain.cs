@@ -21,7 +21,7 @@ namespace Zeckoxe.Graphics
 {
     public class SwapChain
     {
-        internal IDXGISwapChain3 swapChain;
+        internal IDXGISwapChain3 NativeSwapChain;
 
         internal GraphicsDevice GraphicsDevice;
 
@@ -36,18 +36,18 @@ namespace Zeckoxe.Graphics
             GraphicsDevice = graphicsDevice;
             Description = graphicsDevice.NativeParameters;
 
-            swapChain = CreateSwapChain();
+            CreateSwapChainForDesktop();
 
-            BackBufferIndex = swapChain.GetCurrentBackBufferIndex();
+            BackBufferIndex = NativeSwapChain.GetCurrentBackBufferIndex();
 
 
             BackBuffer = new Texture(GraphicsDevice);
-            BackBuffer.InitializeFromImpl(swapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
+            BackBuffer.InitializeFromImpl(NativeSwapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
         }
 
 
 
-        private IDXGISwapChain3 CreateSwapChain()
+        private void CreateSwapChain()
         {
 
             //switch (Description.Settings.Platform)
@@ -62,78 +62,81 @@ namespace Zeckoxe.Graphics
             //}
 
 
-            return CreateSwapChainForDesktop();
+            CreateSwapChainForDesktop();
 
         }
 
         public void Present()
         {
-            swapChain.Present(1, PresentFlags.None);
-            BackBufferIndex = swapChain.GetCurrentBackBufferIndex();
+            NativeSwapChain.Present(1, PresentFlags.None);
+            BackBufferIndex = NativeSwapChain.GetCurrentBackBufferIndex();
 
             BackBuffer.Resource.Dispose();
-            BackBuffer.InitializeFromImpl(swapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
+            BackBuffer.InitializeFromImpl(NativeSwapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
 
         }
 
 
 
-        private IDXGISwapChain3 CreateSwapChainForDesktop()
+        private void CreateSwapChainForDesktop()
         {
 
-            ModeDescription BackBufferDesc = new ModeDescription();
-            BackBufferDesc.Width = Description.BackBufferWidth;
-            BackBufferDesc.Height = Description.BackBufferHeight;
-            //BackBufferDesc.Format = ConvertExtensions.ToPixelFormat(Description.BackBufferFormat);
-            BackBufferDesc.RefreshRate = new Rational(60, 1);
-            BackBufferDesc.ScanlineOrdering = ModeScanlineOrder.Unspecified;
-            BackBufferDesc.Scaling = ModeScaling.Unspecified;
+            ModeDescription BackBufferDesc = new ModeDescription()
+            {
+                Width = Description.BackBufferWidth,
+                Height = Description.BackBufferHeight,
+                Format = Format.R8G8B8A8_UNorm,
+                RefreshRate = new Rational()
+                {
+                    Numerator = 60,
+                    Denominator = 1
+                },
+                ScanlineOrdering = ModeScanlineOrder.Unspecified,
+                Scaling = ModeScaling.Unspecified,
+            };
 
-            // Initialize the swap chain description.
-            SwapChainDescription swapChainDesc = new SwapChainDescription();
-            // Set to a single back buffer.
-            swapChainDesc.BufferCount = 3;
-            // Set the width and height of the back buffer.
-            swapChainDesc.BufferDescription = BackBufferDesc;
-            // Set the usage of the back buffer.
-            swapChainDesc.Usage = Usage.RenderTargetOutput;
-            // Set the handle for the window to render to.
-            swapChainDesc.OutputWindow = Description.DeviceHandle;
-            // Turn multisampling off.
-            swapChainDesc.SampleDescription = new SampleDescription()
+            SampleDescription sampleDescription = new SampleDescription()
             {
                 Count = 1,
                 Quality = 0
             };
-            // Set to full screen or windowed mode.
-            swapChainDesc.IsWindowed = true;
-            // Don't set the advanced flags.
-            swapChainDesc.Flags = SwapChainFlags.None;
-            // Discard the back buffer content after presenting.
-            swapChainDesc.SwapEffect = SwapEffect.FlipDiscard;
 
-            swapChainDesc.Flags = SwapChainFlags.AllowModeSwitch;
+            SwapChainFlags Flags = Description.Settings.Fullscreen ? SwapChainFlags.AllowModeSwitch : SwapChainFlags.None;
+            
 
-            swapChainDesc.SwapEffect = SwapEffect.FlipDiscard;
+
+            SwapChainDescription swapChainDesc = new SwapChainDescription() // Initialize the swap chain description.
+            {
+                BufferCount = 3,                                            // Set to a single back buffer.
+                BufferDescription = BackBufferDesc,                         // Set the width and height of the back buffer.
+                Usage = Usage.Backbuffer | Usage.RenderTargetOutput,        // Set the usage of the back buffer.
+                OutputWindow = Description.DeviceHandle,                    // Set the handle for the window to render to.
+                SampleDescription = sampleDescription,                      // Turn multisampling off.
+                IsWindowed = true,                                          // Set to full screen or windowed mode.
+                Flags = Flags,                                              // Don't set the advanced flags.
+                SwapEffect = SwapEffect.FlipDiscard,                        // Discard the back buffer content after presenting.
+            };
+            
+
+
 
 
 
             IDXGIFactory4 Factory = GraphicsDevice.NativeAdapter.NativeFactory;
 
-            IDXGISwapChain swapChain = Factory.CreateSwapChain(GraphicsDevice.NativeCommandQueue.Queue, swapChainDesc);
+            IDXGISwapChain swapChain = Factory.CreateSwapChain(GraphicsDevice.NativeDirectCommandQueue.Queue, swapChainDesc);
+
 
 
             if (Description.Settings.Fullscreen)
             {
                 swapChain.ResizeTarget(BackBufferDesc);
-
                 swapChain.SetFullscreenState(true, default);
-
-                //swapChain.ResizeBuffers(3, Description.BackBufferWidth, Description.BackBufferHeight, ConvertExtensions.ToPixelFormat(Description.BackBufferFormat), SwapChainFlags.AllowModeSwitch);
+                swapChain.ResizeBuffers(3, Description.BackBufferWidth, Description.BackBufferHeight, Format.R8G8B8A8_UNorm, SwapChainFlags.AllowModeSwitch);
             }
 
+            NativeSwapChain = swapChain.QueryInterface<IDXGISwapChain3>();
 
-            return swapChain.QueryInterface<IDXGISwapChain3>();
 
         }
     }
