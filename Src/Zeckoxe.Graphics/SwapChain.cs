@@ -66,6 +66,16 @@ namespace Zeckoxe.Graphics
 
         }
 
+        public void Present()
+        {
+            swapChain.Present(1, PresentFlags.None);
+            BackBufferIndex = swapChain.GetCurrentBackBufferIndex();
+
+            BackBuffer.Resource.Dispose();
+            BackBuffer.InitializeFromImpl(swapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
+
+        }
+
 
 
         private IDXGISwapChain3 CreateSwapChainForDesktop()
