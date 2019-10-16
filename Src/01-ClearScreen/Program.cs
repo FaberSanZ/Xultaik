@@ -8,6 +8,9 @@ namespace _01_ClearScreen
         {
             using (var App = new Game())
                 App.Run();
+            var i = 0;
+
+            Console.WriteLine(i-=-1);
         }
     }
 }

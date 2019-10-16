@@ -16,7 +16,7 @@ namespace Zeckoxe.Graphics
 
         Unknown = unchecked(0),
 
-        R32G32B32A32_Typeless = 1,
+        R32G32B32A32_Typeless = unchecked(1),
 
         R32G32B32A32_Float = 2,
 

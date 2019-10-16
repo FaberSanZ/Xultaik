@@ -17,11 +17,10 @@ namespace Zeckoxe.Graphics
 {
     public sealed unsafe class GraphicsDevice : IDisposable
     {
-        internal ID3D12Device NativeDevice { get; private set; }
-
         public CommandQueue NativeDirectCommandQueue { get; private set; }
 
         public GraphicsAdapter NativeAdapter { get; }
+
         public PresentationParameters NativeParameters { get; internal set; }
 
         //public SwapChain NativeSwapChain { get; }
@@ -31,6 +30,9 @@ namespace Zeckoxe.Graphics
         public DescriptorAllocator RenderTargetViewAllocator { get; private set; }
 
 
+
+
+        internal ID3D12Device NativeDevice;
 
         public GraphicsDevice()
         {

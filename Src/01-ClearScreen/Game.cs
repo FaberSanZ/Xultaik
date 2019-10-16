@@ -43,7 +43,6 @@ namespace _01_ClearScreen
                 DeviceHandle = Window.Handle,
                 Settings = new Settings()
                 {
-                    Validation = false,
                     Fullscreen = false,
                     VSync = false,
                 },

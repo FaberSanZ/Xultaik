@@ -25,7 +25,4 @@ namespace Zeckoxe.Graphics
         public Settings Settings { get; set; }
 
     }
-
-
-
 }
