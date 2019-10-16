@@ -16,41 +16,41 @@ namespace Zeckoxe.Graphics
 {
     public static class ConvertExtensions
     {
-        //public static PrimitiveTopology ToPrimitiveType(PrimitiveType primitiveType)
-        //{
-        //    switch (primitiveType)
-        //    {
-        //        case PrimitiveType.PointList:
-        //            return PrimitiveTopology.PointList;
+        public static PrimitiveTopology ToPrimitiveType(PrimitiveType primitiveType)
+        {
+            switch (primitiveType)
+            {
+                case PrimitiveType.PointList:
+                    return PrimitiveTopology.PointList;
 
-        //        case PrimitiveType.LineList:
-        //            return PrimitiveTopology.LineList;
+                case PrimitiveType.LineList:
+                    return PrimitiveTopology.LineList;
 
-        //        case PrimitiveType.LineStrip:
-        //            return PrimitiveTopology.LineStrip;
+                case PrimitiveType.LineStrip:
+                    return PrimitiveTopology.LineStrip;
 
-        //        case PrimitiveType.TriangleList:
-        //            return PrimitiveTopology.TriangleList;
+                case PrimitiveType.TriangleList:
+                    return PrimitiveTopology.TriangleList;
 
-        //        case PrimitiveType.TriangleStrip:
-        //            return PrimitiveTopology.TriangleStrip;
+                case PrimitiveType.TriangleStrip:
+                    return PrimitiveTopology.TriangleStrip;
 
-        //        case PrimitiveType.LineListAdjacency:
-        //            return PrimitiveTopology.LineListAdjacency;
+                case PrimitiveType.LineListAdjacency:
+                    return PrimitiveTopology.LineListAdjacency;
 
-        //        case PrimitiveType.LineStripAdjacency:
-        //            return PrimitiveTopology.LineStripAdjacency;
+                case PrimitiveType.LineStripAdjacency:
+                    return PrimitiveTopology.LineStripAdjacency;
 
-        //        case PrimitiveType.TriangleListAdjacency:
-        //            return PrimitiveTopology.TriangleListAdjacency;
+                case PrimitiveType.TriangleListAdjacency:
+                    return PrimitiveTopology.TriangleListAdjacency;
 
-        //        case PrimitiveType.TriangleStripAdjacency:
-        //            return PrimitiveTopology.TriangleStripAdjacency;
+                case PrimitiveType.TriangleStripAdjacency:
+                    return PrimitiveTopology.TriangleStripAdjacency;
 
-        //        default:
-        //            throw new ArgumentOutOfRangeException(nameof(primitiveType));
-        //    }
-        //}
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(primitiveType));
+            }
+        }
 
 
         public static Vortice.Direct3D12.FillMode ToFillMode(FillMode fillMode)
