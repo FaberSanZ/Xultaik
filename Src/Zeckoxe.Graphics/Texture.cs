@@ -46,22 +46,33 @@ namespace Zeckoxe.Graphics
         {
             RenderTargetViewDescription RTVDescription = new RenderTargetViewDescription()
             {
-                //Buffer,  
+                Buffer = new BufferRenderTargetView()
+                {
+                    FirstElement = 0,
+                    NumElements = 0
+                },  
                 //Texture1D,
                 Format = Vortice.DXGI.Format.R8G8B8A8_UNorm,
                 //Texture1DArray
-                //Texture2D
+                Texture2D = new Texture2DRenderTargetView()
+                {
+                    MipSlice = 1,
+                    PlaneSlice = 0
+                },
                 //Texture2DArray
-                //Texture2DMS
+                Texture2DMS = new Texture2DMultisampledRenderTargetView()
+                {
+                   // UnusedFieldNothingToDefine = 0x001,
+                },
                 //Texture2DMSArray
                 //Texture3D
-                //ViewDimension = RenderTargetViewDimension.Unknown
+                ViewDimension = RenderTargetViewDimension.Texture2D
                 
             };
 
             CpuDescriptorHandle descriptorHandle = GraphicsDevice.RenderTargetViewAllocator.Allocate(1);
 
-            GraphicsDevice.NativeDevice.CreateRenderTargetView(Resource,null /*RTVDescription*/, descriptorHandle);
+            GraphicsDevice.NativeDevice.CreateRenderTargetView(Resource,/*null*/ RTVDescription, descriptorHandle);
 
             return descriptorHandle;
         }
