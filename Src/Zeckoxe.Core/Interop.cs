@@ -88,6 +88,11 @@ namespace Zeckoxe.Core
                 void* dstPtr = Unsafe.AsPointer(ref values[0]);
                 Buffer.MemoryCopy(srcPointer.ToPointer(), dstPtr, size, size);
             }
+
+            public static void CopyMemory(object uploadMemory, IntPtr dataPointer, object sizeInBytes)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public static class String

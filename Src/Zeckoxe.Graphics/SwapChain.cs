@@ -77,7 +77,7 @@ namespace Zeckoxe.Graphics
             BackBuffer.Resource.Dispose();
             BackBuffer.InitializeFromImpl(NativeSwapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
 
-        }
+        }     
 
 
 

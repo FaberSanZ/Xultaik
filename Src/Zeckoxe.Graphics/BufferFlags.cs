@@ -31,6 +31,8 @@ namespace Zeckoxe.Graphics
 
 
         ShaderResource = 16,
-
+        StructuredBuffer = 32,
+        ArgumentBuffer = 64,
+        RawBuffer = 128,
     }
 }

@@ -28,9 +28,7 @@ namespace Zeckoxe.Graphics
         public DescriptorAllocator DepthStencilViewAllocator { get; private set; }
 
         public DescriptorAllocator RenderTargetViewAllocator { get; private set; }
-
-
-
+        public DescriptorAllocator ShaderResourceViewAllocator { get; internal set; }
 
         internal ID3D12Device NativeDevice;
 
@@ -75,6 +73,8 @@ namespace Zeckoxe.Graphics
             RenderTargetViewAllocator = new DescriptorAllocator(this, DescriptorHeapType.RenderTargetView);
 
             DepthStencilViewAllocator = new DescriptorAllocator(this, DescriptorHeapType.DepthStencilView);
+
+            ShaderResourceViewAllocator = new DescriptorAllocator(this, DescriptorHeapType.ConstantBufferViewShaderResourceViewUnorderedAccessView);
         }
 
         public CommandQueue CreateCommandQueueDirect()
