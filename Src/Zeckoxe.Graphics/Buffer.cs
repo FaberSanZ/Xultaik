@@ -81,7 +81,7 @@ namespace Zeckoxe.Graphics
                 if (heapType == HeapType.Upload)
                 {
                     //var uploadMemory = NativeResource.Map(0);
-                    Interop.MemoryHelper.CopyMemory(/*uploadMemory*/, dataPointer, SizeInBytes);
+                    Interop.MemoryHelper.CopyMemory(nameof(dataPointer).GetType(), dataPointer, SizeInBytes);
                     //NativeResource.Unmap(0);
                 }
                 else
