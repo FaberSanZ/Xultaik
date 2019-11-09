@@ -30,10 +30,10 @@ namespace Zeckoxe.Desktop
 
         public void RenderLoop(Action render)
         {
-            if (this == null)
-                throw new ArgumentNullException("form");
+            if (this is null)
+                throw new ArgumentNullException("Windows");
 
-            if (render == null)
+            if (render is null)
                 throw new ArgumentNullException("renderCallback");
 
             this.Show();
@@ -43,8 +43,8 @@ namespace Zeckoxe.Desktop
                 UseApplicationDoEvents = false
             };
 
-                while (renderLoop.NextFrame())
-                    render();
+            while (renderLoop.NextFrame())
+                render();
 
         }
     }
