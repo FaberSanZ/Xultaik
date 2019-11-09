@@ -33,7 +33,10 @@ namespace _01_ClearScreen
 
         public Game()
         {
-            Window = new Window("Zeckoxe Engine - (Clear Screen)", 1000, 720, BorderStyle.Sizable);
+            Window = new Window("Zeckoxe Engine - (Clear Screen)", 1000, 720)
+            {
+                StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
+            };
 
 
             Parameters = new PresentationParameters()
@@ -75,6 +78,7 @@ namespace _01_ClearScreen
 
         public void Tick()
         {
+
             Window.RenderLoop(() =>
             {
                 Update();
