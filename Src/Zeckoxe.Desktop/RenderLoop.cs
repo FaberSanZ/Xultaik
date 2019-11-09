@@ -97,7 +97,7 @@ namespace Zeckoxe.Desktop
                         // Previous code not compatible with Application.AddMessageFilter but faster then DoEvents
                         Win32Native.NativeMessage msg;
 
-                        while (Win32Native.PeekMessage(&msg, (void*)(0), 0, 0, Win32Native.PM_REMOVE) != 0)
+                        while (Win32Native.PeekMessage(&msg, (void*)0 , 0, 0, Win32Native.PM_REMOVE) != 0)
                         {
                             // NCDESTROY event?
                             if (msg.msg == 130)

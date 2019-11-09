@@ -46,6 +46,9 @@ namespace Zeckoxe.Desktop
         public const int PM_REMOVE = 0x0001;
 
 
+        public const string DllName = "user32.dll";
+
+
 
 
         [StructLayout(LayoutKind.Sequential)]
@@ -69,17 +72,17 @@ namespace Zeckoxe.Desktop
 
 
 
-        [DllImport("user32.dll", EntryPoint = "PeekMessage")]
+        [DllImport(DllName)]
         public static extern int PeekMessage(NativeMessage* lpMsg, void* hWnd, int wMsgFilterMin, int wMsgFilterMax, int wRemoveMsg);
 
 
 
-        [DllImport("user32.dll", EntryPoint = "TranslateMessage", CharSet = CharSet.Unicode)]
+        [DllImport(DllName)]
         public static extern int TranslateMessage(NativeMessage* lpMsg);
 
 
 
-        [DllImport("user32.dll", EntryPoint = "DispatchMessage", CharSet = CharSet.Unicode)]
+        [DllImport(DllName)]
         public static extern int DispatchMessage(NativeMessage* lpMsg);
 
 
