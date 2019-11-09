@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace Zeckoxe.Desktop
 {
-    public class RenderLoop : IDisposable
+    public unsafe class RenderLoop : IDisposable
     {
         private IntPtr controlHandle;
         private Control control;
@@ -66,11 +66,7 @@ namespace Zeckoxe.Desktop
 
         public bool AllowWindowssKeys { get; set; }
 
-        /// <summary>
-        /// Calls this method on each frame.
-        /// </summary>
-        /// <returns><c>true</c> if if the control is still active, <c>false</c> otherwise.</returns>
-        /// <exception cref="System.InvalidOperationException">An error occurred </exception>
+
         public bool NextFrame()
         {
             // Setup new control
@@ -100,7 +96,8 @@ namespace Zeckoxe.Desktop
                     {
                         // Previous code not compatible with Application.AddMessageFilter but faster then DoEvents
                         Win32Native.NativeMessage msg;
-                        while (Win32Native.PeekMessage(out msg, IntPtr.Zero, 0, 0, Win32Native.PM_REMOVE) != 0)
+
+                        while (Win32Native.PeekMessage(&msg, (void*)(0), 0, 0, Win32Native.PM_REMOVE) != 0)
                         {
                             // NCDESTROY event?
                             if (msg.msg == 130)
@@ -118,8 +115,8 @@ namespace Zeckoxe.Desktop
 
                             if (!Application.FilterMessage(ref message))
                             {
-                                Win32Native.TranslateMessage(ref msg);
-                                Win32Native.DispatchMessage(ref msg);
+                                Win32Native.TranslateMessage(&msg);
+                                Win32Native.DispatchMessage(&msg);
                             }
                         }
                     }
@@ -133,11 +130,6 @@ namespace Zeckoxe.Desktop
 
 
         public void Dispose() => Control = null;
-
-
-
-
-
 
     }
 }

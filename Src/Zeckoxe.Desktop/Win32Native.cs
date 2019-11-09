@@ -13,7 +13,7 @@ using System.Text;
 
 namespace Zeckoxe.Desktop
 {
-    internal static partial class Win32Native
+    internal unsafe static partial class Win32Native
     {
         public const int GCS_COMPSTR = 0x0008;
         public const int WM_SIZE = 0x0005;
@@ -68,31 +68,19 @@ namespace Zeckoxe.Desktop
 
 
 
-        public enum WindowLongType : int
-        {
-            WndProc = (-4),
-            HInstance = (-6),
-            HwndParent = (-8),
-            Style = (-16),
-            ExtendedStyle = (-20),
-            UserData = (-21),
-            Id = (-12),
-        }
-
-
 
         [DllImport("user32.dll", EntryPoint = "PeekMessage")]
-        public static extern int PeekMessage(out NativeMessage lpMsg, IntPtr hWnd, int wMsgFilterMin, int wMsgFilterMax, int wRemoveMsg);
+        public static extern int PeekMessage(NativeMessage* lpMsg, void* hWnd, int wMsgFilterMin, int wMsgFilterMax, int wRemoveMsg);
 
 
 
         [DllImport("user32.dll", EntryPoint = "TranslateMessage", CharSet = CharSet.Unicode)]
-        public static extern int TranslateMessage(ref NativeMessage lpMsg);
+        public static extern int TranslateMessage(NativeMessage* lpMsg);
 
 
 
         [DllImport("user32.dll", EntryPoint = "DispatchMessage", CharSet = CharSet.Unicode)]
-        public static extern int DispatchMessage(ref NativeMessage lpMsg);
+        public static extern int DispatchMessage(NativeMessage* lpMsg);
 
 
     }
