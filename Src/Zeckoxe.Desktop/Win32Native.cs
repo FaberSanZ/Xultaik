@@ -54,10 +54,10 @@ namespace Zeckoxe.Desktop
         [StructLayout(LayoutKind.Sequential)]
         internal struct NativeMessage
         {
-            public IntPtr handle;
+            public void* handle;
             public uint msg;
-            public IntPtr wParam;
-            public IntPtr lParam;
+            public void* wParam;
+            public void* lParam;
             public uint time;
             public POINT pt;
         }

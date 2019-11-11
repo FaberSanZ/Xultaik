@@ -9,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Vortice.Direct3D12;
+using Vortice.Direct3D12.Debug;
 using Vortice.DirectX.Direct3D;
+using Vortice.DXGI;
 using static Vortice.Direct3D12.D3D12;
 using static Vortice.DXGI.DXGI;
 
@@ -30,7 +32,7 @@ namespace Zeckoxe.Graphics
         public DescriptorAllocator RenderTargetViewAllocator { get; private set; }
         public DescriptorAllocator ShaderResourceViewAllocator { get; internal set; }
 
-        internal ID3D12Device NativeDevice;
+        internal ID3D12Device5 NativeDevice;
 
         public GraphicsDevice()
         {
@@ -48,16 +50,47 @@ namespace Zeckoxe.Graphics
 
         public void InitializeFromImpl()
         {
-            InitializePlatformDevice(FeatureLevel.Level_11_1);
+            InitializePlatformDevice(FeatureLevel.Level_12_0);
         }
+
+
+        private ID3D12Device5 CreateDevice(IDXGIFactory4 factory4)
+        {
+            var adapters = factory4.EnumAdapters1();
+            for (int i = 0; i < adapters.Length; i++)
+            {
+                var desc = adapters[i].Description1;
+                if (desc.Flags.HasFlag(AdapterFlags.Software))
+                    continue;
+                
+
+                D3D12CreateDevice(adapters[i], FeatureLevel.Level_12_1, out var dev);
+                FeatureDataD3D12Options5 opt5 = dev.CheckFeatureSupport<FeatureDataD3D12Options5>(Vortice.Direct3D12.Feature.Options5);
+                if (opt5.RaytracingTier != RaytracingTier.Tier1_0)
+                {
+                    throw new NotSupportedException("Raytracing not supported");
+                }
+                return dev.QueryInterface<ID3D12Device5>();
+            }
+            return null;
+        }
+
+
 
 
         private void InitializePlatformDevice(FeatureLevel graphicsProfiles)
         {
 
             foreach (var Adapters in NativeAdapter.Adapters)
-                if (D3D12CreateDevice(Adapters, graphicsProfiles, out ID3D12Device device).Success)
-                    NativeDevice = device;
+                if (D3D12CreateDevice(Adapters, graphicsProfiles, out var device).Success)
+                    NativeDevice = device.QueryInterface<ID3D12Device5>();
+
+
+            FeatureDataD3D12Options5 Options5 = NativeDevice.CheckFeatureSupport<FeatureDataD3D12Options5>(Vortice.Direct3D12.Feature.Options5);
+
+            if (Options5.RaytracingTier != RaytracingTier.Tier1_0)
+                Console.WriteLine("Raytracing not supported");
+
 
 
 

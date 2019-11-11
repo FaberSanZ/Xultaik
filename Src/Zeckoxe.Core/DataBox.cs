@@ -54,6 +54,7 @@ namespace Zeckoxe.Core
         {
             if (ReferenceEquals(null, obj))
                 return false;
+
             return obj is DataBox && Equals((DataBox)obj);
         }
 

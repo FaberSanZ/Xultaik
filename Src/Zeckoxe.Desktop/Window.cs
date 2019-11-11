@@ -40,7 +40,8 @@ namespace Zeckoxe.Desktop
 
             using var renderLoop = new RenderLoop(this)
             {
-                UseApplicationDoEvents = false
+                UseApplicationDoEvents = false,
+                //AllowWindowssKeys = true
             };
 
             while (renderLoop.NextFrame())

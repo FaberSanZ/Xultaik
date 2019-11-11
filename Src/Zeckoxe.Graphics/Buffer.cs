@@ -16,17 +16,19 @@ namespace Zeckoxe.Graphics
 {
     public class Buffer : GraphicsResource
     {
-        private BufferDescription bufferDescription;
-        private Vortice.Direct3D12.ResourceDescription nativeDescription;
-
         public BufferFlags ViewFlags { get; private set; }
         public PixelFormat ViewFormat { get; private set; }
         public object Description { get; private set; }
         public ResourceStates NativeResourceState { get; private set; }
         public object SizeInBytes { get; private set; }
 
-        internal long GPUVirtualAddress;
+
+        private BufferDescription bufferDescription;
+        private Vortice.Direct3D12.ResourceDescription nativeDescription;
         private HeapType heapType;
+
+        internal long GPUVirtualAddress;
+
 
         public Buffer(GraphicsDevice device) : base(device)
         {
@@ -54,20 +56,23 @@ namespace Zeckoxe.Graphics
             if ((bufferFlags & BufferFlags.ConstantBuffer) != 0)
                 NativeResourceState |= ResourceStates.VertexAndConstantBuffer;
 
+
             if ((bufferFlags & BufferFlags.IndexBuffer) != 0)
                 NativeResourceState |= ResourceStates.IndexBuffer;
+
 
             if ((bufferFlags & BufferFlags.VertexBuffer) != 0)
                 NativeResourceState |= ResourceStates.VertexAndConstantBuffer;
 
+
             if ((bufferFlags & BufferFlags.ShaderResource) != 0)
                 NativeResourceState |= ResourceStates.PixelShaderResource | ResourceStates.NonPixelShaderResource;
 
+
             if ((bufferFlags & BufferFlags.StructuredBuffer) != 0)
-            {
                 if (bufferDescription.StructureByteStride <= 0)
                     throw new ArgumentException("Element size cannot be less or equal 0 for structured buffer");
-            }
+            
 
             if ((bufferFlags & BufferFlags.ArgumentBuffer) == BufferFlags.ArgumentBuffer)
                 NativeResourceState |= ResourceStates.IndirectArgument;
@@ -75,7 +80,7 @@ namespace Zeckoxe.Graphics
 
             //GPUVirtualAddress = NativeResource.GPUVirtualAddress;
 
-
+            //Span<int> bbs = sta
             if (dataPointer != IntPtr.Zero)
             {
                 if (heapType == HeapType.Upload)
@@ -86,25 +91,7 @@ namespace Zeckoxe.Graphics
                 }
                 else
                 {
-                    //// Copy data in upload heap for later copy
-                    //// TODO D3D12 move that to a shared upload heap
-                    //SharpDX.Direct3D12.Resource uploadResource;
-                    //int uploadOffset;
-                    //var uploadMemory = GraphicsDevice.AllocateUploadBuffer(SizeInBytes, out uploadResource, out uploadOffset);
-                    //Interop.MemoryHelper.CopyMemory(uploadMemory, dataPointer, SizeInBytes);
 
-                    //// TODO D3D12 lock NativeCopyCommandList usages
-                    //var commandList = GraphicsDevice.NativeCopyCommandList;
-                    //commandList.Reset(GraphicsDevice.NativeCopyCommandAllocator, null);
-                    //// Copy from upload heap to actual resource
-                    //commandList.CopyBufferRegion(NativeResource, 0, uploadResource, uploadOffset, SizeInBytes);
-
-                    //// Switch resource to proper read state
-                    //commandList.ResourceBarrierTransition(NativeResource, 0, ResourceStates.CopyDestination, NativeResourceState);
-
-                    //commandList.Close();
-
-                    //GraphicsDevice.WaitCopyQueue();
                 }
             }
 
@@ -117,21 +104,21 @@ namespace Zeckoxe.Graphics
 
         internal CpuDescriptorHandle GetShaderResourceView(PixelFormat viewFormat)
         {
-            var srv = new CpuDescriptorHandle();
+            CpuDescriptorHandle srv = new CpuDescriptorHandle();
             if ((ViewFlags & BufferFlags.ShaderResource) != 0)
             {
-                var description = new ShaderResourceViewDescription
+                ShaderResourceViewDescription description = new ShaderResourceViewDescription
                 {
                     Shader4ComponentMapping = 0x00001688,
                     Format = ConvertExtensions.ToPixelFormat(viewFormat),
                     ViewDimension = ShaderResourceViewDimension.Buffer,
-                    Buffer =
+                    Buffer = new BufferShaderResourceView 
                     {
                         NumElements = 0,
                     }
                 };
 
-                if (((ViewFlags & BufferFlags.RawBuffer) == BufferFlags.RawBuffer))
+                if ((ViewFlags & BufferFlags.RawBuffer) == BufferFlags.RawBuffer)
                     description.Buffer.Flags |= BufferShaderResourceViewFlags.Raw;
 
                 srv = GraphicsDevice.ShaderResourceViewAllocator.Allocate(1);

@@ -16,15 +16,12 @@ namespace Zeckoxe.Desktop
 {
     public unsafe class RenderLoop : IDisposable
     {
-        private IntPtr controlHandle;
-        private Control control;
-        private bool isControlAlive;
-        private bool switchControl;
+        internal IntPtr controlHandle;
+        internal Control control;
+        internal bool isControlAlive;
+        internal bool switchControl;
 
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WindowsMessageLoop"/> class.
-        /// </summary>
         public RenderLoop()
         {
 
@@ -106,10 +103,10 @@ namespace Zeckoxe.Desktop
 
                             Message message = new Message()
                             {
-                                HWnd = msg.handle,
-                                LParam = msg.lParam,
+                                HWnd = (IntPtr)(void*)msg.handle,
+                                LParam = (IntPtr)(void*)msg.lParam,
                                 Msg = (int)msg.msg,
-                                WParam = msg.wParam
+                                WParam = (IntPtr)(void*)msg.wParam
                             };
 
 
