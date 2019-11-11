@@ -50,39 +50,23 @@ namespace Zeckoxe.Graphics
 
         public void InitializeFromImpl()
         {
-            InitializePlatformDevice(FeatureLevel.Level_12_0);
-        }
-
-
-        internal ID3D12Device5 CreateDevice(GraphicsAdapter factory4)
-        {
- 
-
-            foreach (var Adapters in factory4.Adapters)
-                if (D3D12CreateDevice(Adapters, FeatureLevel.Level_12_1, out var device).Success)
-                    return device.QueryInterface<ID3D12Device5>();
-
-
-            return null;
+            InitializePlatformDevice();
         }
 
 
 
 
-        private void InitializePlatformDevice(FeatureLevel graphicsProfiles)
+        private void InitializePlatformDevice()
         {
 
             NativeDevice = CreateDevice(NativeAdapter);
 
 
-            FeatureDataD3D12Options5 Options5 = NativeDevice.CheckFeatureSupport<FeatureDataD3D12Options5>(Vortice.Direct3D12.Feature.Options5);
-
-
-
             //TODO: Raytracing
-            if (Options5.RaytracingTier != RaytracingTier.Tier1_0)
+            if (RaytracingSupported() != true)
                 Console.WriteLine("Raytracing not supported");
 
+            
 
 
 
@@ -91,6 +75,30 @@ namespace Zeckoxe.Graphics
 
             CreateDescriptorAllocators();
 
+        }
+
+        public bool RaytracingSupported()
+        {
+            FeatureDataD3D12Options5 Options5 = NativeDevice.CheckFeatureSupport<FeatureDataD3D12Options5>(Vortice.Direct3D12.Feature.Options5);
+
+            //TODO: Raytracing
+            if (Options5.RaytracingTier != RaytracingTier.Tier1_0)
+                return false;
+
+
+            return true;
+        }
+
+        internal ID3D12Device5 CreateDevice(GraphicsAdapter factory4)
+        {
+
+
+            foreach (var Adapters in factory4.Adapters)
+                if (D3D12CreateDevice(Adapters, FeatureLevel.Level_12_1, out var device).Success)
+                    return device.QueryInterface<ID3D12Device5>();
+
+
+            return null;
         }
 
         public void CreateDescriptorAllocators()
