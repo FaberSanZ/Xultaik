@@ -54,24 +54,15 @@ namespace Zeckoxe.Graphics
         }
 
 
-        private ID3D12Device5 CreateDevice(IDXGIFactory4 factory4)
+        internal ID3D12Device5 CreateDevice(GraphicsAdapter factory4)
         {
-            var adapters = factory4.EnumAdapters1();
-            for (int i = 0; i < adapters.Length; i++)
-            {
-                var desc = adapters[i].Description1;
-                if (desc.Flags.HasFlag(AdapterFlags.Software))
-                    continue;
-                
+ 
 
-                D3D12CreateDevice(adapters[i], FeatureLevel.Level_12_1, out var dev);
-                FeatureDataD3D12Options5 opt5 = dev.CheckFeatureSupport<FeatureDataD3D12Options5>(Vortice.Direct3D12.Feature.Options5);
-                if (opt5.RaytracingTier != RaytracingTier.Tier1_0)
-                {
-                    throw new NotSupportedException("Raytracing not supported");
-                }
-                return dev.QueryInterface<ID3D12Device5>();
-            }
+            foreach (var Adapters in factory4.Adapters)
+                if (D3D12CreateDevice(Adapters, FeatureLevel.Level_12_1, out var device).Success)
+                    return device.QueryInterface<ID3D12Device5>();
+
+
             return null;
         }
 
@@ -81,13 +72,14 @@ namespace Zeckoxe.Graphics
         private void InitializePlatformDevice(FeatureLevel graphicsProfiles)
         {
 
-            foreach (var Adapters in NativeAdapter.Adapters)
-                if (D3D12CreateDevice(Adapters, graphicsProfiles, out var device).Success)
-                    NativeDevice = device.QueryInterface<ID3D12Device5>();
+            NativeDevice = CreateDevice(NativeAdapter);
 
 
             FeatureDataD3D12Options5 Options5 = NativeDevice.CheckFeatureSupport<FeatureDataD3D12Options5>(Vortice.Direct3D12.Feature.Options5);
 
+
+
+            //TODO: Raytracing
             if (Options5.RaytracingTier != RaytracingTier.Tier1_0)
                 Console.WriteLine("Raytracing not supported");
 
@@ -95,7 +87,7 @@ namespace Zeckoxe.Graphics
 
 
             // Create the NativeCommandQueue
-            NativeDirectCommandQueue = new CommandQueue(this, CommandListType.Direct); //CreateCommandQueueDirect();
+            NativeDirectCommandQueue = CreateCommandQueueDirect();
 
             CreateDescriptorAllocators();
 
