@@ -17,13 +17,11 @@ namespace Zeckoxe.Graphics
 {
     public unsafe class CommandList : GraphicsResource
     {
-        private ID3D12GraphicsCommandList nativeCommandList;
-        internal ID3D12GraphicsCommandList NativeCommandList => nativeCommandList;
-
-        private ID3D12PipelineState pipelineState;
-        private ID3D12CommandAllocator commandAllocator;
-        private ID3D12Fence fence;
-        private long fenceValue;
+        internal ID3D12GraphicsCommandList nativeCommandList;
+        internal ID3D12PipelineState pipelineState;
+        internal ID3D12CommandAllocator commandAllocator;
+        internal Fence fence;
+        internal long fenceValue;
 
 
         public CommandList(GraphicsDevice device) : base(device)
@@ -38,41 +36,39 @@ namespace Zeckoxe.Graphics
             commandAllocator = GraphicsDevice.NativeDevice.CreateCommandAllocator( Vortice.Direct3D12.CommandListType.Direct);
 
             fenceValue = 0;
-            fence = GraphicsDevice.NativeDevice.CreateFence(0, FenceFlags.None);
+            fence = new Fence(GraphicsDevice, fenceValue);
 
             nativeCommandList = GraphicsDevice.NativeDevice.CreateCommandList(Vortice.Direct3D12.CommandListType.Direct, commandAllocator, null);
             // We close it as it starts in open state
-            NativeCommandList.Close();
+            nativeCommandList.Close();
 
         }
 
 
         public void Wait()
         {
-            while (fence.CompletedValue < fenceValue)
-            {
-                System.Threading.Thread.Sleep(1);
-            }
+            fence.Wait(fenceValue);
         }
 
 
         public void Reset()
         {
             commandAllocator.Reset();
-            NativeCommandList.Reset(commandAllocator, null);
+            nativeCommandList.Reset(commandAllocator, null);
         }
 
 
         public void Close()
         {
-            NativeCommandList.Close();
+            nativeCommandList.Close();
         }
 
 
         public void FinishFrame()
         {
             fenceValue++;
-            GraphicsDevice.NativeDirectCommandQueue.Queue.Signal(fence, fenceValue);
+
+            fence.Signal(GraphicsDevice.NativeDirectCommandQueue, fenceValue);
         }
 
 
@@ -87,7 +83,7 @@ namespace Zeckoxe.Graphics
                 MaxDepth = 1.0f,
                 MinDepth = 0.0f
             };
-            NativeCommandList.RSSetViewport(viewport);
+            nativeCommandList.RSSetViewport(viewport);
         }
 
 
@@ -119,30 +115,30 @@ namespace Zeckoxe.Graphics
         {
             //NativeCommandList.OMSetRenderTargets();
             var ss = render[0].NativeRenderTargetView;
-            NativeCommandList.OMSetRenderTargets(ss, depth?.NativeDepthStencilView);
+            nativeCommandList.OMSetRenderTargets(ss, depth?.NativeDepthStencilView);
         }
 
 
         public void ClearTargetColor(CpuDescriptorHandle handle, float r, float g, float b, float a)
         {
-            NativeCommandList.ClearRenderTargetView(handle, new Vortice.Mathematics.Color4(r, g, b, a));
+            nativeCommandList.ClearRenderTargetView(handle, new Vortice.Mathematics.Color4(r, g, b, a));
         }
 
 
         public void ClearTargetColor(Texture texture, float r, float g, float b, float a)
         {
-            NativeCommandList.ClearRenderTargetView(texture.NativeRenderTargetView, new Vortice.Mathematics.Color4(r, g, b, a));
+            nativeCommandList.ClearRenderTargetView(texture.NativeRenderTargetView, new Vortice.Mathematics.Color4(r, g, b, a));
         }
 
         public void ClearDepth(CpuDescriptorHandle handle, float depth)
         {
-            NativeCommandList.ClearDepthStencilView(handle, ClearFlags.Depth, depth, 0);
+            nativeCommandList.ClearDepthStencilView(handle, ClearFlags.Depth, depth, 0);
         }
 
 
         public void ClearDepth(Texture texture, float depth)
         {
-            NativeCommandList.ClearDepthStencilView(texture.NativeDepthStencilView, ClearFlags.Depth, depth, 0);
+            nativeCommandList.ClearDepthStencilView(texture.NativeDepthStencilView, ClearFlags.Depth, depth, 0);
         }
 
         public void ResourceTransition(ID3D12Resource resource, ResourceStates before, ResourceStates after)
@@ -151,7 +147,7 @@ namespace Zeckoxe.Graphics
             var barriers = stackalloc ResourceBarrier[1];
             barriers[0] = new ResourceBarrier(new ResourceTransitionBarrier(resource, (ResourceStates)before, (ResourceStates)after));
 
-            NativeCommandList.ResourceBarrier(*barriers);
+            nativeCommandList.ResourceBarrier(*barriers);
             //NativeCommandList.ResourceBarrierTransition(resource, (ResourceStates)before, (ResourceStates)after);
         }
 
@@ -162,7 +158,7 @@ namespace Zeckoxe.Graphics
             var barriers = stackalloc ResourceBarrier[1];
             barriers[0] = new ResourceBarrier(new ResourceTransitionBarrier(resource.Resource, (ResourceStates)before, (ResourceStates)after));
 
-            NativeCommandList.ResourceBarrier(*barriers);
+            nativeCommandList.ResourceBarrier(*barriers);
 
 
             //NativeCommandList.ResourceBarrierTransition(resource.Resource, (ResourceStates)before, (ResourceStates)after);
@@ -184,13 +180,13 @@ namespace Zeckoxe.Graphics
 
         public void Draw(int count)
         {
-            NativeCommandList.DrawInstanced(count, 1, 0, 0);
+            nativeCommandList.DrawInstanced(count, 1, 0, 0);
         }
 
         public void DrawIndexed(int idxCnt)
         {
 
-            NativeCommandList.DrawIndexedInstanced(idxCnt, 1, 0, 0, 0);
+            nativeCommandList.DrawIndexedInstanced(idxCnt, 1, 0, 0, 0);
         }
 
 
@@ -201,8 +197,9 @@ namespace Zeckoxe.Graphics
 
         public void EndDraw()
         {
-            NativeCommandList.Close();
-            GraphicsDevice.NativeDirectCommandQueue.Queue.ExecuteCommandList(NativeCommandList);
+            nativeCommandList.Close();
+
+            GraphicsDevice.NativeDirectCommandQueue.ExecuteCommandList(this);
         }
 
     }

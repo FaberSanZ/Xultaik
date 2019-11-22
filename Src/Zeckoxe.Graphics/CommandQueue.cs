@@ -74,6 +74,11 @@ namespace Zeckoxe.Graphics
             }
         }
 
+        public void ExecuteCommandList(CommandList commandList)
+        {
+            Queue.ExecuteCommandList(commandList.nativeCommandList);
+        }
+
         public void Wait(/*Fence fence*/)
         {
             Queue.Wait(new ID3D12Fence(IntPtr.Zero), 20);
