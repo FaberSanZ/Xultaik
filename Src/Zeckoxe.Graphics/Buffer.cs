@@ -18,16 +18,16 @@ namespace Zeckoxe.Graphics
     {
         public BufferFlags ViewFlags { get; private set; }
         public PixelFormat ViewFormat { get; private set; }
-        public object Description { get; private set; }
+        public int Description { get; private set; }
         public ResourceStates NativeResourceState { get; private set; }
-        public object SizeInBytes { get; private set; }
+        public int SizeInBytes { get; private set; }
 
 
-        private BufferDescription bufferDescription;
-        private Vortice.Direct3D12.ResourceDescription nativeDescription;
-        private HeapType heapType;
-
+        internal BufferDescription bufferDescription;
+        internal Vortice.Direct3D12.ResourceDescription nativeDescription;
+        internal HeapType heapType;
         internal long GPUVirtualAddress;
+        internal CpuDescriptorHandle NativeConstantBufferView;
 
 
         public Buffer(GraphicsDevice device) : base(device)
