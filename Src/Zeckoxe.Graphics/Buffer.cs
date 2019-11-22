@@ -14,7 +14,7 @@ using Zeckoxe.Core;
 
 namespace Zeckoxe.Graphics
 {
-    public class Buffer : GraphicsResource
+    public unsafe class Buffer : GraphicsResource
     {
         public BufferFlags ViewFlags { get; private set; }
         public PixelFormat ViewFormat { get; private set; }
@@ -48,7 +48,7 @@ namespace Zeckoxe.Graphics
 
             return this;
         }
-
+             
         private void Recreate(IntPtr dataPointer)
         {
             var bufferFlags = bufferDescription.BufferFlags;
@@ -86,7 +86,7 @@ namespace Zeckoxe.Graphics
                 if (heapType == HeapType.Upload)
                 {
                     //var uploadMemory = NativeResource.Map(0);
-                    Interop.MemoryHelper.CopyMemory(nameof(dataPointer).GetType(), dataPointer, SizeInBytes);
+                    Interop.MemoryHelper.CopyMemory(0, dataPointer, SizeInBytes);
                     //NativeResource.Unmap(0);
                 }
                 else
@@ -112,7 +112,7 @@ namespace Zeckoxe.Graphics
                     Shader4ComponentMapping = 0x00001688,
                     Format = ConvertExtensions.ToPixelFormat(viewFormat),
                     ViewDimension = ShaderResourceViewDimension.Buffer,
-                    Buffer = new BufferShaderResourceView 
+                    Buffer = new BufferShaderResourceView
                     {
                         NumElements = 0,
                     }
@@ -121,8 +121,10 @@ namespace Zeckoxe.Graphics
                 if ((ViewFlags & BufferFlags.RawBuffer) == BufferFlags.RawBuffer)
                     description.Buffer.Flags |= BufferShaderResourceViewFlags.Raw;
 
+
+
                 srv = GraphicsDevice.ShaderResourceViewAllocator.Allocate(1);
-                //GraphicsDevice.CreateShaderResourceView(NativeResource, description, srv);
+                //GraphicsDevice.ShaderResourceViewAllocator(NativeResource, description, srv);
             }
             return srv;
         }
