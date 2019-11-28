@@ -16,21 +16,19 @@ namespace Zeckoxe.Graphics
 
         public int SizeInBytes;
 
-
         public int StructureByteStride;
 
+        public HeapType HeapType;
 
-        public BufferFlags BufferFlags;
+        public BufferFlags Flags;
 
 
 
-
-        public BufferDescription(int sizeInBytes, BufferFlags bufferFlags, int structureByteStride = 0)
+        public BufferDescription(int sizeInBytes, BufferFlags bufferFlags, HeapType heapType, int structureByteStride = 0)
         {
             SizeInBytes = sizeInBytes;
-
-            BufferFlags = bufferFlags;
-
+            Flags = bufferFlags;
+            HeapType = heapType;
             StructureByteStride = structureByteStride;
         }
 
