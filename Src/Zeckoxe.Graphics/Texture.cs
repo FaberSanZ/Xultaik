@@ -40,11 +40,9 @@ namespace Zeckoxe.Graphics
             Resource = resource;
 
             NativeRenderTargetView = GetRenderTargetView();
-
-            NativeDepthStencilView = CreateDepthStencilView();
         }
 
-        internal CpuDescriptorHandle GetRenderTargetView()
+        private CpuDescriptorHandle GetRenderTargetView()
         {
             RenderTargetViewDescription RTVDescription = new RenderTargetViewDescription()
             {
@@ -74,33 +72,9 @@ namespace Zeckoxe.Graphics
 
             CpuDescriptorHandle descriptorHandle = GraphicsDevice.RenderTargetViewAllocator.Allocate(1);
 
-            GraphicsDevice.NativeDevice.CreateRenderTargetView(Resource, RTVDescription, descriptorHandle);
+            GraphicsDevice.NativeDevice.CreateRenderTargetView(Resource,/*null*/ RTVDescription, descriptorHandle);
 
             return descriptorHandle;
-        }
-
-
-
-
-
-        internal CpuDescriptorHandle CreateDepthStencilView()
-        {
-            CpuDescriptorHandle cpuHandle = GraphicsDevice.DepthStencilViewAllocator.Allocate(1);
-
-            DepthStencilViewDescription viewDescription = new DepthStencilViewDescription()
-            {
-                ViewDimension = DepthStencilViewDimension.Texture2D,
-                Flags = DepthStencilViewFlags.None,
-                Format = Vortice.DXGI.Format.D24_UNorm_S8_UInt,
-                Texture2D = new Texture2DDepthStencilView 
-                { 
-                    MipSlice = 0 
-                }
-            };
-
-            GraphicsDevice.NativeDevice.CreateDepthStencilView(Resource, viewDescription, cpuHandle);
-
-            return cpuHandle;
         }
 
     }
