@@ -19,8 +19,7 @@ namespace Zeckoxe.Graphics
     {
 
         internal uint imageIndex;
-
-        public VkCommandBuffer CommandBuffer { get; set; }
+        internal VkCommandBuffer CommandBuffer;
 
 
 
@@ -96,24 +95,6 @@ namespace Zeckoxe.Graphics
         }
 
 
-
-        public void Clear(Vector4 vector4)
-        {
-            VkClearColorValue clearValue = new VkClearColorValue(vector4.X, vector4.Y, vector4.Z, vector4.W);
-
-            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
-
-            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
-        }
-
-        public void Clear(System.Numerics.Vector4 vector4)
-        {
-            VkClearColorValue clearValue = new VkClearColorValue(vector4.X, vector4.Y, vector4.Z, vector4.W);
-
-            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
-
-            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
-        }
 
 
         public void SetPipelineState(PipelineState pipelineState)

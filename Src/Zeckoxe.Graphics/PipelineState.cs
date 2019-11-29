@@ -65,8 +65,8 @@ namespace Zeckoxe.Graphics
         public void CreateGraphicsPipeline(string[] fileShaders, Framebuffer framebuffer)
         {
 
-            VkShaderModule vertexShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[0]);
-            VkShaderModule fragmentShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[1]);
+            VkShaderModule vertexShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[0], ShaderCompiler.ShaderCompiler.Stage.Vertex);
+            VkShaderModule fragmentShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[1], ShaderCompiler.ShaderCompiler.Stage.Fragment);
 
             VkPipelineShaderStageCreateInfo vertCreateInfo = VkPipelineShaderStageCreateInfo.New();
             vertCreateInfo.stage = VkShaderStageFlags.Vertex;

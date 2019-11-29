@@ -6,9 +6,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
+using Zeckoxe.ShaderCompiler;
 using Buffer = Zeckoxe.Graphics.Buffer;
 //using Zeckoxe.Mathematics;
 
@@ -17,20 +19,89 @@ namespace _02_Hello_Triangle
     public class Game : IDisposable
     {
 
+        public Window Window { get; set; }
 
+        public PresentationParameters Parameters { get; set; }
 
+        public GraphicsInstance Instance { get; set; }
 
+        public GraphicsAdapter Adapter { get; set; }
 
+        public GraphicsDevice Device { get; set; }
+
+        public Texture Texture { get; set; }
+
+        public Framebuffer Framebuffer { get; set; }
+
+        public GraphicsContext Context { get; set; }
+
+        public PipelineState PipelineState { get; set; }
 
 
         public Game()
         {
+            Window = new Window("Zeckoxe Engine - (Clear Screen)", 1000, 720)
+            {
+                StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
+            };
 
+
+            Parameters = new PresentationParameters()
+            {
+                BackBufferWidth = Window.Width,
+                BackBufferHeight = Window.Height,
+                DeviceHandle = Window.Handle,
+                Settings = new Settings()
+                {
+                    Validation = true,
+                    Fullscreen = true,
+                    VSync = false,
+                },
+            };
+
+
+            //hlslVulkan();
         }
+
+
+
+
+        public void hlslVulkan()
+        {
+            var c = new ShaderCompiler();
+            var o = new CompileOptions();
+
+            o.Language = CompileOptions.InputLanguage.GLSL;
+            
+
+            string testShader = File.ReadAllText("Shaders/shader.vert");
+
+            var r = c.Compile(testShader, ShaderCompiler.Stage.Vertex,  o, "testShader");
+
+            
+            byte[] bc = r.GetBytes();
+            foreach (var item in bc)
+                Console.WriteLine(item);
+            
+        }
+
 
         public void Initialize()
         {
+            Instance = new GraphicsInstance(Parameters);
 
+            Adapter = new GraphicsAdapter(Instance);
+
+            Device = new GraphicsDevice(Adapter);
+
+            Texture = new Texture(Device);
+
+            Framebuffer = new Framebuffer(Device);
+
+            Context = new GraphicsContext(Device);
+
+
+            PipelineState = new PipelineState(Device, new string[] { "Shaders/VertexShader.hlsl", "Shaders/PixelShader.hlsl" }, Framebuffer);
         }
 
 
@@ -40,7 +111,7 @@ namespace _02_Hello_Triangle
 
             BeginRun();
 
-
+            Window?.Show();
 
             Tick();
         }
@@ -48,12 +119,19 @@ namespace _02_Hello_Triangle
         public void Tick()
         {
 
+            Window.RenderLoop(() =>
+            {
+                Update();
+                Draw();
+            });
         }
 
 
 
         public void BeginRun()
         {
+            foreach (var Description in Device.NativeAdapter.Description)
+                Console.WriteLine(Description);
 
 
         }
@@ -65,7 +143,24 @@ namespace _02_Hello_Triangle
 
         public void Draw()
         {
+            CommandList CommandList = Context.CommandList;
 
+            Device.WaitIdle();
+
+            CommandList.Begin();
+            CommandList.BeginFramebuffer(Framebuffer);
+            CommandList.Clear(0.0f, 0.2f, 0.4f, 1.0f);
+
+            CommandList.SetViewport(Window.Width, Window.Height, 0, 0);
+            CommandList.SetScissor(Window.Width, Window.Height, 0, 0);
+            CommandList.SetPipelineState(PipelineState);
+            CommandList.Draw(3, 1, 0, 0);
+
+            CommandList.EndFramebuffer();
+            CommandList.End();
+            CommandList.Submit();
+
+            Device.NativeSwapChain.Present();
         }
 
         public void Dispose()

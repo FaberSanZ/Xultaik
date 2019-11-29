@@ -17,6 +17,7 @@ using Vulkan;
 using static Vulkan.VulkanNative;
 using System.Diagnostics;
 using System.IO;
+using Zeckoxe.ShaderCompiler;
 
 namespace Zeckoxe.Graphics
 {
@@ -335,15 +336,28 @@ namespace Zeckoxe.Graphics
         }
 
 
-        internal VkShaderModule LoadSPIR_V_Shader(string path)
+        internal VkShaderModule LoadSPIR_V_Shader(string path, Zeckoxe.ShaderCompiler.ShaderCompiler.Stage stage)
         {
             byte[] shaderCode = File.ReadAllBytes(path);
 
-            fixed (byte* scPtr = shaderCode)
+            Zeckoxe.ShaderCompiler.ShaderCompiler c = new Zeckoxe.ShaderCompiler.ShaderCompiler();
+            var o = new CompileOptions();
+
+            o.Language = CompileOptions.InputLanguage.HLSL;
+
+            string testShader = File.ReadAllText(path);
+
+            var r = c.Compile(testShader, stage, o, "testShader", "main");
+
+
+            var bc = r.GetBytes();
+
+
+            fixed (byte* scPtr = bc)
             {
                 // Create a new shader module that will be used for Pipeline creation
                 VkShaderModuleCreateInfo moduleCreateInfo = VkShaderModuleCreateInfo.New();
-                moduleCreateInfo.codeSize = new UIntPtr((ulong)shaderCode.Length);
+                moduleCreateInfo.codeSize = new UIntPtr((ulong)bc.Length);
                 moduleCreateInfo.pCode = (uint*)scPtr;
 
                 vkCreateShaderModule(Device, ref moduleCreateInfo, null, out VkShaderModule shaderModule);
