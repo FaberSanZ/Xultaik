@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zeckoxe.Desktop\Zeckoxe.Desktop.csproj" />
+    <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Graphics.csproj" />
+  </ItemGroup>
+
+
+
+
+</Project>

@@ -16,122 +16,204 @@ namespace Zeckoxe.Graphics
 {
     public unsafe class Buffer : GraphicsResource
     {
-        public BufferFlags ViewFlags { get; private set; }
-        public PixelFormat ViewFormat { get; private set; }
-        public object Description { get; private set; }
-        public ResourceStates NativeResourceState { get; private set; }
-        public object SizeInBytes { get; private set; }
+        public IntPtr MappedResource { get; private set; }
+
+        public int FirstElement { get; set; }
+
+        public int ElementCount { get; set; }
+
+        public BufferDescription Description { get; private set; }
+
+        public int SizeInBytes => Description.SizeInBytes;
+
+        public BufferFlags Flags => Description.Flags;
+
+        public HeapType HeapType => Description.HeapType;
+
+        public int StructureByteStride => Description.StructureByteStride;
 
 
-        private BufferDescription bufferDescription;
-        private Vortice.Direct3D12.ResourceDescription nativeDescription;
-        private HeapType heapType;
-
-        internal long GPUVirtualAddress;
 
 
-        public Buffer(GraphicsDevice device) : base(device)
+        //internal
+        internal Vortice.Direct3D12.ResourceDescription nativeDescription;
+        internal ID3D12Resource NativeResource;
+        internal CpuDescriptorHandle? shaderResourceView;
+        internal CpuDescriptorHandle? constantBufferView;
+        internal CpuDescriptorHandle? unorderedAccessView;
+
+
+        public Buffer(GraphicsDevice device, BufferDescription description) : base(device)
         {
+            nativeDescription = ConvertToNativeDescription(description);
+            InitializeFrom(description);
+        }
 
+        public void SetData<T>(T[] data, int offsetInBytes = 0) where T : unmanaged
+        {
+            offsetInBytes = FirstElement * StructureByteStride + offsetInBytes;
+
+            if (HeapType == HeapType.Upload)
+            {
+                Map(0);
+                Interop.MemoryHelper.Write(MappedResource + offsetInBytes, data);
+                Unmap(0);
+            }
+            else
+            {
+                // Copy data in upload heap for later copy
+                // TODO D3D12 move that to a shared upload heap
+            }
         }
 
 
-        protected Buffer InitializeFromImpl(BufferDescription description, BufferFlags viewFlags, PixelFormat viewFormat, IntPtr dataPointer)
+        public Buffer InitializeFrom(BufferDescription description)
         {
-            bufferDescription = description;
-            nativeDescription = ConvertToNativeDescription(GraphicsDevice, Description);
-            ViewFlags = viewFlags;
+            ResourceStates resourceStates = ResourceStates.Common;
 
-            ViewFormat = viewFormat;
-            Recreate(dataPointer);
 
+            if ((description.Flags & BufferFlags.ConstantBuffer) != 0)
+                resourceStates |= ResourceStates.VertexAndConstantBuffer;
+
+
+            if ((description.Flags & BufferFlags.IndexBuffer) != 0)
+                resourceStates |= ResourceStates.IndexBuffer;
+
+
+            if ((description.Flags & BufferFlags.VertexBuffer) != 0)
+                resourceStates |= ResourceStates.VertexAndConstantBuffer;
+
+
+            HeapProperties heapProp = new HeapProperties()
+            {
+                Type = (Vortice.Direct3D12.HeapType)description.HeapType,
+                CreationNodeMask = 1,
+                VisibleNodeMask = 1
+            };
+
+            ID3D12Resource resource = GraphicsDevice.NativeDevice.CreateCommittedResource(heapProp, HeapFlags.None, nativeDescription, resourceStates);
+
+            return InitializeFrom(resource, description);
+        }
+
+
+        internal Buffer InitializeFrom(ID3D12Resource resource, BufferDescription description, int firstElement = 0, int elementCount = 0)
+        {
+            NativeResource = resource;
+            Description = description;
+
+            FirstElement = firstElement;
+
+            if (description.StructureByteStride != 0)
+                ElementCount = elementCount == 0 ? description.SizeInBytes / description.StructureByteStride : elementCount;
+            
+
+
+            if ((description.Flags &  BufferFlags.ConstantBuffer) != 0)
+                constantBufferView = CreateConstantBufferView();
+            
+
+            if ((description.Flags & BufferFlags.ShaderResource) != 0)
+                shaderResourceView = CreateShaderResourceView();
+            
+
+            if ((description.Flags & BufferFlags.UnorderedAccess) != 0)
+                unorderedAccessView = CreateUnorderedAccessView();
+            
 
             return this;
         }
-             
-        private void Recreate(IntPtr dataPointer)
+
+
+        internal ResourceDescription ConvertToNativeDescription(BufferDescription description)
         {
-            var bufferFlags = bufferDescription.BufferFlags;
+            ResourceFlags flags = ResourceFlags.None;
+            int size = description.SizeInBytes;
 
-            if ((bufferFlags & BufferFlags.ConstantBuffer) != 0)
-                NativeResourceState |= ResourceStates.VertexAndConstantBuffer;
-
-
-            if ((bufferFlags & BufferFlags.IndexBuffer) != 0)
-                NativeResourceState |= ResourceStates.IndexBuffer;
+            if ((description.Flags & BufferFlags.UnorderedAccess) != 0)
+                flags |= ResourceFlags.AllowUnorderedAccess;
 
 
-            if ((bufferFlags & BufferFlags.VertexBuffer) != 0)
-                NativeResourceState |= ResourceStates.VertexAndConstantBuffer;
+            size = (size + 256) & ~256; 
 
-
-            if ((bufferFlags & BufferFlags.ShaderResource) != 0)
-                NativeResourceState |= ResourceStates.PixelShaderResource | ResourceStates.NonPixelShaderResource;
-
-
-            if ((bufferFlags & BufferFlags.StructuredBuffer) != 0)
-                if (bufferDescription.StructureByteStride <= 0)
-                    throw new ArgumentException("Element size cannot be less or equal 0 for structured buffer");
-            
-
-            if ((bufferFlags & BufferFlags.ArgumentBuffer) == BufferFlags.ArgumentBuffer)
-                NativeResourceState |= ResourceStates.IndirectArgument;
-
-
-            //GPUVirtualAddress = NativeResource.GPUVirtualAddress;
-
-            //Span<int> bbs = sta
-            if (dataPointer != IntPtr.Zero)
-            {
-                if (heapType == HeapType.Upload)
-                {
-                    //var uploadMemory = NativeResource.Map(0);
-                    Interop.MemoryHelper.CopyMemory(0, dataPointer, SizeInBytes);
-                    //NativeResource.Unmap(0);
-                }
-                else
-                {
-
-                }
-            }
-
-            //NativeShaderResourceView = GetShaderResourceView(ViewFormat);
-            //NativeUnorderedAccessView = GetUnorderedAccessView(ViewFormat);
-
+            return ResourceDescription.Buffer(size, flags);
         }
 
 
 
-        internal CpuDescriptorHandle GetShaderResourceView(PixelFormat viewFormat)
+
+        public IntPtr Map(int subresource)
         {
-            CpuDescriptorHandle srv = new CpuDescriptorHandle();
-            if ((ViewFlags & BufferFlags.ShaderResource) != 0)
-            {
-                ShaderResourceViewDescription description = new ShaderResourceViewDescription
-                {
-                    Shader4ComponentMapping = 0x00001688,
-                    Format = ConvertExtensions.ToPixelFormat(viewFormat),
-                    ViewDimension = ShaderResourceViewDimension.Buffer,
-                    Buffer = new BufferShaderResourceView
-                    {
-                        NumElements = 0,
-                    }
-                };
-
-                if ((ViewFlags & BufferFlags.RawBuffer) == BufferFlags.RawBuffer)
-                    description.Buffer.Flags |= BufferShaderResourceViewFlags.Raw;
-
-
-
-                srv = GraphicsDevice.ShaderResourceViewAllocator.Allocate(1);
-                //GraphicsDevice.ShaderResourceViewAllocator(NativeResource, description, srv);
-            }
-            return srv;
+            IntPtr mappedResource = NativeResource?.Map(subresource) ?? throw new InvalidOperationException();
+            MappedResource = mappedResource;
+            return mappedResource;
         }
 
-        private ResourceDescription ConvertToNativeDescription(GraphicsDevice graphicsDevice, object description)
+        public void Unmap(int subresource)
         {
-            throw new NotImplementedException();
+            NativeResource?.Unmap(subresource);
+            MappedResource = IntPtr.Zero;
+        }
+
+
+        internal CpuDescriptorHandle CreateConstantBufferView()
+        {
+            CpuDescriptorHandle cpuHandle = GraphicsDevice.ShaderResourceViewAllocator.Allocate(1);
+
+            int constantBufferSize = (SizeInBytes + 255) & ~255;
+
+            ConstantBufferViewDescription cbvDescription = new ConstantBufferViewDescription()
+            {
+                BufferLocation = NativeResource!.GPUVirtualAddress,
+                SizeInBytes = constantBufferSize
+            };
+
+            GraphicsDevice.NativeDevice.CreateConstantBufferView(cbvDescription, cpuHandle);
+
+            return cpuHandle;
+        }
+
+        internal CpuDescriptorHandle CreateShaderResourceView()
+        {
+            CpuDescriptorHandle cpuHandle = GraphicsDevice.ShaderResourceViewAllocator.Allocate(1);
+
+            ShaderResourceViewDescription description = new ShaderResourceViewDescription
+            {
+                Shader4ComponentMapping = DefaultComponentMapping(),
+                ViewDimension = ShaderResourceViewDimension.Buffer,
+                Buffer = new BufferShaderResourceView()
+                {
+                    FirstElement = FirstElement,
+                    NumElements = ElementCount,
+                    StructureByteStride = StructureByteStride
+                },
+            };
+
+            GraphicsDevice.NativeDevice.CreateShaderResourceView(NativeResource, description, cpuHandle);
+
+            return cpuHandle;
+        }
+
+        internal CpuDescriptorHandle CreateUnorderedAccessView()
+        {
+            CpuDescriptorHandle cpuHandle = GraphicsDevice.ShaderResourceViewAllocator.Allocate(1);
+
+            UnorderedAccessViewDescription description = new UnorderedAccessViewDescription
+            {
+                ViewDimension = UnorderedAccessViewDimension.Buffer,
+                Buffer = new BufferUnorderedAccessView()
+                {
+                    FirstElement = FirstElement,
+                    NumElements = ElementCount,
+                    StructureByteStride = StructureByteStride
+                }
+            };
+
+            GraphicsDevice.NativeDevice.CreateUnorderedAccessView(NativeResource, null, description, cpuHandle);
+
+            return cpuHandle;
         }
     }
+
+    
 }

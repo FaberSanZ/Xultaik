@@ -69,7 +69,7 @@ namespace Zeckoxe.Core
             public static void Write<T>(IntPtr dstPointer, ref T value) => Unsafe.Copy(dstPointer.ToPointer(), ref value);
 
 
-            public static void Write<T>(IntPtr dstPointer, Span<T> values)
+            public static void Write<T>(IntPtr dstPointer, T[] values)
             {
                 if (values == null || values.Length == 0)
                     return;
