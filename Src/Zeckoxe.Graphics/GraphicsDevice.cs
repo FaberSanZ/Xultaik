@@ -338,8 +338,6 @@ namespace Zeckoxe.Graphics
 
         internal VkShaderModule LoadSPIR_V_Shader(string path, Zeckoxe.ShaderCompiler.ShaderCompiler.Stage stage)
         {
-            byte[] shaderCode = File.ReadAllBytes(path);
-
             Zeckoxe.ShaderCompiler.ShaderCompiler c = new Zeckoxe.ShaderCompiler.ShaderCompiler();
             var o = new CompileOptions();
 

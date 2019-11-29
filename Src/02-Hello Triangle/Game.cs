@@ -37,7 +37,6 @@ namespace _02_Hello_Triangle
 
         public PipelineState PipelineState { get; set; }
 
-
         public Game()
         {
             Window = new Window("Zeckoxe Engine - (Clear Screen)", 1000, 720)
@@ -58,32 +57,9 @@ namespace _02_Hello_Triangle
                     VSync = false,
                 },
             };
-
-
-            //hlslVulkan();
         }
 
 
-
-
-        public void hlslVulkan()
-        {
-            var c = new ShaderCompiler();
-            var o = new CompileOptions();
-
-            o.Language = CompileOptions.InputLanguage.GLSL;
-            
-
-            string testShader = File.ReadAllText("Shaders/shader.vert");
-
-            var r = c.Compile(testShader, ShaderCompiler.Stage.Vertex,  o, "testShader");
-
-            
-            byte[] bc = r.GetBytes();
-            foreach (var item in bc)
-                Console.WriteLine(item);
-            
-        }
 
 
         public void Initialize()
@@ -130,8 +106,8 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
-            foreach (var Description in Device.NativeAdapter.Description)
-                Console.WriteLine(Description);
+
+            Console.WriteLine(Device.NativeAdapter.Description);
 
 
         }
