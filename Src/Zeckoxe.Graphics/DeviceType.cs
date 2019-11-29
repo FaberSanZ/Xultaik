@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
 
 /*=============================================================================
-	PresentationParameters.cs
+	GraphicsAdapter.cs
 =============================================================================*/
 
 
@@ -11,19 +11,16 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
-    public struct PresentationParameters
+    public enum DeviceType : int
     {
+        Other = unchecked(0),
 
-        public int BackBufferWidth { get; set; }
+        IntegratedGPU = unchecked(1),
 
-        public int BackBufferHeight { get; set; }
+        DiscreteGPU = unchecked(2),
 
-        public IntPtr DeviceHandle { get; set; }
+        VirtualGPU = unchecked(3),
 
-        public Settings Settings { get; set; }
-
+        CPU = unchecked(4)
     }
-
-
-
 }

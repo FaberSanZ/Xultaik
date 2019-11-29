@@ -1,19 +1,20 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
 
 /*=============================================================================
-	FillMode.cs
+	GraphicsResourceUsage.cs
 =============================================================================*/
+
 
 namespace Zeckoxe.Graphics
 {
-    public enum FillMode : int
+    public enum GraphicsResourceUsage
     {
-        Solid = unchecked(0),
+        Default = unchecked(0),
 
-        Wireframe = unchecked(1),
+        Immutable = unchecked(1),
 
-        Point = unchecked(2),
+        Dynamic = unchecked(2),
 
-        FillRectangleNV = unchecked(1000153000)
+        Staging = unchecked(3),
     }
 }

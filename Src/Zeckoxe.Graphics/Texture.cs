@@ -8,74 +8,78 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Vortice.Direct3D12;
-using Vortice.DirectX.Direct3D;
-using static Vortice.Direct3D12.D3D12;
-using static Vortice.DXGI.DXGI;
+using Vulkan;
+using Zeckoxe.Core;
+using static Vulkan.VulkanNative;
 
 namespace Zeckoxe.Graphics
 {
-    public class Texture : GraphicsResource
+    public unsafe class Texture : GraphicsResource
     {
-        public int Width { get; private set; }
+        public TextureDescription Description { get; set; }
 
-        public int Height { get; private set; }
+        public TextureDimension Dimension
+        {
+            get => Description.Dimension;
+        }
+
+        public PixelFormat ViewFormat
+        {
+            get => Description.Format;
+        }
+
+        public int MipLevels
+        {
+            get => Description.MipLevels;
+        }
+
+        public int ArraySize
+        {
+            get => Description.ArraySize;
+        }
+
+        public int Width
+        {
+            get => Description.Width;
+        }
+
+        public int Height
+        {
+            get => Description.Height;
+        }
+
+        public int Depth
+        {
+            get => Description.Depth;
+        }
+
+        public PixelFormat Format
+        {
+            get => Description.Format;
+        }
 
 
 
-        internal CpuDescriptorHandle NativeRenderTargetView;
-        internal CpuDescriptorHandle NativeDepthStencilView;
-        internal ID3D12Resource Resource;
-        internal ID3D12Resource UploadResource;
 
         public Texture(GraphicsDevice device) : base(device)
         {
-
+            Recreate();
         }
 
 
-
-        internal void InitializeFromImpl(ID3D12Resource resource)
+        public void Recreate()
         {
-            Resource = resource;
 
-            NativeRenderTargetView = GetRenderTargetView();
         }
 
-        private CpuDescriptorHandle GetRenderTargetView()
+
+        public void Imple(DataBox dataBox)
         {
-            RenderTargetViewDescription RTVDescription = new RenderTargetViewDescription()
-            {
-                Buffer = new BufferRenderTargetView()
-                {
-                    FirstElement = 0,
-                    NumElements = 0
-                },  
-                //Texture1D,
-                Format = Vortice.DXGI.Format.R8G8B8A8_UNorm,
-                //Texture1DArray
-                Texture2D = new Texture2DRenderTargetView()
-                {
-                    MipSlice = 1,
-                    PlaneSlice = 0
-                },
-                //Texture2DArray
-                Texture2DMS = new Texture2DMultisampledRenderTargetView()
-                {
-                   // UnusedFieldNothingToDefine = 0x001,
-                },
-                //Texture2DMSArray
-                //Texture3D
-                ViewDimension = RenderTargetViewDimension.Texture2D
-                
-            };
+            var pixelsPtr = IntPtr.Zero;
 
-            CpuDescriptorHandle descriptorHandle = GraphicsDevice.RenderTargetViewAllocator.Allocate(1);
-
-            GraphicsDevice.NativeDevice.CreateRenderTargetView(Resource,/*null*/ RTVDescription, descriptorHandle);
-
-            return descriptorHandle;
+            //Interop.MemoryHelper.Copy(pixelsPtr, dataBox.DataPointer, dataBox.SlicePitch);
         }
+
 
     }
 }

@@ -8,199 +8,211 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Vortice.Direct3D12;
-using Vortice.DirectX.Direct3D;
-using static Vortice.Direct3D12.D3D12;
-using static Vortice.DXGI.DXGI;
+using Vulkan;
+using Zeckoxe.Core;
+using Zeckoxe.Mathematics;
+using static Vulkan.VulkanNative;
 
 namespace Zeckoxe.Graphics
 {
     public unsafe class CommandList : GraphicsResource
     {
-        internal ID3D12GraphicsCommandList nativeCommandList;
-        internal ID3D12PipelineState pipelineState;
-        internal ID3D12CommandAllocator commandAllocator;
-        internal Fence fence;
-        internal long fenceValue;
+
+        internal uint imageIndex;
+
+        public VkCommandBuffer CommandBuffer { get; set; }
 
 
-        public CommandList(GraphicsDevice device) : base(device)
+
+
+
+        public CommandList(GraphicsDevice graphicsDevice) : base(graphicsDevice)
         {
-            Initialize();
+            Recreate();
         }
 
 
 
-        private void Initialize()
+        public void Recreate()
         {
-            commandAllocator = GraphicsDevice.NativeDevice.CreateCommandAllocator( Vortice.Direct3D12.CommandListType.Direct);
-
-            fenceValue = 0;
-            fence = new Fence(GraphicsDevice, fenceValue);
-
-            nativeCommandList = GraphicsDevice.NativeDevice.CreateCommandList(Vortice.Direct3D12.CommandListType.Direct, commandAllocator, null);
-            // We close it as it starts in open state
-            nativeCommandList.Close();
-
+            CommandBuffer = NativeDevice.CreateCommandBufferPrimary();
         }
 
 
-        public void Wait()
+        public void Begin()
         {
-            fence.Wait(fenceValue);
-        }
+            // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
+            // With that we don't have to handle VK_NOT_READY
+            uint i = 0; 
+            vkAcquireNextImageKHR(NativeDevice.Device, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.ImageAvailableSemaphore, new VkFence(), &i);
+            imageIndex = i; 
 
 
-        public void Reset()
-        {
-            commandAllocator.Reset();
-            nativeCommandList.Reset(commandAllocator, null);
-        }
-
-
-        public void Close()
-        {
-            nativeCommandList.Close();
-        }
-
-
-        public void FinishFrame()
-        {
-            fenceValue++;
-
-            fence.Signal(GraphicsDevice.NativeDirectCommandQueue, fenceValue);
-        }
-
-
-        public void SetViewport(int x, int y, int w, int h)
-        {
-            var viewport = new Vortice.Mathematics.Viewport
+            VkCommandBufferBeginInfo beginInfo = new VkCommandBufferBeginInfo()
             {
-                Width = w,
-                Height = h,
-                X = x,
-                Y = y,
-                MaxDepth = 1.0f,
-                MinDepth = 0.0f
+                sType = VkStructureType.CommandBufferBeginInfo,
+                flags = VkCommandBufferUsageFlags.RenderPassContinue,
             };
-            nativeCommandList.RSSetViewport(viewport);
+
+            vkBeginCommandBuffer(CommandBuffer, &beginInfo);
         }
 
 
-        public void SetScissor(int x, int y, int w, int h)
+        public void BeginFramebuffer(Framebuffer framebuffer)
         {
-            //NativeCommandList.SetScissorRectangles();
-        }
 
-
-        public void SetColorTarget(CpuDescriptorHandle view)
-        {
-            //NativeCommandList.OMSetRenderTargets(1, view, null);
-        }
-
-
-        public void SetRenderTargets(CpuDescriptorHandle render, CpuDescriptorHandle depth)
-        {
-            //NativeCommandList.OMSetRenderTargets(1, render, depth);
-        }
-
-
-        public void SetRenderTargets(CpuDescriptorHandle render, Texture depth)
-        {
-            //NativeCommandList.SetRenderTargets(1, render, depth?.NativeDepthStencilView);
-        }
-
-
-        public void SetRenderTargets(Texture depth, Texture[] render)
-        {
-            //NativeCommandList.OMSetRenderTargets();
-            var ss = render[0].NativeRenderTargetView;
-            nativeCommandList.OMSetRenderTargets(ss, depth?.NativeDepthStencilView);
-        }
-
-
-        public void ClearTargetColor(CpuDescriptorHandle handle, float r, float g, float b, float a)
-        {
-            nativeCommandList.ClearRenderTargetView(handle, new Vortice.Mathematics.Color4(r, g, b, a));
-        }
-
-
-        public void ClearTargetColor(Texture texture, float r, float g, float b, float a)
-        {
-            nativeCommandList.ClearRenderTargetView(texture.NativeRenderTargetView, new Vortice.Mathematics.Color4(r, g, b, a));
-        }
-
-        public void ClearDepth(CpuDescriptorHandle handle, float depth)
-        {
-            nativeCommandList.ClearDepthStencilView(handle, ClearFlags.Depth, depth, 0);
-        }
-
-
-        public void ClearDepth(Texture texture, float depth)
-        {
-            nativeCommandList.ClearDepthStencilView(texture.NativeDepthStencilView, ClearFlags.Depth, depth, 0);
-        }
-
-        public void ResourceTransition(ID3D12Resource resource, ResourceStates before, ResourceStates after)
-        {
-            ResourceBarrier barrier = new ResourceBarrier(new ResourceTransitionBarrier(resource, (ResourceStates)before, (ResourceStates)after));
-            var barriers = stackalloc ResourceBarrier[1];
-            barriers[0] = new ResourceBarrier(new ResourceTransitionBarrier(resource, (ResourceStates)before, (ResourceStates)after));
-
-            nativeCommandList.ResourceBarrier(*barriers);
-            //NativeCommandList.ResourceBarrierTransition(resource, (ResourceStates)before, (ResourceStates)after);
-        }
-
-
-        public void ResourceTransition(Texture resource, ResourceStates before, ResourceStates after)
-        {
-            //ResourceBarrier barrier = new ResourceBarrier(new ResourceTransitionBarrier(resource, (ResourceStates)before, (ResourceStates)after));
-            var barriers = stackalloc ResourceBarrier[1];
-            barriers[0] = new ResourceBarrier(new ResourceTransitionBarrier(resource.Resource, (ResourceStates)before, (ResourceStates)after));
-
-            nativeCommandList.ResourceBarrier(*barriers);
-
-
-            //NativeCommandList.ResourceBarrierTransition(resource.Resource, (ResourceStates)before, (ResourceStates)after);
-        }
-
-
-
-        public void Draw(int count, bool indexed)
-        {
-            if (indexed)
+            VkRenderPassBeginInfo renderPassInfo = new VkRenderPassBeginInfo()
             {
-                DrawIndexed(count);
-            }
-            else
+                sType = VkStructureType.RenderPassBeginInfo,
+                renderPass = framebuffer.NativeRenderPass,
+                framebuffer = framebuffer.SwapChainFramebuffers[imageIndex],
+                renderArea = new VkRect2D()
+                {
+                    extent = new VkExtent2D(NativeDevice.NativeParameters.BackBufferWidth, NativeDevice.NativeParameters.BackBufferHeight)
+                },
+            };
+
+            vkCmdBeginRenderPass(CommandBuffer, &renderPassInfo, VkSubpassContents.Inline);
+        }
+
+
+        public void Clear(float R, float G, float B, float A = 1.0f)
+        {
+            VkClearColorValue clearValue = new VkClearColorValue(R, G, B);
+
+            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
+
+            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
+        }
+
+
+        public void Clear(RawColor color)
+        {
+            VkClearColorValue clearValue = new VkClearColorValue(color.R, color.G, color.B, color.A);
+
+            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
+
+            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
+        }
+
+
+
+        public void Clear(Vector4 vector4)
+        {
+            VkClearColorValue clearValue = new VkClearColorValue(vector4.X, vector4.Y, vector4.Z, vector4.W);
+
+            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
+
+            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
+        }
+
+        public void Clear(System.Numerics.Vector4 vector4)
+        {
+            VkClearColorValue clearValue = new VkClearColorValue(vector4.X, vector4.Y, vector4.Z, vector4.W);
+
+            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
+
+            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
+        }
+
+
+        public void SetPipelineState(PipelineState pipelineState)
+        {
+            vkCmdBindPipeline(CommandBuffer, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
+        }
+
+
+        public void DrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance)
+        {
+
+        }
+
+        public void SetScissor(int width, int height, int x, int y)
+        {
+            // Update dynamic scissor state
+            VkRect2D scissor = new VkRect2D();
+            scissor.extent.width = (uint)width;
+            scissor.extent.height = (uint)height;
+            scissor.offset.x = x;
+            scissor.offset.y = y;
+            vkCmdSetScissor(CommandBuffer, 0, 1, &scissor);
+        }
+
+        public void SetViewport(float Width, float Height, float X, float Y, float MinDepth = 0.0f, float MaxDepth = 1.0f)
+        {
+            VkViewport Viewport = new VkViewport()
             {
-                Draw(count);
-            }
+                width = Width,
+
+                height = Height,
+
+                x = X,
+
+                y = Y,
+
+                minDepth = MinDepth,
+
+                maxDepth = MaxDepth
+            };
+
+            vkCmdSetViewport(CommandBuffer, 0, 1, &Viewport);
         }
 
-        public void Draw(int count)
+        public void SetVertexBuffer(Buffer buffer)
         {
-            nativeCommandList.DrawInstanced(count, 1, 0, 0);
+
         }
 
-        public void DrawIndexed(int idxCnt)
+        public void SetIndexBuffer(Buffer buffer)
         {
 
-            nativeCommandList.DrawIndexedInstanced(idxCnt, 1, 0, 0, 0);
         }
 
-
-        public void BeginDraw()
+        public void Draw(uint vertexCount, uint instanceCount, uint firstVertex, int firstInstance)
         {
-            Reset();
+            vkCmdDraw(CommandBuffer, vertexCount, instanceCount, 0, 0);
+
         }
 
-        public void EndDraw()
+
+
+
+        public void End()
         {
-            nativeCommandList.Close();
-
-            GraphicsDevice.NativeDirectCommandQueue.ExecuteCommandList(this);
+            vkEndCommandBuffer(CommandBuffer);
         }
+
+
+        public void EndFramebuffer()
+        {
+            vkCmdEndRenderPass(CommandBuffer);
+
+        }
+
+
+        public void Submit()
+        {
+            VkSemaphore signalSemaphore = NativeDevice.RenderFinishedSemaphore;
+            VkSemaphore waitSemaphore = NativeDevice.ImageAvailableSemaphore;
+            VkPipelineStageFlags waitStages = VkPipelineStageFlags.ColorAttachmentOutput;
+            VkCommandBuffer commandBuffer = CommandBuffer;
+
+
+            VkSubmitInfo submitInfo = new VkSubmitInfo()
+            {
+                sType = VkStructureType.SubmitInfo,
+                waitSemaphoreCount = 1,
+                pWaitSemaphores = &waitSemaphore,
+                pWaitDstStageMask = &waitStages,
+                commandBufferCount = 1,
+                pCommandBuffers = &commandBuffer,
+                signalSemaphoreCount = 1,
+                pSignalSemaphores = &signalSemaphore,
+            };
+
+            vkQueueSubmit(NativeDevice.NativeCommandQueue, 1, &submitInfo, VkFence.Null);
+        }
+
 
     }
 }
