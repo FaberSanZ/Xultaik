@@ -4,20 +4,16 @@
 	CullMode.cs
 =============================================================================*/
 
-
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Zeckoxe.Graphics
 {
-    public enum CullMode : int
+    public enum CullMode
     {
-        None = unchecked(0),
+        None = 0,
 
-        Front = unchecked(1),
+        Front = 1,
 
-        Back = unchecked(2),
+        Back = 2,
+
+        FrontAndBack = 3
     }
 }

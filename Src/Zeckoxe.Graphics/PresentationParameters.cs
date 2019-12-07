@@ -1,4 +1,4 @@
-﻿// Copyright(c) 2019-2020 Faber Leonardo.All Rights Reserved.
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
 
 /*=============================================================================
 	PresentationParameters.cs
@@ -14,8 +14,6 @@ namespace Zeckoxe.Graphics
     public struct PresentationParameters
     {
 
-        public PixelFormat BackBufferFormat { get; set; }
-
         public int BackBufferWidth { get; set; }
 
         public int BackBufferHeight { get; set; }
@@ -25,4 +23,7 @@ namespace Zeckoxe.Graphics
         public Settings Settings { get; set; }
 
     }
+
+
+
 }
