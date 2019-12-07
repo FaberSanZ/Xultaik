@@ -36,7 +36,6 @@ namespace Zeckoxe.Graphics
 
 
 
-
         public Buffer(GraphicsDevice device, BufferDescription description) : base(device)
         {
             InitializeFrom(description);
