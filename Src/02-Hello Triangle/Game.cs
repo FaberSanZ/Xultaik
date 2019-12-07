@@ -6,10 +6,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Vortice.DirectX;
+using Vortice.Mathematics;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
+using Zeckoxe.Mathematics;
 using Buffer = Zeckoxe.Graphics.Buffer;
 //using Zeckoxe.Mathematics;
 
@@ -17,6 +20,19 @@ namespace _02_Hello_Triangle
 {
     public class Game : IDisposable
     {
+        struct Vertex
+        {
+            public readonly Vector3 Position;
+            public readonly Color4 Color;
+
+            public Vertex(Vector3 position, Color4 color)
+            {
+                Position = position;
+                Color = color;
+            }
+        };
+
+
         public Window Window { get; set; }
         public PresentationParameters Parameters { get; set; }
         public GraphicsAdapter Adapter { get; set; }
@@ -28,7 +44,7 @@ namespace _02_Hello_Triangle
         // New
         public Buffer VertexBuffer;
 
-
+        PipelineState PipelineState;
 
 
         public Game()
@@ -61,17 +77,36 @@ namespace _02_Hello_Triangle
 
             SwapChain = new SwapChain(Device);
 
+            PipelineState = new PipelineState(Device);
+
             CommandList = new CommandList(Device);
+
+            var o = Parameters.BackBufferWidth / Parameters.BackBufferHeight;
+
+            Vertex[] triangleVertices = new Vertex[]
+            {
+                  new Vertex(new Vector3(0f, 0.5f * o, 1.0f), new Color4(1.0f, 0.0f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(0.5f, -0.5f * o, 1.0f), new Color4(0.0f, 1.0f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(-0.5f, -0.5f * o, 1.0f), new Color4(0.0f, 0.0f, 1.0f, 1.0f))
+            };
+
 
 
             VertexBuffer = new Buffer(Device, new BufferDescription()
             {
                 Flags = BufferFlags.VertexBuffer,
                 HeapType = HeapType.Upload,
-                //SizeInBytes = Interop.
-                //StructureByteStride = Interop
+                SizeInBytes = SizeOf(triangleVertices),
+                StructureByteStride = Unsafe.SizeOf<Vertex>(),
             });
+
+
+            VertexBuffer.SetData(triangleVertices);
         }
+
+
+        public int SizeOf<T>(T[] data) where T : struct => data.Length * Unsafe.SizeOf<T>();
+        
 
 
         public void Run()
@@ -115,9 +150,16 @@ namespace _02_Hello_Triangle
         public void Draw()
         {
             CommandList.Reset();
-            CommandList.SetViewport(0, 0, 800, 600);
-            CommandList.SetScissor(0, 0, 800, 600);
+
+
             CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
+
+
+            CommandList.SetPipelineState(PipelineState);
+            CommandList.SetViewport(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
+            CommandList.SetScissor(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
+            CommandList.SetVertexBuffer(VertexBuffer);
+            CommandList.Draw(3);
             CommandList.EndDraw();
             CommandList.FinishFrame();
             SwapChain.Present();

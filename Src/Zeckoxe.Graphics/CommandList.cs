@@ -45,6 +45,15 @@ namespace Zeckoxe.Graphics
         }
 
 
+
+        public void SetPipelineState(PipelineState pipelineState)
+        {
+
+            nativeCommandList.SetPipelineState(pipelineState.oldPipelineState);
+
+            nativeCommandList.SetGraphicsRootSignature(pipelineState.RootSignature);
+
+        }
         public void Wait()
         {
             fence.Wait(fenceValue);
@@ -128,6 +137,7 @@ namespace Zeckoxe.Graphics
         public void ClearTargetColor(Texture texture, float r, float g, float b, float a)
         {
             nativeCommandList.ClearRenderTargetView(texture.NativeRenderTargetView, new Vortice.Mathematics.Color4(r, g, b, a));
+            nativeCommandList.OMSetRenderTargets(texture.NativeRenderTargetView);
         }
 
         public void ClearDepth(CpuDescriptorHandle handle, float depth)
@@ -163,8 +173,20 @@ namespace Zeckoxe.Graphics
 
             //NativeCommandList.ResourceBarrierTransition(resource.Resource, (ResourceStates)before, (ResourceStates)after);
         }
+        public void SetVertexBuffer(Buffer buffer)
+        {
+            nativeCommandList.IASetPrimitiveTopology(PrimitiveTopology.TriangleList);
+            //nativeCommandList.IASetVertexBuffers(buffer.VertexBufferView);
 
 
+            VertexBufferView vertexBufferView = new VertexBufferView()
+            {
+                BufferLocation = buffer.GPUVirtualAddress,
+                SizeInBytes = buffer.SizeInBytes,
+                StrideInBytes = buffer.StructureByteStride
+            };
+            nativeCommandList.IASetVertexBuffers(vertexBufferView);
+        }
 
         public void Draw(int count, bool indexed)
         {

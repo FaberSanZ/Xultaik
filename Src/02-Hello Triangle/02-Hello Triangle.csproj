@@ -16,6 +16,13 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <None Update="shaders.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
 
 
 </Project>
