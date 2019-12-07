@@ -126,6 +126,7 @@ namespace Zeckoxe.Graphics
 
 
 
+
             HeapProperties heapProp = new HeapProperties()
             {
                 Type = (Vortice.Direct3D12.HeapType)description.HeapType,
