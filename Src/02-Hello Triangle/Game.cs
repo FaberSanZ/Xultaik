@@ -169,14 +169,16 @@ namespace _02_Hello_Triangle
 
 
             CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
-
-
-            CommandList.SetPipelineState(PipelineState);
             CommandList.SetViewport(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
             CommandList.SetScissor(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
+
+            CommandList.SetPipelineState(PipelineState);
             CommandList.SetVertexBuffer(VertexBuffer);
             CommandList.SetIndexBuffer(IndexBuffer);
             CommandList.DrawIndexed(3);
+
+
+
             CommandList.EndDraw();
             CommandList.FinishFrame();
             SwapChain.Present();
