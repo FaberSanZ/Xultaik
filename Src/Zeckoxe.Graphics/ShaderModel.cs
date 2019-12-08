@@ -1,8 +1,9 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
 
 /*=============================================================================
-	ShaderStage.cs
+	PipelineState.cs
 =============================================================================*/
+
 
 
 
@@ -12,22 +13,18 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
-    public enum ShaderStage
+    public enum ShaderModel
     {
-        VertexShader = 0,
+        Model6_0,
 
-        PixelShader = 1,
+        Model6_1,
 
-        GeometryShader = 2,
+        Model6_2,
 
-        HullShader = 3,
+        Model6_3,
 
-        DomainShader = 4,
+        Model6_4,
 
-        ComputeShader = 5,
-
-        //Library = 6,
-
-        //Count = 7
+        Model6_5,
     }
 }
