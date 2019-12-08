@@ -13,7 +13,6 @@ namespace Zeckoxe.Graphics
 {
     public struct BufferDescription
     {
-
         public int SizeInBytes;
 
         public int StructureByteStride;
