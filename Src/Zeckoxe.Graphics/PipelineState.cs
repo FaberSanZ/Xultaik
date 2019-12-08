@@ -20,12 +20,6 @@ namespace Zeckoxe.Graphics
             return Compile(shaderStage, source, entryPoint, sourceName, new DxcCompilerOptions
             {
                 ShaderModel = shaderModel,
-                //PackMatrixInRowMajor = true,
-                //GenerateSPIRV = true,
-                //DisableOptimizations = true,
-
-
-
             });
         }
 
