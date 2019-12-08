@@ -188,17 +188,22 @@ namespace Zeckoxe.Graphics
             nativeCommandList.IASetVertexBuffers(vertexBufferView);
         }
 
-        public void Draw(int count, bool indexed)
+
+
+
+        public void SetIndexBuffer(Buffer buffer)
         {
-            if (indexed)
+
+            IndexBufferView indexBufferView = new IndexBufferView()
             {
-                DrawIndexed(count);
-            }
-            else
-            {
-                Draw(count);
-            }
+                BufferLocation = buffer.GPUVirtualAddress,
+                SizeInBytes = buffer.SizeInBytes,
+                //Format = Vortice.DXGI.Format.R16_UInt
+            };
+            nativeCommandList.IASetIndexBuffer(indexBufferView);
         }
+
+
 
         public void Draw(int count)
         {

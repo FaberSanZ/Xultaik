@@ -43,6 +43,7 @@ namespace _02_Hello_Triangle
 
         // New
         public Buffer VertexBuffer;
+        public Buffer IndexBuffer;
 
         PipelineState PipelineState;
 
@@ -91,6 +92,12 @@ namespace _02_Hello_Triangle
             };
 
 
+            int[] indices = new int[]
+            {
+                2, 1, 0
+            };
+
+
 
             VertexBuffer = new Buffer(Device, new BufferDescription()
             {
@@ -100,6 +107,17 @@ namespace _02_Hello_Triangle
                 StructureByteStride = Unsafe.SizeOf<Vertex>(),
             });
 
+
+
+            IndexBuffer = new Buffer(Device, new BufferDescription()
+            {
+                Flags = BufferFlags.VertexBuffer,
+                HeapType = HeapType.Upload,
+                SizeInBytes = SizeOf(indices),
+                StructureByteStride = Unsafe.SizeOf<int>(),
+            });
+
+            IndexBuffer.SetData(indices);
 
             VertexBuffer.SetData(triangleVertices);
         }
@@ -159,7 +177,8 @@ namespace _02_Hello_Triangle
             CommandList.SetViewport(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
             CommandList.SetScissor(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
             CommandList.SetVertexBuffer(VertexBuffer);
-            CommandList.Draw(3);
+            CommandList.SetIndexBuffer(IndexBuffer);
+            CommandList.DrawIndexed(3);
             CommandList.EndDraw();
             CommandList.FinishFrame();
             SwapChain.Present();

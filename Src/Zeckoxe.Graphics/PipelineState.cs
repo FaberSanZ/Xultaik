@@ -28,9 +28,6 @@ namespace Zeckoxe.Graphics
             IDxcOperationResult result = DxcCompiler.Compile(shaderStage, source, entryPoint, sourceName, options);
 
             return Dxc.GetBytesFromBlob(result.GetResult());
-
-
-
         }
     }
 
