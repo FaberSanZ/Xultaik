@@ -107,7 +107,6 @@ namespace _02_Hello_Triangle
             });
 
 
-
             IndexBuffer = new Buffer(Device, new BufferDescription()
             {
                 Flags = BufferFlags.VertexBuffer,
