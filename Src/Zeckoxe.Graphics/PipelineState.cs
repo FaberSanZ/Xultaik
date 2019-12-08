@@ -17,49 +17,6 @@ using Vortice.DXGI;
 namespace Zeckoxe.Graphics
 {
 
-
-
-    public class ShaderByteCode
-    {
-
-
-        public byte[] Data = Array.Empty<byte>();
-
-
-        public ShaderStage ShaderStage { get; set; }
-
-        public ShaderModel ShaderModel { get; set; }
-
-        public string Path { get; set; }
-
-        public string EntryPoint { get; set; }
-
-
-        public ShaderByteCode(string path, ShaderStage stage, string entrypoint, ShaderModel shaderModel = ShaderModel.Model6_0)
-        {
-            Recreate(path, stage, entrypoint, shaderModel);
-        }
-
-
-        public void Recreate(string path, ShaderStage stage, string entrypoint, ShaderModel shaderModel)
-        {
-            DxcCompilerOptions options = new DxcCompilerOptions()
-            {
-                ShaderModel = ConvertExtensions.ToDxcShaderModel(shaderModel),
-            };
-
-
-            IDxcOperationResult result = DxcCompiler.Compile(ConvertExtensions.ToDxcShaderStage(stage), File.ReadAllText(path), entrypoint, "", options);
-
-            Data = Dxc.GetBytesFromBlob(result.GetResult());
-        }
-
-
-        public static implicit operator byte[](ShaderByteCode value) => value.Data;
-
-    }
-
-
     public class PipelineState : GraphicsResource
     {
         /* Pipeline */
@@ -93,8 +50,8 @@ namespace Zeckoxe.Graphics
             var psoDesc = new GraphicsPipelineStateDescription()
             {
                 RootSignature = RootSignature,
-                VertexShader = new ShaderBytecode(new ShaderByteCode("shaders.hlsl", ShaderStage.VertexShader, "VS")),
-                PixelShader = new ShaderByteCode("shaders.hlsl", ShaderStage.PixelShader, "PS").Data,
+                VertexShader = new ShaderBytecode(new ShaderByteCode(File.ReadAllText("shaders.hlsl"), ShaderStage.VertexShader, "VS").Data )/*new ShaderBytecode(ShaderByteCode.CompileFromFile("shaders.hlsl", ShaderStage.VertexShader, "VS").Data)*/,
+                PixelShader = new ShaderBytecode(new ShaderByteCode(File.ReadAllText("shaders.hlsl"), ShaderStage.PixelShader, "PS").Data),
                 InputLayout = new InputLayoutDescription(inputElementDescs),
                 SampleMask = uint.MaxValue,
                 PrimitiveTopologyType = PrimitiveTopologyType.Triangle,
