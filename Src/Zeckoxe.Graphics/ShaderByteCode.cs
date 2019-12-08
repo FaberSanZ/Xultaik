@@ -34,7 +34,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public ShaderByteCode(string source, ShaderStage stage, string entrypoint, ShaderModel shaderModel = ShaderModel.Model6_1)
+        public ShaderByteCode(string source, ShaderStage stage, string entrypoint, ShaderModel shaderModel)
         {
             Source = source;
             ShaderStage = stage;
@@ -45,7 +45,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void Recreate()
+        internal void Recreate()
         {
             DxcCompilerOptions options = new DxcCompilerOptions()
             {
@@ -60,10 +60,22 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public static ShaderByteCode CompileFromFile(string fileName, ShaderStage stage, string entrypoint, ShaderModel shaderModel = ShaderModel.Model6_0)
+        public static ShaderByteCode CompileFromFile(string fileName, ShaderStage stage, string entrypoint = "", ShaderModel shaderModel = ShaderModel.Model6_0)
         {
+            if (string.IsNullOrEmpty(entrypoint))
+                entrypoint = ConvertExtensions.GetDefaultEntryPoint(stage);
+
+
             return new ShaderByteCode(File.ReadAllText(fileName), stage, entrypoint, shaderModel);
         }
+
+
+
+
+
+
+
+
 
         public static implicit operator byte[](ShaderByteCode value) => value.Data;
 

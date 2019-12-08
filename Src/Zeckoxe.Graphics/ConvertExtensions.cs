@@ -17,8 +17,30 @@ namespace Zeckoxe.Graphics
 {
     public static class ConvertExtensions
     {
+        public static string GetDefaultEntryPoint(ShaderStage stage)
+        {
+            switch (stage)
+            {
+                case ShaderStage.VertexShader:
+                    return "VS";
+                case ShaderStage.PixelShader:
+                    return "PS";
+                case ShaderStage.GeometryShader:
+                    return "GS";
+                case ShaderStage.HullShader:
+                    return "HS";
+                case ShaderStage.DomainShader:
+                    return "DS";
+                case ShaderStage.ComputeShader:
+                    return "CS";
 
-        public static DxcShaderModel ToDxcShaderModel(ShaderModel shaderStage)
+                default:
+                    return string.Empty;
+            }
+        }
+
+
+        internal static DxcShaderModel ToDxcShaderModel(ShaderModel shaderStage)
         {
             switch (shaderStage)
             {
@@ -45,7 +67,7 @@ namespace Zeckoxe.Graphics
             }
         }
 
-        public static DxcShaderStage ToDxcShaderStage(ShaderStage shaderStage)
+        internal static DxcShaderStage ToDxcShaderStage(ShaderStage shaderStage)
         {
             switch (shaderStage)
             {
@@ -80,7 +102,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public static PrimitiveTopology ToPrimitiveType(PrimitiveType primitiveType)
+        internal static PrimitiveTopology ToPrimitiveType(PrimitiveType primitiveType)
         {
             switch (primitiveType)
             {
@@ -117,7 +139,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public static Vortice.Direct3D12.FillMode ToFillMode(FillMode fillMode)
+        internal static Vortice.Direct3D12.FillMode ToFillMode(FillMode fillMode)
         {
             switch (fillMode)
             {
@@ -133,7 +155,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public static Vortice.Direct3D12.CullMode ToCullMode(CullMode cullMode)
+        internal static Vortice.Direct3D12.CullMode ToCullMode(CullMode cullMode)
         {
             switch (cullMode)
             {
@@ -182,7 +204,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public static Format ToPixelFormat(PixelFormat format)
+        internal static Format ToPixelFormat(PixelFormat format)
         {
 
             switch (format)

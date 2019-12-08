@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Vortice.DirectX;
@@ -78,7 +79,7 @@ namespace _02_Hello_Triangle
 
             SwapChain = new SwapChain(Device);
 
-            PipelineState = new PipelineState(Device);
+            CreatePSO();
 
             CommandList = new CommandList(Device);
 
@@ -118,6 +119,18 @@ namespace _02_Hello_Triangle
             IndexBuffer.SetData(indices);
 
             VertexBuffer.SetData(Vertices);
+        }
+
+
+        public void CreatePSO()
+        {
+            PipelineStateDescription pipelineStateDescription = new PipelineStateDescription()
+            {
+                VertexShader =  ShaderByteCode.CompileFromFile("shaders.hlsl", ShaderStage.VertexShader),                                // Compile #1
+                PixelShader = new ShaderByteCode(File.ReadAllText("shaders.hlsl"), ShaderStage.PixelShader, "PS", ShaderModel.Model6_0), // Compile #2
+            };
+
+            PipelineState = new PipelineState(Device, pipelineStateDescription);
         }
 
 

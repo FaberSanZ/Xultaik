@@ -19,15 +19,16 @@ namespace Zeckoxe.Graphics
 
     public class PipelineState : GraphicsResource
     {
-        /* Pipeline */
-        /* -- para este ejemplo no necesitamos pipeline ni root signature */
-        //ComPtr<ID3DBlob> LoadShader(LPCWSTR Filename, LPCSTR EntryPoint, LPCSTR Target);
+        PipelineStateDescription PipelineStateDescription { get; set; }
+
+
         internal ID3D12RootSignature RootSignature;
         internal ID3D12PipelineState oldPipelineState;
 
 
-        public PipelineState(GraphicsDevice device) : base(device)
+        public PipelineState(GraphicsDevice device, PipelineStateDescription description) : base(device)
         {
+            PipelineStateDescription = description;
             Recreate();
         }
 
@@ -40,7 +41,7 @@ namespace Zeckoxe.Graphics
 
         public void CreatePipeline()
         {
-            var inputElementDescs = new[]
+            InputElementDescription[] inputElementDescs = new InputElementDescription[]  
             {
                 new InputElementDescription("POSITION", 0, Format.R32G32B32_Float, 0, 0),
                 new InputElementDescription("COLOR", 0, Format.R32G32B32A32_Float, 12, 0),
@@ -50,8 +51,8 @@ namespace Zeckoxe.Graphics
             var psoDesc = new GraphicsPipelineStateDescription()
             {
                 RootSignature = RootSignature,
-                VertexShader = new ShaderBytecode(new ShaderByteCode(File.ReadAllText("shaders.hlsl"), ShaderStage.VertexShader, "VS").Data )/*new ShaderBytecode(ShaderByteCode.CompileFromFile("shaders.hlsl", ShaderStage.VertexShader, "VS").Data)*/,
-                PixelShader = new ShaderBytecode(new ShaderByteCode(File.ReadAllText("shaders.hlsl"), ShaderStage.PixelShader, "PS").Data),
+                VertexShader = PipelineStateDescription.VertexShader.Data,
+                PixelShader = PipelineStateDescription.PixelShader.Data,
                 InputLayout = new InputLayoutDescription(inputElementDescs),
                 SampleMask = uint.MaxValue,
                 PrimitiveTopologyType = PrimitiveTopologyType.Triangle,
@@ -65,7 +66,12 @@ namespace Zeckoxe.Graphics
                 StreamOutput = new StreamOutputDescription()
                 {
                     //RasterizedStream =
-                }
+                },
+                HullShader = null,
+                GeometryShader = null,
+                DomainShader = null,
+                
+                
             };
 
             oldPipelineState = GraphicsDevice.NativeDevice.CreateGraphicsPipelineState(psoDesc);
