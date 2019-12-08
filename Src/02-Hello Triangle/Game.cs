@@ -6,11 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using Vortice.DirectX;
+using Vortice.Mathematics;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
-using Zeckoxe.ShaderCompiler;
+using Zeckoxe.Mathematics;
 using Buffer = Zeckoxe.Graphics.Buffer;
 //using Zeckoxe.Mathematics;
 
@@ -18,28 +20,36 @@ namespace _02_Hello_Triangle
 {
     public class Game : IDisposable
     {
+        struct Vertex
+        {
+            public readonly Vector3 Position;
+            public readonly Color4 Color;
+
+            public Vertex(Vector3 position, Color4 color)
+            {
+                Position = position;
+                Color = color;
+            }
+        };
+
 
         public Window Window { get; set; }
-
         public PresentationParameters Parameters { get; set; }
-
-        public GraphicsInstance Instance { get; set; }
-
         public GraphicsAdapter Adapter { get; set; }
-
         public GraphicsDevice Device { get; set; }
+        public SwapChain SwapChain { get; set; }
+        public CommandList CommandList { get; set; }
 
-        public Texture Texture { get; set; }
 
-        public Framebuffer Framebuffer { get; set; }
+        // New
+        public Buffer VertexBuffer;
 
-        public GraphicsContext Context { get; set; }
+        PipelineState PipelineState;
 
-        public PipelineState PipelineState { get; set; }
 
         public Game()
         {
-            Window = new Window("Zeckoxe Engine - (Clear Screen)", 1000, 720)
+            Window = new Window("Zeckoxe Engine - (Hello Triangle)", 1000, 720)
             {
                 StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
             };
@@ -52,33 +62,51 @@ namespace _02_Hello_Triangle
                 DeviceHandle = Window.Handle,
                 Settings = new Settings()
                 {
-                    Validation = true,
-                    Fullscreen = true,
+                    Fullscreen = false,
                     VSync = false,
                 },
             };
         }
 
-
-
-
         public void Initialize()
         {
-            Instance = new GraphicsInstance(Parameters);
 
-            Adapter = new GraphicsAdapter(Instance);
+            Adapter = new GraphicsAdapter();
 
-            Device = new GraphicsDevice(Adapter);
+            Device = new GraphicsDevice(Adapter, Parameters);
 
-            Texture = new Texture(Device);
+            SwapChain = new SwapChain(Device);
 
-            Framebuffer = new Framebuffer(Device);
+            PipelineState = new PipelineState(Device);
 
-            Context = new GraphicsContext(Device);
+            CommandList = new CommandList(Device);
+
+            var o = Parameters.BackBufferWidth / Parameters.BackBufferHeight;
+
+            Vertex[] triangleVertices = new Vertex[]
+            {
+                  new Vertex(new Vector3(0f, 0.5f * o, 1.0f), new Color4(1.0f, 0.0f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(0.5f, -0.5f * o, 1.0f), new Color4(0.0f, 1.0f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(-0.5f, -0.5f * o, 1.0f), new Color4(0.0f, 0.0f, 1.0f, 1.0f))
+            };
 
 
-            PipelineState = new PipelineState(Device, new string[] { "Shaders/VertexShader.hlsl", "Shaders/PixelShader.hlsl" }, Framebuffer);
+
+            VertexBuffer = new Buffer(Device, new BufferDescription()
+            {
+                Flags = BufferFlags.VertexBuffer,
+                HeapType = HeapType.Upload,
+                SizeInBytes = SizeOf(triangleVertices),
+                StructureByteStride = Unsafe.SizeOf<Vertex>(),
+            });
+
+
+            VertexBuffer.SetData(triangleVertices);
         }
+
+
+        public int SizeOf<T>(T[] data) where T : struct => data.Length * Unsafe.SizeOf<T>();
+        
 
 
         public void Run()
@@ -106,9 +134,11 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
+            foreach (var Description in Device.NativeAdapter.Description)
+                Console.WriteLine(Description);
 
-            Console.WriteLine(Device.NativeAdapter.Description);
-
+            foreach (var VendorId in Device.NativeAdapter.VendorId)
+                Console.WriteLine(VendorId);
 
         }
 
@@ -119,24 +149,21 @@ namespace _02_Hello_Triangle
 
         public void Draw()
         {
-            CommandList CommandList = Context.CommandList;
+            CommandList.Reset();
 
-            Device.WaitIdle();
 
-            CommandList.Begin();
-            CommandList.BeginFramebuffer(Framebuffer);
-            CommandList.Clear(0.0f, 0.2f, 0.4f, 1.0f);
+            CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
 
-            CommandList.SetViewport(Window.Width, Window.Height, 0, 0);
-            CommandList.SetScissor(Window.Width, Window.Height, 0, 0);
+
             CommandList.SetPipelineState(PipelineState);
-            CommandList.Draw(3, 1, 0, 0);
-
-            CommandList.EndFramebuffer();
-            CommandList.End();
-            CommandList.Submit();
-
-            Device.NativeSwapChain.Present();
+            CommandList.SetViewport(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
+            CommandList.SetScissor(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
+            CommandList.SetVertexBuffer(VertexBuffer);
+            CommandList.Draw(3);
+            CommandList.EndDraw();
+            CommandList.FinishFrame();
+            SwapChain.Present();
+            CommandList.Wait();
         }
 
         public void Dispose()

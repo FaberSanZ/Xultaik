@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01-ClearScreen", "01-ClearS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "02-Hello Triangle", "02-Hello Triangle\02-Hello Triangle.csproj", "{6FD5A0C0-5EDB-4E64-9178-F17D2F3E94B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeckoxe.ShaderCompiler", "Zeckoxe.ShaderCompiler\Zeckoxe.ShaderCompiler.csproj", "{D564F170-EAFB-4B5E-81A4-2FB9DDAA930C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,10 +81,6 @@ Global
 		{6FD5A0C0-5EDB-4E64-9178-F17D2F3E94B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FD5A0C0-5EDB-4E64-9178-F17D2F3E94B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FD5A0C0-5EDB-4E64-9178-F17D2F3E94B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D564F170-EAFB-4B5E-81A4-2FB9DDAA930C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D564F170-EAFB-4B5E-81A4-2FB9DDAA930C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D564F170-EAFB-4B5E-81A4-2FB9DDAA930C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D564F170-EAFB-4B5E-81A4-2FB9DDAA930C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

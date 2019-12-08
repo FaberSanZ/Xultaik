@@ -4,92 +4,66 @@
 	GraphicsAdapter.cs
 =============================================================================*/
 
-
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Zeckoxe.Core;
-using Vulkan;
-using static Vulkan.VulkanNative;
+using Vortice;
+using Vortice.DXGI;
+using static Vortice.DXGI.DXGI;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class GraphicsAdapter
+    public class GraphicsAdapter
     {
-        public GraphicsInstance DefaultInstance { get; private set; }
+        public List<string> Description { get; private set; } = new List<string>();
 
-        public DeviceType DeviceType => (DeviceType)Properties.deviceType;
+        public List<int> VendorId { get; private set; } = new List<int>();
 
-        public uint VendorId => Properties.vendorID;
 
-        public string Description
+
+        internal IDXGIAdapter Adapter;
+        internal List<IDXGIAdapter> Adapters = new List<IDXGIAdapter>();
+        internal IDXGIFactory4 NativeFactory;
+
+        public GraphicsAdapter()
         {
-            get
-            {
-                VkPhysicalDeviceProperties deviceProperties = Properties;
-                return Interop.String.FromPointer(deviceProperties.deviceName);
-            }
+            InitializeFromImpl();
         }
 
 
 
-
-
-
-
-        internal VkPhysicalDevice NativePhysicalDevice { get; private set; }
-        internal List<VkPhysicalDevice> NativePhysicalDevices { get; private set; }
-        internal VkPhysicalDeviceProperties Properties { get; private set; }
-
-
-        public GraphicsAdapter(GraphicsInstance Instance)
-        {
-
-            DefaultInstance = Instance;
-
-            Recreate();
-        }
 
         public void Recreate()
         {
-            NativePhysicalDevices = new List<VkPhysicalDevice>();
-
-            NativePhysicalDevices = GetPhysicalDevice();
-
-            foreach (var item in NativePhysicalDevices)
-                NativePhysicalDevice = item;
-            
-
-            Properties = GetProperties();
+            InitializeFromImpl();
         }
 
-        internal VkPhysicalDeviceProperties GetProperties()
+        internal void InitializeFromImpl()
         {
-            vkGetPhysicalDeviceProperties(NativePhysicalDevice, out var physicalDeviceProperties);
-            return physicalDeviceProperties;
+
+            if (CreateDXGIFactory2(true, out IDXGIFactory4 tempDXGIFactory4).Failure)
+                throw new InvalidOperationException("Cannot create IDXGIFactory4");
+
+
+            NativeFactory = tempDXGIFactory4;
+
+
+            foreach (IDXGIAdapter1 adapter in NativeFactory.EnumAdapters1())
+            {
+                AdapterDescription1 desc = adapter.Description1;
+
+                // Don't select the Basic Render Driver adapter.
+                if ((desc.Flags & AdapterFlags.Software) != AdapterFlags.None)
+                    continue;
+
+
+                Adapters.Add(adapter);
+                Description.Add(adapter.Description.Description);
+                VendorId.Add(adapter.Description.DeviceId);
+            }
+
+            Adapter = Adapters[0]; // TODO:
+
         }
-
-
-        internal List<VkPhysicalDevice> GetPhysicalDevice()
-        {
-            // Physical Device
-            uint Count = 0;
-            vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, null);
-
-            // Enumerate devices
-            VkPhysicalDevice* physicalDevices = stackalloc VkPhysicalDevice[(int)Count];
-            vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, physicalDevices);
-
-            List<VkPhysicalDevice> vkPhysicalDevices = new List<VkPhysicalDevice>();
-
-            for (int i = 0; i < Count; i++)
-                vkPhysicalDevices.Add(physicalDevices[i]);
-
-
-            return vkPhysicalDevices;
-        }
-
     }
 }
