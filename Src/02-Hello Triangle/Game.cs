@@ -82,13 +82,12 @@ namespace _02_Hello_Triangle
 
             CommandList = new CommandList(Device);
 
-            var o = Parameters.BackBufferWidth / Parameters.BackBufferHeight;
 
-            Vertex[] triangleVertices = new Vertex[]
+            Vertex[] Vertices = new Vertex[]
             {
-                  new Vertex(new Vector3(0f, 0.5f * o, 1.0f), new Color4(1.0f, 0.0f, 0.0f, 1.0f)),
-                  new Vertex(new Vector3(0.5f, -0.5f * o, 1.0f), new Color4(0.0f, 1.0f, 0.0f, 1.0f)),
-                  new Vertex(new Vector3(-0.5f, -0.5f * o, 1.0f), new Color4(0.0f, 0.0f, 1.0f, 1.0f))
+                  new Vertex(new Vector3(0f, 0.65f, 1.0f), new Color4(1.0f, 0.0f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(0.5f, -0.65f, 1.0f), new Color4(0.0f, 1.0f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(-0.5f, -0.65f, 1.0f), new Color4(0.0f, 0.0f, 1.0f, 1.0f))
             };
 
 
@@ -103,7 +102,7 @@ namespace _02_Hello_Triangle
             {
                 Flags = BufferFlags.VertexBuffer,
                 HeapType = HeapType.Upload,
-                SizeInBytes = SizeOf(triangleVertices),
+                SizeInBytes = SizeOf(Vertices),
                 StructureByteStride = Unsafe.SizeOf<Vertex>(),
             });
 
@@ -119,7 +118,7 @@ namespace _02_Hello_Triangle
 
             IndexBuffer.SetData(indices);
 
-            VertexBuffer.SetData(triangleVertices);
+            VertexBuffer.SetData(Vertices);
         }
 
 
