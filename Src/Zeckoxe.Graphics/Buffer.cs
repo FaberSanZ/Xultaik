@@ -28,12 +28,10 @@ namespace Zeckoxe.Graphics
         public int StructureByteStride => Description.StructureByteStride;
 
 
-
         //internal
         internal ID3D12Resource NativeResource;
         internal CpuDescriptorHandle? constantBufferView;
         internal long GPUVirtualAddress;
-
 
 
 
@@ -123,6 +121,7 @@ namespace Zeckoxe.Graphics
                     Quality = 0
                 }
             };
+
 
 
 
