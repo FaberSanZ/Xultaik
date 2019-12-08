@@ -30,6 +30,11 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <Folder Include="Shaders\" />
+  </ItemGroup>
+
+
 
 
 </Project>

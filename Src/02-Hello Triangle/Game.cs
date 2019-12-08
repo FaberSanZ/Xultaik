@@ -85,9 +85,9 @@ namespace _02_Hello_Triangle
 
             Vertex[] Vertices = new Vertex[]
             {
-                  new Vertex(new Vector3(0f, 0.65f, 1.0f), new Color4(2.3f, 0.0f, 0.0f, 1.0f)),
-                  new Vertex(new Vector3(0.5f, -0.65f, 1.0f), new Color4(0.0f, 2.3f, 0.0f, 1.0f)),
-                  new Vertex(new Vector3(-0.5f, -0.65f, 1.0f), new Color4(0.0f, 0.0f, 2.3f, 1.0f))
+                  new Vertex(new Vector3(0f, 0.65f, 1.0f), new Color4(1.8f, 0.0f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(0.5f, -0.65f, 1.0f), new Color4(0.0f, 1.8f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(-0.5f, -0.65f, 1.0f), new Color4(0.0f, 0.0f, 1.8f, 1.0f))
             };
 
 
