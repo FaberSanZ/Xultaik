@@ -8,27 +8,60 @@ using Vortice.DXGI;
 
 namespace Zeckoxe.Graphics
 {
-    public static class ShaderCompiler
+
+    public enum ShaderModel
     {
-        public static byte[] Compile(DxcShaderStage shaderStage, string source, string entryPoint, string sourceName = "")
+        Model6_0,
+
+        Model6_1,
+
+        Model6_2,
+
+        Model6_3,
+
+        Model6_4,
+
+        Model6_5,
+    }
+
+    public class ShaderByteCode
+    {
+
+
+        public byte[] Data = Array.Empty<byte>();
+
+
+        public ShaderStage ShaderStage { get; set; }
+
+        public ShaderModel ShaderModel { get; set; }
+
+        public string Path { get; set; }
+
+        public string EntryPoint { get; set; }
+
+
+        public ShaderByteCode(string path, ShaderStage stage, string entrypoint, ShaderModel shaderModel = ShaderModel.Model6_0)
         {
-            return Compile(shaderStage, File.ReadAllText(source), entryPoint, sourceName, new DxcShaderModel(6, 1)/* DxcShaderModel.Model6_0*/);
+            Recreate(path, stage, entrypoint, shaderModel);
         }
 
-        public static byte[] Compile(DxcShaderStage shaderStage, string source, string entryPoint, string sourceName, DxcShaderModel shaderModel)
+
+        public void Recreate(string path, ShaderStage stage, string entrypoint, ShaderModel shaderModel)
         {
-            return Compile(shaderStage, source, entryPoint, sourceName, new DxcCompilerOptions
+            DxcCompilerOptions options = new DxcCompilerOptions()
             {
-                ShaderModel = shaderModel,
-            });
+                ShaderModel = ConvertExtensions.ToDxcShaderModel(shaderModel),
+            };
+
+
+            IDxcOperationResult result = DxcCompiler.Compile(ConvertExtensions.ToDxcShaderStage(stage), File.ReadAllText(path), entrypoint, "", options);
+
+            Data = Dxc.GetBytesFromBlob(result.GetResult());
         }
 
-        public static byte[] Compile(DxcShaderStage shaderStage, string source, string entryPoint, string sourceName, DxcCompilerOptions options)
-        {
-            IDxcOperationResult result = DxcCompiler.Compile(shaderStage, source, entryPoint, sourceName, options);
 
-            return Dxc.GetBytesFromBlob(result.GetResult());
-        }
+        public static implicit operator byte[](ShaderByteCode value) => value.Data;
+
     }
 
 
@@ -61,14 +94,12 @@ namespace Zeckoxe.Graphics
                 new InputElementDescription("COLOR", 0, Format.R32G32B32A32_Float, 12, 0),
 
             };
-            var VertexShaderBytecode = ShaderCompiler.Compile(DxcShaderStage.VertexShader, "shaders.hlsl", "VS");
-            var PixelShaderBytecode = ShaderCompiler.Compile(DxcShaderStage.PixelShader, "shaders.hlsl", "PS");
 
             var psoDesc = new GraphicsPipelineStateDescription()
             {
                 RootSignature = RootSignature,
-                VertexShader = VertexShaderBytecode,
-                PixelShader = PixelShaderBytecode,
+                VertexShader = new ShaderBytecode(new ShaderByteCode("shaders.hlsl", ShaderStage.VertexShader, "VS")),
+                PixelShader = new ShaderByteCode("shaders.hlsl", ShaderStage.PixelShader, "PS").Data,
                 InputLayout = new InputLayoutDescription(inputElementDescs),
                 SampleMask = uint.MaxValue,
                 PrimitiveTopologyType = PrimitiveTopologyType.Triangle,

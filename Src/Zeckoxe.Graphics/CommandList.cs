@@ -128,12 +128,6 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void ClearTargetColor(CpuDescriptorHandle handle, float r, float g, float b, float a)
-        {
-            nativeCommandList.ClearRenderTargetView(handle, new Vortice.Mathematics.Color4(r, g, b, a));
-        }
-
-
         public void ClearTargetColor(Texture texture, float r, float g, float b, float a)
         {
             nativeCommandList.ClearRenderTargetView(texture.NativeRenderTargetView, new Vortice.Mathematics.Color4(r, g, b, a));
@@ -176,8 +170,6 @@ namespace Zeckoxe.Graphics
         public void SetVertexBuffer(Buffer buffer)
         {
             nativeCommandList.IASetPrimitiveTopology(PrimitiveTopology.TriangleList);
-            //nativeCommandList.IASetVertexBuffers(buffer.VertexBufferView);
-
 
             VertexBufferView vertexBufferView = new VertexBufferView()
             {

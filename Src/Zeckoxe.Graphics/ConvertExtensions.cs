@@ -11,11 +11,75 @@ using System.Text;
 using Vortice.DXGI;
 using Vortice.DirectX.Direct3D;
 using Vortice.Direct3D12;
+using Vortice.Dxc;
 
 namespace Zeckoxe.Graphics
 {
     public static class ConvertExtensions
     {
+
+        public static DxcShaderModel ToDxcShaderModel(ShaderModel shaderStage)
+        {
+            switch (shaderStage)
+            {
+                case ShaderModel.Model6_0:
+                    return new DxcShaderModel(6, 0);
+
+                case ShaderModel.Model6_1:
+                    return new DxcShaderModel(6, 1);
+
+                case ShaderModel.Model6_2:
+                    return new DxcShaderModel(6, 2);
+
+                case ShaderModel.Model6_3:
+                    return new DxcShaderModel(6, 3);
+
+                case ShaderModel.Model6_4:
+                    return new DxcShaderModel(6, 4);
+
+                case ShaderModel.Model6_5:
+                    return new DxcShaderModel(6, 5);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(shaderStage));
+            }
+        }
+
+        public static DxcShaderStage ToDxcShaderStage(ShaderStage shaderStage)
+        {
+            switch (shaderStage)
+            {
+                case ShaderStage.VertexShader:
+                    return DxcShaderStage.VertexShader;
+
+                case ShaderStage.PixelShader:
+                    return DxcShaderStage.PixelShader;
+
+                case ShaderStage.GeometryShader:
+                    return DxcShaderStage.GeometryShader;
+
+                case ShaderStage.HullShader:
+                    return DxcShaderStage.HullShader;
+
+                case ShaderStage.DomainShader:
+                    return DxcShaderStage.DomainShader;
+
+                case ShaderStage.ComputeShader:
+                    return DxcShaderStage.ComputeShader;
+
+                //case ShaderStage.Library:
+                //    return DxcShaderStage.VertexShader;
+
+                //case ShaderStage.Count:
+                //    return DxcShaderStage.VertexShader;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(shaderStage));
+            }
+        }
+
+
+
         public static PrimitiveTopology ToPrimitiveType(PrimitiveType primitiveType)
         {
             switch (primitiveType)
