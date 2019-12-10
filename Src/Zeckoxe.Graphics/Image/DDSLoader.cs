@@ -8,7 +8,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
+using Vortice.Direct3D12;
+using Zeckoxe.Graphics;
 
 namespace Zeckoxe.Image
 {
@@ -94,5 +97,26 @@ namespace Zeckoxe.Image
 
             Luminance = 0x20000,
         }
+
+
+
+        [Flags]
+        public enum HeaderFlags
+        {
+            Texture = 0x00001007, 
+
+            Mipmap = 0x00020000, 
+
+            Volume = 0x00800000, 
+
+            Pitch = 0x00000008, 
+
+            LinearSize = 0x00080000, 
+
+            Height = 0x00000002, 
+
+            Width = 0x00000004, 
+        }
+
     }
 }
