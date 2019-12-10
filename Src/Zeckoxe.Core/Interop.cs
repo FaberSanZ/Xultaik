@@ -32,10 +32,10 @@ namespace Zeckoxe.Core
 
 
 
-        public static T* AllocToPointer<T>(T[] values) where T : unmanaged
+        public static T AllocToPointer<T>(T[] values) where T : unmanaged
         {
-            if (values == null || values.Length == 0)
-                return (T*)IntPtr.Zero.ToPointer();
+            //if (values == null || values.Length == 0)
+            //    return (;
             
 
             int structSize = SizeOf<T>();
@@ -49,7 +49,7 @@ namespace Zeckoxe.Core
                 walk += structSize;
             }
 
-            return (T*)ptr.ToPointer();
+            return (T)Marshal.PtrToStructure(ptr, typeof(T)); ;
         }
 
 
