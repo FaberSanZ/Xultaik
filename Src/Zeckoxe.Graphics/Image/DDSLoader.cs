@@ -66,7 +66,7 @@ namespace Zeckoxe.Image
         }
 
 
-        enum FlagsDX10
+        public enum FlagsDX10
         {
             AlphaModeUnknown = 0x0,
 
@@ -77,6 +77,22 @@ namespace Zeckoxe.Image
             AlphaModeOpaque = 0x3,
 
             AlphaModeCustom = 0x4,
+        }
+
+
+        public enum DDSPixelFormat
+        {
+            AlphaPixels = 0x1,
+
+            Alpha = 0x2,
+
+            Fourcc = 0x4,
+
+            RGB = 0x40,
+
+            YUV = 0x200,
+
+            Luminance = 0x20000,
         }
     }
 }
