@@ -17,19 +17,19 @@ namespace Zeckoxe.Graphics
     {
         public byte[] Data { get; internal set; } = Array.Empty<Byte>();
 
-        public int Width { get; private set; }
+        public int Width { get; set; }
 
-        public int Height { get; private set; }
+        public int Height { get; set; }
 
-        public int Depth { get; private set; }
+        public int Depth { get; set; }
 
-        public int MipMaps { get; private set; }
+        public int MipMaps { get; set; }
 
         public int Size { get; set; }
 
-        public bool IsCubeMap { get; private set; }
+        public bool IsCubeMap { get; set; }
 
-        public PixelFormat   Format { get; private set; }
+        public PixelFormat   Format { get; set; }
 
 
 
@@ -43,6 +43,19 @@ namespace Zeckoxe.Graphics
             Size = size;
             IsCubeMap = isCubeMap;
             Format = format;
+        }
+
+
+        public TextureData()
+        {
+            Data = Array.Empty<byte>();
+            Width = 0;
+            Height = 0;
+            Depth = 0;
+            MipMaps = 0;
+            Size = 0;
+            IsCubeMap = false;
+            Format = PixelFormat.Unknown;
         }
 
     }

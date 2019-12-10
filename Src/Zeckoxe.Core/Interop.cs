@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -30,7 +31,14 @@ namespace Zeckoxe.Core
             return Marshal.AllocHGlobal(byteCount);
         }
 
-
+        public static T ToStructure<T>(byte[] bytes, int start, int count) where T : struct
+        {
+            byte[] temp = bytes.Skip(start).Take(count).ToArray();
+            GCHandle handle = GCHandle.Alloc(temp, GCHandleType.Pinned);
+            T stuff = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
+            handle.Free();
+            return stuff;
+        }
 
         public static T AllocToPointer<T>(T[] values) where T : unmanaged
         {

@@ -18,50 +18,9 @@ using Zeckoxe.Graphics;
 
 namespace Zeckoxe.Image
 {
-    public static class help
-    {
-        public static T ToStructure<T>(this byte[] bytes, int start, int count) where T : struct
-        {
-            byte[] temp = bytes.Skip(start).Take(count).ToArray();
-            GCHandle handle = GCHandle.Alloc(temp, GCHandleType.Pinned);
-            T stuff = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
-            handle.Free();
-            return stuff;
-        }
-    }
+
     public class DDSLoader
     {
-        public enum Caps
-        {
-            Complex = 0x8,
-
-            Mipmap = 0x400000,
-
-            Texture = 0x1000,
-        }
-
-
-        [Flags]
-        public enum Caps2
-        {
-            Cubemap = 0x200,
-
-            CubemapPositiveX = 0x400,
- 
-            CubemapNegativeX = 0x800,
- 
-            CubemapPositiveY = 0x1000,
-
-            CubemapNegativeY = 0x2000,
-
-            CubemapPositiveZ = 0x4000,
-
-            CubemapNegativeZ = 0x8000,
-
-            Volume = 0x200000,
-
-            AllFaces = 0x200 | CubemapPositiveX | CubemapNegativeX | CubemapPositiveY | CubemapNegativeY | CubemapPositiveZ | CubemapNegativeZ,
-        }
 
         public enum FlagTypes
         {
@@ -207,10 +166,240 @@ namespace Zeckoxe.Image
             GdiCompatible = unchecked(512),
         }
 
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct DdsHeader
+        {
+            const int DDSMagic = 0x20534444;
+
+            public readonly static int StructSize = Interop.SizeOf<DdsHeader>();
+
+            public int Size;
+
+            public FlagTypes Flags;
+
+            public int Height;
+
+            public int Width;
+
+            public int PitchOrLinearSize;
+
+            public int Depth;
+
+            public int MipMapCount;
+
+            private readonly uint unused1;
+            private readonly uint unused2;
+            private readonly uint unused3;
+            private readonly uint unused4;
+            private readonly uint unused5;
+            private readonly uint unused6;
+            private readonly uint unused7;
+            private readonly uint unused8;
+            private readonly uint unused9;
+            private readonly uint unused10;
+            private readonly uint unused11;
+
+            public DDSPixelFormat PixelFormat;
+
+            public SurfaceFlags SurfaceFlags;
+
+            public CubemapFlags CubemapFlags;
+
+            private readonly uint unused12;
+            private readonly uint unused13;
+            private readonly uint unused14;
+
+
+            public static bool GetInfo(byte[] data, out DdsHeader header, out HeaderDXT10? header10, out int offset)
+            {
+                // Validate DDS file in memory
+                header = new DdsHeader();
+                header10 = null;
+                offset = 0;
+
+                if (data.Length < (sizeof(uint) + DdsHeader.StructSize))
+                {
+                    return false;
+                }
+
+                // First is magic number
+                int dwMagicNumber = BitConverter.ToInt32(data, 0);
+                if (dwMagicNumber != DdsHeader.DDSMagic)
+                {
+                    return false;
+                }
+
+                header = Interop.ToStructure<DdsHeader>(data, 4, DdsHeader.StructSize);
+
+                // Verify header to validate DDS file
+                if (header.Size != DdsHeader.StructSize ||
+                    header.PixelFormat.Size != DDSPixelFormat.StructSize)
+                {
+                    return false;
+                }
+
+                // Check for DX10 extension
+                if (header.PixelFormat.IsDX10())
+                {
+                    var h10Offset = 4 + DdsHeader.StructSize + HeaderDXT10.StructSize;
+
+                    // Must be long enough for both headers and magic value
+                    if (data.Length < h10Offset)
+                    {
+                        return false;
+                    }
+
+                    header10 = Interop.ToStructure<HeaderDXT10>(data, 4, HeaderDXT10.StructSize);
+
+                    offset = h10Offset;
+                }
+                else
+                {
+                    offset = 4 + DdsHeader.StructSize;
+                }
+
+                return true;
+            }
+
+            public static bool GetInfo(string filename, out DdsHeader header, out HeaderDXT10? header10, out int offset, out byte[] buffer)
+            {
+                buffer = File.ReadAllBytes(filename);
+                return GetInfo(buffer, out header, out header10, out offset);
+            }
+
+
+            public static bool ValidateTexture(DdsHeader header, HeaderDXT10? header10, out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap)
+            {
+                if (header10.HasValue)
+                    return ValidateTexture(header10.Value, header.Flags, out depth, out format, out resDim, out arraySize, out isCubeMap);
+                
+                else
+                    return ValidateTexture(header, out depth, out format, out resDim, out arraySize, out isCubeMap);
+                
+            }
+
+            private static bool ValidateTexture(DdsHeader header, out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap)
+            {
+                depth = 0;
+                format = Graphics.PixelFormat.Unknown;
+                resDim = ResourceDimension.Unknown;
+                arraySize = 1;
+                isCubeMap = false;
+
+                format = header.PixelFormat.GetDXGIFormat();
+                if (format ==  Graphics.PixelFormat.Unknown)
+                    return false;
+                
+
+                if (header.Flags.HasFlag(FlagTypes.Depth))
+                    resDim = ResourceDimension.Texture3D;
+                
+                else
+                {
+                    if (header.SurfaceFlags.HasFlag(SurfaceFlags.Cubemap))
+                    {
+                        // We require all six faces to be defined
+                        if ((header.CubemapFlags & CubemapFlags.AllFaces) != CubemapFlags.AllFaces)
+                            return false;
+                        
+
+                        arraySize = 6;
+                        isCubeMap = true;
+                    }
+
+                    depth = 1;
+                    resDim = ResourceDimension.Texture2D;
+                }
+
+                return true;
+            }
+
+            private static bool ValidateTexture(HeaderDXT10 header, FlagTypes flags, out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap)
+            {
+                depth = 0;
+                format = Graphics.PixelFormat.Unknown;
+                resDim = ResourceDimension.Unknown;
+                arraySize = 1;
+                isCubeMap = false;
+
+                arraySize = header.ArraySize;
+                if (arraySize == 0)
+                    return false;
+                
+
+                if (header.MiscFlag2 != FlagsDX10.AlphaModeUnknown)
+                    return false;
+                
+
+                if (DDSPixelFormat.BitsPerPixel(header.DXGIFormat) == 0)
+                    return false;
+                
+
+                format = header.DXGIFormat;
+
+                switch (header.Dimension)
+                {
+                    case ResourceDimension.Texture1D:
+                        depth = 1;
+                        break;
+
+                    case ResourceDimension.Texture2D:
+                        if (header.MiscFlag.HasFlag(ResourceOptionFlags.TextureCube))
+                        {
+                            arraySize *= 6;
+                            isCubeMap = true;
+                        }
+                        depth = 1;
+                        break;
+
+                    case ResourceDimension.Texture3D:
+                        if (!flags.HasFlag(FlagTypes.Depth))
+                            return false;
+                        
+
+                        if (arraySize > 1)
+                            return false;
+                        
+                        break;
+
+                    default:
+                        return false;
+                }
+
+                resDim = header.Dimension;
+
+                return true;
+            }
+
+        }
+
+
+
+
+
+
         public struct DDSPixelFormat
         {
 
             public readonly static int StructSize = Interop.SizeOf<DDSPixelFormat>();
+
+            public int Size;
+
+            public DDSPixelFormats Flags;
+
+            public int FourCC;
+
+            public int RGBBitCount;
+
+            public uint RBitMask;
+
+            public uint GBitMask;
+
+            public uint BBitMask;
+
+            public uint ABitMask;
 
             public static int MakeFourCC(string text)
             {
@@ -430,50 +619,36 @@ namespace Zeckoxe.Image
             }
 
 
-            public int Size;
-
-            public DDSPixelFormats Flags;
-
-            public int FourCC;
-
-            public int RGBBitCount;
-
-            public uint RBitMask;
-
-            public uint GBitMask;
-
-            public uint BBitMask;
-
-            public uint ABitMask;
 
 
-            public bool IsDX10()
-            {
-                return
-                    (this.Flags.HasFlag(DDSPixelFormats.Fourcc)) &&
-                    (MakeFourCC("DX10") == this.FourCC);
-            }
+            public bool IsDX10() => this.Flags.HasFlag(DDSPixelFormats.Fourcc) && (MakeFourCC("DX10") == this.FourCC);
+            
 
             public PixelFormat GetDXGIFormat()
             {
-                if (this.Flags.HasFlag(DDSPixelFormats.RGB))
+
+                switch (this.Flags)
                 {
-                    return GetFormatDDPFRGB();
-                }
-                else if (this.Flags.HasFlag(DDSPixelFormats.Luminance))
-                {
-                    return GetFormatDDPFLuminance();
-                }
-                else if (this.Flags.HasFlag(DDSPixelFormats.Alpha))
-                {
-                    return GetFormatDDPFAlpha();
-                }
-                else if (this.Flags.HasFlag(DDSPixelFormats.Fourcc))
-                {
-                    return GetFormatDDPFFOURCC();
+                    case DDSPixelFormats.Alpha:
+                        return GetFormatDDPFAlpha();
+
+                    case DDSPixelFormats.Fourcc:
+                        return GetFormatDDPFFOURCC();
+
+                    case DDSPixelFormats.RGB:
+                        return GetFormatDDPFRGB();
+
+                    //case DDSPixelFormats.YUV:
+                    //    break;
+
+                    case DDSPixelFormats.Luminance:
+                        return GetFormatDDPFLuminance();
+
+                    default:
+                        return PixelFormat.Unknown;
                 }
 
-                return PixelFormat.Unknown;
+
             }
 
             private PixelFormat GetFormatDDPFRGB()
@@ -483,8 +658,10 @@ namespace Zeckoxe.Image
                 {
                     case 32:
                         return GetFormatDDPFRGB32();
+
                     case 24:
                         return GetFormatDDPFRGB24();
+
                     case 16:
                         return GetFormatDDPFRGB16();
                 }
@@ -495,19 +672,16 @@ namespace Zeckoxe.Image
             private PixelFormat GetFormatDDPFRGB32()
             {
                 if (this.IsBitMask(0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000))
-                {
                     return PixelFormat.R8G8B8A8_UNorm;
-                }
+                
 
                 if (this.IsBitMask(0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000))
-                {
                     return PixelFormat.B8G8R8A8_UNorm;
-                }
+                
 
                 if (this.IsBitMask(0x00ff0000, 0x0000ff00, 0x000000ff, 0x00000000))
-                {
                     return PixelFormat.B8G8R8X8_UNorm;
-                }
+                
 
                 // No DXGI format maps to ISBITMASK(0x000000ff, 0x0000ff00, 0x00ff0000, 0x00000000) aka D3DFMT_X8B8G8R8
 
@@ -519,48 +693,39 @@ namespace Zeckoxe.Image
 
                 // For 'correct' writers, this should be 0x000003ff, 0x000ffc00, 0x3ff00000 for RGB data
                 if (this.IsBitMask(0x3ff00000, 0x000ffc00, 0x000003ff, 0xc0000000))
-                {
                     return PixelFormat.R10G10B10A2_UNorm;
-                }
+                
 
                 // No DXGI format maps to ISBITMASK(0x000003ff, 0x000ffc00, 0x3ff00000, 0xc0000000) aka D3DFMT_A2R10G10B10
 
                 if (this.IsBitMask(0x0000ffff, 0xffff0000, 0x00000000, 0x00000000))
-                {
                     return PixelFormat.R16G16_UNorm;
-                }
+                
 
                 if (this.IsBitMask(0xffffffff, 0x00000000, 0x00000000, 0x00000000))
-                {
                     // Only 32-bit color channel format in D3D9 was R32F
                     return PixelFormat.R32_Float; // D3DX writes this out as a FourCC of 114
-                }
+                
 
                 return PixelFormat.Unknown;
             }
 
-            private PixelFormat GetFormatDDPFRGB24()
-            {
-                // No 24bpp DXGI formats aka D3DFMT_R8G8B8
-                return PixelFormat.Unknown;
-            }
+            private PixelFormat GetFormatDDPFRGB24() => PixelFormat.Unknown; // No 24bpp DXGI formats aka D3DFMT_R8G8B8
+
 
             private PixelFormat GetFormatDDPFRGB16()
             {
                 if (this.IsBitMask(0x7c00, 0x03e0, 0x001f, 0x8000))
-                {
                     return PixelFormat.B5G5R5A1_UNorm;
-                }
+                
                 if (this.IsBitMask(0xf800, 0x07e0, 0x001f, 0x0000))
-                {
                     return PixelFormat.B5G6R5_UNorm;
-                }
+                
 
                 // No DXGI format maps to ISBITMASK(0x7c00, 0x03e0, 0x001f, 0x0000) aka D3DFMT_X1R5G5B5
                 if (this.IsBitMask(0x0f00, 0x00f0, 0x000f, 0xf000))
-                {
                     return PixelFormat.B4G4R4A4_UNorm;
-                }
+                
 
                 // No DXGI format maps to ISBITMASK(0x0f00, 0x00f0, 0x000f, 0x0000) aka D3DFMT_X4R4G4B4
 
@@ -571,98 +736,74 @@ namespace Zeckoxe.Image
             private PixelFormat GetFormatDDPFLuminance()
             {
                 if (8 == this.RGBBitCount && this.IsBitMask(0x000000ff, 0x00000000, 0x00000000, 0x00000000))
-                {
                     return PixelFormat.R8_UNorm; // D3DX10/11 writes this out as DX10 extension
-                }
+                
                 // No DXGI format maps to ISBITMASK(0x0f, 0x00, 0x00, 0xf0) aka D3DFMT_A4L4
 
                 if (16 == this.RGBBitCount)
                 {
                     if (this.IsBitMask(0x0000ffff, 0x00000000, 0x00000000, 0x00000000))
-                    {
                         return PixelFormat.R16_UNorm; // D3DX10/11 writes this out as DX10 extension
-                    }
+                    
                     if (this.IsBitMask(0x000000ff, 0x00000000, 0x00000000, 0x0000ff00))
-                    {
                         return PixelFormat.R8G8_UNorm; // D3DX10/11 writes this out as DX10 extension
-                    }
+                    
                 }
 
                 return PixelFormat.Unknown;
             }
 
-            private PixelFormat GetFormatDDPFAlpha()
-            {
-                if (8 == this.RGBBitCount)
-                {
-                    return PixelFormat.A8_UNorm;
-                }
+            private PixelFormat GetFormatDDPFAlpha() => 8 == this.RGBBitCount ? PixelFormat.A8_UNorm : PixelFormat.Unknown;
 
-                return PixelFormat.Unknown;
-            }
 
             private PixelFormat GetFormatDDPFFOURCC()
             {
                 if (MakeFourCC("DXT1") == this.FourCC)
-                {
                     return PixelFormat.BC1_UNorm;
-                }
+                
                 if (MakeFourCC("DXT3") == this.FourCC)
-                {
                     return PixelFormat.BC2_UNorm;
-                }
+                
                 if (MakeFourCC("DXT5") == this.FourCC)
-                {
                     return PixelFormat.BC3_UNorm;
-                }
+                
 
                 // While pre-mulitplied alpha isn't directly supported by the DXGI formats,
                 // they are basically the same as these BC formats so they can be mapped
                 if (MakeFourCC("DXT2") == this.FourCC)
-                {
                     return PixelFormat.BC2_UNorm;
-                }
+                
                 if (MakeFourCC("DXT4") == this.FourCC)
-                {
                     return PixelFormat.BC3_UNorm;
-                }
+                
 
                 if (MakeFourCC("ATI1") == this.FourCC)
-                {
                     return PixelFormat.BC4_UNorm;
-                }
+                
                 if (MakeFourCC("BC4U") == this.FourCC)
-                {
                     return PixelFormat.BC4_UNorm;
-                }
+                
                 if (MakeFourCC("BC4S") == this.FourCC)
-                {
                     return PixelFormat.BC4_SNorm;
-                }
+                
 
                 if (MakeFourCC("ATI2") == this.FourCC)
-                {
                     return PixelFormat.BC5_UNorm;
-                }
+                
                 if (MakeFourCC("BC5U") == this.FourCC)
-                {
                     return PixelFormat.BC5_UNorm;
-                }
+                
                 if (MakeFourCC("BC5S") == this.FourCC)
-                {
                     return PixelFormat.BC5_SNorm;
-                }
+                
 
                 // BC6H and BC7 are written using the "DX10" extended header
-
                 if (MakeFourCC("RGBG") == this.FourCC)
-                {
                     return PixelFormat.R8G8_B8G8_UNorm;
-                }
+                
                 if (MakeFourCC("GRGB") == this.FourCC)
-                {
                     return PixelFormat.G8R8_G8B8_UNorm;
-                }
+                
 
                 // Check for D3DFORMAT enums being set here
                 switch (this.FourCC)
@@ -695,10 +836,8 @@ namespace Zeckoxe.Image
                 return PixelFormat.Unknown;
             }
 
-            private bool IsBitMask(uint r, uint g, uint b, uint a)
-            {
-                return (this.RBitMask == r && this.GBitMask == g && this.BBitMask == b && this.ABitMask == a);
-            }
+            private bool IsBitMask(uint r, uint g, uint b, uint a) => RBitMask == r && GBitMask == g && BBitMask == b && ABitMask == a;
+            
         }
 
 
@@ -708,17 +847,54 @@ namespace Zeckoxe.Image
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct HeaderDXT10
         {
+            public readonly static int StructSize = Interop.SizeOf<HeaderDXT10>();
+
             public PixelFormat DXGIFormat;
 
-            public ResourceDimension ResourceDimension;
+            public ResourceDimension Dimension;
 
-            public ResourceOptionFlags MiscFlags; 
+            public ResourceOptionFlags MiscFlag;
 
             public int ArraySize;
 
             public FlagsDX10 MiscFlag2;
         }
 
+        public static TextureData LoadFromFile(string filename)
+        {
+            if (DdsHeader.GetInfo(filename, out DdsHeader header, out HeaderDXT10? header10, out int offset, out byte[] buffer))
+                return LoadTexture(header, header10, buffer, offset, 0);
+            
+            else
+                return LoadTexture(header, header10, buffer, offset, 0);
+        }
+
+        public static TextureData LoadTexture(DdsHeader header, HeaderDXT10? header10, byte[] bitData, int offset, int maxsize)
+        {
+            bool validFile = DdsHeader.ValidateTexture(
+            header, header10,
+            out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap);
+
+            TextureData textureData = new TextureData()
+            {
+                Width = header.Width,
+                Height = header.Height,
+                Depth = depth,
+                Format = format,
+                Size = arraySize,
+                IsCubeMap = isCubeMap,
+                MipMaps = header.MipMapCount is 0 ? 1 : header.MipMapCount,
+            };
+
+
+
+            byte[] bytes = new byte[bitData.Length - offset];
+            Array.Copy(bitData, offset, bytes, 0, bytes.Length);
+            //bytes.CopyTo(bitData, offset);
+            textureData.Data = bytes;
+
+            return textureData;
+        }
 
     }
 }
