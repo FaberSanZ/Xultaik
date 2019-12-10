@@ -25,7 +25,7 @@ namespace Zeckoxe.Image
 
 
         [Flags]
-        enum Caps2
+        public enum Caps2
         {
             Cubemap = 0x200,
 
@@ -46,9 +46,7 @@ namespace Zeckoxe.Image
             AllFaces = 0x200 | CubemapPositiveX | CubemapNegativeX | CubemapPositiveY | CubemapNegativeY | CubemapPositiveZ | CubemapNegativeZ,
         }
 
-
-
-        enum FlagTypes
+        public enum FlagTypes
         {
             Caps = 0x1,
 
@@ -65,6 +63,20 @@ namespace Zeckoxe.Image
             LinearSize = 0x80000,
 
             Depth = 0x800000,
+        }
+
+
+        enum FlagsDX10
+        {
+            AlphaModeUnknown = 0x0,
+
+            AlphaModeStraight = 0x1,
+
+            AlphaModePremultiplied = 0x2,
+
+            AlphaModeOpaque = 0x3,
+
+            AlphaModeCustom = 0x4,
         }
     }
 }
