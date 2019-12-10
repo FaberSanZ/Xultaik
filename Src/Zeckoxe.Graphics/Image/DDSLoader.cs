@@ -168,5 +168,30 @@ namespace Zeckoxe.Image
             Texture3D = unchecked(4),
         }
 
+
+        [Flags]
+        public enum ResourceOptionFlags : int
+        {
+            None = unchecked(0),
+
+            GenerateMipMaps = unchecked(1),
+
+            Shared = unchecked(2),
+
+            TextureCube = unchecked(4),
+
+            DrawindirectArgs = unchecked(16),
+
+            BufferAllowRawViews = unchecked(32),
+
+            BufferStructured = unchecked(64),
+
+            ResourceClamp = unchecked(128),
+
+            SharedKeyedmutex = unchecked(256),
+
+            GdiCompatible = unchecked(512),
+        }
+
     }
 }
