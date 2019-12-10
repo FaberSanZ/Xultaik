@@ -16,7 +16,6 @@ namespace Zeckoxe.Graphics
     public class DescriptorAllocator : GraphicsResource
     {
         private const int DescriptorPerHeap = 256;
-
         private DescriptorHeapType DescriptorHeapType;
         private ID3D12DescriptorHeap currentHeap;
         private CpuDescriptorHandle currentHandle;
@@ -35,7 +34,7 @@ namespace Zeckoxe.Graphics
             currentHeap = null;
         }
 
-        public CpuDescriptorHandle Allocate(int count)
+        internal CpuDescriptorHandle Allocate(int count)
         {
             if (currentHeap == null || remainingHandles < count)
             {

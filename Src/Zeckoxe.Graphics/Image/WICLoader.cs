@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
 
 /*=============================================================================
-	KTXLoader.cs
+	WICLoader.cs
 =============================================================================*/
 
 
@@ -14,7 +14,7 @@ using System.Text;
 
 namespace Zeckoxe.Image
 {
-    class WICLoader
+    public class WICLoader
     {
     }
 }

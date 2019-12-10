@@ -12,7 +12,15 @@ using System.Text;
 
 namespace Zeckoxe.Image
 {
-    class DDSLoader
+    public class DDSLoader
     {
+        public enum DDSCaps
+        {
+            Complex = 0x8,
+
+            Mipmap = 0x400000,
+
+            Texture = 0x1000,
+        }
     }
 }
