@@ -237,5 +237,21 @@ namespace Zeckoxe.Image
             
         }
 
+
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct HeaderDXT10
+        {
+            public PixelFormat DXGIFormat;
+
+            public ResourceDimension ResourceDimension;
+
+            public ResourceOptionFlags MiscFlags; 
+
+            public int ArraySize;
+
+            public FlagsDX10 MiscFlag2;
+        }
+
     }
 }
