@@ -193,5 +193,49 @@ namespace Zeckoxe.Image
             GdiCompatible = unchecked(512),
         }
 
+
+
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct Header
+        {
+            public int StructSize;
+
+            public HeaderFlags Flags;
+
+            public int Height;
+
+            public int Width;
+
+            public int PitchOrLinearSize;
+
+            public int Depth; 
+
+            public int MipMapCount;
+
+            private readonly uint unused1;
+            private readonly uint unused2;
+            private readonly uint unused3;
+            private readonly uint unused4;
+            private readonly uint unused5;
+            private readonly uint unused6;
+            private readonly uint unused7;
+            private readonly uint unused8;
+            private readonly uint unused9;
+            private readonly uint unused10;
+            private readonly uint unused11;
+
+            public DDSPixelFormat PixelFormat;
+
+            public SurfaceFlags SurfaceFlags;
+
+            public CubemapFlags CubemapFlags;
+
+            private readonly uint unused12;
+            private readonly uint unused13;
+            private readonly uint unused14;
+            
+        }
+
     }
 }
