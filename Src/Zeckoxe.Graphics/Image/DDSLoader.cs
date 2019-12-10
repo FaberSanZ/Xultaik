@@ -14,7 +14,7 @@ namespace Zeckoxe.Image
 {
     public class DDSLoader
     {
-        public enum DDSCaps
+        public enum Caps
         {
             Complex = 0x8,
 
@@ -25,7 +25,7 @@ namespace Zeckoxe.Image
 
 
         [Flags]
-        enum DDSCaps2
+        enum Caps2
         {
             Cubemap = 0x200,
 
@@ -44,6 +44,27 @@ namespace Zeckoxe.Image
             Volume = 0x200000,
 
             AllFaces = 0x200 | CubemapPositiveX | CubemapNegativeX | CubemapPositiveY | CubemapNegativeY | CubemapPositiveZ | CubemapNegativeZ,
+        }
+
+
+
+        enum FlagTypes
+        {
+            Caps = 0x1,
+
+            Height = 0x2,
+
+            Width = 0x4,
+
+            Pitch = 0x8,
+
+            PixelFormat = 0x1000,
+
+            MipmapCount = 0x20000,
+
+            LinearSize = 0x80000,
+
+            Depth = 0x800000,
         }
     }
 }
