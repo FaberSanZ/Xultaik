@@ -154,5 +154,19 @@ namespace Zeckoxe.Image
             AllFaces = PositiveX | NegativeX | PositiveY | NegativeY | PositiveZ | NegativeZ,
         }
 
+
+        public enum ResourceDimension : int
+        {
+            Unknown = unchecked(0),
+
+            Buffer = unchecked(1),
+
+            Texture1D = unchecked(2),
+
+            Texture2D = unchecked(3),
+
+            Texture3D = unchecked(4),
+        }
+
     }
 }
