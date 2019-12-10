@@ -71,12 +71,6 @@ namespace Zeckoxe.Graphics
 
 
 
-
-
-
-
-
-
         public static implicit operator byte[](ShaderByteCode value) => value.Data;
 
     }

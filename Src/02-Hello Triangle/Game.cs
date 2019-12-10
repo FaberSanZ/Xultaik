@@ -135,8 +135,7 @@ namespace _02_Hello_Triangle
 
 
         public int SizeOf<T>(T[] data) where T : struct => data.Length * Unsafe.SizeOf<T>();
-        
-
+  
 
         public void Run()
         {
@@ -163,7 +162,7 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
-            foreach (var Description in Device.NativeAdapter.Description)
+            foreach (string Description in Device.NativeAdapter.Description)
                 Console.WriteLine(Description);
 
             foreach (var VendorId in Device.NativeAdapter.VendorId)

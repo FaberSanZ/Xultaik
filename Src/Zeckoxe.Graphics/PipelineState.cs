@@ -22,6 +22,8 @@ namespace Zeckoxe.Graphics
         PipelineStateDescription PipelineStateDescription { get; set; }
 
 
+
+        //Internal 
         internal ID3D12RootSignature RootSignature;
         internal ID3D12PipelineState oldPipelineState;
 
@@ -51,8 +53,7 @@ namespace Zeckoxe.Graphics
             var psoDesc = new GraphicsPipelineStateDescription()
             {
                 RootSignature = RootSignature,
-                VertexShader = PipelineStateDescription.VertexShader.Data,
-                PixelShader = PipelineStateDescription.PixelShader.Data,
+
                 InputLayout = new InputLayoutDescription(inputElementDescs),
                 SampleMask = uint.MaxValue,
                 PrimitiveTopologyType = PrimitiveTopologyType.Triangle,
@@ -67,11 +68,17 @@ namespace Zeckoxe.Graphics
                 {
                     //RasterizedStream =
                 },
-                HullShader = null,
-                GeometryShader = null,
-                DomainShader = null,
-                
-                
+
+
+                HullShader = PipelineStateDescription.HullShader == null ? null : PipelineStateDescription.HullShader.Data,
+
+                GeometryShader = PipelineStateDescription.GeometryShader == null ? null : PipelineStateDescription.GeometryShader.Data,
+
+                DomainShader = PipelineStateDescription.DomainShader == null ? null : PipelineStateDescription.DomainShader.Data,
+
+                VertexShader = PipelineStateDescription.VertexShader == null ? null : PipelineStateDescription.VertexShader.Data,
+
+                PixelShader = PipelineStateDescription.PixelShader == null ? null : PipelineStateDescription.PixelShader.Data,
             };
 
             oldPipelineState = GraphicsDevice.NativeDevice.CreateGraphicsPipelineState(psoDesc);

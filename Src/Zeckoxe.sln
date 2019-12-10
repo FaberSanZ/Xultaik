@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Engine", "Zeckoxe.E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Mathematics", "Zeckoxe.Mathematics\Zeckoxe.Mathematics.csproj", "{7092F6B2-0ACF-419C-A101-7A472AF078A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Image", "Zeckoxe.Image\Zeckoxe.Image.csproj", "{A6CD8E2B-3458-42DE-9550-FBE75065B557}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Desktop", "Zeckoxe.Desktop\Zeckoxe.Desktop.csproj", "{DE2E4494-049F-42D1-ADD5-B4A59F3E497A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Input", "Zeckoxe.Input\Zeckoxe.Input.csproj", "{E25B5E8C-CA51-4702-9236-95B44D9459AB}"
@@ -25,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Graphics", "Zeckoxe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01-ClearScreen", "01-ClearScreen\01-ClearScreen.csproj", "{792BFC52-0575-41C1-A9CF-EEAC37BD0C25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "02-Hello Triangle", "02-Hello Triangle\02-Hello Triangle.csproj", "{6FD5A0C0-5EDB-4E64-9178-F17D2F3E94B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02-Hello Triangle", "02-Hello Triangle\02-Hello Triangle.csproj", "{6FD5A0C0-5EDB-4E64-9178-F17D2F3E94B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +47,6 @@ Global
 		{7092F6B2-0ACF-419C-A101-7A472AF078A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7092F6B2-0ACF-419C-A101-7A472AF078A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7092F6B2-0ACF-419C-A101-7A472AF078A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6CD8E2B-3458-42DE-9550-FBE75065B557}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6CD8E2B-3458-42DE-9550-FBE75065B557}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6CD8E2B-3458-42DE-9550-FBE75065B557}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6CD8E2B-3458-42DE-9550-FBE75065B557}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DE2E4494-049F-42D1-ADD5-B4A59F3E497A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DE2E4494-049F-42D1-ADD5-B4A59F3E497A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE2E4494-049F-42D1-ADD5-B4A59F3E497A}.Release|Any CPU.ActiveCfg = Release|Any CPU
