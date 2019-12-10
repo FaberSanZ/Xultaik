@@ -22,7 +22,7 @@ namespace Zeckoxe.Image
     public class DDSLoader
     {
 
-        public enum FlagTypes
+        public enum HeaderFlags
         {
             Caps = 0x1,
 
@@ -70,27 +70,6 @@ namespace Zeckoxe.Image
 
             Luminance = 0x20000,
         }
-
-
-
-        [Flags]
-        public enum HeaderFlags
-        {
-            Texture = 0x00001007, 
-
-            Mipmap = 0x00020000, 
-
-            Volume = 0x00800000, 
-
-            Pitch = 0x00000008, 
-
-            LinearSize = 0x00080000, 
-
-            Height = 0x00000002, 
-
-            Width = 0x00000004, 
-        }
-
 
 
         [Flags]
@@ -177,7 +156,7 @@ namespace Zeckoxe.Image
 
             public int Size;
 
-            public FlagTypes Flags;
+            public HeaderFlags Flags;
 
             public int Height;
 
@@ -220,45 +199,39 @@ namespace Zeckoxe.Image
                 offset = 0;
 
                 if (data.Length < (sizeof(uint) + DdsHeader.StructSize))
-                {
                     return false;
-                }
+                
 
                 // First is magic number
                 int dwMagicNumber = BitConverter.ToInt32(data, 0);
                 if (dwMagicNumber != DdsHeader.DDSMagic)
-                {
                     return false;
-                }
+                
 
                 header = Interop.ToStructure<DdsHeader>(data, 4, DdsHeader.StructSize);
 
                 // Verify header to validate DDS file
-                if (header.Size != DdsHeader.StructSize ||
-                    header.PixelFormat.Size != DDSPixelFormat.StructSize)
-                {
+                if (header.Size != DdsHeader.StructSize || header.PixelFormat.Size != DDSPixelFormat.StructSize)
                     return false;
-                }
+                
 
                 // Check for DX10 extension
                 if (header.PixelFormat.IsDX10())
                 {
-                    var h10Offset = 4 + DdsHeader.StructSize + HeaderDXT10.StructSize;
+                    int h10Offset = 4 + DdsHeader.StructSize + HeaderDXT10.StructSize;
 
                     // Must be long enough for both headers and magic value
                     if (data.Length < h10Offset)
-                    {
                         return false;
-                    }
+                    
 
                     header10 = Interop.ToStructure<HeaderDXT10>(data, 4, HeaderDXT10.StructSize);
 
                     offset = h10Offset;
                 }
                 else
-                {
                     offset = 4 + DdsHeader.StructSize;
-                }
+                
 
                 return true;
             }
@@ -293,7 +266,7 @@ namespace Zeckoxe.Image
                     return false;
                 
 
-                if (header.Flags.HasFlag(FlagTypes.Depth))
+                if (header.Flags.HasFlag(HeaderFlags.Depth))
                     resDim = ResourceDimension.Texture3D;
                 
                 else
@@ -316,7 +289,7 @@ namespace Zeckoxe.Image
                 return true;
             }
 
-            private static bool ValidateTexture(HeaderDXT10 header, FlagTypes flags, out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap)
+            private static bool ValidateTexture(HeaderDXT10 header, HeaderFlags flags, out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap)
             {
                 depth = 0;
                 format = Graphics.PixelFormat.Unknown;
@@ -355,7 +328,7 @@ namespace Zeckoxe.Image
                         break;
 
                     case ResourceDimension.Texture3D:
-                        if (!flags.HasFlag(FlagTypes.Depth))
+                        if (!flags.HasFlag(HeaderFlags.Depth))
                             return false;
                         
 
@@ -461,14 +434,12 @@ namespace Zeckoxe.Image
                 {
                     int numBlocksWide = 0;
                     if (width > 0)
-                    {
                         numBlocksWide = Math.Max(1, (width + 3) / 4);
-                    }
+                    
                     int numBlocksHigh = 0;
                     if (height > 0)
-                    {
                         numBlocksHigh = Math.Max(1, (height + 3) / 4);
-                    }
+                    
                     rowBytes = numBlocksWide * bcnumBytesPerBlock;
                     numRows = numBlocksHigh;
                 }
