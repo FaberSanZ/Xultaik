@@ -22,7 +22,7 @@ namespace Zeckoxe.Image
     public class DDSLoader
     {
 
-        public enum HeaderFlags
+        internal enum HeaderFlags
         {
             Caps = 0x1,
 
@@ -42,7 +42,7 @@ namespace Zeckoxe.Image
         }
 
 
-        public enum FlagsDX10
+        internal enum FlagsDX10
         {
             AlphaModeUnknown = 0x0,
 
@@ -56,7 +56,7 @@ namespace Zeckoxe.Image
         }
 
 
-        public enum DDSPixelFormats
+        internal enum DDSPixelFormats
         {
             AlphaPixels = 0x1,
 
@@ -148,7 +148,7 @@ namespace Zeckoxe.Image
 
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct DdsHeader
+        internal struct DdsHeader
         {
             const int DDSMagic = 0x20534444;
 
@@ -353,7 +353,7 @@ namespace Zeckoxe.Image
 
 
 
-        public struct DDSPixelFormat
+        internal struct DDSPixelFormat
         {
 
             public readonly static int StructSize = Interop.SizeOf<DDSPixelFormat>();
@@ -816,7 +816,7 @@ namespace Zeckoxe.Image
 
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct HeaderDXT10
+        internal struct HeaderDXT10
         {
             public readonly static int StructSize = Interop.SizeOf<HeaderDXT10>();
 
@@ -831,16 +831,31 @@ namespace Zeckoxe.Image
             public FlagsDX10 MiscFlag2;
         }
 
-        public static TextureData LoadFromFile(string filename)
+
+        public TextureData TextureData { get; private set; }
+
+
+
+        public DDSLoader(string filename)
         {
+
             if (DdsHeader.GetInfo(filename, out DdsHeader header, out HeaderDXT10? header10, out int offset, out byte[] buffer))
-                return LoadTexture(header, header10, buffer, offset, 0);
-            
+                TextureData = LoadTexture(header, header10, buffer, offset, 0);
+
             else
-                return LoadTexture(header, header10, buffer, offset, 0);
+                TextureData = LoadTexture(header, header10, buffer, offset, 0);
+
         }
 
-        public static TextureData LoadTexture(DdsHeader header, HeaderDXT10? header10, byte[] bitData, int offset, int maxsize)
+
+
+
+        public static TextureData LoadFromFile(string filename) => new DDSLoader(filename).TextureData;
+        
+
+        
+
+        internal TextureData LoadTexture(DdsHeader header, HeaderDXT10? header10, byte[] bitData, int offset, int maxsize)
         {
             bool validFile = DdsHeader.ValidateTexture(
             header, header10,

@@ -58,5 +58,12 @@ namespace Zeckoxe.Graphics
             Format = PixelFormat.Unknown;
         }
 
+
+
+
+
+        //public override string ToString() => string.Format("Data:{0} Width:{1} Depth:{0} Width:{1} Data:{0} Width:{1}", Data.Length, Width, Height, Depth, MipMaps, Size, IsCubeMap, Format);
+
+
     }
 }

@@ -17,6 +17,15 @@
 
 
   <ItemGroup>
+    <None Update="bricks.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="desertcube1024.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="grass.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="shaders.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -28,6 +37,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Test.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="UVCheckerMap08-512.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
