@@ -12,7 +12,7 @@ namespace _02_Hello_Triangle
             //var data = dDSLoader.TextureData;
 
 
-            var data = Zeckoxe.Image.WICLoader.LoadFromFile("UVCheckerMap08-512.png");
+            var data = Zeckoxe.Image.IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
             //var data = Zeckoxe.Image.DDSLoader.LoadFromFile("desertcube1024.dds");
 
             Console.WriteLine("Format = {0}", data.Format);
@@ -23,7 +23,7 @@ namespace _02_Hello_Triangle
             Console.WriteLine("Size = {0}", data.Size);
             Console.WriteLine("IsCubeMap = {0}", data.IsCubeMap);
             Console.WriteLine("-----------------DataInBytes-----------");
-            foreach (byte item in data.Data)
+            foreach (byte item in data.Data.Span)
                 Console.Write("-{0}", item);
             Console.WriteLine("-----------------DataInBytes-----------");
 
