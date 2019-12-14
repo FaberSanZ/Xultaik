@@ -23,7 +23,7 @@ namespace _02_Hello_Triangle
             Console.WriteLine("Size = {0}", data.Size);
             Console.WriteLine("IsCubeMap = {0}", data.IsCubeMap);
             Console.WriteLine("-----------------DataInBytes-----------");
-            foreach (byte item in data.Data.Span)
+            foreach (byte item in data.Data)
                 Console.Write("-{0}", item);
             Console.WriteLine("-----------------DataInBytes-----------");
 

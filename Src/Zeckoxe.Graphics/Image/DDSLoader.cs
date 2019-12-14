@@ -236,10 +236,10 @@ namespace Zeckoxe.Image
                 return true;
             }
 
-            public static bool GetInfo(string filename, out DdsHeader header, out HeaderDXT10? header10, out int offset, out Memory<byte> buffer)
+            public static bool GetInfo(string filename, out DdsHeader header, out HeaderDXT10? header10, out int offset, out byte[] buffer)
             {
                 buffer = File.ReadAllBytes(filename);
-                return GetInfo(buffer.ToArray(), out header, out header10, out offset);
+                return GetInfo(buffer, out header, out header10, out offset);
             }
 
 
@@ -839,7 +839,7 @@ namespace Zeckoxe.Image
         public DDSLoader(string filename)
         {
 
-            if (DdsHeader.GetInfo(filename, out DdsHeader header, out HeaderDXT10? header10, out int offset, out Memory<byte> buffer))
+            if (DdsHeader.GetInfo(filename, out DdsHeader header, out HeaderDXT10? header10, out int offset, out byte[] buffer))
                 TextureData = LoadTexture(header, header10, buffer, offset, 0);
 
             else
@@ -855,7 +855,7 @@ namespace Zeckoxe.Image
 
         
 
-        internal TextureData LoadTexture(DdsHeader header, HeaderDXT10? header10, Memory<byte> bitData, int offset, int maxsize)
+        internal TextureData LoadTexture(DdsHeader header, HeaderDXT10? header10, byte[] bitData, int offset, int maxsize)
         {
             bool validFile = DdsHeader.ValidateTexture(
             header, header10,
@@ -875,10 +875,8 @@ namespace Zeckoxe.Image
 
 
             byte[] bytes = new byte[bitData.Length - offset];
-            //Array.Copy(bitData.Span.ToArray(), offset, bytes, 0, bytes.Length);
-            ////bytes.CopyTo(bitData, offset);
 
-            bitData.CopyTo(bytes);
+            Array.Copy(bitData, offset, bytes, 0, bytes.Length);
 
             textureData.Data = bytes;
 

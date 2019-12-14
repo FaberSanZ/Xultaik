@@ -15,7 +15,7 @@ namespace Zeckoxe.Graphics
 {
     public class TextureData
     {
-        public Memory<byte> Data { get; internal set; } 
+        public byte[] Data { get; internal set; } = Array.Empty<Byte>();
 
         public int Width { get; set; }
 
@@ -33,7 +33,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public TextureData(Memory<byte> data, int width, int height, int depth, int mipMaps, int size, bool isCubeMap, PixelFormat format)
+        public TextureData(byte[] data, int width, int height, int depth, int mipMaps, int size, bool isCubeMap, PixelFormat format)
         {
             Data = data;
             Width = width;
