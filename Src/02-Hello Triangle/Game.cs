@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Vortice.DirectX;
-using Vortice.Mathematics;
+using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
+using Zeckoxe.Image;
 using Zeckoxe.Mathematics;
 using Buffer = Zeckoxe.Graphics.Buffer;
 //using Zeckoxe.Mathematics;
@@ -24,9 +24,9 @@ namespace _02_Hello_Triangle
         struct Vertex
         {
             public readonly Vector3 Position;
-            public readonly Color4 Color;
+            public readonly Vector4 Color;
 
-            public Vertex(Vector3 position, Color4 color)
+            public Vertex(Vector3 position, Vector4 color)
             {
                 Position = position;
                 Color = color;
@@ -68,6 +68,9 @@ namespace _02_Hello_Triangle
                     VSync = false,
                 },
             };
+
+
+            //TestIMGLoaders();
         }
 
         public void Initialize()
@@ -86,9 +89,9 @@ namespace _02_Hello_Triangle
 
             Vertex[] Vertices = new Vertex[]
             {
-                  new Vertex(new Vector3(0f, 0.65f, 1.0f), new Color4(1.8f, 0.0f, 0.0f, 1.0f)),
-                  new Vertex(new Vector3(0.5f, -0.65f, 1.0f), new Color4(0.0f, 1.8f, 0.0f, 1.0f)),
-                  new Vertex(new Vector3(-0.5f, -0.65f, 1.0f), new Color4(0.0f, 0.0f, 1.8f, 1.0f))
+                  new Vertex(new Vector3(0f, 0.65f, 1.0f), new Vector4(1.8f, 0.0f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(0.5f, -0.65f, 1.0f), new Vector4(0.0f, 1.8f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(-0.5f, -0.65f, 1.0f), new Vector4(0.0f, 0.0f, 1.8f, 1.0f))
             };
 
 
@@ -103,8 +106,8 @@ namespace _02_Hello_Triangle
             {
                 Flags = BufferFlags.VertexBuffer,
                 HeapType = HeapType.Upload,
-                SizeInBytes = SizeOf(Vertices),
-                StructureByteStride = Unsafe.SizeOf<Vertex>(),
+                SizeInBytes = Interop.SizeOf(Vertices),
+                StructureByteStride = Interop.SizeOf<Vertex>(),
             });
 
 
@@ -112,8 +115,8 @@ namespace _02_Hello_Triangle
             {
                 Flags = BufferFlags.VertexBuffer,
                 HeapType = HeapType.Upload,
-                SizeInBytes = SizeOf(indices),
-                StructureByteStride = Unsafe.SizeOf<int>(),
+                SizeInBytes = Interop.SizeOf(indices),
+                StructureByteStride = Interop.SizeOf<int>(),
             });
 
             IndexBuffer.SetData(indices);
@@ -134,7 +137,6 @@ namespace _02_Hello_Triangle
         }
 
 
-        public int SizeOf<T>(T[] data) where T : struct => data.Length * Unsafe.SizeOf<T>();
   
 
         public void Run()
@@ -200,6 +202,45 @@ namespace _02_Hello_Triangle
         public void Dispose()
         {
             //Device.Dispose();
+        }
+
+
+
+
+
+        public void TestIMGLoaders()
+        {
+            Console.WriteLine("-----------------TextureData-----------");
+
+            //Zeckoxe.Image.DDSLoader dDSLoader = new Zeckoxe.Image.DDSLoader("desertcube1024.dds");
+            //var data = dDSLoader.TextureData;
+
+
+            //TextureData data = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
+            TextureData data = DDSLoader.LoadFromFile("desertcube1024.dds");
+
+            Console.WriteLine("Format = {0}", data.Format);
+            Console.WriteLine("Width = {0}", data.Width);
+            Console.WriteLine("Height = {0}", data.Height);
+            Console.WriteLine("Depth = {0}", data.Depth);
+            Console.WriteLine("MipMaps = {0}", data.MipMaps);
+            Console.WriteLine("Size = {0}", data.Size);
+            Console.WriteLine("IsCubeMap = {0}", data.IsCubeMap);
+            Console.WriteLine("-----------------DataInBytes-----------");
+
+            int i = 0;
+            foreach (byte item in data.Data)
+            {
+                Console.Write("-{0}", item);
+                if (i is 10)
+                {
+                    Console.WriteLine();
+                    i = 0;
+                }
+
+                i++;
+            }
+            Console.WriteLine("-----------------DataInBytes-----------");
         }
 
     }

@@ -20,6 +20,9 @@ namespace Zeckoxe.Core
 
         public static int SizeOf<T>() => Unsafe.SizeOf<T>();
 
+
+        public static int SizeOf<T>(T[] values) => Unsafe.SizeOf<T>() * values.Length;
+
         public static IntPtr Alloc<T>(int count = 1) => Alloc(Unsafe.SizeOf<T>() * count);
 
 
@@ -60,13 +63,6 @@ namespace Zeckoxe.Core
             return (T)Marshal.PtrToStructure(ptr, typeof(T)); ;
         }
 
-
-        public static T* AllocToPointer<T>(ref T value) where T : unmanaged
-        {
-            IntPtr ptr = Alloc<T>();
-            Unsafe.Copy(ptr.ToPointer(), ref value);
-            return (T*)ptr.ToPointer();
-        }
 
 
         public static class MemoryHelper

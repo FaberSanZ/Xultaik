@@ -7,13 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Core", "Zeckoxe.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Collections", "Zeckoxe.Collections\Zeckoxe.Collections.csproj", "{20AEAB35-ABE7-409C-A77D-3703AB3F178B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Engine", "Zeckoxe.Engine\Zeckoxe.Engine.csproj", "{6F3D0642-0854-4A9B-BEF4-DCCE0763516A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Mathematics", "Zeckoxe.Mathematics\Zeckoxe.Mathematics.csproj", "{7092F6B2-0ACF-419C-A101-7A472AF078A0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Desktop", "Zeckoxe.Desktop\Zeckoxe.Desktop.csproj", "{DE2E4494-049F-42D1-ADD5-B4A59F3E497A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Input", "Zeckoxe.Input\Zeckoxe.Input.csproj", "{E25B5E8C-CA51-4702-9236-95B44D9459AB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Audio", "Zeckoxe.Audio\Zeckoxe.Audio.csproj", "{5503DA91-504B-470D-9203-9BB9A33A3054}"
 EndProject
@@ -39,10 +35,6 @@ Global
 		{20AEAB35-ABE7-409C-A77D-3703AB3F178B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20AEAB35-ABE7-409C-A77D-3703AB3F178B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20AEAB35-ABE7-409C-A77D-3703AB3F178B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F3D0642-0854-4A9B-BEF4-DCCE0763516A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F3D0642-0854-4A9B-BEF4-DCCE0763516A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F3D0642-0854-4A9B-BEF4-DCCE0763516A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F3D0642-0854-4A9B-BEF4-DCCE0763516A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7092F6B2-0ACF-419C-A101-7A472AF078A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7092F6B2-0ACF-419C-A101-7A472AF078A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7092F6B2-0ACF-419C-A101-7A472AF078A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,10 +43,6 @@ Global
 		{DE2E4494-049F-42D1-ADD5-B4A59F3E497A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE2E4494-049F-42D1-ADD5-B4A59F3E497A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE2E4494-049F-42D1-ADD5-B4A59F3E497A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E25B5E8C-CA51-4702-9236-95B44D9459AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E25B5E8C-CA51-4702-9236-95B44D9459AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E25B5E8C-CA51-4702-9236-95B44D9459AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E25B5E8C-CA51-4702-9236-95B44D9459AB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5503DA91-504B-470D-9203-9BB9A33A3054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5503DA91-504B-470D-9203-9BB9A33A3054}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5503DA91-504B-470D-9203-9BB9A33A3054}.Release|Any CPU.ActiveCfg = Release|Any CPU
