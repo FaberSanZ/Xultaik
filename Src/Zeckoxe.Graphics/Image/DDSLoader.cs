@@ -203,7 +203,7 @@ namespace Zeckoxe.Image
                 
 
                 // First is magic number
-                int dwMagicNumber = BitConverter.ToInt32(data, 0);
+                int dwMagicNumber = BitConverter.ToInt32(data, 0x0);
                 if (dwMagicNumber != DdsHeader.DDSMagic)
                     return false;
                 
@@ -230,7 +230,7 @@ namespace Zeckoxe.Image
                     offset = h10Offset;
                 }
                 else
-                    offset = 4 + DdsHeader.StructSize;
+                    offset = 0x4 + DdsHeader.StructSize;
                 
 
                 return true;
@@ -255,7 +255,7 @@ namespace Zeckoxe.Image
 
             private static bool ValidateTexture(DdsHeader header, out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap)
             {
-                depth = 0;
+                depth = 0x0;
                 format = Graphics.PixelFormat.Unknown;
                 resDim = ResourceDimension.Unknown;
                 arraySize = 1;
@@ -294,7 +294,7 @@ namespace Zeckoxe.Image
                 depth = 0;
                 format = Graphics.PixelFormat.Unknown;
                 resDim = ResourceDimension.Unknown;
-                arraySize = 1;
+                arraySize = 0x1;
                 isCubeMap = false;
 
                 arraySize = header.ArraySize;

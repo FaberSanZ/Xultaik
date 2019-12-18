@@ -17,7 +17,7 @@ namespace _01_ClearScreen
     {
         public Window Window { get; set; }
 
-        public PresentationParameters Parameters { get; set; }
+        public RenderDescriptor Parameters { get; set; }
 
         public GraphicsAdapter Adapter { get; set; }
 
@@ -39,7 +39,7 @@ namespace _01_ClearScreen
             };
 
 
-            Parameters = new PresentationParameters()
+            Parameters = new RenderDescriptor()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,

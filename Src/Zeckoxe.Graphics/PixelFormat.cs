@@ -14,9 +14,9 @@ namespace Zeckoxe.Graphics
     public enum PixelFormat : int
     {
 
-        Unknown = unchecked(0),
+        Unknown = 0,
 
-        R32G32B32A32_Typeless = unchecked(1),
+        R32G32B32A32_Typeless = 1,
 
         R32G32B32A32_Float = 2,
 
@@ -148,7 +148,7 @@ namespace Zeckoxe.Graphics
 
         R1_UNorm = 66,
 
-        R9G9B9E5_SharedExp = 67,
+        R9G9B9E5_Sharedexp = 67,
 
         R8G8_B8G8_UNorm = 68,
 

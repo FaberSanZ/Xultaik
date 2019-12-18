@@ -48,17 +48,17 @@ namespace Zeckoxe.Image
 
             Span<byte> pixels;
 
-            fixed (void* pointer = Images[0].GetPixelSpan())
-                pixels = new Span<byte>(pointer, Images[0].GetPixelSpan().Length);
+            fixed (void* pointer = Images[0x0].GetPixelSpan())
+                pixels = new Span<byte>(pointer, Images[0x0].GetPixelSpan().Length);
 
-            return new TextureData() 
+            return new TextureData()
             {
                 MipMaps = Images.Length,
                 Format = PixelFormat.R8G8B8A8_UNorm,
-                Width = Images[0].Width,
-                Height = Images[0].Height,
-                Depth = 1,
-                Size = Images[0].Width * Interop.SizeOf<Rgba32>(),
+                Width = Images[0x0].Width,
+                Height = Images[0x0].Height,
+                Depth = 0x1,
+                Size = Images[0x0].Width * Interop.SizeOf<Rgba32>(),//+ 7 / 8,
                 Data = pixels.ToArray(),
                 IsCubeMap = false,
             };
@@ -72,11 +72,11 @@ namespace Zeckoxe.Image
             int i = 1;
 
             Image<T>[] mipLevels = new Image<T>[mipLevelCount];
-            mipLevels[0] = baseImage;
+            mipLevels[0x0] = baseImage;
 
 
             int currentWidth = baseImage.Width;
-            int currentHeight = baseImage.Height;
+            int currentHeight = baseImage.Height; 
 
             while (currentWidth != 1 || currentHeight != 1)
             {

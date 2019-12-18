@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
-    public struct PresentationParameters
+    public struct RenderDescriptor
     {
 
         public PixelFormat BackBufferFormat { get; set; }

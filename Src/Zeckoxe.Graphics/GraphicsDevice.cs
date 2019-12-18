@@ -23,7 +23,7 @@ namespace Zeckoxe.Graphics
 
         public GraphicsAdapter NativeAdapter { get; }
 
-        public PresentationParameters NativeParameters { get; internal set; }
+        public RenderDescriptor NativeParameters { get; internal set; }
 
         //public SwapChain NativeSwapChain { get; }
 
@@ -40,7 +40,7 @@ namespace Zeckoxe.Graphics
             InitializeFromImpl();
         }
 
-        public GraphicsDevice(GraphicsAdapter graphicsAdapter, PresentationParameters presentation)
+        public GraphicsDevice(GraphicsAdapter graphicsAdapter, RenderDescriptor presentation)
         {
             NativeAdapter = graphicsAdapter;
             NativeParameters = presentation;

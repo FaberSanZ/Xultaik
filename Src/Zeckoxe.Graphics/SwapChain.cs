@@ -21,7 +21,7 @@ namespace Zeckoxe.Graphics
 {
     public class SwapChain
     {
-        public PresentationParameters Description { get; private set; }
+        public RenderDescriptor Description { get; private set; }
 
         public Texture BackBuffer { get; set; }
 
@@ -144,9 +144,6 @@ namespace Zeckoxe.Graphics
 
 
             NativeSwapChain = swapChain.QueryInterface<IDXGISwapChain3>();
-
-
-
         }
     }
 }

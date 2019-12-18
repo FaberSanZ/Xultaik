@@ -26,7 +26,7 @@ namespace _02_Hello_Triangle
             public readonly Vector3 Position;
             public readonly Vector4 Color;
 
-            public Vertex(Vector3 position, Vector4 color)
+            public Vertex(in Vector3 position,in Vector4 color)
             {
                 Position = position;
                 Color = color;
@@ -35,7 +35,7 @@ namespace _02_Hello_Triangle
 
 
         public Window Window { get; set; }
-        public PresentationParameters Parameters { get; set; }
+        public RenderDescriptor Parameters { get; set; }
         public GraphicsAdapter Adapter { get; set; }
         public GraphicsDevice Device { get; set; }
         public SwapChain SwapChain { get; set; }
@@ -43,10 +43,11 @@ namespace _02_Hello_Triangle
 
 
         // New
-        public Buffer VertexBuffer;
-        public Buffer IndexBuffer;
+        public Buffer VertexBuffer { get; set; }
+        public Buffer IndexBuffer { get; set; }
+        public PipelineState PipelineState { get; set; }
 
-        PipelineState PipelineState;
+
 
 
         public Game()
@@ -57,7 +58,7 @@ namespace _02_Hello_Triangle
             };
 
 
-            Parameters = new PresentationParameters()
+            Parameters = new RenderDescriptor()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
@@ -113,7 +114,7 @@ namespace _02_Hello_Triangle
 
             IndexBuffer = new Buffer(Device, new BufferDescription()
             {
-                Flags = BufferFlags.VertexBuffer,
+                Flags = BufferFlags.IndexBuffer,
                 HeapType = HeapType.Upload,
                 SizeInBytes = Interop.SizeOf(indices),
                 StructureByteStride = Interop.SizeOf<int>(),
@@ -226,7 +227,7 @@ namespace _02_Hello_Triangle
             Console.WriteLine("MipMaps = {0}", data.MipMaps);
             Console.WriteLine("Size = {0}", data.Size);
             Console.WriteLine("IsCubeMap = {0}", data.IsCubeMap);
-            Console.WriteLine("-----------------DataInBytes-----------");
+            Console.WriteLine("-------------DataInBytes-----------");
 
             int i = 0;
             foreach (byte item in data.Data)
