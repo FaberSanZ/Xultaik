@@ -106,6 +106,21 @@ namespace Zeckoxe.Graphics
         }
 
 
+        internal static Format ToIndexType(IndexType primitiveType)
+        {
+            switch (primitiveType)
+            {
+                case IndexType.UInt32:
+                    return Format.R32_UInt;
+
+                case IndexType.UInt16:
+                    return Format.R16_UInt;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(primitiveType));
+            }
+        }
+
 
         internal static PrimitiveTopology ToPrimitiveType(PrimitiveType primitiveType)
         {

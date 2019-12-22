@@ -184,13 +184,14 @@ namespace _02_Hello_Triangle
 
 
             CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
-
             CommandList.SetViewport(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
             CommandList.SetScissor(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
 
             CommandList.SetPipelineState(PipelineState);
+
+            CommandList.SetPrimitiveTopology(PrimitiveType.TriangleList);
             CommandList.SetVertexBuffer(VertexBuffer);
-            CommandList.SetIndexBuffer(IndexBuffer);
+            CommandList.SetIndexBuffer(IndexBuffer, IndexType.UInt32);
             CommandList.DrawIndexed(3);
 
 

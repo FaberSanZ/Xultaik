@@ -156,9 +156,16 @@ namespace Zeckoxe.Graphics
 
             //NativeCommandList.ResourceBarrierTransition(resource.Resource, (ResourceStates)before, (ResourceStates)after);
         }
+
+
+
+        public void SetPrimitiveTopology(PrimitiveType primitiveType)
+        {
+            nativeCommandList.IASetPrimitiveTopology(ConvertExtensions.ToPrimitiveType(primitiveType));
+        }
+
         public void SetVertexBuffer(Buffer buffer)
         {
-            nativeCommandList.IASetPrimitiveTopology(PrimitiveTopology.TriangleList);
 
             VertexBufferView vertexBufferView = new VertexBufferView()
             {
@@ -170,17 +177,15 @@ namespace Zeckoxe.Graphics
         }
 
 
-
-
-        public void SetIndexBuffer(Buffer buffer)
+        public void SetIndexBuffer(Buffer buffer, IndexType type)
         {
-
             IndexBufferView indexBufferView = new IndexBufferView()
             {
                 BufferLocation = buffer.GPUVirtualAddress,
                 SizeInBytes = buffer.SizeInBytes,
-                //Format = Vortice.DXGI.Format.R16_UInt
+                Format = ConvertExtensions.ToIndexType(type),
             };
+
             nativeCommandList.IASetIndexBuffer(indexBufferView);
         }
 
@@ -206,7 +211,6 @@ namespace Zeckoxe.Graphics
         public void EndDraw()
         {
             nativeCommandList.Close();
-
             GraphicsDevice.NativeDirectCommandQueue.ExecuteCommandList(this);
         }
 
