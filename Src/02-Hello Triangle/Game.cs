@@ -71,7 +71,7 @@ namespace _02_Hello_Triangle
             };
 
 
-            //TestIMGLoaders();
+            TestIMGLoaders();
         }
 
         public void Initialize()
@@ -184,6 +184,7 @@ namespace _02_Hello_Triangle
 
 
             CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
+
             CommandList.SetViewport(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
             CommandList.SetScissor(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
 
@@ -217,8 +218,8 @@ namespace _02_Hello_Triangle
             //var data = dDSLoader.TextureData;
 
 
-            //TextureData data = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
-            TextureData data = DDSLoader.LoadFromFile("desertcube1024.dds");
+            TextureData data = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
+            //TextureData data = DDSLoader.LoadFromFile("desertcube1024.dds");
 
             Console.WriteLine("Format = {0}", data.Format);
             Console.WriteLine("Width = {0}", data.Width);
@@ -232,10 +233,10 @@ namespace _02_Hello_Triangle
             int i = 0;
             foreach (byte item in data.Data)
             {
-                Console.Write("-{0}", item);
+                //Console.Write("-{0}", item);
                 if (i is 10)
                 {
-                    Console.WriteLine();
+                    //Console.WriteLine();
                     i = 0;
                 }
 

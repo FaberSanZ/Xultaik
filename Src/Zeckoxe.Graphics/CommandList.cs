@@ -98,33 +98,28 @@ namespace Zeckoxe.Graphics
 
         public void SetScissor(int x, int y, int w, int h)
         {
-            //NativeCommandList.SetScissorRectangles();
+            Vortice.Mathematics.Rect rect = new Vortice.Mathematics.Rect
+            {
+                
+            };
+
+
+            nativeCommandList.RSSetScissorRect(rect);
         }
 
 
-        public void SetColorTarget(CpuDescriptorHandle view)
+
+
+
+        public void SetRenderTargets(Texture depthStencilBuffer, Texture[] renderTargets)
         {
-            //NativeCommandList.OMSetRenderTargets(1, view, null);
-        }
+            CpuDescriptorHandle[] cpuDescriptorHandles = new CpuDescriptorHandle[renderTargets.Length];
 
+            for (int i = 0; i < cpuDescriptorHandles.Length; i++)
+                cpuDescriptorHandles[i] = renderTargets[i].NativeRenderTargetView;
+            
 
-        public void SetRenderTargets(CpuDescriptorHandle render, CpuDescriptorHandle depth)
-        {
-            //NativeCommandList.OMSetRenderTargets(1, render, depth);
-        }
-
-
-        public void SetRenderTargets(CpuDescriptorHandle render, Texture depth)
-        {
-            //NativeCommandList.SetRenderTargets(1, render, depth?.NativeDepthStencilView);
-        }
-
-
-        public void SetRenderTargets(Texture depth, Texture[] render)
-        {
-            //NativeCommandList.OMSetRenderTargets();
-            var ss = render[0].NativeRenderTargetView;
-            nativeCommandList.OMSetRenderTargets(ss, depth?.NativeDepthStencilView);
+            nativeCommandList.OMSetRenderTargets(cpuDescriptorHandles, depthStencilBuffer?.NativeDepthStencilView);
         }
 
 

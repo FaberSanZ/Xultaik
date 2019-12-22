@@ -519,7 +519,7 @@ namespace Zeckoxe.Image
                     case PixelFormat.D24_UNorm_S8_UInt:
                     case PixelFormat.R24_UNorm_X8_Typeless:
                     case PixelFormat.X24_Typeless_G8_UInt:
-                    case PixelFormat.R9G9B9E5_SharedExp:
+                    case PixelFormat.R9G9B9E5_Sharedexp:
                     case PixelFormat.R8G8_B8G8_UNorm:
                     case PixelFormat.G8R8_G8B8_UNorm:
                     case PixelFormat.B8G8R8A8_UNorm:

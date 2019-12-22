@@ -23,14 +23,19 @@ namespace Zeckoxe.Graphics
             {
                 case ShaderStage.VertexShader:
                     return "VS";
+
                 case ShaderStage.PixelShader:
                     return "PS";
+
                 case ShaderStage.GeometryShader:
                     return "GS";
+
                 case ShaderStage.HullShader:
                     return "HS";
+
                 case ShaderStage.DomainShader:
                     return "DS";
+
                 case ShaderStage.ComputeShader:
                     return "CS";
 
@@ -90,10 +95,10 @@ namespace Zeckoxe.Graphics
                     return DxcShaderStage.ComputeShader;
 
                 //case ShaderStage.Library:
-                //    return DxcShaderStage.VertexShader;
+                //    return DxcShaderStage.Library;
 
                 //case ShaderStage.Count:
-                //    return DxcShaderStage.VertexShader;
+                //    return DxcShaderStage.Count;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(shaderStage));
