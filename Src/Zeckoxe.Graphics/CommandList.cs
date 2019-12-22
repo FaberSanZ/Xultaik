@@ -54,30 +54,13 @@ namespace Zeckoxe.Graphics
             nativeCommandList.SetGraphicsRootSignature(pipelineState.RootSignature);
 
         }
-        public void Wait()
-        {
-            fence.Wait(fenceValue);
-        }
+        
 
 
         public void Reset()
         {
             commandAllocator.Reset();
             nativeCommandList.Reset(commandAllocator, null);
-        }
-
-
-        public void Close()
-        {
-            nativeCommandList.Close();
-        }
-
-
-        public void FinishFrame()
-        {
-            fenceValue++;
-
-            fence.Signal(GraphicsDevice.NativeDirectCommandQueue, fenceValue);
         }
 
 
@@ -139,8 +122,10 @@ namespace Zeckoxe.Graphics
 
         public void ClearDepth(Texture texture, float depth)
         {
+            ResourceTransition(texture, ResourceStates.DepthRead, ResourceStates.Present);
             nativeCommandList.ClearDepthStencilView(texture.NativeDepthStencilView, ClearFlags.Depth, depth, 0);
         }
+
 
 
 
@@ -159,10 +144,8 @@ namespace Zeckoxe.Graphics
 
 
 
-        public void SetPrimitiveTopology(PrimitiveType primitiveType)
-        {
-            nativeCommandList.IASetPrimitiveTopology(ConvertExtensions.ToPrimitiveType(primitiveType));
-        }
+        public void SetTopology(PrimitiveType primitiveType) => nativeCommandList.IASetPrimitiveTopology(ConvertExtensions.ToPrimitiveType(primitiveType));
+        
 
         public void SetVertexBuffer(Buffer buffer)
         {
@@ -191,28 +174,28 @@ namespace Zeckoxe.Graphics
 
 
 
-        public void Draw(int count)
-        {
-            nativeCommandList.DrawInstanced(count, 1, 0, 0);
-        }
+        public void DrawInstanced(int count) => nativeCommandList.DrawInstanced(count, 1, 0, 0);
+        
 
-        public void DrawIndexed(int idxCnt)
-        {
-
-            nativeCommandList.DrawIndexedInstanced(idxCnt, 1, 0, 0, 0);
-        }
+        public void DrawIndexedInstanced(int indexCountPerInstance, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) =>
+            nativeCommandList.DrawIndexedInstanced(indexCountPerInstance, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation);
 
 
-        public void BeginDraw()
-        {
-            Reset();
-        }
 
-        public void EndDraw()
+        public void ExecuteCommandList()
         {
             nativeCommandList.Close();
             GraphicsDevice.NativeDirectCommandQueue.ExecuteCommandList(this);
+
+            fenceValue++;
+            fence.Signal(GraphicsDevice.NativeDirectCommandQueue, fenceValue);
+
+            fence.Wait(fenceValue);
+
+            //commandAllocator.Reset();
+            //nativeCommandList.Reset(commandAllocator, null);
         }
+
 
     }
 }

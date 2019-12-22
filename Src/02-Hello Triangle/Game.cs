@@ -182,24 +182,20 @@ namespace _02_Hello_Triangle
         {
             CommandList.Reset();
 
-
             CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
             CommandList.SetViewport(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
             CommandList.SetScissor(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
 
             CommandList.SetPipelineState(PipelineState);
-
-            CommandList.SetPrimitiveTopology(PrimitiveType.TriangleList);
+            CommandList.SetTopology(PrimitiveType.TriangleList);
             CommandList.SetVertexBuffer(VertexBuffer);
-            CommandList.SetIndexBuffer(IndexBuffer, IndexType.UInt32);
-            CommandList.DrawIndexed(3);
+            CommandList.SetIndexBuffer(IndexBuffer, IndexType.UInt16);
+            CommandList.DrawIndexedInstanced(3, 1, 0, 0, 0);
 
+            CommandList.ExecuteCommandList();
 
-
-            CommandList.EndDraw();
-            CommandList.FinishFrame();
             SwapChain.Present();
-            CommandList.Wait();
+
         }
 
         public void Dispose()
