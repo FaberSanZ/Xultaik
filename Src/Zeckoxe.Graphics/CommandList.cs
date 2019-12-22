@@ -100,7 +100,10 @@ namespace Zeckoxe.Graphics
         {
             Vortice.Mathematics.Rect rect = new Vortice.Mathematics.Rect
             {
-                
+                Left = x,
+                Right = x + w,
+                Top = y,
+                Bottom = y + h
             };
 
 
@@ -125,14 +128,13 @@ namespace Zeckoxe.Graphics
 
         public void ClearTargetColor(Texture texture, float r, float g, float b, float a)
         {
+            ResourceTransition(texture, ResourceStates.RenderTarget, ResourceStates.Present);
+
             nativeCommandList.ClearRenderTargetView(texture.NativeRenderTargetView, new Vortice.Mathematics.Color4(r, g, b, a));
             nativeCommandList.OMSetRenderTargets(texture.NativeRenderTargetView);
+
         }
 
-        public void ClearDepth(CpuDescriptorHandle handle, float depth)
-        {
-            nativeCommandList.ClearDepthStencilView(handle, ClearFlags.Depth, depth, 0);
-        }
 
 
         public void ClearDepth(Texture texture, float depth)
@@ -140,15 +142,7 @@ namespace Zeckoxe.Graphics
             nativeCommandList.ClearDepthStencilView(texture.NativeDepthStencilView, ClearFlags.Depth, depth, 0);
         }
 
-        public void ResourceTransition(ID3D12Resource resource, ResourceStates before, ResourceStates after)
-        {
-            ResourceBarrier barrier = new ResourceBarrier(new ResourceTransitionBarrier(resource, (ResourceStates)before, (ResourceStates)after));
-            var barriers = stackalloc ResourceBarrier[1];
-            barriers[0] = new ResourceBarrier(new ResourceTransitionBarrier(resource, (ResourceStates)before, (ResourceStates)after));
 
-            nativeCommandList.ResourceBarrier(*barriers);
-            //NativeCommandList.ResourceBarrierTransition(resource, (ResourceStates)before, (ResourceStates)after);
-        }
 
 
         public void ResourceTransition(Texture resource, ResourceStates before, ResourceStates after)
