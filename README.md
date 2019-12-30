@@ -25,7 +25,7 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 ## Examples
 
-### [Clear Screen](HelloTriangle)(https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) 
+### [Clear Screen](HelloTriangle)
 
 This example shows how to configure the device and clear the color.
 
@@ -34,7 +34,7 @@ This example shows how to configure the device and clear the color.
 <hr>
 <br>
 
-### [Hello Triangle](HelloTriangle)(https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) 
+### [Hello Triangle](HelloTriangle) 
 
 Getting started tutorial where a single multi-colored triangle is rendered.
 
