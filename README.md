@@ -25,7 +25,7 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 ## Examples
 
-### [Clear Screen](HelloTriangle)
+### [Clear Screen](https://github.com/FaberSanZ/Zeckoxe-Engine/tree/master/Src/01-ClearScreen)
 
 This example shows how to configure the device and clear the color.
 
