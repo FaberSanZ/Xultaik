@@ -20,9 +20,6 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 <br>
 
 
-<hr>
-<br>
-
 ## Examples
 
 ### [Clear Screen](https://github.com/FaberSanZ/Zeckoxe-Engine/tree/master/Src/01-ClearScreen)
