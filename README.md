@@ -26,7 +26,7 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 This example shows how to configure the device and clear the color.
 
-<p align="center"><img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/01.PNG" width="600" height="420"/></p>
+<p align="center"><img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/01.PNG" width="680" height="440"/></p>
 
 <hr>
 <br>
@@ -35,7 +35,7 @@ This example shows how to configure the device and clear the color.
 
 Getting started tutorial where a single multi-colored triangle is rendered.
 
-<p align="center"><img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/02.PNG" width="600" height="420"/></p>
+<p align="center"><img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/02.PNG" width="680" height="440"/></p>
 
 
 <hr>
