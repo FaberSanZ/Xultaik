@@ -34,7 +34,7 @@ This example shows how to configure the device and clear the color.
 <hr>
 <br>
 
-### [Hello Triangle](HelloTriangle) 
+### [Hello Triangle](https://github.com/FaberSanZ/Zeckoxe-Engine/tree/master/Src/02-Hello%20Triangle) 
 
 Getting started tutorial where a single multi-colored triangle is rendered.
 
