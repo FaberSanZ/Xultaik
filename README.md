@@ -20,12 +20,28 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 <br>
 
 
+<hr>
+<br>
 
 ## Examples
 
-| Example   | Screenshot  | Description          |
-|---------------|-------------|----------------------|
-| [01 - Clear Screen](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) | <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/01.PNG" width=240> | This example shows how to configure the device and clear the color using  Zeckoxe Engine. |
-| [02 - Hello Triangle](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) |  <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/02.PNG" width=240> | This example shows how to render simple triangle using  Zeckoxe Engine  |
+### [Clear Screen](HelloTriangle)(https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) 
+
+This example shows how to configure the device and clear the color.
+
+<p align="center"><img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/01.PNG" width="400" height="300"/></p>
+
+<hr>
+<br>
+
+### [Hello Triangle](HelloTriangle)(https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) 
+
+Getting started tutorial where a single multi-colored triangle is rendered.
+
+<p align="center"><img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/02.PNG" width="400" height="300"/></p>
+
+
+<hr>
+<br>
 
 
