@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+
+
+
+  <ItemGroup>
+    <Content Include="..\..\native\win-x64\shaderc_shared.dll">
+      <PackagePath>runtimes/win-x64/native</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\native\win-x86\shaderc_shared.dll">
+      <PackagePath>runtimes/win-x86/native</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="..\..\native\linux-x64\libshaderc_shared.so">
+      <PackagePath>runtimes/linux-x64/native</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+
+
+</Project>

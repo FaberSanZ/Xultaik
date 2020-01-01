@@ -8,192 +8,190 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Vortice.Direct3D12;
-using Vortice.DirectX.Direct3D;
-using static Vortice.Direct3D12.D3D12;
-using static Vortice.DXGI.DXGI;
+using Vulkan;
+using Zeckoxe.Core;
+using Zeckoxe.Mathematics;
+using static Vulkan.VulkanNative;
 
 namespace Zeckoxe.Graphics
 {
     public unsafe class CommandList : GraphicsResource
     {
-        internal ID3D12GraphicsCommandList nativeCommandList;
-        internal ID3D12PipelineState pipelineState;
-        internal ID3D12CommandAllocator commandAllocator;
-        internal Fence fence;
-        internal long fenceValue;
+
+        internal uint imageIndex;
+        internal VkCommandBuffer CommandBuffer;
 
 
-        public CommandList(GraphicsDevice device) : base(device)
+
+
+
+        public CommandList(GraphicsDevice graphicsDevice) : base(graphicsDevice)
         {
-            Initialize();
+            Recreate();
         }
 
 
 
-        private void Initialize()
+        public void Recreate()
         {
-            commandAllocator = GraphicsDevice.NativeDevice.CreateCommandAllocator( Vortice.Direct3D12.CommandListType.Direct);
-
-            fenceValue = 0;
-            fence = new Fence(GraphicsDevice, fenceValue);
-
-            nativeCommandList = GraphicsDevice.NativeDevice.CreateCommandList(Vortice.Direct3D12.CommandListType.Direct, commandAllocator, null);
-            // We close it as it starts in open state
-            nativeCommandList.Close();
-
+            CommandBuffer = NativeDevice.CreateCommandBufferPrimary();
         }
+
+
+        public void Begin()
+        {
+            // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
+            // With that we don't have to handle VK_NOT_READY
+            uint i = 0; 
+            vkAcquireNextImageKHR(NativeDevice.Device, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.ImageAvailableSemaphore, new VkFence(), &i);
+            imageIndex = i; 
+
+
+            VkCommandBufferBeginInfo beginInfo = new VkCommandBufferBeginInfo()
+            {
+                sType = VkStructureType.CommandBufferBeginInfo,
+                flags = VkCommandBufferUsageFlags.RenderPassContinue,
+            };
+
+            vkBeginCommandBuffer(CommandBuffer, &beginInfo);
+        }
+
+
+        public void BeginFramebuffer(Framebuffer framebuffer)
+        {
+
+            VkRenderPassBeginInfo renderPassInfo = new VkRenderPassBeginInfo()
+            {
+                sType = VkStructureType.RenderPassBeginInfo,
+                renderPass = framebuffer.NativeRenderPass,
+                framebuffer = framebuffer.SwapChainFramebuffers[imageIndex],
+                renderArea = new VkRect2D()
+                {
+                    extent = new VkExtent2D(NativeDevice.NativeParameters.BackBufferWidth, NativeDevice.NativeParameters.BackBufferHeight)
+                },
+            };
+
+            vkCmdBeginRenderPass(CommandBuffer, &renderPassInfo, VkSubpassContents.Inline);
+        }
+
+
+        public void Clear(float R, float G, float B, float A = 1.0f)
+        {
+            VkClearColorValue clearValue = new VkClearColorValue(R, G, B);
+
+            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
+
+            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
+        }
+
+
+        public void Clear(RawColor color)
+        {
+            VkClearColorValue clearValue = new VkClearColorValue(color.R, color.G, color.B, color.A);
+
+            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
+
+            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
+        }
+
 
 
 
         public void SetPipelineState(PipelineState pipelineState)
         {
-
-            nativeCommandList.SetPipelineState(pipelineState.oldPipelineState);
-
-            nativeCommandList.SetGraphicsRootSignature(pipelineState.RootSignature);
-
-        }
-        
-
-
-        public void Reset()
-        {
-            commandAllocator.Reset();
-            nativeCommandList.Reset(commandAllocator, null);
+            vkCmdBindPipeline(CommandBuffer, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
         }
 
 
-        public void SetViewport(int x, int y, int w, int h)
+        public void DrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance)
         {
-            var viewport = new Vortice.Mathematics.Viewport
+
+        }
+
+        public void SetScissor(int width, int height, int x, int y)
+        {
+            // Update dynamic scissor state
+            VkRect2D scissor = new VkRect2D();
+            scissor.extent.width = (uint)width;
+            scissor.extent.height = (uint)height;
+            scissor.offset.x = x;
+            scissor.offset.y = y;
+            vkCmdSetScissor(CommandBuffer, 0, 1, &scissor);
+        }
+
+        public void SetViewport(float Width, float Height, float X, float Y, float MinDepth = 0.0f, float MaxDepth = 1.0f)
+        {
+            VkViewport Viewport = new VkViewport()
             {
-                Width = w,
-                Height = h,
-                X = x,
-                Y = y,
-                MaxDepth = 1.0f,
-                MinDepth = 0.0f
-            };
-            nativeCommandList.RSSetViewport(viewport);
-        }
+                width = Width,
 
+                height = Height,
 
-        public void SetScissor(int x, int y, int w, int h)
-        {
-            Vortice.Mathematics.Rect rect = new Vortice.Mathematics.Rect
-            {
-                Left = x,
-                Right = x + w,
-                Top = y,
-                Bottom = y + h
+                x = X,
+
+                y = Y,
+
+                minDepth = MinDepth,
+
+                maxDepth = MaxDepth
             };
 
-
-            nativeCommandList.RSSetScissorRect(rect);
+            vkCmdSetViewport(CommandBuffer, 0, 1, &Viewport);
         }
-
-
-
-
-
-        public void SetRenderTargets(Texture depthStencilBuffer, Texture[] renderTargets)
-        {
-            CpuDescriptorHandle[] cpuDescriptorHandles = new CpuDescriptorHandle[renderTargets.Length];
-
-            for (int i = 0; i < cpuDescriptorHandles.Length; i++)
-                cpuDescriptorHandles[i] = renderTargets[i].NativeRenderTargetView;
-            
-
-            nativeCommandList.OMSetRenderTargets(cpuDescriptorHandles, depthStencilBuffer?.NativeDepthStencilView);
-        }
-
-
-        public void ClearTargetColor(Texture texture, float r, float g, float b, float a)
-        {
-            ResourceTransition(texture, ResourceStates.RenderTarget, ResourceStates.Present);
-
-            nativeCommandList.ClearRenderTargetView(texture.NativeRenderTargetView, new Vortice.Mathematics.Color4(r, g, b, a));
-            nativeCommandList.OMSetRenderTargets(texture.NativeRenderTargetView);
-
-        }
-
-
-
-        public void ClearDepth(Texture texture, float depth)
-        {
-            ResourceTransition(texture, ResourceStates.DepthRead, ResourceStates.Present);
-            nativeCommandList.ClearDepthStencilView(texture.NativeDepthStencilView, ClearFlags.Depth, depth, 0);
-        }
-
-
-
-
-
-        public void ResourceTransition(Texture resource, ResourceStates before, ResourceStates after)
-        {
-            //ResourceBarrier barrier = new ResourceBarrier(new ResourceTransitionBarrier(resource, (ResourceStates)before, (ResourceStates)after));
-            var barriers = stackalloc ResourceBarrier[1];
-            barriers[0] = new ResourceBarrier(new ResourceTransitionBarrier(resource.Resource, (ResourceStates)before, (ResourceStates)after));
-
-            nativeCommandList.ResourceBarrier(*barriers);
-
-
-            //NativeCommandList.ResourceBarrierTransition(resource.Resource, (ResourceStates)before, (ResourceStates)after);
-        }
-
-
-
-        public void SetTopology(PrimitiveType primitiveType) => nativeCommandList.IASetPrimitiveTopology(ConvertExtensions.ToPrimitiveType(primitiveType));
-        
 
         public void SetVertexBuffer(Buffer buffer)
         {
 
-            VertexBufferView vertexBufferView = new VertexBufferView()
-            {
-                BufferLocation = buffer.GPUVirtualAddress,
-                SizeInBytes = buffer.SizeInBytes,
-                StrideInBytes = buffer.StructureByteStride
-            };
-            nativeCommandList.IASetVertexBuffers(vertexBufferView);
         }
 
-
-        public void SetIndexBuffer(Buffer buffer, IndexType type)
+        public void SetIndexBuffer(Buffer buffer)
         {
-            IndexBufferView indexBufferView = new IndexBufferView()
-            {
-                BufferLocation = buffer.GPUVirtualAddress,
-                SizeInBytes = buffer.SizeInBytes,
-                Format = ConvertExtensions.ToIndexType(type),
-            };
 
-            nativeCommandList.IASetIndexBuffer(indexBufferView);
+        }
+
+        public void Draw(uint vertexCount, uint instanceCount, uint firstVertex, int firstInstance)
+        {
+            vkCmdDraw(CommandBuffer, vertexCount, instanceCount, 0, 0);
+
         }
 
 
 
-        public void DrawInstanced(int count) => nativeCommandList.DrawInstanced(count, 1, 0, 0);
-        
 
-        public void DrawIndexedInstanced(int indexCountPerInstance, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation) =>
-            nativeCommandList.DrawIndexedInstanced(indexCountPerInstance, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation);
-
-
-
-        public void ExecuteCommandList()
+        public void End()
         {
-            nativeCommandList.Close();
-            GraphicsDevice.NativeDirectCommandQueue.ExecuteCommandList(this);
+            vkEndCommandBuffer(CommandBuffer);
+        }
 
-            fenceValue++;
-            fence.Signal(GraphicsDevice.NativeDirectCommandQueue, fenceValue);
 
-            fence.Wait(fenceValue);
+        public void EndFramebuffer()
+        {
+            vkCmdEndRenderPass(CommandBuffer);
 
-            //commandAllocator.Reset();
-            //nativeCommandList.Reset(commandAllocator, null);
+        }
+
+
+        public void Submit()
+        {
+            VkSemaphore signalSemaphore = NativeDevice.RenderFinishedSemaphore;
+            VkSemaphore waitSemaphore = NativeDevice.ImageAvailableSemaphore;
+            VkPipelineStageFlags waitStages = VkPipelineStageFlags.ColorAttachmentOutput;
+            VkCommandBuffer commandBuffer = CommandBuffer;
+
+
+            VkSubmitInfo submitInfo = new VkSubmitInfo()
+            {
+                sType = VkStructureType.SubmitInfo,
+                waitSemaphoreCount = 1,
+                pWaitSemaphores = &waitSemaphore,
+                pWaitDstStageMask = &waitStages,
+                commandBufferCount = 1,
+                pCommandBuffers = &commandBuffer,
+                signalSemaphoreCount = 1,
+                pSignalSemaphores = &signalSemaphore,
+            };
+
+            vkQueueSubmit(NativeDevice.NativeCommandQueue, 1, &submitInfo, VkFence.Null);
         }
 
 
