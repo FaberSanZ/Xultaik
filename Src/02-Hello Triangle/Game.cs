@@ -7,10 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
-using Zeckoxe.ShaderCompiler;
+using Zeckoxe.Image;
+using Zeckoxe.Mathematics;
 using Buffer = Zeckoxe.Graphics.Buffer;
 //using Zeckoxe.Mathematics;
 
@@ -18,24 +21,33 @@ namespace _02_Hello_Triangle
 {
     public class Game : IDisposable
     {
+        struct Vertex
+        {
+            public readonly Vector3 Position;
+            public readonly Vector4 Color;
+
+            public Vertex(in Vector3 position,in Vector4 color)
+            {
+                Position = position;
+                Color = color;
+            }
+        };
+
 
         public Window Window { get; set; }
-
-        public PresentationParameters Parameters { get; set; }
-
-        public GraphicsInstance Instance { get; set; }
-
+        public RenderDescriptor Parameters { get; set; }
         public GraphicsAdapter Adapter { get; set; }
-
         public GraphicsDevice Device { get; set; }
+        public SwapChain SwapChain { get; set; }
+        public CommandList CommandList { get; set; }
 
-        public Texture Texture { get; set; }
 
-        public Framebuffer Framebuffer { get; set; }
-
-        public GraphicsContext Context { get; set; }
-
+        // New
+        public Buffer VertexBuffer { get; set; }
+        public Buffer IndexBuffer { get; set; }
         public PipelineState PipelineState { get; set; }
+
+
 
 
         public Game()
@@ -46,67 +58,87 @@ namespace _02_Hello_Triangle
             };
 
 
-            Parameters = new PresentationParameters()
+            Parameters = new RenderDescriptor()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
                 DeviceHandle = Window.Handle,
                 Settings = new Settings()
                 {
-                    Validation = true,
-                    Fullscreen = true,
+                    Fullscreen = false,
                     VSync = false,
                 },
             };
 
 
-            hlslVulkan();
+            TestIMGLoaders();
         }
-
-
-
-
-        public void hlslVulkan()
-        {
-            var c = new ShaderCompiler();
-            var o = new CompileOptions()
-            {
-                Target = CompileOptions.Environment.Vulkan,
-            };
-
-            o.Language = CompileOptions.InputLanguage.GLSL;
-            
-
-            string testShader = File.ReadAllText("Shaders/raygen.rgen");
-
-            var r = c.Compile(testShader, ShaderCompiler.Stage.shaderc_raygen_shader,  o, "raygen");
-
-            
-            byte[] bc = r.GetBytes();
-            foreach (var item in bc)
-                Console.WriteLine(item);
-            
-        }
-
 
         public void Initialize()
         {
-            Instance = new GraphicsInstance(Parameters);
 
-            Adapter = new GraphicsAdapter(Instance);
+            Adapter = new GraphicsAdapter();
 
-            Device = new GraphicsDevice(Adapter);
+            Device = new GraphicsDevice(Adapter, Parameters);
 
-            Texture = new Texture(Device);
+            SwapChain = new SwapChain(Device);
 
-            Framebuffer = new Framebuffer(Device);
+            CreatePSO();
 
-            Context = new GraphicsContext(Device);
+            CommandList = new CommandList(Device);
 
 
-            PipelineState = new PipelineState(Device, new string[] { "Shaders/VertexShader.hlsl", "Shaders/PixelShader.hlsl" }, Framebuffer);
+            Vertex[] Vertices = new Vertex[]
+            {
+                  new Vertex(new Vector3(0f, 0.65f, 1.0f), new Vector4(1.8f, 0.0f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(0.5f, -0.65f, 1.0f), new Vector4(0.0f, 1.8f, 0.0f, 1.0f)),
+                  new Vertex(new Vector3(-0.5f, -0.65f, 1.0f), new Vector4(0.0f, 0.0f, 1.8f, 1.0f))
+            };
+
+
+            int[] indices = new int[]
+            {
+                2, 1, 0,
+            };
+
+
+
+            VertexBuffer = new Buffer(Device, new BufferDescription()
+            {
+                Flags = BufferFlags.VertexBuffer,
+                HeapType = HeapType.Upload,
+                SizeInBytes = Interop.SizeOf(Vertices),
+                StructureByteStride = Interop.SizeOf<Vertex>(),
+            });
+
+
+            IndexBuffer = new Buffer(Device, new BufferDescription()
+            {
+                Flags = BufferFlags.IndexBuffer,
+                HeapType = HeapType.Upload,
+                SizeInBytes = Interop.SizeOf(indices),
+                StructureByteStride = Interop.SizeOf<int>(),
+            });
+
+            IndexBuffer.SetData(indices);
+
+            VertexBuffer.SetData(Vertices);
         }
 
+
+        public void CreatePSO()
+        {
+            PipelineStateDescription pipelineStateDescription = new PipelineStateDescription()
+            {
+                VertexShader =  ShaderByteCode.CompileFromFile("shaders.hlsl", ShaderStage.VertexShader),                                // Compile #1
+                PixelShader = new ShaderByteCode(File.ReadAllText("shaders.hlsl"), ShaderStage.PixelShader, "PS", ShaderModel.Model6_0), // Compile #2
+            };
+
+            PipelineState = new PipelineState(Device, pipelineStateDescription);
+        }
+
+
+  
 
         public void Run()
         {
@@ -133,9 +165,11 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
-            foreach (var Description in Device.NativeAdapter.Description)
+            foreach (string Description in Device.NativeAdapter.Description)
                 Console.WriteLine(Description);
 
+            foreach (var VendorId in Device.NativeAdapter.VendorId)
+                Console.WriteLine(VendorId);
 
         }
 
@@ -146,29 +180,66 @@ namespace _02_Hello_Triangle
 
         public void Draw()
         {
-            CommandList CommandList = Context.CommandList;
+            CommandList.Reset();
 
-            Device.WaitIdle();
+            CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
+            CommandList.SetViewport(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
+            CommandList.SetScissor(0, 0, Parameters.BackBufferWidth, Parameters.BackBufferHeight);
 
-            CommandList.Begin();
-            CommandList.BeginFramebuffer(Framebuffer);
-            CommandList.Clear(0.0f, 0.2f, 0.4f, 1.0f);
-
-            CommandList.SetViewport(Window.Width, Window.Height, 0, 0);
-            CommandList.SetScissor(Window.Width, Window.Height, 0, 0);
             CommandList.SetPipelineState(PipelineState);
-            CommandList.Draw(3, 1, 0, 0);
+            CommandList.SetTopology(PrimitiveType.TriangleList);
+            CommandList.SetVertexBuffer(VertexBuffer);
+            CommandList.SetIndexBuffer(IndexBuffer, IndexType.UInt16);
+            CommandList.DrawIndexedInstanced(3, 1, 0, 0, 0);
 
-            CommandList.EndFramebuffer();
-            CommandList.End();
-            CommandList.Submit();
+            CommandList.ExecuteCommandList();
 
-            Device.NativeSwapChain.Present();
+            SwapChain.Present();
+
         }
 
         public void Dispose()
         {
             //Device.Dispose();
+        }
+
+
+
+
+
+        public void TestIMGLoaders()
+        {
+            Console.WriteLine("-----------------TextureData-----------");
+
+            //Zeckoxe.Image.DDSLoader dDSLoader = new Zeckoxe.Image.DDSLoader("desertcube1024.dds");
+            //var data = dDSLoader.TextureData;
+
+
+            TextureData data = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
+            //TextureData data = DDSLoader.LoadFromFile("desertcube1024.dds");
+
+            Console.WriteLine("Format = {0}", data.Format);
+            Console.WriteLine("Width = {0}", data.Width);
+            Console.WriteLine("Height = {0}", data.Height);
+            Console.WriteLine("Depth = {0}", data.Depth);
+            Console.WriteLine("MipMaps = {0}", data.MipMaps);
+            Console.WriteLine("Size = {0}", data.Size);
+            Console.WriteLine("IsCubeMap = {0}", data.IsCubeMap);
+            Console.WriteLine("-------------DataInBytes-----------");
+
+            int i = 0;
+            foreach (byte item in data.Data)
+            {
+                //Console.Write("-{0}", item);
+                if (i is 10)
+                {
+                    //Console.WriteLine();
+                    i = 0;
+                }
+
+                i++;
+            }
+            Console.WriteLine("-----------------DataInBytes-----------");
         }
 
     }

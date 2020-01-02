@@ -103,10 +103,10 @@ namespace Zeckoxe.Desktop
 
                             Message message = new Message()
                             {
-                                HWnd = (IntPtr)(void*)msg.handle,
-                                LParam = (IntPtr)(void*)msg.lParam,
+                                HWnd = (IntPtr)msg.handle,
+                                LParam = (IntPtr)msg.lParam,
                                 Msg = (int)msg.msg,
-                                WParam = (IntPtr)(void*)msg.wParam
+                                WParam = (IntPtr)/*(void*)*/msg.wParam
                             };
 
 

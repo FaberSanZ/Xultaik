@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -18,6 +19,9 @@ namespace Zeckoxe.Core
     {
 
         public static int SizeOf<T>() => Unsafe.SizeOf<T>();
+
+
+        public static int SizeOf<T>(T[] values) => Unsafe.SizeOf<T>() * values.Length;
 
         public static IntPtr Alloc<T>(int count = 1) => Alloc(Unsafe.SizeOf<T>() * count);
 
@@ -30,17 +34,24 @@ namespace Zeckoxe.Core
             return Marshal.AllocHGlobal(byteCount);
         }
 
-
-
-        public static T* AllocToPointer<T>(T[] values) where T : unmanaged
+        public static T ToStructure<T>(byte[] bytes, int start, int count) where T : struct
         {
-            if (values == null || values.Length == 0)
-                return (T*)null;
+            byte[] temp = bytes.Skip(start).Take(count).ToArray();
+            GCHandle handle = GCHandle.Alloc(temp, GCHandleType.Pinned);
+            T stuff = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
+            handle.Free();
+            return stuff;
+        }
+
+        public static T AllocToPointer<T>(T[] values) where T : unmanaged
+        {
+            //if (values == null || values.Length == 0)
+            //    return (;
             
 
             int structSize = SizeOf<T>();
             int totalSize = values.Length * structSize;
-            void* ptr = (void*)Marshal.AllocHGlobal(totalSize);
+            IntPtr ptr = Marshal.AllocHGlobal(totalSize);
 
             byte* walk = (byte*)ptr;
             for (int i = 0; i < values.Length; i++)
@@ -49,16 +60,9 @@ namespace Zeckoxe.Core
                 walk += structSize;
             }
 
-            return (T*)ptr;
+            return (T)Marshal.PtrToStructure(ptr, typeof(T)); ;
         }
 
-
-        public static T* AllocToPointer<T>(ref T value) where T : unmanaged
-        {
-            void* ptr = (void*)Alloc<T>();
-            Unsafe.Copy(ptr, ref value);
-            return (T*)ptr;
-        }
 
 
         public static class MemoryHelper
@@ -147,13 +151,13 @@ namespace Zeckoxe.Core
                     return null;
 
                 // Allocate unmanaged memory for string pointers.
-                byte** stringHandlesPtr = (byte**)(void*)Alloc<IntPtr>(values.Length);
+                IntPtr* stringHandlesPtr = (IntPtr*)Alloc<IntPtr>(values.Length);
 
                 for (var i = 0; i < values.Length; i++)
                     // Store the pointer to the string.
-                    stringHandlesPtr[i] = (byte*)AllocToPointer(values[i]);
+                    stringHandlesPtr[i] = AllocToPointer(values[i]);
 
-                return stringHandlesPtr;
+                return (byte**)stringHandlesPtr;
             }
 
             public static int GetMaxByteCount(string value) => value == null ? 0 : Encoding.UTF8.GetMaxByteCount(value.Length + 1);

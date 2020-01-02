@@ -13,24 +13,33 @@
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Desktop\Zeckoxe.Desktop.csproj" />
     <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Graphics.csproj" />
-    <ProjectReference Include="..\Zeckoxe.ShaderCompiler\Zeckoxe.ShaderCompiler.csproj" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <None Update="Shaders\PixelShader.hlsl">
+    <None Update="bricks.dds">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Shaders\raygen.rgen">
+    <None Update="desertcube1024.dds">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Shaders\shader.frag">
+    <None Update="grass.dds">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Shaders\shader.vert">
+    <None Update="shaders.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Shaders\VertexShader.hlsl">
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Update="shaders.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Test.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="UVCheckerMap08-512.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

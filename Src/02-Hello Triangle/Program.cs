@@ -6,8 +6,8 @@ namespace _02_Hello_Triangle
     {
         static void Main(string[] args)
         {
-            using (var App = new Game())
-                App.Run();
+            using var App = new Game();
+            App.Run();
         }
     }
 }

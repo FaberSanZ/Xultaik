@@ -5,150 +5,154 @@
 =============================================================================*/
 
 
+
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
-using Zeckoxe.Core;
-using Vulkan;
-using static Vulkan.VulkanNative;
+using Vortice.Direct3D12;
+using Vortice.Dxc;
+using Vortice.DXGI;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class PipelineState : GraphicsResource
+
+    public class PipelineState : GraphicsResource
     {
-        VkPipelineLayout pipelineLayout;
-        internal VkPipeline graphicsPipeline;
+        PipelineStateDescription PipelineStateDescription { get; set; }
 
-        ShaderBytecode VertShaderbyteCode { get; set; }
 
-        ShaderBytecode FragShaderbyteCode { get; set; }
 
-        string[] FileShaders { get; set; }
+        //Internal 
+        internal ID3D12RootSignature RootSignature;
+        internal ID3D12PipelineState oldPipelineState;
 
-        public PipelineState(GraphicsDevice graphicsDevice, string[] fileShaders, Framebuffer framebuffer) : base(graphicsDevice)
+
+        public PipelineState(GraphicsDevice device, PipelineStateDescription description) : base(device)
         {
-            Recreate(fileShaders, framebuffer);
+            PipelineStateDescription = description;
+            Recreate();
+        }
+
+        public void Recreate()
+        {
+            CreateRootSignature();
+            CreatePipeline();
         }
 
 
-
-
-        private void Recreate(string[] fileShaders, Framebuffer framebuffer)
+        public void CreatePipeline()
         {
-            CreatePipelineLayout();
-
-            CreateGraphicsPipeline(fileShaders, framebuffer);
-        }
-
-
-
-        public void CreatePipelineLayout()
-        {
-
-        }
-
-        private VkShaderModule CreateShader(byte[] bytecode)
-        {
-            VkShaderModuleCreateInfo smci = VkShaderModuleCreateInfo.New();
-            fixed (byte* byteCodePtr = bytecode)
+            InputElementDescription[] inputElementDescs = new InputElementDescription[]  
             {
-                smci.pCode = (uint*)byteCodePtr;
-                smci.codeSize = new UIntPtr((uint)bytecode.Length);
-                vkCreateShaderModule(NativeDevice.Device, ref smci, null, out VkShaderModule module);
-                return module;
-            }
+                new InputElementDescription("POSITION", 0, Format.R32G32B32_Float, 0, 0),
+                new InputElementDescription("COLOR", 0, Format.R32G32B32A32_Float, 12, 0),
+
+            };
+
+            var psoDesc = new GraphicsPipelineStateDescription()
+            {
+                RootSignature = RootSignature,
+
+                InputLayout = new InputLayoutDescription(inputElementDescs),
+                SampleMask = uint.MaxValue,
+                PrimitiveTopologyType = PrimitiveTopologyType.Triangle,
+                RasterizerState = RasterizerDescription.CullCounterClockwise,
+                BlendState = BlendDescription.Opaque,
+                DepthStencilState = DepthStencilDescription.None,
+                RenderTargetFormats = new[] { Format.R8G8B8A8_UNorm },
+                DepthStencilFormat = Format.Unknown,
+                SampleDescription = new SampleDescription(1, 0),
+                //IndexBufferStripCutValue = IndexBufferStripCutValue.Value0xFFFF
+                StreamOutput = new StreamOutputDescription()
+                {
+                    //RasterizedStream =
+                },
+
+
+                HullShader = PipelineStateDescription.HullShader == null ? null : PipelineStateDescription.HullShader.Data,
+
+                GeometryShader = PipelineStateDescription.GeometryShader == null ? null : PipelineStateDescription.GeometryShader.Data,
+
+                DomainShader = PipelineStateDescription.DomainShader == null ? null : PipelineStateDescription.DomainShader.Data,
+
+                VertexShader = PipelineStateDescription.VertexShader == null ? null : PipelineStateDescription.VertexShader.Data,
+
+                PixelShader = PipelineStateDescription.PixelShader == null ? null : PipelineStateDescription.PixelShader.Data,
+            };
+
+            oldPipelineState = GraphicsDevice.NativeDevice.CreateGraphicsPipelineState(psoDesc);
         }
 
 
-        public void CreateGraphicsPipeline(string[] fileShaders, Framebuffer framebuffer)
+        private void CreateRootSignature()
         {
 
-            VkShaderModule vertexShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[0], ShaderCompiler.ShaderCompiler.Stage.vertex_shader);
-            VkShaderModule fragmentShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[1], ShaderCompiler.ShaderCompiler.Stage.fragment_shader);
+            //RootDescriptorTable table = new RootDescriptorTable()
+            //{
+            //Ranges = new DescriptorRange()
+            //    {
 
-            VkPipelineShaderStageCreateInfo vertCreateInfo = new VkPipelineShaderStageCreateInfo()
+            //   }
+            //}
+
+            //RootParameter rootParameter = new RootParameter(RootDescriptorTable)
+            //{
+            //    DescriptorTable = new RootDescriptorTable
+            //}
+
+
+            DescriptorRange Ranges = new DescriptorRange()
             {
-                sType = VkStructureType.PipelineShaderStageCreateInfo,
-                pNext = null,
-                stage = VkShaderStageFlags.Vertex,
-                module = vertexShader,
-                pName = Interop.String.ToPointer("main"),
+                BaseShaderRegister = 0,
+                NumDescriptors = 1,
+                OffsetInDescriptorsFromTableStart = 0,
+                RangeType = DescriptorRangeType.ShaderResourceView,
+                RegisterSpace = 0,
+            };
+
+            RootParameter[] slotRootParameters = new RootParameter[]
+            {
+                //new RootParameter(new roo
+                //new RootParameter(RootParameterType.ConstantBufferView, new RootDescriptor(0, 0), ShaderVisibility.All),
+                //new RootParameter(RootParameterType.ConstantBufferView, new RootDescriptor(1, 0), ShaderVisibility.All),
+                //new RootParameter(RootParameterType.ShaderResourceView, new RootDescriptor(1, 0), ShaderVisibility.All),
+                //new RootParameter(new RootDescriptorTable(new DescriptorRange[]{ Ranges }), ShaderVisibility.All)
             };
 
 
-            VkPipelineShaderStageCreateInfo fragCreateInfo = new VkPipelineShaderStageCreateInfo
+
+
+            RootSignatureDescription SignatureDesc = new RootSignatureDescription()
             {
-                sType = VkStructureType.PipelineShaderStageCreateInfo,
-                pNext = null,
-                flags = 0,
-                stage = VkShaderStageFlags.Fragment,
-                module = fragmentShader,
-                pName = Interop.String.ToPointer("main"),
+                Flags = RootSignatureFlags.AllowInputAssemblerInputLayout,
+                //Parameters = slotRootParameters,
+                //StaticSamplers = new StaticSamplerDescription[]
+                //{
+                //    new StaticSamplerDescription()
+                //    {
+
+                //        ShaderRegister = 0,
+                //        RegisterSpace = 0,
+                //        ShaderVisibility = ShaderVisibility.Pixel,
+
+                //        Filter = Filter.MinMagMipPoint,
+                //        AddressU = TextureAddressMode.Border,
+                //        AddressV = TextureAddressMode.Border,
+                //        AddressW = TextureAddressMode.Border,
+                //        MipLODBias = 0,
+                //        MaxAnisotropy = 0,
+                //        ComparisonFunction = ComparisonFunction.Never,
+                //        BorderColor = StaticBorderColor.TransparentBlack,
+                //        MinLOD = 0.0f,
+                //        MaxLOD =  int.MaxValue,
+                //    }
+                //},
             };
 
 
-            VkPipelineShaderStageCreateInfo* shaderStageCreateInfos = stackalloc VkPipelineShaderStageCreateInfo[2];
-            shaderStageCreateInfos[0] = vertCreateInfo;
-            shaderStageCreateInfos[1] = fragCreateInfo;
-
-            VkPipelineVertexInputStateCreateInfo vertexInputStateCI = VkPipelineVertexInputStateCreateInfo.New();
-            //var vertexBindingDesc = Vertex.GetBindingDescription();
-            vertexInputStateCI.vertexBindingDescriptionCount = 0;
-            //vertexInputStateCI.pVertexBindingDescriptions = Interop.Struct.AllocToPointer(ref vertexBindingDesc);
-
-
-            vertexInputStateCI.vertexAttributeDescriptionCount = 0;
-            //vertexInputStateCI.pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions());
-            //vertexInputStateCI.pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions().AsSpan());
-
-            VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI = VkPipelineInputAssemblyStateCreateInfo.New();
-            inputAssemblyCI.primitiveRestartEnable = false;
-            inputAssemblyCI.topology = VkPrimitiveTopology.TriangleList;
-
-
-
-            VkPipelineRasterizationStateCreateInfo rasterizerStateCI = VkPipelineRasterizationStateCreateInfo.New();
-            rasterizerStateCI.cullMode = VkCullModeFlags.None;
-            rasterizerStateCI.polygonMode = VkPolygonMode.Fill;
-            rasterizerStateCI.lineWidth = 2.5f;
-            rasterizerStateCI.frontFace = VkFrontFace.CounterClockwise;
-
-            VkPipelineMultisampleStateCreateInfo multisampleStateCI = VkPipelineMultisampleStateCreateInfo.New();
-            multisampleStateCI.rasterizationSamples = VkSampleCountFlags.Count1;
-            multisampleStateCI.minSampleShading = 1f;
-
-            VkPipelineColorBlendAttachmentState colorBlendAttachementState = new VkPipelineColorBlendAttachmentState();
-            colorBlendAttachementState.colorWriteMask = VkColorComponentFlags.R | VkColorComponentFlags.G | VkColorComponentFlags.B | VkColorComponentFlags.A;
-            colorBlendAttachementState.blendEnable = false;
-
-            VkPipelineColorBlendStateCreateInfo colorBlendStateCI = VkPipelineColorBlendStateCreateInfo.New();
-            colorBlendStateCI.attachmentCount = 1;
-            colorBlendStateCI.pAttachments = &colorBlendAttachementState;
-
-            //VkDescriptorSetLayout dsl = _descriptoSetLayout;
-            VkPipelineLayoutCreateInfo pipelineLayoutCI = VkPipelineLayoutCreateInfo.New();
-            pipelineLayoutCI.setLayoutCount = 0;
-            //pipelineLayoutCI.pSetLayouts = &dsl;
-            vkCreatePipelineLayout(NativeDevice.Device, ref pipelineLayoutCI, null, out pipelineLayout);
-
-            VkGraphicsPipelineCreateInfo graphicsPipelineCI = VkGraphicsPipelineCreateInfo.New();
-            graphicsPipelineCI.stageCount = 2;
-            graphicsPipelineCI.pStages = shaderStageCreateInfos;
-
-            graphicsPipelineCI.pVertexInputState = &vertexInputStateCI;
-            graphicsPipelineCI.pInputAssemblyState = &inputAssemblyCI;
-            graphicsPipelineCI.pRasterizationState = &rasterizerStateCI;
-            graphicsPipelineCI.pMultisampleState = &multisampleStateCI;
-            graphicsPipelineCI.pColorBlendState = &colorBlendStateCI;
-            graphicsPipelineCI.layout = pipelineLayout;
-            graphicsPipelineCI.renderPass = framebuffer.NativeRenderPass;
-            graphicsPipelineCI.subpass = 0;
-
-            vkCreateGraphicsPipelines(NativeDevice.Device, VkPipelineCache.Null, 1, ref graphicsPipelineCI, null, out graphicsPipeline);
+            RootSignature = GraphicsDevice.NativeDevice.CreateRootSignature(0, SignatureDesc, RootSignatureVersion.Version10);
+            //RootSignature.
         }
-
-
     }
 }
