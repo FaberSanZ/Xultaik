@@ -12,7 +12,7 @@ using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
 using Zeckoxe.ShaderCompiler;
 using Buffer = Zeckoxe.Graphics.Buffer;
-//using Zeckoxe.Mathematics;
+using Zeckoxe.Mathematics;
 
 namespace _02_Hello_Triangle
 {
