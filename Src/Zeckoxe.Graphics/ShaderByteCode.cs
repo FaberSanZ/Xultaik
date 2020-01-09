@@ -1,77 +1,59 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
 
 /*=============================================================================
-	ShaderByteCode.cs
+	ShaderBytecode.cs
 =============================================================================*/
-
 
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Vortice.Dxc;
 
 namespace Zeckoxe.Graphics
 {
-    public class ShaderByteCode
+    public class ShaderBytecode
     {
 
-        public byte[] Data = Array.Empty<byte>();
+        /// <summary>
+        /// Gets the buffer pointer.
+        /// </summary>
+        public byte[] Data { get; private set; }
 
 
-        public ShaderStage ShaderStage { get; set; }
 
-        public ShaderModel ShaderModel { get; set; }
 
-        public string Source { get; set; }
-
-        public string EntryPoint { get; set; }
-
-        public ShaderByteCode()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShaderBytecode"/> class.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        public ShaderBytecode(string path)
         {
-
+            Data = File.ReadAllBytes(path);
         }
 
 
-        public ShaderByteCode(string source, ShaderStage stage, string entrypoint, ShaderModel shaderModel)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShaderBytecode"/> class.
+        /// </summary>
+        /// <param name="buffer">The buffer.</param>
+        public ShaderBytecode(byte[] buffer)
         {
-            Source = source;
-            ShaderStage = stage;
-            EntryPoint = entrypoint;
-            ShaderModel = shaderModel;
-
-            Recreate();
-        }
-
-
-        internal void Recreate()
-        {
-            DxcCompilerOptions options = new DxcCompilerOptions()
-            {
-                ShaderModel = ConvertExtensions.ToDxcShaderModel(ShaderModel),
-                
-            };
-
-
-            IDxcOperationResult result = DxcCompiler.Compile(ConvertExtensions.ToDxcShaderStage(ShaderStage), Source, EntryPoint, "", options);
-
-            Data = Dxc.GetBytesFromBlob(result.GetResult());
-        }
-
-
-        public static ShaderByteCode CompileFromFile(string fileName, ShaderStage stage, string entrypoint = "", ShaderModel shaderModel = ShaderModel.Model6_0)
-        {
-            if (string.IsNullOrEmpty(entrypoint))
-                entrypoint = ConvertExtensions.GetDefaultEntryPoint(stage);
-
-
-            return new ShaderByteCode(File.ReadAllText(fileName), stage, entrypoint, shaderModel);
+            Data = buffer;
         }
 
 
 
-        public static implicit operator byte[](ShaderByteCode value) => value.Data;
+        public static byte[] LoadFromFile(string path) => new ShaderBytecode(path);
+
+
+
+        /// <summary>
+        /// Cast this <see cref="ShaderBytecode"/> to the underlying byte buffer.
+        /// </summary>
+        /// <param name="shaderBytecode"></param>
+        /// <returns>A byte buffer</returns>
+        public static implicit operator byte[](ShaderBytecode shaderBytecode) => shaderBytecode.Data;
 
     }
 }

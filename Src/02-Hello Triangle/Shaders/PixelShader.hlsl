@@ -1,11 +1,13 @@
-﻿struct VS_OUTPUT
+﻿struct PSInput
 {
-	float4 pos : SV_POSITION;
-	float4 color : COLOR;
+    float4 Pos   : SV_POSITION;
+    float3 Color : COLOR;
 };
-
-float4 PS(VS_OUTPUT input) : SV_TARGET
+struct PSOutput
 {
-	// return interpolated color
-	return input.color;
+    float4 Color : SV_TARGET;
+};
+void main(in  PSInput  PSIn, out PSOutput PSOut)
+{
+    PSOut.Color = float4(PSIn.Color.rgb, 1.0);
 }

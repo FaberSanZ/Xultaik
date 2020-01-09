@@ -17,16 +17,19 @@ namespace _01_ClearScreen
     {
         public Window Window { get; set; }
 
-        public RenderDescriptor Parameters { get; set; }
+        public PresentationParameters Parameters { get; set; }
+
+        public GraphicsInstance Instance { get; set; }
 
         public GraphicsAdapter Adapter { get; set; }
 
         public GraphicsDevice Device { get; set; }
 
-        public SwapChain SwapChain { get; set; }
+        public Texture Texture { get; set; }
 
-        public CommandList CommandList { get; set; }
+        public Framebuffer Framebuffer { get; set; }
 
+        public GraphicsContext Context { get; set; }
 
 
 
@@ -39,14 +42,15 @@ namespace _01_ClearScreen
             };
 
 
-            Parameters = new RenderDescriptor()
+            Parameters = new PresentationParameters()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
                 DeviceHandle = Window.Handle,
                 Settings = new Settings()
                 {
-                    Fullscreen = false,
+                    Validation = true,
+                    Fullscreen = true,
                     VSync = false,
                 },
             };
@@ -54,14 +58,17 @@ namespace _01_ClearScreen
 
         public void Initialize()
         {
+            Instance = new GraphicsInstance(Parameters);
 
-            Adapter = new GraphicsAdapter();
+            Adapter = new GraphicsAdapter(Instance);
 
-            Device = new GraphicsDevice(Adapter, Parameters);
+            Device = new GraphicsDevice(Adapter);
 
-            SwapChain = new SwapChain(Device);
+            Texture = new Texture(Device);
 
-            CommandList = new CommandList(Device);
+            Framebuffer = new Framebuffer(Device);
+
+            Context = new GraphicsContext(Device);
         }
 
 
@@ -93,8 +100,6 @@ namespace _01_ClearScreen
             foreach (var Description in Device.NativeAdapter.Description)
                 Console.WriteLine(Description);
 
-            foreach (var VendorId in Device.NativeAdapter.VendorId)
-                Console.WriteLine(VendorId);
 
         }
 
@@ -105,16 +110,22 @@ namespace _01_ClearScreen
 
         public void Draw()
         {
-            CommandList.Reset();
+            CommandList CommandList = Context.CommandList;
 
-            CommandList.SetViewport(0, 0, 800, 600);
-            CommandList.SetScissor(0, 0, 800, 600);
-            CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
+            Device.WaitIdle();
 
-            CommandList.ExecuteCommandList();
+            CommandList.Begin();
+            CommandList.BeginFramebuffer(Framebuffer);
+            CommandList.Clear(0.0f, 0.2f, 0.4f, 1.0f);
 
-            SwapChain.Present();
+            CommandList.SetViewport(Window.Width, Window.Height, 0, 0);
+            CommandList.SetScissor(Window.Width, Window.Height, 0, 0);
 
+            CommandList.EndFramebuffer();
+            CommandList.End();
+            CommandList.Submit();
+
+            Device.NativeSwapChain.Present();
         }
 
         public void Dispose()

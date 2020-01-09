@@ -4,18 +4,16 @@
 	FillMode.cs
 =============================================================================*/
 
-
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Zeckoxe.Graphics
 {
     public enum FillMode : int
     {
-        Wireframe = unchecked(0),
+        Solid = unchecked(0),
 
-        Solid = unchecked(1),
+        Wireframe = unchecked(1),
+
+        Point = unchecked(2),
+
+        FillRectangleNV = unchecked(1000153000)
     }
 }

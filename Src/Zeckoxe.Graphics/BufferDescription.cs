@@ -1,5 +1,4 @@
-﻿
-// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
 
 /*=============================================================================
 	BufferDescription.cs
@@ -13,22 +12,30 @@ namespace Zeckoxe.Graphics
 {
     public struct BufferDescription
     {
+
         public int SizeInBytes;
 
-        public int StructureByteStride;
 
-        public HeapType HeapType;
-
-        public BufferFlags Flags;
+        public int ByteStride;
 
 
+        public BufferFlags BufferFlags;
 
-        public BufferDescription(int sizeInBytes, BufferFlags bufferFlags, HeapType heapType, int structureByteStride = 0)
+
+        public GraphicsResourceUsage Usage;
+
+
+
+
+        public BufferDescription(int sizeInBytes, BufferFlags bufferFlags, GraphicsResourceUsage usage, int byteStride = 0)
         {
             SizeInBytes = sizeInBytes;
-            Flags = bufferFlags;
-            HeapType = heapType;
-            StructureByteStride = structureByteStride;
+
+            BufferFlags = bufferFlags;
+
+            Usage = usage;
+
+            ByteStride = byteStride;
         }
 
     }
