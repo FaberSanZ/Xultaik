@@ -12,12 +12,12 @@ namespace Zeckoxe.Graphics
 {
     public class GraphicsContext
     {
-        public CommandList CommandList { get; set; }
+        public CommandBuffer CommandBuffer { get; set; }
 
 
-        public GraphicsContext(GraphicsDevice graphicsDevice, CommandList? commandList = null)
+        public GraphicsContext(GraphicsDevice graphicsDevice, CommandBuffer? commandBuffer = null)
         {
-            CommandList = commandList is null ? graphicsDevice.NativeCommandList : new CommandList(graphicsDevice);
+            CommandBuffer = commandBuffer is null ? graphicsDevice.NativeCommand : new CommandBuffer(graphicsDevice);
         }
     }
 }

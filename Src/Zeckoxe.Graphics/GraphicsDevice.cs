@@ -33,7 +33,7 @@ namespace Zeckoxe.Graphics
 
         public PresentationParameters NativeParameters { get; set; }
 
-        public CommandList NativeCommandList { get; set; }
+        public CommandBuffer  NativeCommand { get; set; }
 
         public uint GraphicsFamily { get; private set; }
 
@@ -87,7 +87,7 @@ namespace Zeckoxe.Graphics
             NativeCommandBufferPrimary = CreateCommandBufferPrimary();
 
 
-            NativeCommandList = new CommandList(this);
+            NativeCommand = new CommandBuffer(this);
 
 
             NativeCommandBufferSecondary = CreateCommandBufferSecondary();

@@ -74,7 +74,38 @@ namespace Zeckoxe.Graphics
             }
         }
 
+        internal static MultisampleCount ToSampleCountFlags_Invert(VkSampleCountFlags countFlags)
+        {
+            switch (countFlags)
+            {
+                case VkSampleCountFlags.None:
+                    return MultisampleCount.None;
 
+                case VkSampleCountFlags.Count1:
+                    return MultisampleCount.X1;
+
+                case VkSampleCountFlags.Count2:
+                    return MultisampleCount.X2;
+
+                case VkSampleCountFlags.Count4:
+                    return MultisampleCount.X4;
+
+                case VkSampleCountFlags.Count8:
+                    return MultisampleCount.X8;
+
+                case VkSampleCountFlags.Count16:
+                    return MultisampleCount.X16;
+
+                case VkSampleCountFlags.Count32:
+                    return MultisampleCount.X32;
+
+                case VkSampleCountFlags.Count64:
+                    return MultisampleCount.X64;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(countFlags));
+            }
+        }
 
         internal static VkPolygonMode ToFillMode(FillMode fillMode)
         {

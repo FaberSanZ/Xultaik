@@ -34,6 +34,35 @@ namespace Zeckoxe.Graphics
             return extensionName;
         }
 
+        internal static VkSampleCountFlags ExtractMaxSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties)
+        {
+            VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts & physicalDeviceProperties.limits.framebufferDepthSampleCounts;
+
+            if ((counts & VkSampleCountFlags.Count64) != 0)
+                return VkSampleCountFlags.Count64;
+
+            if ((counts & VkSampleCountFlags.Count32) != 0)
+                return VkSampleCountFlags.Count32;
+
+            if ((counts & VkSampleCountFlags.Count16) != 0)
+                return VkSampleCountFlags.Count16;
+
+
+            if ((counts & VkSampleCountFlags.Count8) != 0)
+                return VkSampleCountFlags.Count8;
+
+
+            if ((counts & VkSampleCountFlags.Count4) != 0)
+                return VkSampleCountFlags.Count4;
+
+
+            if ((counts & VkSampleCountFlags.Count2) != 0)
+                return VkSampleCountFlags.Count2;
+
+
+            return VkSampleCountFlags.Count1;
+        }
+
         public static int BlockSizeInBytes(PixelFormat format)
         {
             return 1;

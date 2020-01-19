@@ -382,7 +382,7 @@ namespace Zeckoxe.Graphics
         {
             VkSemaphore Semaphore = NativeDevice.RenderFinishedSemaphore;
             VkSwapchainKHR swapchain = SwapChain;
-            CommandList commandList = NativeDevice.NativeCommandList;
+            CommandBuffer commandBuffer = NativeDevice.NativeCommand;
 
             VkPresentInfoKHR presentInfo = new VkPresentInfoKHR()
             {
@@ -391,7 +391,7 @@ namespace Zeckoxe.Graphics
                 pWaitSemaphores = &Semaphore,
                 swapchainCount = 1,
                 pSwapchains = &swapchain,
-                pImageIndices = Interop.AllocToPointer(ref commandList.imageIndex),
+                pImageIndices = Interop.AllocToPointer(ref commandBuffer.imageIndex),
             };
 
 

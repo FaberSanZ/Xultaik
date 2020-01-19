@@ -29,7 +29,7 @@ namespace _02_Hello_Triangle
 
         public GraphicsDevice Device { get; set; }
 
-        public Texture Texture { get; set; }
+        public DeviceLimits Limits { get; set; }
 
         public Framebuffer Framebuffer { get; set; }
 
@@ -97,7 +97,7 @@ namespace _02_Hello_Triangle
 
             Device = new GraphicsDevice(Adapter);
 
-            Texture = new Texture(Device);
+            Limits = new DeviceLimits(Device);
 
             Framebuffer = new Framebuffer(Device);
 
@@ -133,10 +133,8 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
-            foreach (var Description in Device.NativeAdapter.Description)
-                Console.WriteLine(Description);
-
-
+            Console.WriteLine($"DeviceName: { Device.NativeAdapter.DeviceName }");
+            Console.WriteLine($"MultisampleCount: { Limits.MultisampleCount }");
         }
 
         public void Update()
@@ -146,7 +144,7 @@ namespace _02_Hello_Triangle
 
         public void Draw()
         {
-            CommandList CommandList = Context.CommandList;
+            CommandBuffer CommandList = Context.CommandBuffer;
 
             Device.WaitIdle();
 

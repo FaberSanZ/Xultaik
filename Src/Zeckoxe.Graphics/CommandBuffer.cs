@@ -15,17 +15,17 @@ using static Vulkan.VulkanNative;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class CommandList : GraphicsResource
+    public unsafe class CommandBuffer : GraphicsResource
     {
 
         internal uint imageIndex;
-        internal VkCommandBuffer CommandBuffer;
+        internal VkCommandBuffer NativeCommandBuffer;
 
 
 
 
 
-        public CommandList(GraphicsDevice graphicsDevice) : base(graphicsDevice)
+        public CommandBuffer(GraphicsDevice graphicsDevice) : base(graphicsDevice)
         {
             Recreate();
         }
@@ -34,7 +34,7 @@ namespace Zeckoxe.Graphics
 
         public void Recreate()
         {
-            CommandBuffer = NativeDevice.CreateCommandBufferPrimary();
+            NativeCommandBuffer = NativeDevice.CreateCommandBufferPrimary();
         }
 
 
@@ -53,7 +53,7 @@ namespace Zeckoxe.Graphics
                 flags = VkCommandBufferUsageFlags.RenderPassContinue,
             };
 
-            vkBeginCommandBuffer(CommandBuffer, &beginInfo);
+            vkBeginCommandBuffer(NativeCommandBuffer, &beginInfo);
         }
 
 
@@ -71,7 +71,7 @@ namespace Zeckoxe.Graphics
                 },
             };
 
-            vkCmdBeginRenderPass(CommandBuffer, &renderPassInfo, VkSubpassContents.Inline);
+            vkCmdBeginRenderPass(NativeCommandBuffer, &renderPassInfo, VkSubpassContents.Inline);
         }
 
 
@@ -81,7 +81,7 @@ namespace Zeckoxe.Graphics
 
             VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
 
-            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
+            vkCmdClearColorImage(NativeCommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
         }
 
 
@@ -91,7 +91,7 @@ namespace Zeckoxe.Graphics
 
             VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
 
-            vkCmdClearColorImage(CommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
+            vkCmdClearColorImage(NativeCommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
         }
 
 
@@ -99,7 +99,7 @@ namespace Zeckoxe.Graphics
 
         public void SetPipelineState(PipelineState pipelineState)
         {
-            vkCmdBindPipeline(CommandBuffer, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
+            vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
         }
 
 
@@ -116,7 +116,7 @@ namespace Zeckoxe.Graphics
             scissor.extent.height = (uint)height;
             scissor.offset.x = x;
             scissor.offset.y = y;
-            vkCmdSetScissor(CommandBuffer, 0, 1, &scissor);
+            vkCmdSetScissor(NativeCommandBuffer, 0, 1, &scissor);
         }
 
         public void SetViewport(float Width, float Height, float X, float Y, float MinDepth = 0.0f, float MaxDepth = 1.0f)
@@ -136,7 +136,7 @@ namespace Zeckoxe.Graphics
                 maxDepth = MaxDepth
             };
 
-            vkCmdSetViewport(CommandBuffer, 0, 1, &Viewport);
+            vkCmdSetViewport(NativeCommandBuffer, 0, 1, &Viewport);
         }
 
         public void SetVertexBuffer(Buffer buffer)
@@ -151,7 +151,7 @@ namespace Zeckoxe.Graphics
 
         public void Draw(uint vertexCount, uint instanceCount, uint firstVertex, int firstInstance)
         {
-            vkCmdDraw(CommandBuffer, vertexCount, instanceCount, 0, 0);
+            vkCmdDraw(NativeCommandBuffer, vertexCount, instanceCount, 0, 0);
 
         }
 
@@ -160,13 +160,13 @@ namespace Zeckoxe.Graphics
 
         public void End()
         {
-            vkEndCommandBuffer(CommandBuffer);
+            vkEndCommandBuffer(NativeCommandBuffer);
         }
 
 
         public void EndFramebuffer()
         {
-            vkCmdEndRenderPass(CommandBuffer);
+            vkCmdEndRenderPass(NativeCommandBuffer);
 
         }
 
@@ -176,7 +176,7 @@ namespace Zeckoxe.Graphics
             VkSemaphore signalSemaphore = NativeDevice.RenderFinishedSemaphore;
             VkSemaphore waitSemaphore = NativeDevice.ImageAvailableSemaphore;
             VkPipelineStageFlags waitStages = VkPipelineStageFlags.ColorAttachmentOutput;
-            VkCommandBuffer commandBuffer = CommandBuffer;
+            VkCommandBuffer commandBuffer = NativeCommandBuffer;
 
 
             VkSubmitInfo submitInfo = new VkSubmitInfo()

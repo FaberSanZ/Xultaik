@@ -24,11 +24,11 @@ namespace Zeckoxe.Graphics
 
         public uint VendorId => Properties.vendorID;
 
-        public string Description
+        public string DeviceName
         {
             get
             {
-                VkPhysicalDeviceProperties deviceProperties = Properties;
+                var deviceProperties = Properties;
                 return Interop.String.FromPointer(deviceProperties.deviceName);
             }
         }
