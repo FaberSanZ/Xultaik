@@ -40,17 +40,14 @@ namespace _02_Hello_Triangle
 
         public Game()
         {
-            Window = new Window("Zeckoxe Engine - (Hello Triangle)", 1000, 720)
-            {
-                StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
-            };
+            Window = new Window("Zeckoxe Engine - (Hello Triangle)", 1000, 720);
 
 
             Parameters = new PresentationParameters()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                DeviceHandle = Window.Handle,
+                Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
                     Validation = true,
@@ -59,34 +56,10 @@ namespace _02_Hello_Triangle
                 },
             };
 
-
-            //hlslVulkan();
         }
 
 
 
-
-        public void hlslVulkan()
-        {
-            var c = new ShaderCompiler();
-            var o = new CompileOptions()
-            {
-                Target = CompileOptions.Environment.Vulkan,
-            };
-
-            o.Language = CompileOptions.InputLanguage.GLSL;
-            
-
-            string testShader = File.ReadAllText("Shaders/raygen.rgen");
-
-            var r = c.Compile(testShader, ShaderCompiler.Stage.shaderc_raygen_shader,  o, "raygen");
-
-            
-            byte[] bc = r.GetBytes();
-            foreach (var item in bc)
-                Console.WriteLine(item);
-            
-        }
 
 
         public void Initialize()
@@ -144,22 +117,22 @@ namespace _02_Hello_Triangle
 
         public void Draw()
         {
-            CommandBuffer CommandList = Context.CommandBuffer;
+            CommandBuffer commandBuffer = Context.CommandBuffer;
 
             Device.WaitIdle();
 
-            CommandList.Begin();
-            CommandList.BeginFramebuffer(Framebuffer);
-            CommandList.Clear(0.0f, 0.2f, 0.4f, 1.0f);
+            commandBuffer.Begin();
+            commandBuffer.BeginFramebuffer(Framebuffer);
+            commandBuffer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
 
-            CommandList.SetViewport(Window.Width, Window.Height, 0, 0);
-            CommandList.SetScissor(Window.Width, Window.Height, 0, 0);
-            CommandList.SetPipelineState(PipelineState);
-            CommandList.Draw(3, 1, 0, 0);
+            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetPipelineState(PipelineState);
+            commandBuffer.Draw(3, 1, 0, 0);
 
-            CommandList.EndFramebuffer();
-            CommandList.End();
-            CommandList.Submit();
+            commandBuffer.EndFramebuffer();
+            commandBuffer.End();
+            commandBuffer.Submit();
 
             Device.NativeSwapChain.Present();
         }

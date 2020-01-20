@@ -102,7 +102,7 @@ namespace Zeckoxe.Graphics
             {
                 sType = VkStructureType.Win32SurfaceCreateInfoKHR,
                 hinstance = Process.GetCurrentProcess().Handle,
-                hwnd = Parameters.DeviceHandle,
+                hwnd = Parameters.Win32Handle,
             };
 
 

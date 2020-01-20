@@ -9,43 +9,54 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
-
+using Zeckoxe.Desktop.GLFWNative;
 
 namespace Zeckoxe.Desktop
 {
-    public class Window : Form
+    public class Window : IDisposable
     {
-       
+
+        public string Title { get; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public IntPtr Win32Handle => GLFW.GlfwGetWin32Window(pWindow);
+
+
+
+
+        internal IntPtr pWindow { get; private set; }
+
         public Window(string title, int width, int height)
         {
-            //if()
-            this.Text = title;
-            this.Width = width;
-            this.Height = height;
-            
+            Title = title;
+            Width = width;
+            Height = height;
+
+            GLFW.GlfwInit();
+            GLFW.GlfwInitHint(GLFW.GLFW_VISIBLE, 0);
+
+            pWindow = GLFW.GlfwCreateWindow(width, height, Title, IntPtr.Zero, IntPtr.Zero);
         }
-
-
 
         public void RenderLoop(Action render)
         {
-            if (this is null)
-                throw new ArgumentNullException("Windows");
-
-            if (render is null)
-                throw new ArgumentNullException("renderCallback");
-
-            this.Show();
-
-            using var renderLoop = new RenderLoop(this)
+            
+            while (GLFW.GlfwWindowShouldClose(pWindow) == 0)
             {
-                UseApplicationDoEvents = false,
-                //AllowWindowssKeys = true
-            };
-
-            while (renderLoop.NextFrame())
                 render();
+
+                GLFW.GlfwPollEvents();
+            }
+
+        }
+
+        public void Show()
+        {
+            GLFW.ShowWindow(pWindow);
+        }
+
+        public void Dispose()
+        {
 
         }
     }

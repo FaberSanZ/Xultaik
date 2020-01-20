@@ -1,4 +1,5 @@
 ﻿using System;
+using Zeckoxe.Desktop.GLFWNative;
 
 namespace _02_Hello_Triangle
 {
