@@ -18,28 +18,26 @@ namespace Zeckoxe.Graphics
 {
     public unsafe class PipelineState : GraphicsResource
     {
-        VkPipelineLayout pipelineLayout;
+        public PipelineStateDescription PipelineStateDescription { get; set; }
+
+
+        internal VkPipelineLayout pipelineLayout;
         internal VkPipeline graphicsPipeline;
 
-        ShaderBytecode VertShaderbyteCode { get; set; }
-
-        ShaderBytecode FragShaderbyteCode { get; set; }
-
-        string[] FileShaders { get; set; }
-
-        public PipelineState(ShaderBytecode[] fileShaders, Framebuffer framebuffer) : base(framebuffer.NativeDevice)
+        public PipelineState(PipelineStateDescription description, Framebuffer framebuffer) : base(framebuffer.NativeDevice)
         {
-            Recreate(fileShaders, framebuffer);
+            PipelineStateDescription = description;
+            Recreate();
         }
 
 
 
 
-        private void Recreate(ShaderBytecode[] fileShaders, Framebuffer framebuffer)
+        private void Recreate()
         {
             CreatePipelineLayout();
 
-            CreateGraphicsPipeline(fileShaders, framebuffer);
+            CreateGraphicsPipeline(PipelineStateDescription);
         }
 
 
@@ -62,11 +60,42 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void CreateGraphicsPipeline(ShaderBytecode[] fileShaders, Framebuffer framebuffer)
+        internal void CreateGraphicsPipeline(PipelineStateDescription description)
         {
 
-            VkShaderModule vertexShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[0]);
-            VkShaderModule fragmentShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[1]);
+            uint stageCount = 0;
+            bool Vertex = PipelineStateDescription.Vertex.Data.Length != 0;
+            bool Fragment = PipelineStateDescription.Fragment.Data.Length != 0;
+            bool Compute = PipelineStateDescription.Compute.Data.Length != 0;
+            VkShaderModule vertexShader = VkShaderModule.Null;
+            VkShaderModule fragmentShader = VkShaderModule.Null;
+            VkShaderModule computeShader = VkShaderModule.Null;
+
+
+            if (Vertex)
+            {
+                stageCount++;
+                vertexShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Vertex.Data);
+
+            }
+
+            if (Fragment)
+            {
+                stageCount++;
+                fragmentShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Fragment.Data);
+            }
+
+
+            if (Compute)
+            {
+                stageCount++;
+                computeShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Compute.Data);
+            }
+
+
+
+
+
 
             VkPipelineShaderStageCreateInfo vertCreateInfo = new VkPipelineShaderStageCreateInfo()
             {
@@ -89,10 +118,35 @@ namespace Zeckoxe.Graphics
             };
 
 
-            VkPipelineShaderStageCreateInfo* shaderStageCreateInfos = stackalloc VkPipelineShaderStageCreateInfo[2];
+            VkPipelineShaderStageCreateInfo ComputeCreateInfo = new VkPipelineShaderStageCreateInfo
+            {
+                sType = VkStructureType.PipelineShaderStageCreateInfo,
+                pNext = null,
+                flags = 0,
+                stage = VkShaderStageFlags.Compute,
+                module = computeShader,
+                pName = Interop.String.ToPointer("main"),
+            };
 
-            shaderStageCreateInfos[0] = vertCreateInfo;
-            shaderStageCreateInfos[1] = fragCreateInfo;
+
+
+
+
+
+
+            VkPipelineShaderStageCreateInfo* shaderStageCreateInfos = stackalloc VkPipelineShaderStageCreateInfo[(int)stageCount];
+
+
+            if (Vertex)
+                shaderStageCreateInfos[0] = vertCreateInfo;
+            
+            if (Fragment)
+                shaderStageCreateInfos[1] = fragCreateInfo;
+            // is Compute?
+            if (Compute)
+                shaderStageCreateInfos[2] = ComputeCreateInfo;
+
+
 
             VkPipelineVertexInputStateCreateInfo vertexInputStateCI = VkPipelineVertexInputStateCreateInfo.New();
             //var vertexBindingDesc = Vertex.GetBindingDescription();
@@ -104,9 +158,28 @@ namespace Zeckoxe.Graphics
             //vertexInputStateCI.pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions());
             //vertexInputStateCI.pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions().AsSpan());
 
-            VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI = VkPipelineInputAssemblyStateCreateInfo.New();
-            inputAssemblyCI.primitiveRestartEnable = false;
-            inputAssemblyCI.topology = VkPrimitiveTopology.TriangleList;
+
+
+            // PipelineInputAssemblyStateCreateInfo
+            VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI = new VkPipelineInputAssemblyStateCreateInfo()
+            {
+                sType = VkStructureType.PipelineInputAssemblyStateCreateInfo,
+                flags = 0,
+                pNext = null,
+            };
+
+            if (PipelineStateDescription.InputAssemblyState != null)
+            {
+                inputAssemblyCI.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable;
+                inputAssemblyCI.topology = VulkanConvert.ToPrimitiveType(PipelineStateDescription.InputAssemblyState.PrimitiveType);
+            }
+            else
+            {
+                inputAssemblyCI.primitiveRestartEnable = true;
+                inputAssemblyCI.topology = VkPrimitiveTopology.TriangleList;
+            }
+
+
 
 
             VkPipelineRasterizationStateCreateInfo rasterizerStateCI = VkPipelineRasterizationStateCreateInfo.New();
@@ -134,7 +207,7 @@ namespace Zeckoxe.Graphics
             vkCreatePipelineLayout(NativeDevice.Device, ref pipelineLayoutCI, null, out pipelineLayout);
 
             VkGraphicsPipelineCreateInfo graphicsPipelineCI = VkGraphicsPipelineCreateInfo.New();
-            graphicsPipelineCI.stageCount = 2;
+            graphicsPipelineCI.stageCount = stageCount;
             graphicsPipelineCI.pStages = shaderStageCreateInfos;
 
             graphicsPipelineCI.pVertexInputState = &vertexInputStateCI;
@@ -143,7 +216,7 @@ namespace Zeckoxe.Graphics
             graphicsPipelineCI.pMultisampleState = &multisampleStateCI;
             graphicsPipelineCI.pColorBlendState = &colorBlendStateCI;
             graphicsPipelineCI.layout = pipelineLayout;
-            graphicsPipelineCI.renderPass = framebuffer.NativeRenderPass;
+            graphicsPipelineCI.renderPass = description.Framebuffer.NativeRenderPass;
             graphicsPipelineCI.subpass = 0;
 
             vkCreateGraphicsPipelines(NativeDevice.Device, VkPipelineCache.Null, 1, ref graphicsPipelineCI, null, out graphicsPipeline);

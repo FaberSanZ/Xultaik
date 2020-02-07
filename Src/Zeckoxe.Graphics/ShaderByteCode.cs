@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
-    public class ShaderBytecode
+    public struct ShaderBytecode
     {
 
         public byte[] Data { get; private set; }

@@ -79,12 +79,26 @@ namespace _02_Hello_Triangle
             Context = new GraphicsContext(Device);
 
 
-            PipelineState = new PipelineState(new ShaderBytecode[] 
+            CreatePSO();
+
+        }
+
+
+        public void CreatePSO()
+        {
+            PipelineStateDescription Pipelinedescription = new PipelineStateDescription()
             {
-                new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.vert",  Stage.Vertex, Language.GLSL)),
-                new ShaderBytecode(Compiler.LoadFromFile("Shaders/PixelShader.hlsl", Stage.Pixel, Language.HLSL)), 
-            }
-            ,Framebuffer);
+                InputAssemblyState = new InputAssemblyState()
+                {
+                    PrimitiveType = PrimitiveType.TriangleList,
+                    PrimitiveRestartEnable = false,
+                },
+                Framebuffer = Framebuffer,
+                Vertex = new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.vert", Stage.Vertex, Language.GLSL)),
+                Fragment = new ShaderBytecode(Compiler.LoadFromFile("Shaders/PixelShader.hlsl", Stage.Pixel, Language.HLSL)),
+            };
+
+            PipelineState = new PipelineState(Pipelinedescription, Framebuffer);
         }
 
 
