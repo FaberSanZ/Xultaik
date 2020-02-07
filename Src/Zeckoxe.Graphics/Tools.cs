@@ -20,15 +20,15 @@ namespace Zeckoxe.Graphics
     {
         public static List<string> EnumerateInstanceExtensions()
         {
-            uint Count = 0;
+            uint count = 0;
 
-            vkEnumerateInstanceExtensionProperties((byte*)null, ref Count, null);
-            VkExtensionProperties* ext = stackalloc VkExtensionProperties[(int)Count];
-            vkEnumerateInstanceExtensionProperties((byte*)null, ref Count, ext);
+            vkEnumerateInstanceExtensionProperties((byte*)null, ref count, null);
+            VkExtensionProperties* ext = stackalloc VkExtensionProperties[(int)count];
+            vkEnumerateInstanceExtensionProperties((byte*)null, ref count, ext);
 
 
             List<string> extensionName = new List<string>();
-            for (int i = 0; i < Count; i++)
+            for (int i = 0; i < count; i++)
                 extensionName.Add(Interop.String.FromPointer(ext[i].extensionName));
 
             return extensionName;
@@ -71,8 +71,10 @@ namespace Zeckoxe.Graphics
         public static void ImGuiAddFontFromMemoryTTF(string path = "ARIAL.TTF")
         {
             var bytes = File.ReadAllBytes(path);
-            //fixed (void* ptr = bytes)
-            //    ImGui.GetIO().Fonts.AddFontFromMemoryTTF(new IntPtr(ptr), 32, 15);
+            fixed (void* ptr = bytes)
+            {
+                //ImGui.GetIO().Fonts.AddFontFromMemoryTTF(new IntPtr(ptr), 32, 15);
+            }
         }
     }
 }

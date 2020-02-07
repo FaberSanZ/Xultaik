@@ -27,7 +27,7 @@ namespace Zeckoxe.Graphics
 
         string[] FileShaders { get; set; }
 
-        public PipelineState(string[] fileShaders, Framebuffer framebuffer) : base(framebuffer.NativeDevice)
+        public PipelineState(ShaderBytecode[] fileShaders, Framebuffer framebuffer) : base(framebuffer.NativeDevice)
         {
             Recreate(fileShaders, framebuffer);
         }
@@ -35,7 +35,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        private void Recreate(string[] fileShaders, Framebuffer framebuffer)
+        private void Recreate(ShaderBytecode[] fileShaders, Framebuffer framebuffer)
         {
             CreatePipelineLayout();
 
@@ -62,11 +62,11 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void CreateGraphicsPipeline(string[] fileShaders, Framebuffer framebuffer)
+        public void CreateGraphicsPipeline(ShaderBytecode[] fileShaders, Framebuffer framebuffer)
         {
 
-            VkShaderModule vertexShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[0], ShaderCompiler.ShaderCompiler.Stage.vertex_shader);
-            VkShaderModule fragmentShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[1], ShaderCompiler.ShaderCompiler.Stage.fragment_shader);
+            VkShaderModule vertexShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[0]);
+            VkShaderModule fragmentShader = NativeDevice.LoadSPIR_V_Shader(fileShaders[1]);
 
             VkPipelineShaderStageCreateInfo vertCreateInfo = new VkPipelineShaderStageCreateInfo()
             {
@@ -90,6 +90,7 @@ namespace Zeckoxe.Graphics
 
 
             VkPipelineShaderStageCreateInfo* shaderStageCreateInfos = stackalloc VkPipelineShaderStageCreateInfo[2];
+
             shaderStageCreateInfos[0] = vertCreateInfo;
             shaderStageCreateInfos[1] = fragCreateInfo;
 
@@ -108,11 +109,10 @@ namespace Zeckoxe.Graphics
             inputAssemblyCI.topology = VkPrimitiveTopology.TriangleList;
 
 
-
             VkPipelineRasterizationStateCreateInfo rasterizerStateCI = VkPipelineRasterizationStateCreateInfo.New();
             rasterizerStateCI.cullMode = VkCullModeFlags.None;
             rasterizerStateCI.polygonMode = VkPolygonMode.Fill;
-            rasterizerStateCI.lineWidth = 2.5f;
+            rasterizerStateCI.lineWidth = 3.5f;
             rasterizerStateCI.frontFace = VkFrontFace.CounterClockwise;
 
             VkPipelineMultisampleStateCreateInfo multisampleStateCI = VkPipelineMultisampleStateCreateInfo.New();

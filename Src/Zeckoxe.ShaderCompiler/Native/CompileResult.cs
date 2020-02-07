@@ -5,12 +5,10 @@ using System.Text;
 
 namespace Zeckoxe.ShaderCompiler
 {
-    public class CompileResult
+    internal class CompileResult
     {
-        /// <summary>
-        /// Gives information about the result of a compilation
-        /// </summary>
-        public enum Status
+
+        internal enum Status
         {
             Success = 0,
             InvalidStage,  // error stage deduction
@@ -23,10 +21,8 @@ namespace Zeckoxe.ShaderCompiler
         IntPtr _handle;
 
         internal IntPtr NativeHandle => _handle;
-        /// <summary>
-        /// Get the number of warnings
-        /// </summary>
-        public ulong NumberOfWarnings
+
+        internal ulong NumberOfWarnings
         {
             get
             {
@@ -36,7 +32,7 @@ namespace Zeckoxe.ShaderCompiler
         /// <summary>
         /// Get the number if errors
         /// </summary>
-        public ulong NumberOfErrors
+        internal ulong NumberOfErrors
         {
             get
             {
@@ -46,7 +42,7 @@ namespace Zeckoxe.ShaderCompiler
         /// <summary>
         /// Get the compile status
         /// </summary>
-        public Status CompileStatus
+        internal Status CompileStatus
         {
             get
             {
@@ -56,7 +52,7 @@ namespace Zeckoxe.ShaderCompiler
         /// <summary>
         /// Get the error message if there is one
         /// </summary>
-        public string ErrorMessage
+        internal string ErrorMessage
         {
             get
             {
@@ -69,12 +65,16 @@ namespace Zeckoxe.ShaderCompiler
         /// Get the produced SpirV bytecode
         /// </summary>
         /// <returns></returns>
-        public byte[] GetBytes()
+        internal byte[] GetBytes()
         {
             int size = (int)ShadercNative.shaderc_result_get_length(_handle);
             IntPtr nativeBuf = ShadercNative.shaderc_result_get_bytes(_handle);
+
             byte[] result = new byte[size];
-            Marshal.Copy(nativeBuf, result, 0, size);
+            if (nativeBuf != IntPtr.Zero)
+                Marshal.Copy(nativeBuf, result, 0, size);
+
+            
 
             return result;
         }
@@ -83,7 +83,7 @@ namespace Zeckoxe.ShaderCompiler
         /// Get the produced Assembly/ Preprocessed shader
         /// </summary>
         /// <returns></returns>
-        public string GetString()
+        internal string GetString()
         {
            return Encoding.ASCII.GetString(GetBytes());
         }

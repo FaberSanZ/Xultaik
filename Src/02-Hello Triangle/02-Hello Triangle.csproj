@@ -21,6 +21,9 @@
     <None Update="Shaders\PixelShader.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Shaders\pntriangles.tesc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Shaders\raygen.rgen">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

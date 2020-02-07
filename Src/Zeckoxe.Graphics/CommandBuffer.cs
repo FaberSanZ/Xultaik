@@ -97,9 +97,15 @@ namespace Zeckoxe.Graphics
 
 
 
-        public void SetPipelineState(PipelineState pipelineState)
+        public void SetGraphicPipeline(PipelineState pipelineState)
         {
             vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
+        }
+
+
+        public void SetComputePipeline(PipelineState pipelineState)
+        {
+            //vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Compute, pipelineState.computesPipeline);
         }
 
 
@@ -149,26 +155,26 @@ namespace Zeckoxe.Graphics
 
         }
 
-        public void Draw(uint vertexCount, uint instanceCount, uint firstVertex, int firstInstance)
+        public void Draw(int vertexCount, int instanceCount, int firstVertex, int firstInstance)
         {
-            vkCmdDraw(NativeCommandBuffer, vertexCount, instanceCount, 0, 0);
-
+            vkCmdDraw(NativeCommandBuffer, (uint)vertexCount, (uint)instanceCount, (uint)firstVertex, (uint)firstInstance);
         }
 
 
 
 
-        public void End()
+        public void Close()
         {
+            CleanupRenderPass();
             vkEndCommandBuffer(NativeCommandBuffer);
         }
 
 
-        public void EndFramebuffer()
+        internal unsafe void CleanupRenderPass()
         {
             vkCmdEndRenderPass(NativeCommandBuffer);
-
         }
+
 
 
         public void Submit()

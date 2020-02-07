@@ -15,7 +15,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Core\Zeckoxe.Core.csproj" />
     <ProjectReference Include="..\Zeckoxe.Mathematics\Zeckoxe.Mathematics.csproj" />
-    <ProjectReference Include="..\Zeckoxe.ShaderCompiler\Zeckoxe.ShaderCompiler.csproj" />
   </ItemGroup>
 
 </Project>

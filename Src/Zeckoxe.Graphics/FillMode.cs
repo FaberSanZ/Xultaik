@@ -14,6 +14,6 @@ namespace Zeckoxe.Graphics
 
         Point = unchecked(2),
 
-        FillRectangleNV = unchecked(1000153000)
+        FillRectangleNV = unchecked(3)
     }
 }

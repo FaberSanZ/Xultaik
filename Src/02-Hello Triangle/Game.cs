@@ -56,6 +56,8 @@ namespace _02_Hello_Triangle
                 },
             };
 
+            //foreach (var item in Compiler.LoadFromFile("Shaders/pntriangles.tesc", Stage.TessControl, Language.GLSL))
+            //    Console.WriteLine(item);
         }
 
 
@@ -77,7 +79,12 @@ namespace _02_Hello_Triangle
             Context = new GraphicsContext(Device);
 
 
-            PipelineState = new PipelineState(new string[] { "Shaders/VertexShader.hlsl", "Shaders/PixelShader.hlsl" }, Framebuffer);
+            PipelineState = new PipelineState(new ShaderBytecode[] 
+            {
+                new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.vert",  Stage.Vertex, Language.GLSL)),
+                new ShaderBytecode(Compiler.LoadFromFile("Shaders/PixelShader.hlsl", Stage.Pixel, Language.HLSL)), 
+            }
+            ,Framebuffer);
         }
 
 
@@ -106,8 +113,8 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
-            Console.WriteLine($"DeviceName: { Device.NativeAdapter.DeviceName }");
-            Console.WriteLine($"MultisampleCount: { Limits.MultisampleCount }");
+            Console.WriteLine($"DeviceName : { Device.NativeAdapter.DeviceName }");
+            Console.WriteLine($"MultisampleCount : { Limits.MultisampleCount }");
         }
 
         public void Update()
@@ -127,11 +134,10 @@ namespace _02_Hello_Triangle
 
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
-            commandBuffer.SetPipelineState(PipelineState);
+            commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.Draw(3, 1, 0, 0);
 
-            commandBuffer.EndFramebuffer();
-            commandBuffer.End();
+            commandBuffer.Close();
             commandBuffer.Submit();
 
             Device.NativeSwapChain.Present();

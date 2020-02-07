@@ -38,7 +38,7 @@ namespace _01_ClearScreen
         {
             Window = new Window("Zeckoxe Engine - (Clear Screen)", 1000, 720)
             {
-                StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
+                //StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
             };
 
 
@@ -46,7 +46,7 @@ namespace _01_ClearScreen
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                DeviceHandle = Window.Handle,
+                Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
                     Validation = true,
@@ -97,7 +97,7 @@ namespace _01_ClearScreen
 
         public void BeginRun()
         {
-            foreach (var Description in Device.NativeAdapter.Description)
+            foreach (var Description in Device.NativeAdapter.DeviceName)
                 Console.WriteLine(Description);
 
 
@@ -110,7 +110,7 @@ namespace _01_ClearScreen
 
         public void Draw()
         {
-            CommandList CommandList = Context.CommandList;
+            CommandBuffer CommandList = Context.CommandBuffer;
 
             Device.WaitIdle();
 
@@ -121,8 +121,8 @@ namespace _01_ClearScreen
             CommandList.SetViewport(Window.Width, Window.Height, 0, 0);
             CommandList.SetScissor(Window.Width, Window.Height, 0, 0);
 
-            CommandList.EndFramebuffer();
-            CommandList.End();
+            //CommandList.EndFramebuffer();
+            //CommandList.End();
             CommandList.Submit();
 
             Device.NativeSwapChain.Present();
