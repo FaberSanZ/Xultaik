@@ -24,7 +24,8 @@ namespace Zeckoxe.Graphics
 
         public InputAssemblyState()
         {
-
+            PrimitiveType = PrimitiveType.TriangleList;
+            PrimitiveRestartEnable = false;
         }
 
 

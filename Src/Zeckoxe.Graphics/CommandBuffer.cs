@@ -77,7 +77,7 @@ namespace Zeckoxe.Graphics
 
         public void Clear(float R, float G, float B, float A = 1.0f)
         {
-            VkClearColorValue clearValue = new VkClearColorValue(R, G, B);
+            VkClearColorValue clearValue = new VkClearColorValue(R, G, B, A);
 
             VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
 

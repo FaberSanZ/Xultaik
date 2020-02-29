@@ -1,11 +1,19 @@
-﻿using System;
+﻿// Copyright(c) 2019-2020 Faber Leonardo.All Rights Reserved.
+
+/*=============================================================================
+	ShadercNative.cs
+=============================================================================*/
+
+
+
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 
 namespace Zeckoxe.ShaderCompiler
 {
-    internal unsafe class ShaderCompiler
+    internal unsafe class ShaderCompiler : IDisposable
     {
         internal enum Stage 
         {
@@ -82,20 +90,16 @@ namespace Zeckoxe.ShaderCompiler
 
         internal ShaderCompiler()
         {
-            _handle = ShadercNative.shaderc_compiler_initialize();
+            _handle = ShadercNative.Initialize();
         }
 
-        ~ShaderCompiler()
-        {
-            ShadercNative.shaderc_compiler_release(_handle);
-        }
 
 
 
 
         internal CompileResult Compile(string source, Stage stage , CompileOptions options, string name,string entryPoint= "main")
         {
-            IntPtr resultPtr = ShadercNative.shaderc_compile_into_spv(_handle, Interop.String.ToPointer(source), new UIntPtr((uint)source.Length), (int)stage, Interop.String.ToPointer(name), Interop.String.ToPointer(entryPoint), options.NativeHandle);
+            IntPtr resultPtr = ShadercNative.shaderc_compile_into_spv(_handle, Zeckoxe.Core.Interop.String.ToPointer(source), new UIntPtr((uint)source.Length), (int)stage, Zeckoxe.Core.Interop.String.ToPointer(name), Zeckoxe.Core.Interop.String.ToPointer(entryPoint), options.NativeHandle);
             return new CompileResult(resultPtr);
         }
 
@@ -108,5 +112,9 @@ namespace Zeckoxe.ShaderCompiler
             return new CompileResult(resultPtr);
         }
 
+        public void Dispose()
+        {
+            ShadercNative.Release(_handle);
+        }
     }
 }

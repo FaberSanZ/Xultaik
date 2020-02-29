@@ -13,7 +13,7 @@ using System.Security;
 
 namespace Zeckoxe.Desktop.GLFWNative
 {
-    internal static partial class GLFW
+    internal static unsafe partial class GLFW
     {
 		internal const int GLFW_VERSION_MAJOR = 3;
 		internal const int GLFW_VERSION_MINOR = 3;
@@ -333,7 +333,15 @@ namespace Zeckoxe.Desktop.GLFWNative
 		internal delegate IntPtr glfwGetWin32Window(IntPtr window);
 		private static readonly glfwGetWin32Window glfwGetWin32Window_ = GLFWLoader.GetStaticProc<glfwGetWin32Window>("glfwGetWin32Window");
 		internal static IntPtr GlfwGetWin32Window(IntPtr window) => glfwGetWin32Window_(window);
-		
+
+
+
+
+
+		public delegate void glfwSetWindowTitle(IntPtr window, byte* title);
+		private static readonly glfwSetWindowTitle glfwSetWindowTitle_ = GLFWLoader.GetStaticProc<glfwSetWindowTitle>("glfwSetWindowTitle");
+		internal static void GlfwSetWindowTitle(IntPtr window, byte* title) => glfwSetWindowTitle_(window, title);
+
 	}
 }
 

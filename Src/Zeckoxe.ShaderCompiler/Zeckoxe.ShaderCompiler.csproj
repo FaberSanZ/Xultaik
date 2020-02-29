@@ -19,6 +19,7 @@
     <Content Include="..\..\deps\ShaderCompiler\linux-x64\libshaderc_shared.so">
       <PackagePath>runtimes/linux-x64/native</PackagePath>
       <Pack>true</Pack>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

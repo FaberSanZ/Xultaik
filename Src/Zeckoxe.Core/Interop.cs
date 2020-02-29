@@ -16,10 +16,16 @@ namespace Zeckoxe.Core
 {
     public static unsafe class Interop
     {
+        public static TDelegate GetDelegateForFunctionPointer<TDelegate>(IntPtr pointer) => Marshal.GetDelegateForFunctionPointer<TDelegate>(pointer);
+        public static IntPtr GetFunctionPointerForDelegate<TDelegate>(TDelegate @delegate) => Marshal.GetFunctionPointerForDelegate(@delegate);
+
+
 
         public static int SizeOf<T>() => Unsafe.SizeOf<T>();
 
         public static IntPtr Alloc<T>(int count = 1) => Alloc(Unsafe.SizeOf<T>() * count);
+
+        //public static void* Alloc<T>(int count) => (void*)Alloc(Unsafe.SizeOf<T>() * count);
 
 
         public static IntPtr Alloc(int byteCount)

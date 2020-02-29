@@ -24,7 +24,7 @@ namespace Zeckoxe.Graphics
         internal VkPipelineLayout pipelineLayout;
         internal VkPipeline graphicsPipeline;
 
-        public PipelineState(PipelineStateDescription description, Framebuffer framebuffer) : base(framebuffer.NativeDevice)
+        public PipelineState(PipelineStateDescription description) : base(description.Framebuffer.NativeDevice)
         {
             PipelineStateDescription = description;
             Recreate();
@@ -47,17 +47,6 @@ namespace Zeckoxe.Graphics
 
         }
 
-        private VkShaderModule CreateShader(byte[] bytecode)
-        {
-            VkShaderModuleCreateInfo smci = VkShaderModuleCreateInfo.New();
-            fixed (byte* byteCodePtr = bytecode)
-            {
-                smci.pCode = (uint*)byteCodePtr;
-                smci.codeSize = new UIntPtr((uint)bytecode.Length);
-                vkCreateShaderModule(NativeDevice.Device, ref smci, null, out VkShaderModule module);
-                return module;
-            }
-        }
 
 
         internal void CreateGraphicsPipeline(PipelineStateDescription description)
@@ -66,9 +55,11 @@ namespace Zeckoxe.Graphics
             uint stageCount = 0;
             bool Vertex = PipelineStateDescription.Vertex.Data.Length != 0;
             bool Fragment = PipelineStateDescription.Fragment.Data.Length != 0;
+            bool Pixel =  PipelineStateDescription.Pixel.Data.Length != 0;
             bool Compute = PipelineStateDescription.Compute.Data.Length != 0;
             VkShaderModule vertexShader = VkShaderModule.Null;
             VkShaderModule fragmentShader = VkShaderModule.Null;
+            VkShaderModule pixelShader = VkShaderModule.Null;
             VkShaderModule computeShader = VkShaderModule.Null;
 
 
@@ -83,6 +74,12 @@ namespace Zeckoxe.Graphics
             {
                 stageCount++;
                 fragmentShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Fragment.Data);
+            }
+
+            if (Pixel)
+            {
+                stageCount++;
+                pixelShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Pixel.Data);
             }
 
 
@@ -113,7 +110,7 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 flags = 0,
                 stage = VkShaderStageFlags.Fragment,
-                module = fragmentShader,
+                module = fragmentShader == VkShaderModule.Null ? pixelShader : fragmentShader,
                 pName = Interop.String.ToPointer("main"),
             };
 
@@ -140,7 +137,7 @@ namespace Zeckoxe.Graphics
             if (Vertex)
                 shaderStageCreateInfos[0] = vertCreateInfo;
             
-            if (Fragment)
+            if (Fragment || Pixel)
                 shaderStageCreateInfos[1] = fragCreateInfo;
             // is Compute?
             if (Compute)
@@ -160,8 +157,10 @@ namespace Zeckoxe.Graphics
 
 
 
-            // PipelineInputAssemblyStateCreateInfo
-            VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI = new VkPipelineInputAssemblyStateCreateInfo()
+
+
+            // PipelineInputAssemblyStateCreateInfo -------------
+            VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo = new VkPipelineInputAssemblyStateCreateInfo()
             {
                 sType = VkStructureType.PipelineInputAssemblyStateCreateInfo,
                 flags = 0,
@@ -170,14 +169,17 @@ namespace Zeckoxe.Graphics
 
             if (PipelineStateDescription.InputAssemblyState != null)
             {
-                inputAssemblyCI.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable;
-                inputAssemblyCI.topology = VulkanConvert.ToPrimitiveType(PipelineStateDescription.InputAssemblyState.PrimitiveType);
+                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable;
+                pipelineInputAssemblyStateCreateInfo.topology = VulkanConvert.ToPrimitiveType(PipelineStateDescription.InputAssemblyState.PrimitiveType);
             }
             else
             {
-                inputAssemblyCI.primitiveRestartEnable = true;
-                inputAssemblyCI.topology = VkPrimitiveTopology.TriangleList;
+                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = true;
+                pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology.PointList;
             }
+            // PipelineInputAssemblyStateCreateInfo -------------
+
+
 
 
 
@@ -211,7 +213,7 @@ namespace Zeckoxe.Graphics
             graphicsPipelineCI.pStages = shaderStageCreateInfos;
 
             graphicsPipelineCI.pVertexInputState = &vertexInputStateCI;
-            graphicsPipelineCI.pInputAssemblyState = &inputAssemblyCI;
+            graphicsPipelineCI.pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo;
             graphicsPipelineCI.pRasterizationState = &rasterizerStateCI;
             graphicsPipelineCI.pMultisampleState = &multisampleStateCI;
             graphicsPipelineCI.pColorBlendState = &colorBlendStateCI;

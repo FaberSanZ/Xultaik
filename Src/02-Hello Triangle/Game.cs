@@ -40,7 +40,7 @@ namespace _02_Hello_Triangle
 
         public Game()
         {
-            Window = new Window("Zeckoxe Engine - (Hello Triangle)", 1000, 720);
+            Window = new Window(string.Empty, 1000, 720);
 
 
             Parameters = new PresentationParameters()
@@ -56,8 +56,6 @@ namespace _02_Hello_Triangle
                 },
             };
 
-            //foreach (var item in Compiler.LoadFromFile("Shaders/pntriangles.tesc", Stage.TessControl, Language.GLSL))
-            //    Console.WriteLine(item);
         }
 
 
@@ -79,26 +77,28 @@ namespace _02_Hello_Triangle
             Context = new GraphicsContext(Device);
 
 
-            CreatePSO();
+            CreatePipelineState();
 
         }
 
 
-        public void CreatePSO()
+        public void CreatePipelineState()
         {
             PipelineStateDescription Pipelinedescription = new PipelineStateDescription()
             {
+                Framebuffer = Framebuffer,
+
                 InputAssemblyState = new InputAssemblyState()
                 {
                     PrimitiveType = PrimitiveType.TriangleList,
-                    PrimitiveRestartEnable = false,
+                    //PrimitiveRestartEnable = false,
                 },
-                Framebuffer = Framebuffer,
+    
                 Vertex = new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.vert", Stage.Vertex, Language.GLSL)),
-                Fragment = new ShaderBytecode(Compiler.LoadFromFile("Shaders/PixelShader.hlsl", Stage.Pixel, Language.HLSL)),
+                Pixel = new ShaderBytecode(Compiler.LoadFromFile("Shaders/PixelShader.hlsl", Stage.Pixel, Language.HLSL)),
             };
 
-            PipelineState = new PipelineState(Pipelinedescription, Framebuffer);
+            PipelineState = new PipelineState(Pipelinedescription);
         }
 
 
@@ -108,6 +108,9 @@ namespace _02_Hello_Triangle
 
             BeginRun();
 
+            Window.Title = ("Zeckoxe Engine - (Hello Triangle) " + Device.NativeAdapter.DeviceName);
+            Console.WriteLine(Window.Title);
+
             Window?.Show();
 
             Tick();
@@ -115,7 +118,6 @@ namespace _02_Hello_Triangle
 
         public void Tick()
         {
-
             Window.RenderLoop(() =>
             {
                 Update();
@@ -127,6 +129,7 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
+
             Console.WriteLine($"DeviceName : { Device.NativeAdapter.DeviceName }");
             Console.WriteLine($"MultisampleCount : { Limits.MultisampleCount }");
         }

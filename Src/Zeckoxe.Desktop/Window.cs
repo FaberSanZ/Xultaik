@@ -13,10 +13,29 @@ using Zeckoxe.Desktop.GLFWNative;
 
 namespace Zeckoxe.Desktop
 {
-    public class Window : IDisposable
+    public unsafe class Window : IDisposable
     {
+        private string _title;
 
-        public string Title { get; set; }
+
+        public string Title
+        {
+            get => _title; 
+
+            set
+            {
+                if (value != _title)
+                {
+                    _title = value;
+                    GLFW.GlfwSetWindowTitle(pWindow, Zeckoxe.Core.Interop.String.ToPointer(value));
+                }
+            }
+        }
+
+
+
+
+
         public int Width { get; set; }
         public int Height { get; set; }
         public IntPtr Win32Handle => GLFW.GlfwGetWin32Window(pWindow);
@@ -28,14 +47,14 @@ namespace Zeckoxe.Desktop
 
         public Window(string title, int width, int height)
         {
-            Title = title;
+            _title = title;
             Width = width;
             Height = height;
 
             GLFW.GlfwInit();
             GLFW.GlfwInitHint(GLFW.GLFW_VISIBLE, 0);
 
-            pWindow = GLFW.GlfwCreateWindow(width, height, Title, IntPtr.Zero, IntPtr.Zero);
+            pWindow = GLFW.GlfwCreateWindow(width, height, _title, IntPtr.Zero, IntPtr.Zero);
         }
 
         public void RenderLoop(Action render)

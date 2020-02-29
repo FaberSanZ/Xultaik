@@ -1,4 +1,14 @@
-﻿using System;
+﻿// Copyright(c) 2019-2020 Faber Leonardo.All Rights Reserved.
+
+/*=============================================================================
+	ShadercNative.cs
+=============================================================================*/
+
+
+
+
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -8,11 +18,20 @@ namespace Zeckoxe.ShaderCompiler
     internal static unsafe class ShadercNative
     {
 
-        [DllImport("shaderc_shared", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern IntPtr shaderc_compiler_initialize();
+        internal delegate IntPtr shader_ccompiler_initialize();
+        private static readonly shader_ccompiler_initialize shaderc_compiler_initialize_ = Loader.GetStaticProc<shader_ccompiler_initialize>("shaderc_compiler_initialize");
+        internal static IntPtr Initialize() => shaderc_compiler_initialize_();
 
-        [DllImport("shaderc_shared", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void shaderc_compiler_release(IntPtr compiler);
+
+
+
+        internal delegate IntPtr shaderc_compiler_release(IntPtr compiler);
+        private static readonly shaderc_compiler_release shaderc_compiler_release_ = Loader.GetStaticProc<shaderc_compiler_release>("shaderc_compiler_release");
+        internal static IntPtr Release(IntPtr compiler) => shaderc_compiler_release_(compiler);
+
+
+
+
 
         [DllImport("shaderc_shared", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr shaderc_compile_into_spv(IntPtr compiler, byte* source, UIntPtr sourceSize, int kind, byte* filename, byte* entryPoint, IntPtr options);
@@ -28,8 +47,6 @@ namespace Zeckoxe.ShaderCompiler
         [DllImport("shaderc_shared", CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr shaderc_compile_options_initialize();
 
-        [DllImport("shaderc_shared", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern IntPtr shaderc_compile_options_clone(IntPtr options);
 
         [DllImport("shaderc_shared", CallingConvention = CallingConvention.Cdecl)]
         internal static extern void shaderc_compile_options_release(IntPtr options);
@@ -80,13 +97,6 @@ namespace Zeckoxe.ShaderCompiler
             internal IntPtr userData;
         }
 
-        internal delegate IntPtr IncludeFunction(IntPtr userData, [MarshalAs(UnmanagedType.LPStr)] string requestedSource, int type,
-                                         [MarshalAs(UnmanagedType.LPStr)] string requestingSource, UIntPtr includeDepth);
 
-        internal delegate void ReleaseInclude(IntPtr userData, IntPtr result);
-
-        [DllImport("shaderc_shared", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void shaderc_compile_options_set_include_callbacks(IntPtr options, [MarshalAs(UnmanagedType.FunctionPtr)] IncludeFunction resolver,
-                                        [MarshalAs(UnmanagedType.FunctionPtr)] ReleaseInclude resultReleaser, IntPtr userData);
     }
 }

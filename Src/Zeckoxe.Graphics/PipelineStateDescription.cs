@@ -11,6 +11,16 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
+
+    public class GLSLByteCode
+    {
+        public ShaderBytecode Vertex { get; set; } = new ShaderBytecode(Array.Empty<byte>());
+        public ShaderBytecode TessellationControl { get; set; } = new ShaderBytecode(Array.Empty<byte>());
+        public ShaderBytecode TessellationEvaluation { get; set; } = new ShaderBytecode(Array.Empty<byte>());
+        public ShaderBytecode Geometry { get; set; } = new ShaderBytecode(Array.Empty<byte>());
+        public ShaderBytecode Fragment { get; set; } = new ShaderBytecode(Array.Empty<byte>());
+        public ShaderBytecode Compute { get; set; } = new ShaderBytecode(Array.Empty<byte>());
+    }
     public class PipelineStateDescription
     {
         
@@ -18,8 +28,9 @@ namespace Zeckoxe.Graphics
 
         public Framebuffer Framebuffer { get; set; }
 
-        
+        public GLSLByteCode GLSLByteCode { get; set; }
 
+        //GLSL and HLSL
         public ShaderBytecode Vertex { get; set; } = new ShaderBytecode(Array.Empty<byte>());
         public ShaderBytecode TessellationControl { get; set; } = new ShaderBytecode(Array.Empty<byte>());
         public ShaderBytecode TessellationEvaluation { get; set; } = new ShaderBytecode(Array.Empty<byte>());
@@ -27,14 +38,10 @@ namespace Zeckoxe.Graphics
         public ShaderBytecode Fragment { get; set; } = new ShaderBytecode(Array.Empty<byte>());
         public ShaderBytecode Compute { get; set; } = new ShaderBytecode(Array.Empty<byte>());
 
-        //public ShaderBytecode AllGraphics { get; set; }
 
         //HLSL
-
-        //public ShaderBytecode VertexShader { get; set; }
-        //public ShaderBytecode PixelShader { get; set; }
-        //public ShaderBytecode HullShader { get; set; }
-        //public ShaderBytecode GeometryShader { get; set; }
-        //public ShaderBytecode DomainShader { get; set; }
+        public ShaderBytecode Pixel { get; set; } = new ShaderBytecode(Array.Empty<byte>());
+        public ShaderBytecode Hull { get; set; } = new ShaderBytecode(Array.Empty<byte>());
+        public ShaderBytecode Domain { get; set; } = new ShaderBytecode(Array.Empty<byte>());
     }
 }
