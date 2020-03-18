@@ -10,18 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Zeckoxe.Core;
 
 
 
 namespace Zeckoxe.Desktop.GLFWNative
 {
-    public static unsafe class Interop
-    {
-        public static TDelegate GetDelegateForFunctionPointer<TDelegate>(IntPtr pointer) => Marshal.GetDelegateForFunctionPointer<TDelegate>(pointer);
-        public static IntPtr GetFunctionPointerForDelegate<TDelegate>(TDelegate @delegate) => Marshal.GetFunctionPointerForDelegate(@delegate);
-
-    }
-
     public static class GLFWLoader
     {
         private static readonly IntPtr _handle;

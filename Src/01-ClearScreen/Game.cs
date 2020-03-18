@@ -110,20 +110,19 @@ namespace _01_ClearScreen
 
         public void Draw()
         {
-            CommandBuffer CommandList = Context.CommandBuffer;
+            CommandBuffer commandBuffer = Context.CommandBuffer;
 
             Device.WaitIdle();
 
-            CommandList.Begin();
-            CommandList.BeginFramebuffer(Framebuffer);
-            CommandList.Clear(0.0f, 0.2f, 0.4f, 1.0f);
+            commandBuffer.Begin();
+            commandBuffer.BeginFramebuffer(Framebuffer);
+            commandBuffer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
 
-            CommandList.SetViewport(Window.Width, Window.Height, 0, 0);
-            CommandList.SetScissor(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 
-            //CommandList.EndFramebuffer();
-            //CommandList.End();
-            CommandList.Submit();
+            commandBuffer.Close();
+            commandBuffer.Submit();
 
             Device.NativeSwapChain.Present();
         }

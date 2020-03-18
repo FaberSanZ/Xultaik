@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Zeckoxe.Core;
 using Zeckoxe.Desktop.GLFWNative;
 
 namespace Zeckoxe.Desktop
@@ -27,7 +28,7 @@ namespace Zeckoxe.Desktop
                 if (value != _title)
                 {
                     _title = value;
-                    GLFW.GlfwSetWindowTitle(pWindow, Zeckoxe.Core.Interop.String.ToPointer(value));
+                    GLFW.GlfwSetWindowTitle(pWindow, Interop.String.ToPointer(value));
                 }
             }
         }

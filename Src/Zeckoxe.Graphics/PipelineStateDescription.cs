@@ -23,10 +23,11 @@ namespace Zeckoxe.Graphics
     }
     public class PipelineStateDescription
     {
-        
-        public InputAssemblyState InputAssemblyState { get; set; }
-
         public Framebuffer Framebuffer { get; set; }
+
+        public InputAssemblyState InputAssemblyState { get; set; }
+        public RasterizationState RasterizationState { get; set; }
+
 
         public GLSLByteCode GLSLByteCode { get; set; }
 

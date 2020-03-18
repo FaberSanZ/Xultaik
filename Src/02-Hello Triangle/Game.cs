@@ -29,8 +29,6 @@ namespace _02_Hello_Triangle
 
         public GraphicsDevice Device { get; set; }
 
-        public DeviceLimits Limits { get; set; }
-
         public Framebuffer Framebuffer { get; set; }
 
         public GraphicsContext Context { get; set; }
@@ -70,15 +68,11 @@ namespace _02_Hello_Triangle
 
             Device = new GraphicsDevice(Adapter);
 
-            Limits = new DeviceLimits(Device);
-
             Framebuffer = new Framebuffer(Device);
 
             Context = new GraphicsContext(Device);
 
-
             CreatePipelineState();
-
         }
 
 
@@ -92,6 +86,12 @@ namespace _02_Hello_Triangle
                 {
                     PrimitiveType = PrimitiveType.TriangleList,
                     //PrimitiveRestartEnable = false,
+                },
+                RasterizationState = new RasterizationState()
+                {
+                    FillMode = FillMode.Wireframe,
+                    CullMode = CullMode.Back,
+                    FrontFace = FrontFace.Clockwise
                 },
     
                 Vertex = new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.vert", Stage.Vertex, Language.GLSL)),
@@ -129,9 +129,6 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
-
-            Console.WriteLine($"DeviceName : { Device.NativeAdapter.DeviceName }");
-            Console.WriteLine($"MultisampleCount : { Limits.MultisampleCount }");
         }
 
         public void Update()

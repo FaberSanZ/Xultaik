@@ -125,6 +125,22 @@ namespace Zeckoxe.Graphics
             }
         }
 
+        internal static VkFrontFace ToFrontFace(FrontFace frontFace)
+        {
+            switch (frontFace)
+            {
+                case FrontFace.Clockwise:
+                    return VkFrontFace.Clockwise;
+
+                case FrontFace.CounterClockwise:
+                    return VkFrontFace.CounterClockwise;
+
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(frontFace));
+            }
+        }
+
 
         internal static VkCullModeFlags ToCullMode(CullMode cullMode)
         {
@@ -135,6 +151,9 @@ namespace Zeckoxe.Graphics
 
                 case CullMode.Front:
                     return VkCullModeFlags.Front;
+
+                case CullMode.FrontAndBack:
+                    return VkCullModeFlags.FrontAndBack;
 
                 case CullMode.None:
                     return VkCullModeFlags.None;

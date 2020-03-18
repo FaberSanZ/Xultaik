@@ -5,13 +5,8 @@
 =============================================================================*/
 
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
-using Zeckoxe.Core;
 using Vulkan;
+using Zeckoxe.Core;
 using static Vulkan.VulkanNative;
 
 namespace Zeckoxe.Graphics
@@ -55,7 +50,7 @@ namespace Zeckoxe.Graphics
             uint stageCount = 0;
             bool Vertex = PipelineStateDescription.Vertex.Data.Length != 0;
             bool Fragment = PipelineStateDescription.Fragment.Data.Length != 0;
-            bool Pixel =  PipelineStateDescription.Pixel.Data.Length != 0;
+            bool Pixel = PipelineStateDescription.Pixel.Data.Length != 0;
             bool Compute = PipelineStateDescription.Compute.Data.Length != 0;
             VkShaderModule vertexShader = VkShaderModule.Null;
             VkShaderModule fragmentShader = VkShaderModule.Null;
@@ -135,15 +130,20 @@ namespace Zeckoxe.Graphics
 
 
             if (Vertex)
+            {
                 shaderStageCreateInfos[0] = vertCreateInfo;
-            
+            }
+
             if (Fragment || Pixel)
+            {
                 shaderStageCreateInfos[1] = fragCreateInfo;
-            // is Compute?
+            }
+
+            // TODO:is Compute?
             if (Compute)
+            {
                 shaderStageCreateInfos[2] = ComputeCreateInfo;
-
-
+            }
 
             VkPipelineVertexInputStateCreateInfo vertexInputStateCI = VkPipelineVertexInputStateCreateInfo.New();
             //var vertexBindingDesc = Vertex.GetBindingDescription();
@@ -184,19 +184,52 @@ namespace Zeckoxe.Graphics
 
 
 
-            VkPipelineRasterizationStateCreateInfo rasterizerStateCI = VkPipelineRasterizationStateCreateInfo.New();
-            rasterizerStateCI.cullMode = VkCullModeFlags.None;
-            rasterizerStateCI.polygonMode = VkPolygonMode.Fill;
-            rasterizerStateCI.lineWidth = 3.5f;
-            rasterizerStateCI.frontFace = VkFrontFace.CounterClockwise;
+            VkPipelineRasterizationStateCreateInfo rasterizerState = new VkPipelineRasterizationStateCreateInfo()
+            {
+                sType = VkStructureType.PipelineRasterizationStateCreateInfo,
+                pNext = (void*)null,
+            };
+
+            if (PipelineStateDescription.RasterizationState != null)
+            {
+                rasterizerState.polygonMode = VulkanConvert.ToFillMode(PipelineStateDescription.RasterizationState.FillMode);
+                rasterizerState.cullMode = VulkanConvert.ToCullMode(PipelineStateDescription.RasterizationState.CullMode);
+                rasterizerState.frontFace = VulkanConvert.ToFrontFace(PipelineStateDescription.RasterizationState.FrontFace);
+                rasterizerState.lineWidth = PipelineStateDescription.RasterizationState.LineWidth;
+                rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable;
+                rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable;
+
+                if (PipelineStateDescription.RasterizationState.DepthBiasClamp != 0)
+                {
+                    rasterizerState.depthBiasClamp = PipelineStateDescription.RasterizationState.DepthBiasClamp;
+                }
+
+                if (PipelineStateDescription.RasterizationState.DepthBiasConstantFactor != 0)
+                {
+                    rasterizerState.depthBiasConstantFactor = PipelineStateDescription.RasterizationState.DepthBiasConstantFactor;
+                }
+
+
+            }
+            else
+            {
+                rasterizerState.polygonMode = VkPolygonMode.Fill;
+                rasterizerState.cullMode = VkCullModeFlags.None;
+                rasterizerState.frontFace = VkFrontFace.Clockwise;
+                rasterizerState.lineWidth = 1.0F;
+            }
+
+
 
             VkPipelineMultisampleStateCreateInfo multisampleStateCI = VkPipelineMultisampleStateCreateInfo.New();
             multisampleStateCI.rasterizationSamples = VkSampleCountFlags.Count1;
             multisampleStateCI.minSampleShading = 1f;
 
-            VkPipelineColorBlendAttachmentState colorBlendAttachementState = new VkPipelineColorBlendAttachmentState();
-            colorBlendAttachementState.colorWriteMask = VkColorComponentFlags.R | VkColorComponentFlags.G | VkColorComponentFlags.B | VkColorComponentFlags.A;
-            colorBlendAttachementState.blendEnable = false;
+            VkPipelineColorBlendAttachmentState colorBlendAttachementState = new VkPipelineColorBlendAttachmentState
+            {
+                colorWriteMask = VkColorComponentFlags.R | VkColorComponentFlags.G | VkColorComponentFlags.B | VkColorComponentFlags.A,
+                blendEnable = false
+            };
 
             VkPipelineColorBlendStateCreateInfo colorBlendStateCI = VkPipelineColorBlendStateCreateInfo.New();
             colorBlendStateCI.attachmentCount = 1;
@@ -208,20 +241,24 @@ namespace Zeckoxe.Graphics
             //pipelineLayoutCI.pSetLayouts = &dsl;
             vkCreatePipelineLayout(NativeDevice.Device, ref pipelineLayoutCI, null, out pipelineLayout);
 
-            VkGraphicsPipelineCreateInfo graphicsPipelineCI = VkGraphicsPipelineCreateInfo.New();
+            VkGraphicsPipelineCreateInfo graphicsPipelineCI = new VkGraphicsPipelineCreateInfo()
+            {
+                sType = VkStructureType.GraphicsPipelineCreateInfo,
+                pNext = (void*)null,
+            };
             graphicsPipelineCI.stageCount = stageCount;
             graphicsPipelineCI.pStages = shaderStageCreateInfos;
 
             graphicsPipelineCI.pVertexInputState = &vertexInputStateCI;
             graphicsPipelineCI.pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo;
-            graphicsPipelineCI.pRasterizationState = &rasterizerStateCI;
+            graphicsPipelineCI.pRasterizationState = &rasterizerState;
             graphicsPipelineCI.pMultisampleState = &multisampleStateCI;
             graphicsPipelineCI.pColorBlendState = &colorBlendStateCI;
             graphicsPipelineCI.layout = pipelineLayout;
             graphicsPipelineCI.renderPass = description.Framebuffer.NativeRenderPass;
             graphicsPipelineCI.subpass = 0;
 
-            vkCreateGraphicsPipelines(NativeDevice.Device, VkPipelineCache.Null, 1, ref graphicsPipelineCI, null, out graphicsPipeline);
+            vkCreateGraphicsPipelines(NativeDevice.Device, /*new VkPipelineCache(0)*/ VkPipelineCache.Null, 1, ref graphicsPipelineCI, null, out graphicsPipeline);
         }
 
 
