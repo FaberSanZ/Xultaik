@@ -111,11 +111,10 @@ namespace Zeckoxe.Graphics
             VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfo = new VkWin32SurfaceCreateInfoKHR()
             {
                 sType = VkStructureType.Win32SurfaceCreateInfoKHR,
+                pNext = null,
                 hinstance = Process.GetCurrentProcess().Handle,
                 hwnd = Parameters.Win32Handle,
             };
-            //var vkCreateWin32SurfaceKHR_ = vkGetInstanceProcAddr(instance, Interop.String.ToPointer(" vkCreateWin32SurfaceKHR"));
-
 
             vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.NativeInstance.GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
 

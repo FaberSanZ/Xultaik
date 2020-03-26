@@ -36,17 +36,19 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public static T GetInstanceProcAddr<T>(this GraphicsInstance instance, string name)
+        public static TDelegate GetInstanceProcAddr<TDelegate>(this GraphicsInstance instance, string name) where TDelegate : class
         {
             IntPtr funcPtr = vkGetInstanceProcAddr(instance.NativeInstance, Interop.String.ToPointer(name));
-            if (funcPtr != IntPtr.Zero)
-            {
-                return Interop.GetDelegateForFunctionPointer<T>(funcPtr);
-            }
-            else 
-            { 
-                return default; 
-            }
+
+            return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
+        }
+
+
+        public static TDelegate GetDeviceProcAddr<TDelegate>(this GraphicsDevice device, string name) where TDelegate : class
+        {
+            IntPtr funcPtr = vkGetDeviceProcAddr(device.Device, Interop.String.ToPointer(name));
+
+            return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
         }
 
         internal static VkSampleCountFlags ExtractMaxSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties)
