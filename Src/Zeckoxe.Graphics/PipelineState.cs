@@ -5,9 +5,10 @@
 =============================================================================*/
 
 
-using Vulkan;
+
 using Zeckoxe.Core;
-using static Vulkan.VulkanNative;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
@@ -145,7 +146,11 @@ namespace Zeckoxe.Graphics
                 shaderStageCreateInfos[2] = ComputeCreateInfo;
             }
 
-            VkPipelineVertexInputStateCreateInfo vertexInputStateCI = VkPipelineVertexInputStateCreateInfo.New();
+            VkPipelineVertexInputStateCreateInfo vertexInputStateCI = new VkPipelineVertexInputStateCreateInfo()
+            {
+                sType = VkStructureType.PipelineVertexInputStateCreateInfo,
+                pNext = null,
+            };
             //var vertexBindingDesc = Vertex.GetBindingDescription();
             vertexInputStateCI.vertexBindingDescriptionCount = 0;
             //vertexInputStateCI.pVertexBindingDescriptions = Interop.Struct.AllocToPointer(ref vertexBindingDesc);
@@ -221,7 +226,10 @@ namespace Zeckoxe.Graphics
 
 
 
-            VkPipelineMultisampleStateCreateInfo multisampleStateCI = VkPipelineMultisampleStateCreateInfo.New();
+            VkPipelineMultisampleStateCreateInfo multisampleStateCI = new VkPipelineMultisampleStateCreateInfo()
+            {
+                sType = VkStructureType.PipelineMultisampleStateCreateInfo
+            };
             multisampleStateCI.rasterizationSamples = VkSampleCountFlags.Count1;
             multisampleStateCI.minSampleShading = 1f;
 
@@ -231,16 +239,27 @@ namespace Zeckoxe.Graphics
                 blendEnable = false
             };
 
-            VkPipelineColorBlendStateCreateInfo colorBlendStateCI = VkPipelineColorBlendStateCreateInfo.New();
+            VkPipelineColorBlendStateCreateInfo colorBlendStateCI = new VkPipelineColorBlendStateCreateInfo()
+            {
+                sType = VkStructureType.PipelineColorBlendStateCreateInfo
+
+            };
             colorBlendStateCI.attachmentCount = 1;
             colorBlendStateCI.pAttachments = &colorBlendAttachementState;
 
             //VkDescriptorSetLayout dsl = _descriptoSetLayout;
-            VkPipelineLayoutCreateInfo pipelineLayoutCI = VkPipelineLayoutCreateInfo.New();
+            VkPipelineLayoutCreateInfo pipelineLayoutCI = new VkPipelineLayoutCreateInfo()
+            {
+                sType = VkStructureType.PipelineLayoutCreateInfo,
+                pNext = null
+            };
+
+
             pipelineLayoutCI.setLayoutCount = 0;
             //pipelineLayoutCI.pSetLayouts = &dsl;
-            vkCreatePipelineLayout(NativeDevice.Device, ref pipelineLayoutCI, null, out pipelineLayout);
-
+            VkPipelineLayout vkpipelineLayout;
+            vkCreatePipelineLayout(NativeDevice.Device, &pipelineLayoutCI, null, &vkpipelineLayout);
+            pipelineLayout =vkpipelineLayout;
             VkGraphicsPipelineCreateInfo graphicsPipelineCI = new VkGraphicsPipelineCreateInfo()
             {
                 sType = VkStructureType.GraphicsPipelineCreateInfo,
@@ -258,7 +277,10 @@ namespace Zeckoxe.Graphics
             graphicsPipelineCI.renderPass = description.Framebuffer.NativeRenderPass;
             graphicsPipelineCI.subpass = 0;
 
-            vkCreateGraphicsPipelines(NativeDevice.Device, /*new VkPipelineCache(0)*/ VkPipelineCache.Null, 1, ref graphicsPipelineCI, null, out graphicsPipeline);
+
+            VkPipeline pipeline;
+            vkCreateGraphicsPipelines(NativeDevice.Device, /*new VkPipelineCache(0)*/ VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
+            graphicsPipeline = pipeline;
         }
 
 

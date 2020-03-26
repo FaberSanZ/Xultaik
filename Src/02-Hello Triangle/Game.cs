@@ -48,7 +48,7 @@ namespace _02_Hello_Triangle
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = true,
+                    Validation = false,
                     Fullscreen = true,
                     VSync = false,
                 },
@@ -67,6 +67,8 @@ namespace _02_Hello_Triangle
             Adapter = new GraphicsAdapter(Instance);
 
             Device = new GraphicsDevice(Adapter);
+
+
 
             Framebuffer = new Framebuffer(Device);
 
@@ -89,7 +91,7 @@ namespace _02_Hello_Triangle
                 },
                 RasterizationState = new RasterizationState()
                 {
-                    FillMode = FillMode.Wireframe,
+                    FillMode = FillMode.Solid,
                     CullMode = CullMode.Back,
                     FrontFace = FrontFace.Clockwise
                 },

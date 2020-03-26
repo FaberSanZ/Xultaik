@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Zeckoxe.Core;
-using Vulkan;
-using static Vulkan.VulkanNative;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
@@ -56,7 +56,7 @@ namespace Zeckoxe.Graphics
         {
             NativePhysicalDevices = new List<VkPhysicalDevice>();
 
-            NativePhysicalDevices = GetPhysicalDevice();
+            NativePhysicalDevices = GetPhysicalDevices();
 
             foreach (var item in NativePhysicalDevices)
                 NativePhysicalDevice = item;
@@ -67,28 +67,28 @@ namespace Zeckoxe.Graphics
 
         internal VkPhysicalDeviceProperties GetProperties()
         {
-            vkGetPhysicalDeviceProperties(NativePhysicalDevice, out var physicalDeviceProperties);
+            VkPhysicalDeviceProperties physicalDeviceProperties;
+            vkGetPhysicalDeviceProperties(NativePhysicalDevice, &physicalDeviceProperties);
             return physicalDeviceProperties;
         }
 
 
-        internal List<VkPhysicalDevice> GetPhysicalDevice()
+        internal List<VkPhysicalDevice> GetPhysicalDevices()
         {
             // Physical Device
-            uint Count = 0;
-            vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, null);
+            //uint Count = 0;
+            //vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, null);
 
-            // Enumerate devices
-            VkPhysicalDevice* physicalDevices = stackalloc VkPhysicalDevice[(int)Count];
-            vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, physicalDevices);
+            //// Enumerate devices
+            //VkPhysicalDevice* physicalDevices = stackalloc VkPhysicalDevice[(int)Count];
+            //vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, physicalDevices);
 
-            List<VkPhysicalDevice> vkPhysicalDevices = new List<VkPhysicalDevice>();
+            //List<VkPhysicalDevice> vkPhysicalDevices = new List<VkPhysicalDevice>();
 
-            for (int i = 0; i < Count; i++)
-                vkPhysicalDevices.Add(physicalDevices[i]);
+            //for (int i = 0; i < Count; i++)
+            //    vkPhysicalDevices.Add(physicalDevices[i]);
 
-
-            return vkPhysicalDevices;
+            return vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance).ToList();
         }
 
     }

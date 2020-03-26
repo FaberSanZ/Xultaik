@@ -8,19 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using Zeckoxe.Graphics;
+using Vortice.Vulkan;
 //using Zeckoxe.Collections;
 using Zeckoxe.Core;
-using Vulkan;
-using static Vulkan.VulkanNative;
-using System.Diagnostics;
-using System.IO;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class GraphicsDevice :  IDisposable
+    public unsafe class GraphicsDevice : IDisposable
     {
 
         // public
@@ -32,7 +27,7 @@ namespace Zeckoxe.Graphics
 
         public PresentationParameters NativeParameters { get; set; }
 
-        public CommandBuffer  NativeCommand { get; set; }
+        public CommandBuffer NativeCommand { get; set; }
 
         public uint GraphicsFamily { get; private set; }
 
@@ -140,7 +135,8 @@ namespace Zeckoxe.Graphics
 
         internal void CreateFeatures()
         {
-            vkGetPhysicalDeviceFeatures(NativeAdapter.NativePhysicalDevice, out VkPhysicalDeviceFeatures features);
+            VkPhysicalDeviceFeatures features;
+            vkGetPhysicalDeviceFeatures(NativeAdapter.NativePhysicalDevice, &features);
 
             Features = features;
         }
@@ -149,7 +145,8 @@ namespace Zeckoxe.Graphics
 
         internal void CreateMemoryProperties()
         {
-            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.NativePhysicalDevice, out var memoryProperties);
+            VkPhysicalDeviceMemoryProperties memoryProperties;
+            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.NativePhysicalDevice, &memoryProperties);
 
             MemoryProperties = memoryProperties;
         }
@@ -161,14 +158,14 @@ namespace Zeckoxe.Graphics
 
             uint Count = 0;
 
-            vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, ref Count, null);
-
+            vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &Count, null);
             VkQueueFamilyProperties* queueFamilyProperties = stackalloc VkQueueFamilyProperties[(int)Count];
-
             vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &Count, queueFamilyProperties);
 
             for (int i = 0; i < Count; i++)
+            {
                 QueueFamilyProperties.Add(queueFamilyProperties[i]);
+            }
         }
 
 
@@ -176,7 +173,7 @@ namespace Zeckoxe.Graphics
         {
             uint extCount = 0;
 
-            vkEnumerateDeviceExtensionProperties(NativeAdapter.NativePhysicalDevice, (byte*)null, ref extCount, null);
+            vkEnumerateDeviceExtensionProperties(NativeAdapter.NativePhysicalDevice, (byte*)null, &extCount, null);
         }
 
 
@@ -206,7 +203,9 @@ namespace Zeckoxe.Graphics
                 queueCreateInfos[0] = (queueInfo);
             }
             else
-                GraphicsFamily = (uint)NullHandle;
+            {
+                GraphicsFamily = uint.MinValue;
+            }
 
 
 
@@ -230,8 +229,10 @@ namespace Zeckoxe.Graphics
                 }
             }
             else
+            {
                 // Else we use the same queue
                 ComputeFamily = GraphicsFamily;
+            }
 
 
             // Dedicated transfer queue
@@ -254,18 +255,26 @@ namespace Zeckoxe.Graphics
                 }
             }
             else
+            {
                 // Else we use the same queue
                 TransferFamily = GraphicsFamily;
+            }
 
 
             // Create the logical device representation
-            List<string> deviceExtensions = new List<string>();
+            List<string> deviceExtensions = new List<string>
+            {
 
-            // If the device will be used for presenting to a display via a swapchain we need to request the swapchain extension
-            deviceExtensions.Add("VK_KHR_swapchain");
+                // If the device will be used for presenting to a display via a swapchain we need to request the swapchain extension
+                "VK_KHR_swapchain"
+            };
 
-            var oldFeatures = Features;
-            VkDeviceCreateInfo deviceCreateInfo = VkDeviceCreateInfo.New();
+            VkPhysicalDeviceFeatures oldFeatures = Features;
+            VkDeviceCreateInfo deviceCreateInfo = new VkDeviceCreateInfo
+            {
+                sType = VkStructureType.DeviceCreateInfo,
+                pNext = null,
+            };
             deviceCreateInfo.queueCreateInfoCount = 3;
             deviceCreateInfo.pQueueCreateInfos = queueCreateInfos;
             deviceCreateInfo.pEnabledFeatures = &oldFeatures;
@@ -273,10 +282,11 @@ namespace Zeckoxe.Graphics
             if (deviceExtensions.Count > 0)
             {
                 deviceCreateInfo.enabledExtensionCount = (uint)deviceExtensions.Count;
-                deviceCreateInfo.ppEnabledExtensionNames = Interop.String.AllocToPointers(deviceExtensions.ToArray());
+                deviceCreateInfo.ppEnabledExtensionNames = (byte*)Interop.String.AllocToPointers(deviceExtensions.ToArray());
             }
 
-            vkCreateDevice(NativeAdapter.NativePhysicalDevice, &deviceCreateInfo, null, out var device);
+            VkDevice device;
+            vkCreateDevice(NativeAdapter.NativePhysicalDevice, &deviceCreateInfo, null, &device);
 
             Device = device;
         }
@@ -285,7 +295,8 @@ namespace Zeckoxe.Graphics
 
         internal VkQueue GetQueue(uint queueFamilyIndex = int.MaxValue, uint queueIndex = 0)
         {
-            vkGetDeviceQueue(Device, queueFamilyIndex, queueIndex, out var Queue);
+            VkQueue Queue;
+            vkGetDeviceQueue(Device, queueFamilyIndex, queueIndex, &Queue);
             return Queue;
         }
 
@@ -303,7 +314,7 @@ namespace Zeckoxe.Graphics
         {
             // Since all depth formats may be optional, we need to find a suitable depth format to use
             // Start with the highest precision packed format
-            List<PixelFormat> depthFormats2  = new List<PixelFormat>()
+            List<PixelFormat> depthFormats2 = new List<PixelFormat>()
             {
                 PixelFormat.D32SfloatS8Uint,
                 PixelFormat.D32Sfloat,
@@ -325,7 +336,7 @@ namespace Zeckoxe.Graphics
 
                 // Format must support depth stencil attachment for optimal tiling
                 //if ((formatProps.OptimalTilingFeatures & FormatFeatures.DepthStencilAttachment) != 0)
-                    depthFormat = format;
+                depthFormat = format;
 
             }
 
@@ -339,11 +350,16 @@ namespace Zeckoxe.Graphics
             fixed (byte* scPtr = bytes)
             {
                 // Create a new shader module that will be used for Pipeline creation
-                VkShaderModuleCreateInfo moduleCreateInfo = VkShaderModuleCreateInfo.New();
+                VkShaderModuleCreateInfo moduleCreateInfo = new VkShaderModuleCreateInfo()
+                {
+                    sType = VkStructureType.ShaderModuleCreateInfo,
+                    pNext = null,
+                };
                 moduleCreateInfo.codeSize = new UIntPtr((ulong)bytes.Length);
                 moduleCreateInfo.pCode = (uint*)scPtr;
 
-                vkCreateShaderModule(Device, ref moduleCreateInfo, null, out VkShaderModule shaderModule);
+                VkShaderModule shaderModule;
+                vkCreateShaderModule(Device, &moduleCreateInfo, null, &shaderModule);
 
                 return shaderModule;
             }
@@ -356,10 +372,16 @@ namespace Zeckoxe.Graphics
             // Dedicated queue for compute
             // Try to find a queue family index that supports compute but not graphics
             if ((queueFlags & VkQueueFlags.Compute) != 0)
+            {
                 for (uint i = 0; i < queueFamilyProperties.Count(); i++)
+                {
                     if (((queueFamilyProperties[(int)i].queueFlags & queueFlags) != 0) &&
                         (queueFamilyProperties[(int)i].queueFlags & VkQueueFlags.Graphics) == 0)
+                    {
                         return i;
+                    }
+                }
+            }
 
 
 
@@ -367,21 +389,29 @@ namespace Zeckoxe.Graphics
             // Dedicated queue for transfer
             // Try to find a queue family index that supports transfer but not graphics and compute
             if ((queueFlags & VkQueueFlags.Transfer) != 0)
+            {
                 for (uint i = 0; i < queueFamilyProperties.Count(); i++)
+                {
                     if (((queueFamilyProperties[(int)i].queueFlags & queueFlags) != 0) &&
                         (queueFamilyProperties[(int)i].queueFlags & VkQueueFlags.Graphics) == 0 &&
                         (queueFamilyProperties[(int)i].queueFlags & VkQueueFlags.Compute) == 0)
+                    {
                         return i;
+                    }
+                }
+            }
 
 
 
 
             // For other queue types or if no separate compute queue is present, return the first one to support the requested flags
             for (uint i = 0; i < queueFamilyProperties.Count(); i++)
+            {
                 if ((queueFamilyProperties[(int)i].queueFlags & queueFlags) != 0)
+                {
                     return i;
-
-
+                }
+            }
 
             throw new InvalidOperationException("Could not find a matching queue family index");
         }
@@ -396,7 +426,8 @@ namespace Zeckoxe.Graphics
                 flags = 0
             };
 
-            vkCreateSemaphore(Device, &vkSemaphoreCreate, null, out var Semaphore);
+            VkSemaphore Semaphore;
+            vkCreateSemaphore(Device, &vkSemaphoreCreate, null, &Semaphore);
 
             return Semaphore;
         }
@@ -412,7 +443,8 @@ namespace Zeckoxe.Graphics
                 pNext = null,
             };
 
-            vkCreateCommandPool(Device, &poolInfo, null, out var commandPool);
+            VkCommandPool commandPool;
+            vkCreateCommandPool(Device, &poolInfo, null, &commandPool);
 
             return commandPool;
         }
@@ -430,7 +462,8 @@ namespace Zeckoxe.Graphics
                 commandBufferCount = 1,
             };
 
-            vkAllocateCommandBuffers(Device, ref allocInfo, out var commandBuffers);
+            VkCommandBuffer commandBuffers;
+            vkAllocateCommandBuffers(Device, &allocInfo, &commandBuffers);
 
             return commandBuffers;
         }
@@ -447,7 +480,9 @@ namespace Zeckoxe.Graphics
                 commandBufferCount = 1,
             };
 
-            vkAllocateCommandBuffers(Device, ref allocInfo, out var commandBuffers);
+
+            VkCommandBuffer commandBuffers;
+            vkAllocateCommandBuffers(Device, &allocInfo, &commandBuffers);
 
             return commandBuffers;
         }
@@ -465,9 +500,12 @@ namespace Zeckoxe.Graphics
             for (uint i = 0; i < MemoryProperties.memoryTypeCount; i++)
             {
                 if ((typeBits & 1) == 1)
+                {
                     if ((GetMemoryType(MemoryProperties, i).propertyFlags & properties) == properties)
+                    {
                         return i;
-
+                    }
+                }
 
                 typeBits >>= 1;
             }

@@ -9,8 +9,8 @@ using System;
 using System.Collections.Generic;
 //using Zeckoxe.Collections;
 using System.Text;
-using Vulkan;
-using static Vulkan.VulkanNative;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 using System.Linq;
 using Zeckoxe.Core;
 using System.Runtime.InteropServices;
@@ -31,16 +31,16 @@ namespace Zeckoxe.Graphics
         internal VkInstance NativeInstance { get; private set; }
 
         internal VkDebugReportCallbackEXT _debugReportCallbackHandle;
-        internal PFN_vkDebugReportCallbackEXT _debugCallbackFunc;
+        //internal PFN_vkDebugReportCallbackEXT _debugCallbackFunc;
 
 
 
         public GraphicsInstance(PresentationParameters parameters)
         {
             Parameters = parameters;
-
+            vkInitialize();
             NativeInstance = CreateInstance();
-
+            vkLoadInstance(NativeInstance);
 
             if (Parameters.Settings.Validation)
             {
@@ -52,7 +52,7 @@ namespace Zeckoxe.Graphics
                     VkDebugReportFlagsEXT.PerformanceWarningEXT | 
                     VkDebugReportFlagsEXT.InformationEXT;
 
-                CreateDebugReportCallback(flags);
+                //CreateDebugReportCallback(flags);
             }
 
         }
@@ -64,9 +64,9 @@ namespace Zeckoxe.Graphics
             VkApplicationInfo AppInfo = new VkApplicationInfo()
             {
                 sType = VkStructureType.ApplicationInfo,
-                apiVersion = new Version(1, 0, 0),
-                applicationVersion = new Version(0, 0, 1),
-                engineVersion = new Version(0, 0, 2),
+                apiVersion = new VkVersion(1, 0, 0),
+                applicationVersion = new VkVersion(0, 0, 1),
+                engineVersion = new VkVersion(0, 0, 2),
                 pApplicationName = Interop.String.ToPointer("Zeckoxe Engine"),
                 pEngineName = Interop.String.ToPointer("Zeckoxe"),
             };
@@ -129,9 +129,9 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 pApplicationInfo = &AppInfo,
                 enabledExtensionCount = (uint)InstanceExtensions.Count(),
-                ppEnabledExtensionNames = Interop.String.AllocToPointers(InstanceExtensions.ToArray()),
-                enabledLayerCount = (uint)ValidationLayer.Count(),
-                ppEnabledLayerNames = Interop.String.AllocToPointers(ValidationLayer.ToArray())
+                ppEnabledExtensionNames = (byte*)Interop.String.AllocToPointers(InstanceExtensions.ToArray()),
+                //enabledLayerCount = (uint)ValidationLayer.Count(),
+                //ppEnabledLayerNames = (byte*)Interop.String.AllocToPointers(ValidationLayer.ToArray())
             };
 
 
@@ -172,30 +172,30 @@ namespace Zeckoxe.Graphics
             VkDebugReportCallbackEXT callback,
             VkAllocationCallbacks* pAllocator);
 
-        private unsafe VkResult CreateDebugReportCallback(VkDebugReportFlagsEXT flags)
-        {
-            _debugCallbackFunc = DebugCallback;
-            IntPtr debugFunctionPtr = Interop.GetFunctionPointerForDelegate(_debugCallbackFunc);
-            VkDebugReportCallbackCreateInfoEXT debugCallbackInfo = new VkDebugReportCallbackCreateInfoEXT()
-            {
-                sType = VkStructureType.DebugReportCallbackCreateInfoEXT,
-                pNext = (void*)null,
-                flags = flags,
-                pfnCallback = debugFunctionPtr,
-            };
+        //private unsafe VkResult CreateDebugReportCallback(VkDebugReportFlagsEXT flags)
+        //{
+        //    //_debugCallbackFunc = DebugCallback;
+        //    //IntPtr debugFunctionPtr = Interop.GetFunctionPointerForDelegate(_debugCallbackFunc);
+        //    //VkDebugReportCallbackCreateInfoEXT debugCallbackInfo = new VkDebugReportCallbackCreateInfoEXT()
+        //    //{
+        //    //    sType = VkStructureType.DebugReportCallbackCreateInfoEXT,
+        //    //    pNext = (void*)null,
+        //    //    flags = flags,
+        //    //    pfnCallback = debugFunctionPtr,
+        //    //};
 
-            IntPtr createFnPtr = vkGetInstanceProcAddr(NativeInstance, Interop.String.ToPointer("vkCreateDebugReportCallbackEXT"));
+        //    IntPtr createFnPtr = vkGetInstanceProcAddr(NativeInstance, Interop.String.ToPointer("vkCreateDebugReportCallbackEXT"));
 
-            if (createFnPtr == IntPtr.Zero)
-                return VkResult.ErrorValidationFailedEXT;
+        //    if (createFnPtr == IntPtr.Zero)
+        //        return VkResult.ErrorValidationFailedEXT;
 
-            vkCreateDebugReportCallbackEXT_d createDelegate = Interop.GetDelegateForFunctionPointer<vkCreateDebugReportCallbackEXT_d>(createFnPtr);
-            return createDelegate(NativeInstance, &debugCallbackInfo, IntPtr.Zero, out _debugReportCallbackHandle);
-        }
+        //    vkCreateDebugReportCallbackEXT_d createDelegate = Interop.GetDelegateForFunctionPointer<vkCreateDebugReportCallbackEXT_d>(createFnPtr);
+        //    return createDelegate(NativeInstance, &debugCallbackInfo, IntPtr.Zero, out _debugReportCallbackHandle);
+        //}
 
         private unsafe void DestroyDebugReportCallback()
         {
-            _debugCallbackFunc = null;
+            //_debugCallbackFunc = null;
             var destroyFuncPtr = vkGetInstanceProcAddr(NativeInstance, Interop.String.ToPointer("vkDestroyDebugReportCallbackEXT"));
             var destroyDel = Interop.GetDelegateForFunctionPointer<vkDestroyDebugReportCallbackEXT_d>(destroyFuncPtr);
             destroyDel(NativeInstance, _debugReportCallbackHandle, null);

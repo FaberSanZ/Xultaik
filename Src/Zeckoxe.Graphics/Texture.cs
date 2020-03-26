@@ -8,9 +8,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Vulkan;
 using Zeckoxe.Core;
-using static Vulkan.VulkanNative;
+
 
 namespace Zeckoxe.Graphics
 {

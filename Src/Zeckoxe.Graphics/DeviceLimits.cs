@@ -9,7 +9,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Vulkan;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {

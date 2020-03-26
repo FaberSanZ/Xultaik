@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using Vulkan;
 using Zeckoxe.Core;
-using static Vulkan.VulkanNative;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
@@ -64,9 +64,9 @@ namespace Zeckoxe.Graphics
 
             // Get the images
             uint Count = 0;
-            vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, ref Count, null);
+            vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, &Count, null);
             VkImage* vkImages = stackalloc VkImage[(int)Count];
-            vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, ref Count, vkImages);
+            vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, &Count, vkImages);
 
 
             for (int i = 0; i < Count; i++)
@@ -86,12 +86,22 @@ namespace Zeckoxe.Graphics
                         layerCount = 1,
                     }
                 };
-
-                vkCreateImageView(NativeDevice.Device, ref imageViewCI, null, out SwapChainImageViews[i]);
+                VkImageView vkImage;
+                vkCreateImageView(NativeDevice.Device, &imageViewCI, null, &vkImage);
+                SwapChainImageViews[i] = vkImage;
             }
         }
 
 
+        struct VkWin32SurfaceCreateInfoKHR
+        {
+            public VkStructureType sType;
+            public void* pNext;
+            public uint flags;
+            public IntPtr hinstance;
+            public IntPtr hwnd;
+        }
+        private delegate VkResult vkCreateWin32SurfaceKHRDelegate(VkInstance instance, VkWin32SurfaceCreateInfoKHR* createInfo, VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 
         internal VkSurfaceKHR CreateSurface()
         {
@@ -104,9 +114,17 @@ namespace Zeckoxe.Graphics
                 hinstance = Process.GetCurrentProcess().Handle,
                 hwnd = Parameters.Win32Handle,
             };
+            //var vkCreateWin32SurfaceKHR_ = vkGetInstanceProcAddr(instance, Interop.String.ToPointer(" vkCreateWin32SurfaceKHR"));
 
 
+            T GetInstanceProcAddr<T>(string name = "vkCreateWin32SurfaceKHR")
+            {
+                IntPtr funcPtr = vkGetInstanceProcAddr(instance, Interop.String.ToPointer(name));
+                if (funcPtr != IntPtr.Zero) { return Marshal.GetDelegateForFunctionPointer<T>(funcPtr); }
+                else { return default; }
+            }
 
+            vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 vkCreateWin32SurfaceKHR(instance, &Win32SurfaceCreateInfo, null, &defSurface);
@@ -161,7 +179,7 @@ namespace Zeckoxe.Graphics
                         graphicsQueueNodeIndex = i;
                     
 
-                    if (supportsPresent[i] == 1)
+                    if (supportsPresent[i] == true)
                     {
                         graphicsQueueNodeIndex = i;
                         presentQueueNodeIndex = i;
@@ -176,7 +194,7 @@ namespace Zeckoxe.Graphics
                 // try to find a separate present queue
                 for (uint i = 0; i < queueCount; ++i)
                 {
-                    if (supportsPresent[i] == 1)
+                    if (supportsPresent[i] == true)
                     {
                         presentQueueNodeIndex = i;
                         break;
@@ -208,7 +226,7 @@ namespace Zeckoxe.Graphics
             // there is no preferered format, so we assume VK_FORMAT_B8G8R8A8_UNORM
             if ((formatCount == 1) && (surfaceFormats[0].format == VkFormat.Undefined))
             {
-                VkColorFormat = VkFormat.B8g8r8a8Unorm;
+                VkColorFormat = VkFormat.B8G8R8A8UNorm;
                 ColorSpace = surfaceFormats[0].colorSpace;
             }
             else
@@ -227,7 +245,7 @@ namespace Zeckoxe.Graphics
 
                 foreach (var surfaceFormat in Formats)
                 {
-                    if (surfaceFormat.format == VkFormat.B8g8r8a8Unorm)
+                    if (surfaceFormat.format == VkFormat.B8G8R8A8UNorm)
                     {
                         VkColorFormat = surfaceFormat.format;
                         ColorSpace = surfaceFormat.colorSpace;
@@ -340,14 +358,14 @@ namespace Zeckoxe.Graphics
                 oldSwapchain = SwapChain,
 
                 // Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
-                clipped = True,
+                clipped = true,
                 compositeAlpha = VkCompositeAlphaFlagsKHR.OpaqueKHR,
             };
 
 
             // Set additional usage flag for blitting from the swapchain Images if supported
             VkFormatProperties formatProps;
-            vkGetPhysicalDeviceFormatProperties(PhysicalDevice, VkColorFormat, out formatProps);
+            vkGetPhysicalDeviceFormatProperties(PhysicalDevice, VkColorFormat, &formatProps);
             if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.BlitDst) != 0)
                 swapchainCI.imageUsage |= VkImageUsageFlags.TransferSrc;
             

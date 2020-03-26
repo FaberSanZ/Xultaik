@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Vulkan;
 using Zeckoxe.Core;
-using static Vulkan.VulkanNative;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
@@ -22,9 +22,9 @@ namespace Zeckoxe.Graphics
         {
             uint count = 0;
 
-            vkEnumerateInstanceExtensionProperties((byte*)null, ref count, null);
+            vkEnumerateInstanceExtensionProperties((byte*)null, &count, null);
             VkExtensionProperties* ext = stackalloc VkExtensionProperties[(int)count];
-            vkEnumerateInstanceExtensionProperties((byte*)null, ref count, ext);
+            vkEnumerateInstanceExtensionProperties((byte*)null, &count, ext);
 
 
             List<string> extensionName = new List<string>();

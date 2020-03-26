@@ -8,10 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Vulkan;
 using Zeckoxe.Core;
 using Zeckoxe.Mathematics;
-using static Vulkan.VulkanNative;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
@@ -67,7 +67,7 @@ namespace Zeckoxe.Graphics
                 framebuffer = framebuffer.SwapChainFramebuffers[imageIndex],
                 renderArea = new VkRect2D()
                 {
-                    extent = new VkExtent2D(NativeDevice.NativeParameters.BackBufferWidth, NativeDevice.NativeParameters.BackBufferHeight)
+                    extent = new VkExtent2D((uint)NativeDevice.NativeParameters.BackBufferWidth, (uint)NativeDevice.NativeParameters.BackBufferHeight)
                 },
             };
 
@@ -79,7 +79,14 @@ namespace Zeckoxe.Graphics
         {
             VkClearColorValue clearValue = new VkClearColorValue(R, G, B, A);
 
-            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
+            VkImageSubresourceRange clearRange = new VkImageSubresourceRange()
+            {
+                aspectMask = VkImageAspectFlags.Color,
+                baseMipLevel = 0,
+                baseArrayLayer = 0,
+                layerCount = 1,
+                levelCount = 1
+            };
 
             vkCmdClearColorImage(NativeCommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
         }
@@ -89,7 +96,10 @@ namespace Zeckoxe.Graphics
         {
             VkClearColorValue clearValue = new VkClearColorValue(color.R, color.G, color.B, color.A);
 
-            VkImageSubresourceRange clearRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1);
+            VkImageSubresourceRange clearRange = new VkImageSubresourceRange();
+            clearRange.aspectMask = VkImageAspectFlags.Color;
+            clearRange.baseArrayLayer = 1;
+            clearRange.baseMipLevel = 0;
 
             vkCmdClearColorImage(NativeCommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
         }

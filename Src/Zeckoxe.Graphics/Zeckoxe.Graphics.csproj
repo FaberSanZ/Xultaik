@@ -8,8 +8,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.3" />
-    <PackageReference Include="Vk" Version="1.0.22" />
+    <PackageReference Include="Vortice.Vulkan" Version="1.1.136-beta-gaac25b1658" />
   </ItemGroup>
 
   <ItemGroup>

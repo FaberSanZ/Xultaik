@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Vulkan;
 using Zeckoxe.Core;
-using static Vulkan.VulkanNative;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
@@ -45,8 +45,9 @@ namespace Zeckoxe.Graphics
                     layers = 1,
                 };
 
-
-                vkCreateFramebuffer(NativeDevice.Device, ref frameBufferInfo, null, out SwapChainFramebuffers[i]);
+                VkFramebuffer vkFramebuffer;
+                vkCreateFramebuffer(NativeDevice.Device, &frameBufferInfo, null, &vkFramebuffer);
+                SwapChainFramebuffers[i] = vkFramebuffer;
             }
 
         }
@@ -107,9 +108,8 @@ namespace Zeckoxe.Graphics
                 pDependencies = &dependency,
             };
 
-
-
-            vkCreateRenderPass(NativeDevice.Device, ref renderPassCI, null, out var RenderPass);
+            VkRenderPass RenderPass;
+            vkCreateRenderPass(NativeDevice.Device, &renderPassCI, null, &RenderPass);
             NativeRenderPass = RenderPass;
 
         }

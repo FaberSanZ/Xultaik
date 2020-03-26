@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Zeckoxe.Core;
-using Vulkan;
-using static Vulkan.VulkanNative;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
