@@ -76,19 +76,19 @@ namespace Zeckoxe.Graphics
         internal List<VkPhysicalDevice> GetPhysicalDevices()
         {
             // Physical Device
-            //uint Count = 0;
-            //vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, null);
+            uint Count = 0;
+            vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, null);
 
-            //// Enumerate devices
-            //VkPhysicalDevice* physicalDevices = stackalloc VkPhysicalDevice[(int)Count];
-            //vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, physicalDevices);
+            // Enumerate devices
+            VkPhysicalDevice* physicalDevices = stackalloc VkPhysicalDevice[(int)Count];
+            vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, physicalDevices);
 
-            //List<VkPhysicalDevice> vkPhysicalDevices = new List<VkPhysicalDevice>();
+            List<VkPhysicalDevice> vkPhysicalDevices = new List<VkPhysicalDevice>();
 
-            //for (int i = 0; i < Count; i++)
-            //    vkPhysicalDevices.Add(physicalDevices[i]);
+            for (int i = 0; i < Count; i++)
+                vkPhysicalDevices.Add(physicalDevices[i]);
 
-            return vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance).ToList();
+            return vkPhysicalDevices /*vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance).ToList()*/;
         }
 
     }
