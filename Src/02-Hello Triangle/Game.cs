@@ -89,13 +89,13 @@ namespace _02_Hello_Triangle
                     PrimitiveType = PrimitiveType.TriangleList,
                     //PrimitiveRestartEnable = false,
                 },
-                RasterizationState = new RasterizationState()
+                RasterizationState = /*new RasterizationState()*/
                 {
-                    FillMode = FillMode.Solid,
+                    FillMode = FillMode.Wireframe,
                     CullMode = CullMode.Back,
                     FrontFace = FrontFace.Clockwise
                 },
-    
+
                 Vertex = new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.vert", Stage.Vertex, Language.GLSL)),
                 Pixel = new ShaderBytecode(Compiler.LoadFromFile("Shaders/PixelShader.hlsl", Stage.Pixel, Language.HLSL)),
             };
@@ -161,7 +161,7 @@ namespace _02_Hello_Triangle
 
         public void Dispose()
         {
-            //Device.Dispose();
+            Instance.Dispose();
         }
 
     }

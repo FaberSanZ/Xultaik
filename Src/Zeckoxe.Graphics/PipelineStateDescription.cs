@@ -26,7 +26,7 @@ namespace Zeckoxe.Graphics
         public Framebuffer Framebuffer { get; set; }
 
         public InputAssemblyState InputAssemblyState { get; set; }
-        public RasterizationState RasterizationState { get; set; }
+        public RasterizationState RasterizationState { get; set; } = new RasterizationState();
 
 
         public GLSLByteCode GLSLByteCode { get; set; }

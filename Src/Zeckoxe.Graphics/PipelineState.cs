@@ -6,8 +6,8 @@
 
 
 
-using Zeckoxe.Core;
 using Vortice.Vulkan;
+using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
@@ -34,13 +34,6 @@ namespace Zeckoxe.Graphics
             CreatePipelineLayout();
 
             CreateGraphicsPipeline(PipelineStateDescription);
-        }
-
-
-
-        public void CreatePipelineLayout()
-        {
-
         }
 
 
@@ -146,21 +139,18 @@ namespace Zeckoxe.Graphics
                 shaderStageCreateInfos[2] = ComputeCreateInfo;
             }
 
-            VkPipelineVertexInputStateCreateInfo vertexInputStateCI = new VkPipelineVertexInputStateCreateInfo()
+            VkPipelineVertexInputStateCreateInfo vertexInputState = new VkPipelineVertexInputStateCreateInfo()
             {
                 sType = VkStructureType.PipelineVertexInputStateCreateInfo,
                 pNext = null,
+                vertexBindingDescriptionCount = 0,
+                //vertexInputStateCI.pVertexBindingDescriptions = Interop.Struct.AllocToPointer(ref vertexBindingDesc),
+
+                //pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions()),
+                //pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions().AsSpan()),
+
+                vertexAttributeDescriptionCount = 0,
             };
-            //var vertexBindingDesc = Vertex.GetBindingDescription();
-            vertexInputStateCI.vertexBindingDescriptionCount = 0;
-            //vertexInputStateCI.pVertexBindingDescriptions = Interop.Struct.AllocToPointer(ref vertexBindingDesc);
-
-
-            vertexInputStateCI.vertexAttributeDescriptionCount = 0;
-            //vertexInputStateCI.pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions());
-            //vertexInputStateCI.pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions().AsSpan());
-
-
 
 
 
@@ -226,12 +216,12 @@ namespace Zeckoxe.Graphics
 
 
 
-            VkPipelineMultisampleStateCreateInfo multisampleStateCI = new VkPipelineMultisampleStateCreateInfo()
+            VkPipelineMultisampleStateCreateInfo multisampleState = new VkPipelineMultisampleStateCreateInfo()
             {
-                sType = VkStructureType.PipelineMultisampleStateCreateInfo
+                rasterizationSamples = VkSampleCountFlags.Count1,
+                minSampleShading = 1f,
             };
-            multisampleStateCI.rasterizationSamples = VkSampleCountFlags.Count1;
-            multisampleStateCI.minSampleShading = 1f;
+
 
             VkPipelineColorBlendAttachmentState colorBlendAttachementState = new VkPipelineColorBlendAttachmentState
             {
@@ -239,48 +229,52 @@ namespace Zeckoxe.Graphics
                 blendEnable = false
             };
 
-            VkPipelineColorBlendStateCreateInfo colorBlendStateCI = new VkPipelineColorBlendStateCreateInfo()
+            VkPipelineColorBlendStateCreateInfo colorBlendState = new VkPipelineColorBlendStateCreateInfo()
             {
-                sType = VkStructureType.PipelineColorBlendStateCreateInfo
-
-            };
-            colorBlendStateCI.attachmentCount = 1;
-            colorBlendStateCI.pAttachments = &colorBlendAttachementState;
-
-            //VkDescriptorSetLayout dsl = _descriptoSetLayout;
-            VkPipelineLayoutCreateInfo pipelineLayoutCI = new VkPipelineLayoutCreateInfo()
-            {
-                sType = VkStructureType.PipelineLayoutCreateInfo,
-                pNext = null
+                sType = VkStructureType.PipelineColorBlendStateCreateInfo,
+                pNext = null,
+                attachmentCount = 1,
+                pAttachments = &colorBlendAttachementState,
             };
 
 
-            pipelineLayoutCI.setLayoutCount = 0;
-            //pipelineLayoutCI.pSetLayouts = &dsl;
-            VkPipelineLayout vkpipelineLayout;
-            vkCreatePipelineLayout(NativeDevice.Device, &pipelineLayoutCI, null, &vkpipelineLayout);
-            pipelineLayout =vkpipelineLayout;
+
             VkGraphicsPipelineCreateInfo graphicsPipelineCI = new VkGraphicsPipelineCreateInfo()
             {
                 sType = VkStructureType.GraphicsPipelineCreateInfo,
                 pNext = (void*)null,
+                stageCount = stageCount,
+                pStages = shaderStageCreateInfos,
+                pVertexInputState = &vertexInputState,
+                pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo,
+                pRasterizationState = &rasterizerState,
+                pMultisampleState = &multisampleState,
+                pColorBlendState = &colorBlendState,
+                layout = pipelineLayout,
+                renderPass = description.Framebuffer.NativeRenderPass,
+                subpass = 0,
             };
-            graphicsPipelineCI.stageCount = stageCount;
-            graphicsPipelineCI.pStages = shaderStageCreateInfos;
 
-            graphicsPipelineCI.pVertexInputState = &vertexInputStateCI;
-            graphicsPipelineCI.pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo;
-            graphicsPipelineCI.pRasterizationState = &rasterizerState;
-            graphicsPipelineCI.pMultisampleState = &multisampleStateCI;
-            graphicsPipelineCI.pColorBlendState = &colorBlendStateCI;
-            graphicsPipelineCI.layout = pipelineLayout;
-            graphicsPipelineCI.renderPass = description.Framebuffer.NativeRenderPass;
-            graphicsPipelineCI.subpass = 0;
 
 
             VkPipeline pipeline;
             vkCreateGraphicsPipelines(NativeDevice.Device, /*new VkPipelineCache(0)*/ VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
             graphicsPipeline = pipeline;
+        }
+
+        internal void CreatePipelineLayout()
+        {
+            VkPipelineLayoutCreateInfo pipelineLayoutCI = new VkPipelineLayoutCreateInfo()
+            {
+                sType = VkStructureType.PipelineLayoutCreateInfo,
+                pNext = null,
+                setLayoutCount = 0,
+                flags = VkPipelineLayoutCreateFlags.None,
+            };
+
+            VkPipelineLayout vkpipelineLayout;
+            vkCreatePipelineLayout(NativeDevice.Device, &pipelineLayoutCI, null, &vkpipelineLayout);
+            pipelineLayout = vkpipelineLayout;
         }
 
 
