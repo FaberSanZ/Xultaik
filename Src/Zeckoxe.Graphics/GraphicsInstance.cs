@@ -7,13 +7,12 @@
 
 using System;
 using System.Collections.Generic;
-//using Zeckoxe.Collections;
-using System.Text;
-using Vortice.Vulkan;
-using static Vortice.Vulkan.Vulkan;
 using System.Linq;
-using Zeckoxe.Core;
 using System.Runtime.InteropServices;
+//using Zeckoxe.Collections;
+using Vortice.Vulkan;
+using Zeckoxe.Core;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
@@ -30,8 +29,16 @@ namespace Zeckoxe.Graphics
 
         internal VkInstance NativeInstance { get; private set; }
 
-        internal VkDebugReportCallbackEXT _debugReportCallbackHandle;
-        //internal PFN_vkDebugReportCallbackEXT _debugCallbackFunc;
+        internal VkDebugReportCallbackEXT _debugReportCallbackHandle; public unsafe delegate uint PFN_vkDebugReportCallbackEXT(
+     uint flags,
+     VkDebugReportObjectTypeEXT objectType,
+     ulong @object,
+     UIntPtr location,
+     int messageCode,
+     byte* pLayerPrefix,
+     byte* pMessage,
+     void* pUserData);
+        internal PFN_vkDebugReportCallbackEXT _debugCallbackFunc;
 
 
 
@@ -45,14 +52,14 @@ namespace Zeckoxe.Graphics
             if (Parameters.Settings.Validation)
             {
                 // TODO: VkDebugReportFlagsEXT 
-                VkDebugReportFlagsEXT flags = 
-                    VkDebugReportFlagsEXT.WarningEXT | 
+                VkDebugReportFlagsEXT flags =
+                    VkDebugReportFlagsEXT.WarningEXT |
                     VkDebugReportFlagsEXT.ErrorEXT |
-                    VkDebugReportFlagsEXT.DebugEXT | 
-                    VkDebugReportFlagsEXT.PerformanceWarningEXT | 
+                    VkDebugReportFlagsEXT.DebugEXT |
+                    VkDebugReportFlagsEXT.PerformanceWarningEXT |
                     VkDebugReportFlagsEXT.InformationEXT;
 
-                //CreateDebugReportCallback(flags);
+                CreateDebugReportCallback(flags);
             }
 
         }
@@ -72,46 +79,52 @@ namespace Zeckoxe.Graphics
             };
 
 
-
-
-
-
             EnumerateInstanceExtensions = Tools.EnumerateInstanceExtensions();
 
             if (EnumerateInstanceExtensions.Contains("VK_KHR_surface"))
+            {
                 InstanceExtensions.Add("VK_KHR_surface");
-
+            }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 if (EnumerateInstanceExtensions.Contains("VK_KHR_win32_surface"))
+                {
                     InstanceExtensions.Add("VK_KHR_win32_surface");
+                }
             }
 
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 if (EnumerateInstanceExtensions.Contains("VK_MVK_macos_surface"))
+                {
                     InstanceExtensions.Add("VK_MVK_macos_surface");
-
+                }
 
                 if (EnumerateInstanceExtensions.Contains("VK_MVK_ios_surface"))
+                {
                     InstanceExtensions.Add("VK_MVK_ios_surface");
+                }
             }
 
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 if (EnumerateInstanceExtensions.Contains("VK_KHR_android_surface"))
+                {
                     InstanceExtensions.Add("VK_KHR_android_surface");
-
+                }
 
                 if (EnumerateInstanceExtensions.Contains("VK_KHR_xlib_surface"))
+                {
                     InstanceExtensions.Add("VK_KHR_xlib_surface");
-
+                }
 
                 if (EnumerateInstanceExtensions.Contains("VK_KHR_wayland_surface"))
+                {
                     InstanceExtensions.Add("VK_KHR_wayland_surface");
+                }
             }
 
 
@@ -130,8 +143,8 @@ namespace Zeckoxe.Graphics
                 pApplicationInfo = &AppInfo,
                 enabledExtensionCount = (uint)InstanceExtensions.Count(),
                 ppEnabledExtensionNames = (byte*)Interop.String.AllocToPointers(InstanceExtensions.ToArray()),
-                //enabledLayerCount = (uint)ValidationLayer.Count(),
-                //ppEnabledLayerNames = (byte*)Interop.String.AllocToPointers(ValidationLayer.ToArray())
+                enabledLayerCount = (uint)ValidationLayer.Count(),
+                ppEnabledLayerNames = (byte*)Interop.String.AllocToPointers(ValidationLayer.ToArray())
             };
 
 
@@ -172,33 +185,33 @@ namespace Zeckoxe.Graphics
             VkDebugReportCallbackEXT callback,
             VkAllocationCallbacks* pAllocator);
 
-        //private unsafe VkResult CreateDebugReportCallback(VkDebugReportFlagsEXT flags)
-        //{
-        //    //_debugCallbackFunc = DebugCallback;
-        //    //IntPtr debugFunctionPtr = Interop.GetFunctionPointerForDelegate(_debugCallbackFunc);
-        //    //VkDebugReportCallbackCreateInfoEXT debugCallbackInfo = new VkDebugReportCallbackCreateInfoEXT()
-        //    //{
-        //    //    sType = VkStructureType.DebugReportCallbackCreateInfoEXT,
-        //    //    pNext = (void*)null,
-        //    //    flags = flags,
-        //    //    pfnCallback = debugFunctionPtr,
-        //    //};
+        private unsafe VkResult CreateDebugReportCallback(VkDebugReportFlagsEXT flags)
+        {
+            _debugCallbackFunc = DebugCallback;
+            IntPtr debugFunctionPtr = Interop.GetFunctionPointerForDelegate(_debugCallbackFunc);
+            VkDebugReportCallbackCreateInfoEXT debugCallbackInfo = new VkDebugReportCallbackCreateInfoEXT()
+            {
+                sType = VkStructureType.DebugReportCallbackCreateInfoEXT,
+                pNext = (void*)null,
+                flags = flags,
+                pfnCallback = debugFunctionPtr,
+            };
 
-        //    IntPtr createFnPtr = vkGetInstanceProcAddr(NativeInstance, Interop.String.ToPointer("vkCreateDebugReportCallbackEXT"));
+            var vkCreateDebugReportCallbackEXT = this.GetInstanceProcAddr<vkCreateDebugReportCallbackEXT_d>("vkCreateDebugReportCallbackEXT");
 
-        //    if (createFnPtr == IntPtr.Zero)
-        //        return VkResult.ErrorValidationFailedEXT;
+            if (vkCreateDebugReportCallbackEXT == null)
+            {
+                return VkResult.ErrorValidationFailedEXT;
+            }
 
-        //    vkCreateDebugReportCallbackEXT_d createDelegate = Interop.GetDelegateForFunctionPointer<vkCreateDebugReportCallbackEXT_d>(createFnPtr);
-        //    return createDelegate(NativeInstance, &debugCallbackInfo, IntPtr.Zero, out _debugReportCallbackHandle);
-        //}
+            return vkCreateDebugReportCallbackEXT(NativeInstance, &debugCallbackInfo, IntPtr.Zero, out _debugReportCallbackHandle);
+        }
 
         private unsafe void DestroyDebugReportCallback()
         {
             //_debugCallbackFunc = null;
-            var destroyFuncPtr = vkGetInstanceProcAddr(NativeInstance, Interop.String.ToPointer("vkDestroyDebugReportCallbackEXT"));
-            var destroyDel = Interop.GetDelegateForFunctionPointer<vkDestroyDebugReportCallbackEXT_d>(destroyFuncPtr);
-            destroyDel(NativeInstance, _debugReportCallbackHandle, null);
+            vkDestroyDebugReportCallbackEXT_d vkDestroyDebugReportCallbackEXT = this.GetInstanceProcAddr<vkDestroyDebugReportCallbackEXT_d>("vkDestroyDebugReportCallbackEXT");
+            vkDestroyDebugReportCallbackEXT(NativeInstance, _debugReportCallbackHandle, null);
         }
 
         public void Dispose()
@@ -206,5 +219,5 @@ namespace Zeckoxe.Graphics
             DestroyDebugReportCallback();
         }
     }
-   
+
 }

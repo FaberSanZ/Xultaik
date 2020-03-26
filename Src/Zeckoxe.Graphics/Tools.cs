@@ -96,7 +96,7 @@ namespace Zeckoxe.Graphics
         public static void ImGuiAddFontFromMemoryTTF(string path = "ARIAL.TTF")
         {
             byte[] bytes = File.ReadAllBytes(path);
-            fixed (void* ptr = bytes)
+            fixed (byte* ptr = bytes)
             {
                 //ImGui.GetIO().Fonts.AddFontFromMemoryTTF(new IntPtr(ptr), 32, 15);
             }

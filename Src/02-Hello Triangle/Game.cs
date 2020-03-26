@@ -48,7 +48,7 @@ namespace _02_Hello_Triangle
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = false,
+                    Validation = true,
                     Fullscreen = true,
                     VSync = false,
                 },
