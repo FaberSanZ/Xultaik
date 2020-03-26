@@ -117,14 +117,7 @@ namespace Zeckoxe.Graphics
             //var vkCreateWin32SurfaceKHR_ = vkGetInstanceProcAddr(instance, Interop.String.ToPointer(" vkCreateWin32SurfaceKHR"));
 
 
-            T GetInstanceProcAddr<T>(string name = "vkCreateWin32SurfaceKHR")
-            {
-                IntPtr funcPtr = vkGetInstanceProcAddr(instance, Interop.String.ToPointer(name));
-                if (funcPtr != IntPtr.Zero) { return Marshal.GetDelegateForFunctionPointer<T>(funcPtr); }
-                else { return default; }
-            }
-
-            vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>();
+            vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.NativeInstance.GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 vkCreateWin32SurfaceKHR(instance, &Win32SurfaceCreateInfo, null, &defSurface);
