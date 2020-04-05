@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -27,6 +28,15 @@ namespace Zeckoxe.Core
 
         //public static void* Alloc<T>(int count) => (void*)Alloc(Unsafe.SizeOf<T>() * count);
 
+
+        public static T ToStructure<T>(byte[] bytes, int start, int count) where T : struct
+        {
+            byte[] temp = bytes.Skip(start).Take(count).ToArray();
+            GCHandle handle = GCHandle.Alloc(temp, GCHandleType.Pinned);
+            T stuff = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
+            handle.Free();
+            return stuff;
+        }
 
         public static IntPtr Alloc(int byteCount)
         {
@@ -73,8 +83,23 @@ namespace Zeckoxe.Core
 
 
             public static void Write<T>(IntPtr dstPointer, ref T value) => Unsafe.Copy(dstPointer.ToPointer(), ref value);
+            public static void CopyBlocks<T>(void* dstPointer, T[] values)
+            {
+                if (values == null || values.Length == 0)
+                {
+                    return;
+                }
 
+                int stride = SizeOf<T>();
+                uint size = (uint)(stride * values.Length);
+                void* srcPtr = AsPointer(ref values[0]);
+                Unsafe.CopyBlock(dstPointer, srcPtr, size);
+            }
 
+            public static void* AsPointer<T>(ref T value)
+            {
+                return Unsafe.AsPointer(ref value);
+            }
             public static void Write<T>(IntPtr dstPointer, T[] values)
             {
                 if (values == null || values.Length == 0)

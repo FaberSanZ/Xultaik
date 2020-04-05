@@ -5,12 +5,8 @@
 =============================================================================*/
 
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Zeckoxe.Core;
-using Zeckoxe.Mathematics;
 using Vortice.Vulkan;
+using Zeckoxe.Mathematics;
 using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
@@ -42,9 +38,9 @@ namespace Zeckoxe.Graphics
         {
             // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
             // With that we don't have to handle VK_NOT_READY
-            uint i = 0; 
+            uint i = 0;
             vkAcquireNextImageKHR(NativeDevice.Device, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.ImageAvailableSemaphore, new VkFence(), &i);
-            imageIndex = i; 
+            imageIndex = i;
 
 
             VkCommandBufferBeginInfo beginInfo = new VkCommandBufferBeginInfo()
@@ -96,10 +92,12 @@ namespace Zeckoxe.Graphics
         {
             VkClearColorValue clearValue = new VkClearColorValue(color.R, color.G, color.B, color.A);
 
-            VkImageSubresourceRange clearRange = new VkImageSubresourceRange();
-            clearRange.aspectMask = VkImageAspectFlags.Color;
-            clearRange.baseArrayLayer = 1;
-            clearRange.baseMipLevel = 0;
+            VkImageSubresourceRange clearRange = new VkImageSubresourceRange
+            {
+                aspectMask = VkImageAspectFlags.Color,
+                baseArrayLayer = 1,
+                baseMipLevel = 0
+            };
 
             vkCmdClearColorImage(NativeCommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
         }
@@ -127,11 +125,21 @@ namespace Zeckoxe.Graphics
         public void SetScissor(int width, int height, int x, int y)
         {
             // Update dynamic scissor state
-            VkRect2D scissor = new VkRect2D();
-            scissor.extent.width = (uint)width;
-            scissor.extent.height = (uint)height;
-            scissor.offset.x = x;
-            scissor.offset.y = y;
+            VkRect2D scissor = new VkRect2D()
+            {
+                extent = new VkExtent2D()
+                {
+                    width = (uint)width,
+                    height = (uint)height,
+                },
+                offset = new VkOffset2D()
+                {
+                    x = x,
+                    y = y,
+                },
+            };
+            
+
             vkCmdSetScissor(NativeCommandBuffer, 0, 1, &scissor);
         }
 
@@ -155,14 +163,30 @@ namespace Zeckoxe.Graphics
             vkCmdSetViewport(NativeCommandBuffer, 0, 1, &Viewport);
         }
 
-        public void SetVertexBuffer(Buffer buffer)
+        public void SetVertexBuffer(Buffer buffer, ulong offsets = 0)
         {
+            fixed (VkBuffer* bufferptr = &buffer.Handle)
+            {
+                vkCmdBindVertexBuffers(NativeCommandBuffer, 0, 1, bufferptr, &offsets);
+            }
+        }
+
+        public void SetVertexBuffers(Buffer[] buffers, ulong offsets = 0)
+        {
+            VkBuffer* buffer = stackalloc VkBuffer[buffers.Length];
+
+            for (int i = 0; i < buffers.Length; i++)
+            {
+                buffer[i] = buffers[i].Handle;
+            }
+
+            vkCmdBindVertexBuffers(NativeCommandBuffer, 0, 1, buffer, &offsets);
 
         }
 
-        public void SetIndexBuffer(Buffer buffer)
+        public void SetIndexBuffer(Buffer buffer, ulong offsets = 0)
         {
-
+            vkCmdBindIndexBuffer(NativeCommandBuffer, buffer.Handle, offsets, VkIndexType.Uint32);
         }
 
         public void Draw(int vertexCount, int instanceCount, int firstVertex, int firstInstance)

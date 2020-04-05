@@ -5,11 +5,32 @@
 =============================================================================*/
 
 
+/*=============================================================================
+
+
+                                                                                       <<GraphicsSwapChain>>
+                            |-----------------------------------------------|-----------→ vkCreateSurface()
+                            |                                               |
+                            |                                               |
+   <<GraphicsInstance>>     |        <<GraphicsAdapter>>                 <<this>>
+    vkCreateInstance() ---------→ vkEnumeratePhysicalDevices() -----→ vkCreateDevice()
+                                                                             |
+                                                                             |
+                                     |-------------------------------------------------------------------------------|------------------|
+                                     |                                       |                                       |                  | 
+                                     |                                       |                                       |                  |
+                                 <<Texture>>                           <<CommandBuffer>>                         <<Fence>>           <<Buffer>> 
+                                    Todo:                          vkAllocateCommandBuffers() -----------------→   Todo:          vkCreateBuffer()
+
+
+
+=============================================================================*/
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vortice.Vulkan;
-//using Zeckoxe.Collections;
 using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
 
@@ -20,19 +41,12 @@ namespace Zeckoxe.Graphics
 
         // public
         public GraphicsAdapter NativeAdapter { get; set; }
-
         public GraphicsInstance NativeInstance { get; set; }
-
         public GraphicsSwapChain NativeSwapChain { get; set; }
-
         public PresentationParameters NativeParameters { get; set; }
-
         public CommandBuffer NativeCommand { get; set; }
-
         public uint GraphicsFamily { get; private set; }
-
         public uint ComputeFamily { get; private set; }
-
         public uint TransferFamily { get; private set; }
 
 
@@ -130,7 +144,6 @@ namespace Zeckoxe.Graphics
 
             RenderFinishedSemaphore = CreateSemaphore();
         }
-
 
 
         internal void CreateFeatures()
@@ -365,6 +378,25 @@ namespace Zeckoxe.Graphics
             }
         }
 
+
+
+        internal uint GetMemoryTypeIndex(uint typeBits, VkMemoryPropertyFlags properties)
+        {
+            // Iterate over all memory types available for the Device used in this example
+            for (uint i = 0; i < MemoryProperties.memoryTypeCount; i++)
+            {
+                if ((typeBits & 1) == 1)
+                {
+                    if ((MemoryProperties.GetMemoryType(i).propertyFlags & properties) == properties)
+                    {
+                        return i;
+                    }
+                }
+                typeBits >>= 1;
+            }
+
+            throw new InvalidOperationException("Could not find a suitable memory type!");
+        }
 
 
         internal uint GetQueueFamilyIndex(VkQueueFlags queueFlags, List<VkQueueFamilyProperties> queueFamilyProperties)

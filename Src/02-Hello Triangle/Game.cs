@@ -5,35 +5,45 @@
 =============================================================================*/
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
+using Zeckoxe.Mathematics;
 using Zeckoxe.ShaderCompiler;
 using Buffer = Zeckoxe.Graphics.Buffer;
-using Zeckoxe.Mathematics;
 
 namespace _02_Hello_Triangle
 {
+    public struct Vertex
+    {
+        public Vector2 pos;
+        public Vector3 color;
+        public Vertex(Vector2 pos, Vector3 color)
+        {
+            this.pos = pos;
+            this.color = color;
+        }
+    }
+
     public class Game : IDisposable
     {
+        public Vertex[] vertices = new[]
+        {
+                new Vertex(new Vector2(0.0f, -0.5f), new Vector3(1.0f, 0.0f, 0.0f)),
+                new Vertex(new Vector2(0.5f, 0.5f), new Vector3(0.0f, 1.0f, 0.0f)),
+                new Vertex(new Vector2(-0.5f, 0.5f), new Vector3(0.0f, 0.0f, 1.0f)),
+        };
 
         public Window Window { get; set; }
-
         public PresentationParameters Parameters { get; set; }
-
         public GraphicsInstance Instance { get; set; }
-
         public GraphicsAdapter Adapter { get; set; }
-
         public GraphicsDevice Device { get; set; }
-
         public Framebuffer Framebuffer { get; set; }
-
         public GraphicsContext Context { get; set; }
-
         public PipelineState PipelineState { get; set; }
+        public Buffer VertexBuffer { get; set; }
+
 
 
         public Game()
@@ -48,14 +58,13 @@ namespace _02_Hello_Triangle
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = true,
+                    Validation = false,
                     Fullscreen = true,
                     VSync = false,
                 },
             };
-
+            //var s = DDSLoader.LoadFromFile("");
         }
-
 
 
 
@@ -74,7 +83,22 @@ namespace _02_Hello_Triangle
 
             Context = new GraphicsContext(Device);
 
+            CreateBuffers();
             CreatePipelineState();
+        }
+
+
+        public void CreateBuffers()
+        {
+
+
+            VertexBuffer = new Buffer(Device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.VertexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = vertices.Length * Interop.SizeOf<Vertex>(),
+            });
+
         }
 
 
@@ -89,15 +113,15 @@ namespace _02_Hello_Triangle
                     PrimitiveType = PrimitiveType.TriangleList,
                     //PrimitiveRestartEnable = false,
                 },
-                RasterizationState = /*new RasterizationState()*/
+                RasterizationState = new RasterizationState()
                 {
-                    FillMode = FillMode.Wireframe,
+                    FillMode = FillMode.Solid,
                     CullMode = CullMode.Back,
                     FrontFace = FrontFace.Clockwise
                 },
 
                 Vertex = new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.vert", Stage.Vertex, Language.GLSL)),
-                Pixel = new ShaderBytecode(Compiler.LoadFromFile("Shaders/PixelShader.hlsl", Stage.Pixel, Language.HLSL)),
+                Pixel = new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.frag", Stage.Pixel, Language.GLSL)),
             };
 
             PipelineState = new PipelineState(Pipelinedescription);
@@ -111,7 +135,6 @@ namespace _02_Hello_Triangle
             BeginRun();
 
             Window.Title = ("Zeckoxe Engine - (Hello Triangle) " + Device.NativeAdapter.DeviceName);
-            Console.WriteLine(Window.Title);
 
             Window?.Show();
 
@@ -127,14 +150,16 @@ namespace _02_Hello_Triangle
             });
         }
 
-
-
         public void BeginRun()
         {
         }
 
         public void Update()
         {
+            //vertices[0].color.Y += 0.001f;
+            //vertices[1].color.X += 0.001f;
+            //vertices[2].color.Z += 0.001f;
+            VertexBuffer.SetData(vertices);
 
         }
 
@@ -151,6 +176,7 @@ namespace _02_Hello_Triangle
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetGraphicPipeline(PipelineState);
+            commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
             commandBuffer.Draw(3, 1, 0, 0);
 
             commandBuffer.Close();

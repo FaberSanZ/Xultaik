@@ -71,24 +71,28 @@ namespace Zeckoxe.Graphics
 
             for (int i = 0; i < Count; i++)
             {
-                VkImageViewCreateInfo imageViewCI = new VkImageViewCreateInfo()
+                fixed (VkImageView* imageViewptr = &SwapChainImageViews[i])
                 {
-                    sType = VkStructureType.ImageViewCreateInfo,
-                    image = vkImages[i],
-                    viewType = VkImageViewType.Image2D,
-                    format = VkColorFormat,
-                    subresourceRange = new VkImageSubresourceRange()
+                    VkImageViewCreateInfo imageViewCI = new VkImageViewCreateInfo()
                     {
-                        aspectMask = VkImageAspectFlags.Color,
-                        baseMipLevel = 0,
-                        levelCount = 1,
-                        baseArrayLayer = 0,
-                        layerCount = 1,
-                    }
-                };
-                VkImageView vkImage;
-                vkCreateImageView(NativeDevice.Device, &imageViewCI, null, &vkImage);
-                SwapChainImageViews[i] = vkImage;
+                        sType = VkStructureType.ImageViewCreateInfo,
+                        image = vkImages[i],
+                        viewType = VkImageViewType.Image2D,
+                        format = VkColorFormat,
+                        subresourceRange = new VkImageSubresourceRange()
+                        {
+                            aspectMask = VkImageAspectFlags.Color,
+                            baseMipLevel = 0,
+                            levelCount = 1,
+                            baseArrayLayer = 0,
+                            layerCount = 1,
+                        }
+                    };
+
+                    vkCreateImageView(NativeDevice.Device, &imageViewCI, null, imageViewptr);
+                }
+   
+
             }
         }
 
@@ -362,9 +366,10 @@ namespace Zeckoxe.Graphics
                 swapchainCI.imageUsage |= VkImageUsageFlags.TransferSrc;
             
 
-            VkSwapchainKHR swapChain;
-            vkCreateSwapchainKHR(NativeDevice.Device, &swapchainCI, null, &swapChain);
-            SwapChain = swapChain;
+            fixed(VkSwapchainKHR* swapchainptr = &SwapChain)
+            {
+                vkCreateSwapchainKHR(NativeDevice.Device, &swapchainCI, null, swapchainptr).CheckResult();
+            }
 
 
             //vkDestroySwapchainKHR(NativeDevice.Device, SwapChain, null);
@@ -374,7 +379,7 @@ namespace Zeckoxe.Graphics
             uint imageCount;
             vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, &imageCount, null);
             VkImage* VkImages = stackalloc VkImage[(int)imageCount];
-            vkGetSwapchainImagesKHR(NativeDevice.Device, swapChain, &imageCount, VkImages);
+            vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, &imageCount, VkImages);
 
 
 

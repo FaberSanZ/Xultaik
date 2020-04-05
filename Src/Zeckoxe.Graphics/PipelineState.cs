@@ -139,17 +139,45 @@ namespace Zeckoxe.Graphics
                 shaderStageCreateInfos[2] = ComputeCreateInfo;
             }
 
-            VkPipelineVertexInputStateCreateInfo vertexInputState = new VkPipelineVertexInputStateCreateInfo()
+            VkVertexInputBindingDescription* vertexBindingDesc = stackalloc VkVertexInputBindingDescription[1];
+
+            vertexBindingDesc[0] = new VkVertexInputBindingDescription()
+            {
+                binding = 0,
+                inputRate = VkVertexInputRate.Vertex,
+                stride = 20,// (uint)Interop.SizeOf<Vertex>(),
+            };
+
+
+
+            VkVertexInputAttributeDescription* attributeDescr = stackalloc VkVertexInputAttributeDescription[2];
+
+            attributeDescr[0] = new VkVertexInputAttributeDescription()
+            {
+                binding = 0,
+                location = 0,
+                format = VkFormat.R32G32SFloat,
+                offset = 0,
+            };
+            attributeDescr[1] = new VkVertexInputAttributeDescription()
+            {
+                binding = 0,
+                location = 1,
+                format = VkFormat.R32G32B32SFloat,
+                offset = 8// (uint)Interop.SizeOf<Vector2>(),
+            };
+
+            VkPipelineVertexInputStateCreateInfo vertexInputStateCreate_info = new VkPipelineVertexInputStateCreateInfo()
             {
                 sType = VkStructureType.PipelineVertexInputStateCreateInfo,
                 pNext = null,
-                vertexBindingDescriptionCount = 0,
-                //vertexInputStateCI.pVertexBindingDescriptions = Interop.Struct.AllocToPointer(ref vertexBindingDesc),
+                flags = VkPipelineVertexInputStateCreateFlags.None,
 
-                //pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions()),
-                //pVertexAttributeDescriptions = Interop.Struct.AllocToPointer(Vertex.GetAttributeDescriptions().AsSpan()),
+                vertexBindingDescriptionCount = 1,
+                pVertexBindingDescriptions = vertexBindingDesc,
 
-                vertexAttributeDescriptionCount = 0,
+                vertexAttributeDescriptionCount = 2,
+                pVertexAttributeDescriptions = attributeDescr,
             };
 
 
@@ -245,7 +273,7 @@ namespace Zeckoxe.Graphics
                 pNext = (void*)null,
                 stageCount = stageCount,
                 pStages = shaderStageCreateInfos,
-                pVertexInputState = &vertexInputState,
+                pVertexInputState = &vertexInputStateCreate_info,
                 pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo,
                 pRasterizationState = &rasterizerState,
                 pMultisampleState = &multisampleState,

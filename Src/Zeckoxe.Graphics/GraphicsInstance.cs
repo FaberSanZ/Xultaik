@@ -142,7 +142,8 @@ namespace Zeckoxe.Graphics
                 enabledExtensionCount = (uint)InstanceExtensions.Count(),
                 ppEnabledExtensionNames = (byte*)Interop.String.AllocToPointers(InstanceExtensions.ToArray()),
                 enabledLayerCount = (uint)ValidationLayer.Count(),
-                ppEnabledLayerNames = (byte*)Interop.String.AllocToPointers(ValidationLayer.ToArray())
+                ppEnabledLayerNames = (byte*)Interop.String.AllocToPointers(ValidationLayer.ToArray()),
+                flags = VkInstanceCreateFlags.None,
             };
 
 
@@ -197,15 +198,17 @@ namespace Zeckoxe.Graphics
 
         private unsafe void DestroyDebugReportCallback()
         {
-            //_debugCallbackFunc = null;
+            _debugCallbackFunc = null;
             vkDestroyDebugReportCallbackEXT_d vkDestroyDebugReportCallbackEXT = this.GetInstanceProcAddr<vkDestroyDebugReportCallbackEXT_d>("vkDestroyDebugReportCallbackEXT");
             vkDestroyDebugReportCallbackEXT(NativeInstance, _debugReportCallbackHandle, null);
         }
 
         public void Dispose()
         {
-            DestroyDebugReportCallback();
-            vkDestroyInstance(NativeInstance, null);
+
+            //DestroyDebugReportCallback();
+            //vkDestroyInstance(NativeInstance, null);
+
         }
     }
 
