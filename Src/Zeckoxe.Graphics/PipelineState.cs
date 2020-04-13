@@ -9,6 +9,7 @@
 using Vortice.Vulkan;
 using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
@@ -301,7 +302,7 @@ namespace Zeckoxe.Graphics
             };
 
             VkPipelineLayout vkpipelineLayout;
-            vkCreatePipelineLayout(NativeDevice.Device, &pipelineLayoutCI, null, &vkpipelineLayout);
+            vkCreatePipelineLayout(NativeDevice.Device, &pipelineLayoutCI, null, out vkpipelineLayout);
             pipelineLayout = vkpipelineLayout;
         }
 

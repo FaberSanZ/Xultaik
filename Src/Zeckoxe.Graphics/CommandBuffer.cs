@@ -5,8 +5,8 @@
 =============================================================================*/
 
 
+using Vortice.Mathematics;
 using Vortice.Vulkan;
-using Zeckoxe.Mathematics;
 using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
@@ -39,7 +39,7 @@ namespace Zeckoxe.Graphics
             // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
             // With that we don't have to handle VK_NOT_READY
             uint i = 0;
-            vkAcquireNextImageKHR(NativeDevice.Device, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.ImageAvailableSemaphore, new VkFence(), &i);
+            vkAcquireNextImageKHR(NativeDevice.Device, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.ImageAvailableSemaphore, new VkFence(), out i);
             imageIndex = i;
 
 
@@ -61,9 +61,11 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.RenderPassBeginInfo,
                 renderPass = framebuffer.NativeRenderPass,
                 framebuffer = framebuffer.SwapChainFramebuffers[imageIndex],
-                renderArea = new VkRect2D()
+                renderArea = new Vortice.Mathematics.Rectangle()
                 {
-                    extent = new VkExtent2D((uint)NativeDevice.NativeParameters.BackBufferWidth, (uint)NativeDevice.NativeParameters.BackBufferHeight)
+                    Height = (int)NativeDevice.NativeParameters.BackBufferHeight,
+                    Width = (int)NativeDevice.NativeParameters.BackBufferWidth,
+                    //extent = new VkExtent2D((uint)NativeDevice.NativeParameters.BackBufferWidth, (uint)NativeDevice.NativeParameters.BackBufferHeight)
                 },
             };
 
@@ -88,23 +90,6 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void Clear(RawColor color)
-        {
-            VkClearColorValue clearValue = new VkClearColorValue(color.R, color.G, color.B, color.A);
-
-            VkImageSubresourceRange clearRange = new VkImageSubresourceRange
-            {
-                aspectMask = VkImageAspectFlags.Color,
-                baseArrayLayer = 1,
-                baseMipLevel = 0
-            };
-
-            vkCmdClearColorImage(NativeCommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
-        }
-
-
-
-
         public void SetGraphicPipeline(PipelineState pipelineState)
         {
             vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
@@ -125,18 +110,16 @@ namespace Zeckoxe.Graphics
         public void SetScissor(int width, int height, int x, int y)
         {
             // Update dynamic scissor state
-            VkRect2D scissor = new VkRect2D()
+            Rectangle scissor = new Rectangle()
             {
-                extent = new VkExtent2D()
-                {
-                    width = (uint)width,
-                    height = (uint)height,
-                },
-                offset = new VkOffset2D()
-                {
-                    x = x,
-                    y = y,
-                },
+
+                    Width = (int)width,
+                    Height = (int)height,
+                
+
+                    X = x,
+                    Y = y,
+                
             };
             
 
@@ -145,19 +128,19 @@ namespace Zeckoxe.Graphics
 
         public void SetViewport(float Width, float Height, float X, float Y, float MinDepth = 0.0f, float MaxDepth = 1.0f)
         {
-            VkViewport Viewport = new VkViewport()
+            Viewport Viewport = new Viewport()
             {
-                width = Width,
+                Width = Width,
 
-                height = Height,
+                Height = Height,
 
-                x = X,
+                X = X,
 
-                y = Y,
+                Y = Y,
 
-                minDepth = MinDepth,
+                MinDepth = MinDepth,
 
-                maxDepth = MaxDepth
+                MaxDepth = MaxDepth
             };
 
             vkCmdSetViewport(NativeCommandBuffer, 0, 1, &Viewport);

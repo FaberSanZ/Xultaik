@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Zeckoxe.Image
+namespace Zeckoxe.Graphics.Toolkit
 {
-    class DDSLoader
+    class KTXLoader
     {
     }
 }

@@ -23,7 +23,7 @@ using Zeckoxe.Graphics;
 //using Vortice.WIC;
 using PixelFormat = Zeckoxe.Graphics.PixelFormat;
 
-namespace Zeckoxe.Image
+namespace Zeckoxe.Graphics.Toolkit
 {
 
 	public unsafe class IMGLoader

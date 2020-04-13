@@ -13,6 +13,7 @@ using System.Text;
 using Zeckoxe.Core;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
@@ -68,7 +69,7 @@ namespace Zeckoxe.Graphics
         internal VkPhysicalDeviceProperties GetProperties()
         {
             VkPhysicalDeviceProperties physicalDeviceProperties;
-            vkGetPhysicalDeviceProperties(NativePhysicalDevice, &physicalDeviceProperties);
+            vkGetPhysicalDeviceProperties(NativePhysicalDevice, out physicalDeviceProperties);
             return physicalDeviceProperties;
         }
 

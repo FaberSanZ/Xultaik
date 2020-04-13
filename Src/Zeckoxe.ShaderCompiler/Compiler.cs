@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 
 
@@ -66,17 +64,10 @@ namespace Zeckoxe.ShaderCompiler
         }
     }
 
-    public enum Language : int
-    {
-        GLSL = unchecked(0),
-
-        HLSL = unchecked(1),
-    };
 
 
     public enum Stage
     {
-        // GLSL
         Vertex,
         Fragment,
         Compute,
@@ -91,25 +82,14 @@ namespace Zeckoxe.ShaderCompiler
         Callable,
         Task,
         Mesh,
-
-
-        // HLSL
-        Pixel = Fragment,
-        Domain = TessEvaluation,
-        Hull = TessControl
     }
 
     public class Compiler
     {
 
-        public static byte[] LoadFromFile(string path, Stage stage, Language language)
+        public static byte[] LoadFromFile(string path, Stage stage)
         {
-            if (language == Language.GLSL)
-                return new Compiler().LoadSPIR_V_ShaderGLSL(path, Convert.ToStage(stage));
-            
-            else
-                return new Compiler().LoadSPIR_V_ShaderHLSL(path, Convert.ToStage(stage));
-            
+            return new Compiler().LoadSPIR_V_ShaderGLSL(path, Convert.ToStage(stage));
         }
 
 

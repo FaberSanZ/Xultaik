@@ -10,6 +10,7 @@ using System.Text;
 using Zeckoxe.Core;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
@@ -115,11 +116,11 @@ namespace Zeckoxe.Graphics
 
 
             // Copy vertex data to a buffer visible to the host
-            vkCreateBuffer(NativeDevice.Device, &buffer_info, null, &_buffer);
+            vkCreateBuffer(NativeDevice.Device, &buffer_info, null, out _buffer);
             Handle = _buffer;
             VkMemoryRequirements memReqs;
 
-            vkGetBufferMemoryRequirements(NativeDevice.Device, Handle, &memReqs);
+            vkGetBufferMemoryRequirements(NativeDevice.Device, Handle, out memReqs);
 
             VkMemoryAllocateInfo MemoryAlloc_info = new VkMemoryAllocateInfo()
             {

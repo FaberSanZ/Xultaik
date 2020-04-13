@@ -5,12 +5,14 @@
 =============================================================================*/
 
 using System;
+using System.Numerics;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
-using Zeckoxe.Mathematics;
+using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.ShaderCompiler;
 using Buffer = Zeckoxe.Graphics.Buffer;
+
 
 namespace _02_Hello_Triangle
 {
@@ -120,8 +122,8 @@ namespace _02_Hello_Triangle
                     FrontFace = FrontFace.Clockwise
                 },
 
-                Vertex = new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.vert", Stage.Vertex, Language.GLSL)),
-                Pixel = new ShaderBytecode(Compiler.LoadFromFile("Shaders/shader.frag", Stage.Pixel, Language.GLSL)),
+                Vertex = ShaderLoader.LoadFromFile("Shaders/shader.vert", Stage.Vertex),
+                Pixel = ShaderLoader.LoadFromFile("Shaders/shader.frag", Stage.Fragment),
             };
 
             PipelineState = new PipelineState(Pipelinedescription);

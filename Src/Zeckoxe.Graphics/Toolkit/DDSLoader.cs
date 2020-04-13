@@ -15,7 +15,7 @@ using System.Text;
 using Zeckoxe.Core;
 using Zeckoxe.Graphics;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Graphics.Toolkit
 {
 
     public class DDSLoader

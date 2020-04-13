@@ -5,14 +5,36 @@
 =============================================================================*/
 
 
+/*
+
+
+                                                                                        <<GraphicsSwapChain>>
+                            |-----------------------------------------------|-----------→ vkCreateSurface()
+                            |                                               |
+                            |                                               |
+   <<GraphicsInstance>>     |        <<GraphicsAdapter>>                 <<this>>
+    vkCreateInstance() ---------→ vkEnumeratePhysicalDevices() -----→ vkCreateDevice()
+                                                                             |
+                                                                             |
+                                     |-------------------------------------------------------------------------------|------------------|
+                                     |                                       |                                       |                  | 
+                                     |                                       |                                       |                  |
+                                 <<Texture>>                           <<CommandBuffer>>                         <<Fence>>           <<Buffer>> 
+                                    Todo:                          vkAllocateCommandBuffers() -----------------→   Todo:          vkCreateBuffer()
+
+
+
+*/
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-//using Zeckoxe.Collections;
 using Vortice.Vulkan;
 using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
@@ -140,15 +162,15 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 pApplicationInfo = &AppInfo,
                 enabledExtensionCount = (uint)InstanceExtensions.Count(),
-                ppEnabledExtensionNames = (byte*)Interop.String.AllocToPointers(InstanceExtensions.ToArray()),
+                ppEnabledExtensionNames = Interop.String.AllocToPointers(InstanceExtensions.ToArray()),
                 enabledLayerCount = (uint)ValidationLayer.Count(),
-                ppEnabledLayerNames = (byte*)Interop.String.AllocToPointers(ValidationLayer.ToArray()),
+                ppEnabledLayerNames = Interop.String.AllocToPointers(ValidationLayer.ToArray()),
                 flags = VkInstanceCreateFlags.None,
             };
 
 
             VkInstance instance;
-            vkCreateInstance(&instanceCreateInfo, (VkAllocationCallbacks*)null, &instance);
+            vkCreateInstance(&instanceCreateInfo, (VkAllocationCallbacks*)null, out instance);
             return instance;
         }
 

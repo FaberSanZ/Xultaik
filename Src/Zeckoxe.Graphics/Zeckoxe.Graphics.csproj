@@ -8,12 +8,12 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Vortice.Vulkan" Version="1.1.136-beta-gaac25b1658" />
+    <PackageReference Include="Vortice.Vulkan" Version="1.2.137-beta" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Core\Zeckoxe.Core.csproj" />
-    <ProjectReference Include="..\Zeckoxe.Mathematics\Zeckoxe.Mathematics.csproj" />
+    <ProjectReference Include="..\Zeckoxe.ShaderCompiler\Zeckoxe.ShaderCompiler.csproj" />
   </ItemGroup>
 
 </Project>

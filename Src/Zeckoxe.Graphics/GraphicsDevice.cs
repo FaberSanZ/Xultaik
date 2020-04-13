@@ -4,35 +4,13 @@
 	GraphicsDevice.cs
 =============================================================================*/
 
-
-/*=============================================================================
-
-
-                                                                                       <<GraphicsSwapChain>>
-                            |-----------------------------------------------|-----------→ vkCreateSurface()
-                            |                                               |
-                            |                                               |
-   <<GraphicsInstance>>     |        <<GraphicsAdapter>>                 <<this>>
-    vkCreateInstance() ---------→ vkEnumeratePhysicalDevices() -----→ vkCreateDevice()
-                                                                             |
-                                                                             |
-                                     |-------------------------------------------------------------------------------|------------------|
-                                     |                                       |                                       |                  | 
-                                     |                                       |                                       |                  |
-                                 <<Texture>>                           <<CommandBuffer>>                         <<Fence>>           <<Buffer>> 
-                                    Todo:                          vkAllocateCommandBuffers() -----------------→   Todo:          vkCreateBuffer()
-
-
-
-=============================================================================*/
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vortice.Vulkan;
 using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
@@ -149,7 +127,7 @@ namespace Zeckoxe.Graphics
         internal void CreateFeatures()
         {
             VkPhysicalDeviceFeatures features;
-            vkGetPhysicalDeviceFeatures(NativeAdapter.NativePhysicalDevice, &features);
+            vkGetPhysicalDeviceFeatures(NativeAdapter.NativePhysicalDevice, out features);
 
             Features = features;
         }
@@ -159,7 +137,7 @@ namespace Zeckoxe.Graphics
         internal void CreateMemoryProperties()
         {
             VkPhysicalDeviceMemoryProperties memoryProperties;
-            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.NativePhysicalDevice, &memoryProperties);
+            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.NativePhysicalDevice, out memoryProperties);
 
             MemoryProperties = memoryProperties;
         }
@@ -295,11 +273,11 @@ namespace Zeckoxe.Graphics
             if (deviceExtensions.Count > 0)
             {
                 deviceCreateInfo.enabledExtensionCount = (uint)deviceExtensions.Count;
-                deviceCreateInfo.ppEnabledExtensionNames = (byte*)Interop.String.AllocToPointers(deviceExtensions.ToArray());
+                deviceCreateInfo.ppEnabledExtensionNames = Interop.String.AllocToPointers(deviceExtensions.ToArray());
             }
 
             VkDevice device;
-            vkCreateDevice(NativeAdapter.NativePhysicalDevice, &deviceCreateInfo, null, &device);
+            vkCreateDevice(NativeAdapter.NativePhysicalDevice, &deviceCreateInfo, null, out device);
 
             Device = device;
         }
@@ -309,7 +287,7 @@ namespace Zeckoxe.Graphics
         internal VkQueue GetQueue(uint queueFamilyIndex = int.MaxValue, uint queueIndex = 0)
         {
             VkQueue Queue;
-            vkGetDeviceQueue(Device, queueFamilyIndex, queueIndex, &Queue);
+            vkGetDeviceQueue(Device, queueFamilyIndex, queueIndex, out Queue);
             return Queue;
         }
 
@@ -372,7 +350,7 @@ namespace Zeckoxe.Graphics
                 moduleCreateInfo.pCode = (uint*)scPtr;
 
                 VkShaderModule shaderModule;
-                vkCreateShaderModule(Device, &moduleCreateInfo, null, &shaderModule);
+                vkCreateShaderModule(Device, &moduleCreateInfo, null, out shaderModule);
 
                 return shaderModule;
             }
@@ -459,7 +437,7 @@ namespace Zeckoxe.Graphics
             };
 
             VkSemaphore Semaphore;
-            vkCreateSemaphore(Device, &vkSemaphoreCreate, null, &Semaphore);
+            vkCreateSemaphore(Device, &vkSemaphoreCreate, null, out Semaphore);
 
             return Semaphore;
         }
@@ -476,7 +454,7 @@ namespace Zeckoxe.Graphics
             };
 
             VkCommandPool commandPool;
-            vkCreateCommandPool(Device, &poolInfo, null, &commandPool);
+            vkCreateCommandPool(Device, &poolInfo, null, out commandPool);
 
             return commandPool;
         }
