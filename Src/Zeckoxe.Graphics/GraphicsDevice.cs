@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vortice.Vulkan;
-using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
@@ -78,6 +77,19 @@ namespace Zeckoxe.Graphics
 
             NativeCommandBufferSecondary = CreateCommandBufferSecondary();
 
+
+            List<PixelFormat> depthFormats = new List<PixelFormat>()
+            {
+                PixelFormat.D32SfloatS8Uint,
+                PixelFormat.D32Sfloat,
+                PixelFormat.D24UnormS8Uint,
+                PixelFormat.D16UnormS8Uint,
+                PixelFormat.D16Unorm,
+            };
+
+
+
+            //GetSupportedDepthFormat(depthFormats);
         }
 
 
@@ -126,8 +138,7 @@ namespace Zeckoxe.Graphics
 
         internal void CreateFeatures()
         {
-            VkPhysicalDeviceFeatures features;
-            vkGetPhysicalDeviceFeatures(NativeAdapter.NativePhysicalDevice, out features);
+            vkGetPhysicalDeviceFeatures(NativeAdapter.NativePhysicalDevice, out VkPhysicalDeviceFeatures features);
 
             Features = features;
         }
@@ -136,8 +147,7 @@ namespace Zeckoxe.Graphics
 
         internal void CreateMemoryProperties()
         {
-            VkPhysicalDeviceMemoryProperties memoryProperties;
-            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.NativePhysicalDevice, out memoryProperties);
+            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.NativePhysicalDevice, out VkPhysicalDeviceMemoryProperties memoryProperties);
 
             MemoryProperties = memoryProperties;
         }
@@ -151,6 +161,7 @@ namespace Zeckoxe.Graphics
 
             vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &Count, null);
             VkQueueFamilyProperties* queueFamilyProperties = stackalloc VkQueueFamilyProperties[(int)Count];
+
             vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &Count, queueFamilyProperties);
 
             for (int i = 0; i < Count; i++)
@@ -265,10 +276,12 @@ namespace Zeckoxe.Graphics
             {
                 sType = VkStructureType.DeviceCreateInfo,
                 pNext = null,
+                flags = VkDeviceCreateFlags.None,
+                queueCreateInfoCount = 3,
+                pQueueCreateInfos = queueCreateInfos,
+                pEnabledFeatures = &oldFeatures,
             };
-            deviceCreateInfo.queueCreateInfoCount = 3;
-            deviceCreateInfo.pQueueCreateInfos = queueCreateInfos;
-            deviceCreateInfo.pEnabledFeatures = &oldFeatures;
+
 
             if (deviceExtensions.Count > 0)
             {
@@ -276,8 +289,7 @@ namespace Zeckoxe.Graphics
                 deviceCreateInfo.ppEnabledExtensionNames = Interop.String.AllocToPointers(deviceExtensions.ToArray());
             }
 
-            VkDevice device;
-            vkCreateDevice(NativeAdapter.NativePhysicalDevice, &deviceCreateInfo, null, out device);
+            vkCreateDevice(NativeAdapter.NativePhysicalDevice, &deviceCreateInfo, null, out VkDevice device);
 
             Device = device;
         }
@@ -286,8 +298,8 @@ namespace Zeckoxe.Graphics
 
         internal VkQueue GetQueue(uint queueFamilyIndex = int.MaxValue, uint queueIndex = 0)
         {
-            VkQueue Queue;
-            vkGetDeviceQueue(Device, queueFamilyIndex, queueIndex, out Queue);
+            //VkQueue Queue;
+            vkGetDeviceQueue(Device, queueFamilyIndex, queueIndex, out VkQueue Queue);
             return Queue;
         }
 
@@ -301,40 +313,6 @@ namespace Zeckoxe.Graphics
 
 
 
-        internal PixelFormat GetSupportedDepthFormat(List<PixelFormat> depthFormats)
-        {
-            // Since all depth formats may be optional, we need to find a suitable depth format to use
-            // Start with the highest precision packed format
-            List<PixelFormat> depthFormats2 = new List<PixelFormat>()
-            {
-                PixelFormat.D32SfloatS8Uint,
-                PixelFormat.D32Sfloat,
-                PixelFormat.D24UnormS8Uint,
-                PixelFormat.D16UnormS8Uint,
-                PixelFormat.D16Unorm,
-            };
-
-            VkFormatProperties properties = new VkFormatProperties()
-            {
-
-            };
-
-            PixelFormat depthFormat = default;
-
-            foreach (PixelFormat format in depthFormats)
-            {
-                //FormatProperties formatProps = vkGetPhysicalDeviceFormatProperties(physicalDevice,VulkanConvert.ToPixelFormat(format));
-
-                // Format must support depth stencil attachment for optimal tiling
-                //if ((formatProps.OptimalTilingFeatures & FormatFeatures.DepthStencilAttachment) != 0)
-                depthFormat = format;
-
-            }
-
-            return depthFormat;
-        }
-
-
         internal VkShaderModule LoadSPIR_V_Shader(byte[] bytes)
         {
 
@@ -345,12 +323,11 @@ namespace Zeckoxe.Graphics
                 {
                     sType = VkStructureType.ShaderModuleCreateInfo,
                     pNext = null,
+                    codeSize = new UIntPtr((ulong)bytes.Length),
+                    pCode = (uint*)scPtr,
                 };
-                moduleCreateInfo.codeSize = new UIntPtr((ulong)bytes.Length);
-                moduleCreateInfo.pCode = (uint*)scPtr;
 
-                VkShaderModule shaderModule;
-                vkCreateShaderModule(Device, &moduleCreateInfo, null, out shaderModule);
+                vkCreateShaderModule(Device, &moduleCreateInfo, null, out VkShaderModule shaderModule);
 
                 return shaderModule;
             }
@@ -436,8 +413,7 @@ namespace Zeckoxe.Graphics
                 flags = 0
             };
 
-            VkSemaphore Semaphore;
-            vkCreateSemaphore(Device, &vkSemaphoreCreate, null, out Semaphore);
+            vkCreateSemaphore(Device, &vkSemaphoreCreate, null, out VkSemaphore Semaphore);
 
             return Semaphore;
         }
@@ -453,8 +429,7 @@ namespace Zeckoxe.Graphics
                 pNext = null,
             };
 
-            VkCommandPool commandPool;
-            vkCreateCommandPool(Device, &poolInfo, null, out commandPool);
+            vkCreateCommandPool(Device, &poolInfo, null, out VkCommandPool commandPool);
 
             return commandPool;
         }

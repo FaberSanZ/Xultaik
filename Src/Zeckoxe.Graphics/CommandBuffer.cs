@@ -164,7 +164,6 @@ namespace Zeckoxe.Graphics
             }
 
             vkCmdBindVertexBuffers(NativeCommandBuffer, 0, 1, buffer, &offsets);
-
         }
 
         public void SetIndexBuffer(Buffer buffer, ulong offsets = 0)

@@ -11,7 +11,7 @@ namespace Zeckoxe.GLTF
         private readonly IList<System.Numerics.Vector2> _Textute;
 
 
-        //public Mesh(string FileName)
+        //public GLTF(string FileName)
         //{
 
         //    Vertices = new ModelPart<Vertex>();
