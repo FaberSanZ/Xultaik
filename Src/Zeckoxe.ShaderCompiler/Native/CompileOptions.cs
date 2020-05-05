@@ -5,34 +5,42 @@ using System.Text;
 
 namespace Zeckoxe.ShaderCompiler
 {
-    internal class CompileOptions
+    internal enum InputLanguage
     {
-        internal enum InputLanguage
-        {
-            GLSL = 0,
-            HLSL = 1,
-        };
+        GLSL = 0,
+        HLSL = 1,
+    };
 
 
-        internal enum OptimizationLevel
-        {
-            None,
-            Size,  
-            Performance,  
-        };
+    internal enum OptimizationLevel
+    {
+        None,
+        Size,
+        Performance,
+    };
 
-        internal enum Environment
-        {
-            Vulkan,
-            OpenGL,
-            OpenGL_Compat,
-        };
+    internal enum Environment
+    {
 
-        internal enum IncludeType
-        {
-            Relative,
-            Absolute
-        }
+        Vulkan,
+
+        OpenGL,
+
+        OpenGLCompat,
+
+        WebGPU,
+
+        Default = Vulkan
+    };
+
+    internal enum IncludeType
+    {
+        Relative,
+        Absolute
+    }
+    internal class CompileOptions : IDisposable
+    {
+
 
         internal delegate IncludeResult IncludeHandler(string requestedSource, string requestingSource, IncludeType type);
 
@@ -50,7 +58,7 @@ namespace Zeckoxe.ShaderCompiler
             set
             {
                 _lang = value;
-                ShadercNative.shaderc_compile_options_set_source_language(_handle, (int)_lang);
+                ShadercNative.CompileOptionsSetSourceLanguage(_handle, (int)_lang);
             }
         }
 
@@ -87,15 +95,14 @@ namespace Zeckoxe.ShaderCompiler
 
         internal CompileOptions()
         {
-            _handle = ShadercNative.shaderc_compile_options_initialize();
+            _handle = ShadercNative.CompileOptionsInitialize();
         }
 
-        ~CompileOptions()
+
+
+        public void Dispose()
         {
-            ShadercNative.shaderc_compile_options_release(_handle);
+            ShadercNative.CompileOptionsRelease(_handle);
         }
-
-
-
     }
 }

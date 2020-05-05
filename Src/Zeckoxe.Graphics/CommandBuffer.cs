@@ -38,8 +38,7 @@ namespace Zeckoxe.Graphics
         {
             // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
             // With that we don't have to handle VK_NOT_READY
-            uint i = 0;
-            vkAcquireNextImageKHR(NativeDevice.Device, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.ImageAvailableSemaphore, new VkFence(), out i);
+            vkAcquireNextImageKHR(NativeDevice.Device, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.ImageAvailableSemaphore, new VkFence(), out uint i);
             imageIndex = i;
 
 
@@ -63,8 +62,8 @@ namespace Zeckoxe.Graphics
                 framebuffer = framebuffer.SwapChainFramebuffers[imageIndex],
                 renderArea = new Vortice.Mathematics.Rectangle()
                 {
-                    Height = (int)NativeDevice.NativeParameters.BackBufferHeight,
-                    Width = (int)NativeDevice.NativeParameters.BackBufferWidth,
+                    Height = NativeDevice.NativeParameters.BackBufferHeight,
+                    Width = NativeDevice.NativeParameters.BackBufferWidth,
                     //extent = new VkExtent2D((uint)NativeDevice.NativeParameters.BackBufferWidth, (uint)NativeDevice.NativeParameters.BackBufferHeight)
                 },
             };
@@ -90,6 +89,45 @@ namespace Zeckoxe.Graphics
         }
 
 
+        public ulong srcOffset;
+        public ulong dstOffset;
+        public ulong size;
+
+        public struct BufferCopy
+        {
+            public ulong SourceOffset;
+            public ulong DestinationOffset;
+            public ulong Size;
+        }
+
+        public void CopyBuffer(Buffer sourceBuffer, Buffer destinationBuffer, BufferCopy bufferCopy)
+        {
+            VkBufferCopy region = new VkBufferCopy()
+            {
+                srcOffset = bufferCopy.SourceOffset,
+                dstOffset = bufferCopy.DestinationOffset,
+                size = bufferCopy.Size
+            };
+
+
+            VkBufferMemoryBarrier* bufferBarriers = stackalloc VkBufferMemoryBarrier[2];
+            bufferBarriers[0x0] = new VkBufferMemoryBarrier()
+            {
+                sType = VkStructureType.BufferMemoryBarrier,
+                pNext = null,
+            };
+
+            bufferBarriers[0x1] = new VkBufferMemoryBarrier()
+            {
+                sType = VkStructureType.BufferMemoryBarrier,
+                pNext = null,
+            };
+            //vkCmdPipelineBarrier()
+            vkCmdCopyBuffer(NativeCommandBuffer, sourceBuffer.Handle, destinationBuffer.Handle, 1, &region);
+
+        }
+
+
         public void SetGraphicPipeline(PipelineState pipelineState)
         {
             vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
@@ -100,6 +138,12 @@ namespace Zeckoxe.Graphics
         {
             //vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Compute, pipelineState.computesPipeline);
         }
+
+        public void SetRayTracinPipeline(PipelineState pipelineState)
+        {
+            //vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.RayTracingNV, pipelineState.rayTracinPipeline);
+        }
+
 
 
         public void DrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance)
@@ -113,15 +157,15 @@ namespace Zeckoxe.Graphics
             Rectangle scissor = new Rectangle()
             {
 
-                    Width = (int)width,
-                    Height = (int)height,
-                
+                Width = width,
+                Height = height,
 
-                    X = x,
-                    Y = y,
-                
+
+                X = x,
+                Y = y,
+
             };
-            
+
 
             vkCmdSetScissor(NativeCommandBuffer, 0, 1, &scissor);
         }

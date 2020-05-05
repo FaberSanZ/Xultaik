@@ -55,6 +55,8 @@ namespace Zeckoxe.Graphics
                 }
             }
 
+            
+
             return depthFormat;
         }
 

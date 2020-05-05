@@ -65,7 +65,19 @@ namespace _02_Hello_Triangle
                     VSync = false,
                 },
             };
-            //var s = DDSLoader.LoadFromFile("");
+            var data = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
+
+            Console.WriteLine(data.Height);
+            Console.WriteLine(data.Width);
+            Console.WriteLine(data.Depth);
+            Console.WriteLine(data.MipMaps);
+            Console.WriteLine(data.Data.Length);
+
+            foreach (var item in data.Data)
+            {
+                Console.WriteLine(item);
+            }
+
         }
 
 
@@ -92,8 +104,6 @@ namespace _02_Hello_Triangle
 
         public void CreateBuffers()
         {
-
-
             VertexBuffer = new Buffer(Device, new BufferDescription()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
@@ -127,6 +137,7 @@ namespace _02_Hello_Triangle
             };
 
             PipelineState = new PipelineState(Pipelinedescription);
+
         }
 
 
@@ -179,7 +190,7 @@ namespace _02_Hello_Triangle
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
-            commandBuffer.Draw(3, 1, 0, 0);
+            commandBuffer.Draw(6, 1, 0, 0);
 
             commandBuffer.Close();
             commandBuffer.Submit();

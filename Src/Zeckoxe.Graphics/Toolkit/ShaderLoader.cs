@@ -14,7 +14,10 @@ namespace Zeckoxe.Graphics.Toolkit
     {
         public static ShaderBytecode LoadFromFile(string path, Stage stage)
         {
-            return new ShaderBytecode(Compiler.LoadFromFile(path, stage));
+            return new ShaderBytecode(Compiler.LoadFromFile(path, stage))
+            {
+
+            };
         }
     }
 }

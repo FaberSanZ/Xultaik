@@ -98,8 +98,8 @@ namespace Zeckoxe.ShaderCompiler
         {
             CompileOptions options = new CompileOptions()
             {
-                Language = CompileOptions.InputLanguage.GLSL,
-                Optimization = CompileOptions.OptimizationLevel.None,
+                Language = InputLanguage.GLSL,
+                Optimization = OptimizationLevel.None,
             };
 
             CompileResult result = new ShaderCompiler().Compile(File.ReadAllText(path), stage, options, "testShader", "main");
@@ -113,7 +113,7 @@ namespace Zeckoxe.ShaderCompiler
         {
             CompileOptions options = new CompileOptions()
             {
-                Language = CompileOptions.InputLanguage.HLSL,
+                Language = InputLanguage.HLSL,
                 //Optimization = CompileOptions.OptimizationLevel.None,
             };
 

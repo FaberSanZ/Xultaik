@@ -148,18 +148,18 @@ namespace Zeckoxe.Graphics
 
             //vkAllocateMemory(device, &MemoryAlloc_info, null, &_memory);
             //memory = _memory;
-            void* data;
-            vkMapMemory(NativeDevice.Device, memory, 0, size, 0, &data);
+            void* ppData;
+            vkMapMemory(NativeDevice.Device, memory, 0, size, 0, &ppData);
 
             //Copy Data
             {
                 //int stride = Interop.SizeOf<Vertex>();
                 //uint size = (uint)(stride * vertices.Length);
-                //void* srcPtr = Unsafe.AsPointer(ref vertices[0]);
-                //Interop.MemoryHelper.CopyBlock(data, size);
+                //void* srcPtr = Unsafe.AsPointer(ref Data[0]);
+                //Interop.MemoryHelper.CopyBlock(srcPtr, size);
             }
 
-            Interop.MemoryHelper.CopyBlocks<T>(data, Data);
+            Interop.MemoryHelper.CopyBlocks<T>(ppData, Data);
 
             vkUnmapMemory(NativeDevice.Device, memory);
 
@@ -169,7 +169,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public void GetData<T>(T[] Data) where T : struct
+        public void GetData<T>() where T : struct
         {
 
         }

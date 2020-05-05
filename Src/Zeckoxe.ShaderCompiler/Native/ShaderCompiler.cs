@@ -7,17 +7,13 @@
 
 
 using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using Zeckoxe.Core;
 
 namespace Zeckoxe.ShaderCompiler
 {
     internal unsafe class ShaderCompiler : IDisposable
     {
-        internal enum Stage 
+        internal enum Stage
         {
-
             Vertex,
 
             Fragment,
@@ -32,20 +28,20 @@ namespace Zeckoxe.ShaderCompiler
 
 
 
-            Shaderc_GLSL_Vertex = Vertex,
-            Shaderc_GLSL_Fragment = Fragment,
-            Shaderc_GLSL_Compute = Compute,
-            Shaderc_GLSL_Geometry = Geometry,
-            Shaderc_GLSL_TessControl = TessControl,
-            Shaderc_GLSL_TessEvaluation = TessEvaluation,
-            Shaderc_GLSL_infer_from_source,
-            Shaderc_GLSL_DefaultVertex,
-            Shaderc_GLSL_DefaultFragment,
-            Shaderc_GLSL_DefaultCompute,
-            Shaderc_GLSL_DefaultGeometry,
-            Shaderc_GLSL_DefaultTess_control,
-            Shaderc_GLSL_DefaultTess_evaluation,
-            shaderc_SpirV_Assembly,
+            GLSL_Vertex = Vertex,
+            GLSL_Fragment = Fragment,
+            GLSL_Compute = Compute,
+            GLSL_Geometry = Geometry,
+            GLSL_TessControl = TessControl,
+            GLSL_TessEvaluation = TessEvaluation,
+            GLSL_infer_from_source,
+            GLSL_DefaultVertex,
+            GLSL_DefaultFragment,
+            GLSL_DefaultCompute,
+            GLSL_DefaultGeometry,
+            GLSL_DefaultTess_control,
+            GLSL_DefaultTess_evaluation,
+            SpirV_Assembly,
 
 
 
@@ -62,18 +58,18 @@ namespace Zeckoxe.ShaderCompiler
             Callable,
 
 
-            Shaderc_GLSL_Raygen = Raygen,
-            Shaderc_GLSL_Anyhit = Anyhit,
-            Shaderc_GLSL_Closesthit = Closesthit,
-            Shaderc_GLSL_Miss = Miss,
-            Shaderc_GLSL_Intersection = Intersection,
-            Shaderc_GLSL_Callable = Callable,
-            Shaderc_GLSL_Default_Raygen,
-            Shaderc_GLSL_Default_Anyhit,
-            Shaderc_GLSL_Default_Closesthit,
-            Shaderc_GLSL_Default_Miss,
-            Shaderc_GLSL_Default_Intersection,
-            Shaderc_GLSL_Default_Callable,
+            GLSL_Raygen = Raygen,
+            GLSL_Anyhit = Anyhit,
+            GLSL_Closesthit = Closesthit,
+            GLSL_Miss = Miss,
+            GLSL_Intersection = Intersection,
+            GLSL_Callable = Callable,
+            GLSL_Default_Raygen,
+            GLSL_Default_Anyhit,
+            GLSL_Default_Closesthit,
+            GLSL_Default_Miss,
+            GLSL_Default_Intersection,
+            GLSL_Default_Callable,
 
 
             Task,
@@ -81,10 +77,10 @@ namespace Zeckoxe.ShaderCompiler
             Mesh,
 
 
- 
+
         }
 
-        private IntPtr _handle;
+        private readonly IntPtr _handle;
 
         internal IntPtr NativeHandle => _handle;
 
@@ -97,9 +93,9 @@ namespace Zeckoxe.ShaderCompiler
 
 
 
-        internal CompileResult Compile(string source, Stage stage , CompileOptions options, string name,string entryPoint= "main")
+        internal CompileResult Compile(string source, Stage stage, CompileOptions options, string name, string entryPoint = "main")
         {
-            IntPtr resultPtr = ShadercNative.shaderc_compile_into_spv(_handle, Zeckoxe.Core.Interop.String.ToPointer(source), new UIntPtr((uint)source.Length), (int)stage, Zeckoxe.Core.Interop.String.ToPointer(name), Zeckoxe.Core.Interop.String.ToPointer(entryPoint), options.NativeHandle);
+            IntPtr resultPtr = ShadercNative.CompileIntoSPV(_handle, Core.Interop.String.ToPointer(source), new UIntPtr((uint)source.Length), (int)stage, Zeckoxe.Core.Interop.String.ToPointer(name), Core.Interop.String.ToPointer(entryPoint), options.NativeHandle);
             return new CompileResult(resultPtr);
         }
 
@@ -108,7 +104,9 @@ namespace Zeckoxe.ShaderCompiler
 
         internal CompileResult Preprocess(string source, Stage stage, CompileOptions options, string name, string entryPoint = "main")
         {
-            IntPtr resultPtr = ShadercNative.shaderc_compile_into_preprocessed_text(_handle, source, new UIntPtr((uint) source.Length), (int) stage, name, entryPoint, options.NativeHandle);
+            IntPtr resultPtr = ShadercNative.CompileIntoPreprocessedText(_handle, Core.Interop.String.ToPointer(source + source),
+                                            new UIntPtr((uint)source.Length), (int)stage, Core.Interop.String.ToPointer(name),
+                                            Core.Interop.String.ToPointer(entryPoint), options.NativeHandle);
             return new CompileResult(resultPtr);
         }
 

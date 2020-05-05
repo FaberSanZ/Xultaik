@@ -40,24 +40,21 @@ namespace Zeckoxe.Graphics
 
         public int MaxDrawIndirectCount => (int)NativeDevice.NativeAdapter.Properties.limits.maxDrawIndirectCount;
 
-        public MultisampleCount MultisampleCount => VulkanConvert.ToSampleCountFlags_Invert(Tools.ExtractMaxSampleCount(NativeDevice.NativeAdapter.Properties));
+        public MultisampleCount MultisampleCount => (MultisampleCount)Tools.ExtractMaxSampleCount(NativeDevice.NativeAdapter.Properties);
 
-
-
+        public PixelFormat SupportedDepthFormat => NativeDevice.NativeAdapter.GetSupportedDepthFormat(new List<PixelFormat>()
+        {
+                PixelFormat.D32SfloatS8Uint,
+                PixelFormat.D32Sfloat,
+                PixelFormat.D24UnormS8Uint,
+                PixelFormat.D16UnormS8Uint,
+                PixelFormat.D16Unorm,
+        });
 
 
         public DeviceLimits(GraphicsDevice device) : base(device) { }
 
 
 
-        //public string ExtractVersion(uint _value)
-        //{
-
-        //    uint major = _value >> 22;
-        //    uint minor = (_value >> 12) & 0x03FF;
-        //    uint patch = _value & 0x0FFF;
-
-        //    return $"{major}.{minor}.{patch}";
-        //}
     }
 }

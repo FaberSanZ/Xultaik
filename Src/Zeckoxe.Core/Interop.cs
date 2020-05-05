@@ -112,7 +112,7 @@ namespace Zeckoxe.Core
             }
 
 
-            public static void Read<T>(IntPtr srcPointer, Span<T> values)
+            public static void Read<T>(IntPtr srcPointer, T[] values)
             {
                 int stride = SizeOf<T>();
                 long size = stride * values.Length;
