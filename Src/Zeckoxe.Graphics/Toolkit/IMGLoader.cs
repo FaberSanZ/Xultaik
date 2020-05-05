@@ -18,87 +18,67 @@ namespace Zeckoxe.Graphics.Toolkit
 	public unsafe class IMGLoader
 	{
 
-		private Stream _stream;
-		private byte[] _buffer = new byte[1024];
-
-		private readonly ImageNative.io_callbacks _callbacks;
 
 		public TextureData TextureData { get; set; }
 
 		public IMGLoader(string filename)
 		{
-			_callbacks = new ImageNative.io_callbacks
-			{
-				read = ReadCallback,
-				skip = SkipCallback,
-				eof = Eof
-			};
-
-			using FileStream fs = File.OpenRead(filename);
+			//using FileStream fs = File.OpenRead(filename);
+			 byte[] fs = File.ReadAllBytes(filename);
 
 			TextureData = Load(fs);
 		}
 
 
-		public IMGLoader(Stream stream)
+		//public IMGLoader(Stream stream)
+		//{
+		//	_callbacks = new ImageNative.io_callbacks
+		//	{
+		//		read = ReadCallback,
+		//		skip = SkipCallback,
+		//		eof = Eof
+		//	};
+
+		//	TextureData = Load(stream);
+		//}
+
+
+
+
+
+		internal TextureData Load(byte[] stream)
 		{
-			_callbacks = new ImageNative.io_callbacks
-			{
-				read = ReadCallback,
-				skip = SkipCallback,
-				eof = Eof
-			};
-
-			TextureData = Load(stream);
-		}
-
-
-		private int SkipCallback(void* user, int i)
-		{
-			return (int)_stream.Seek(i, SeekOrigin.Current);
-		}
-
-		private int Eof(void* user)
-		{
-			return _stream.CanRead ? 1 : 0;
-		}
-
-		private int ReadCallback(void* user, sbyte* data, int size)
-		{
-			if (size > _buffer.Length)
-			{
-				_buffer = new byte[size * 2];
-			}
-
-			int res = _stream.Read(_buffer, 0, size);
-			Marshal.Copy(_buffer, 0, (IntPtr)data, size);
-			return res;
-		}
-
-
-
-
-		internal TextureData Load(Stream stream)
-		{
-			_stream = stream;
+			//_stream = stream;
 			int req_comp = ImageNative.rgb_alpha;
 			int x;
 			int y;
 			int comp;
-			byte* result = ImageNative.load_from_callbacks(_callbacks, null, &x, &y, &comp, req_comp);
+			byte* result;
+			fixed (byte* ptr = stream)
+			{
+				result = ImageNative.load_from_memory(ptr, stream.Length, &x, &y, &comp, req_comp);
+			}
+
+
+
+			int bpp = 4; // RGBA
+
+			int rowPitch = x * bpp;
+			int slicePitch = rowPitch * y;
+
 
 			TextureData image = new TextureData
 			{
 				Width = x,
 				Height = y,
 				Depth = 1,
-				Size = 1,
+				Size = slicePitch,
 				IsCubeMap = false,
 				MipMaps = (int)Math.Floor(Math.Log(Math.Max(x, y), 2)) + 1,
-				Format = PixelFormat.R8g8b8a8Snorm
+				Format = PixelFormat.R8g8b8a8Unorm
 			};
 
-			//Console.WriteLine(comp);
+			Console.WriteLine(image.Size);
 
 			if (result is null)
 			{
@@ -106,9 +86,8 @@ namespace Zeckoxe.Graphics.Toolkit
 			}
 
 
-
 			// Convert to array
-			byte[] data = new byte[x * y * 4];
+			byte[] data = new byte[slicePitch];
 
 
 			Marshal.Copy((IntPtr)result, data, 0, data.Length);
@@ -127,9 +106,9 @@ namespace Zeckoxe.Graphics.Toolkit
 		}
 
 
-		public static TextureData LoadFromFile(Stream stream)
-		{
-			return new IMGLoader(stream).TextureData;
-		}
+		//public static TextureData LoadFromFile(Stream stream)
+		//{
+		//	return new IMGLoader(stream).TextureData;
+		//}
 	}
 }

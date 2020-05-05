@@ -65,19 +65,17 @@ namespace _02_Hello_Triangle
                     VSync = false,
                 },
             };
-            var data = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
 
-            Console.WriteLine(data.Height);
-            Console.WriteLine(data.Width);
-            Console.WriteLine(data.Depth);
-            Console.WriteLine(data.MipMaps);
-            Console.WriteLine(data.Data.Length);
+            var data = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
 
             foreach (var item in data.Data)
             {
+                if (item == 255)
+                {
+                    Console.WriteLine("-----");
+                }
                 Console.WriteLine(item);
             }
-
         }
 
 
