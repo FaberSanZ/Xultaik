@@ -66,16 +66,6 @@ namespace _02_Hello_Triangle
                 },
             };
 
-            var data = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
-
-            foreach (var item in data.Data)
-            {
-                if (item == 255)
-                {
-                    Console.WriteLine("-----");
-                }
-                Console.WriteLine(item);
-            }
         }
 
 

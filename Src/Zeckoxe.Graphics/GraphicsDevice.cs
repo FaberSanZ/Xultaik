@@ -518,6 +518,13 @@ namespace Zeckoxe.Graphics
 
 
 
+        public int GetFormatVertexSize(PixelFormat format)
+        {
+            return (int)VkFormat.Undefined;
+        }
+
+
+
         public void Dispose()
         {
 

@@ -17,8 +17,6 @@ namespace Zeckoxe.Graphics.Toolkit
 
 	public unsafe class IMGLoader
 	{
-
-
 		public TextureData TextureData { get; set; }
 
 		public IMGLoader(string filename)
@@ -28,19 +26,6 @@ namespace Zeckoxe.Graphics.Toolkit
 
 			TextureData = Load(fs);
 		}
-
-
-		//public IMGLoader(Stream stream)
-		//{
-		//	_callbacks = new ImageNative.io_callbacks
-		//	{
-		//		read = ReadCallback,
-		//		skip = SkipCallback,
-		//		eof = Eof
-		//	};
-
-		//	TextureData = Load(stream);
-		//}
 
 
 
@@ -61,7 +46,7 @@ namespace Zeckoxe.Graphics.Toolkit
 
 
 
-			int bpp = 4; // RGBA
+			int bpp = 4; // R8G8B8A8Unorm -> Red - Green - Blue - Alpha
 
 			int rowPitch = x * bpp;
 			int slicePitch = rowPitch * y;
@@ -77,8 +62,6 @@ namespace Zeckoxe.Graphics.Toolkit
 				MipMaps = (int)Math.Floor(Math.Log(Math.Max(x, y), 2)) + 1,
 				Format = PixelFormat.R8g8b8a8Unorm
 			};
-
-			Console.WriteLine(image.Size);
 
 			if (result is null)
 			{

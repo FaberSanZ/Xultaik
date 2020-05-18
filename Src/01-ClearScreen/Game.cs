@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Text;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
-//using Zeckoxe.Mathematics;
 
 namespace _01_ClearScreen
 {
@@ -24,8 +23,6 @@ namespace _01_ClearScreen
         public GraphicsAdapter Adapter { get; set; }
 
         public GraphicsDevice Device { get; set; }
-
-        public Texture Texture { get; set; }
 
         public Framebuffer Framebuffer { get; set; }
 
@@ -64,8 +61,6 @@ namespace _01_ClearScreen
 
             Device = new GraphicsDevice(Adapter);
 
-            Texture = new Texture(Device);
-
             Framebuffer = new Framebuffer(Device);
 
             Context = new GraphicsContext(Device);
@@ -97,9 +92,6 @@ namespace _01_ClearScreen
 
         public void BeginRun()
         {
-            foreach (var Description in Device.NativeAdapter.DeviceName)
-                Console.WriteLine(Description);
-
 
         }
 
@@ -117,9 +109,6 @@ namespace _01_ClearScreen
             commandBuffer.Begin();
             commandBuffer.BeginFramebuffer(Framebuffer);
             commandBuffer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
-
-            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
-            commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 
             commandBuffer.Close();
             commandBuffer.Submit();
