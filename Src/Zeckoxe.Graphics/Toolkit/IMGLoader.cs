@@ -60,7 +60,7 @@ namespace Zeckoxe.Graphics.Toolkit
 				Size = slicePitch,
 				IsCubeMap = false,
 				MipMaps = (int)Math.Floor(Math.Log(Math.Max(x, y), 2)) + 1,
-				Format = PixelFormat.R8g8b8a8Unorm
+				Format = PixelFormat.R8G8B8A8UNorm
 			};
 
 			if (result is null)

@@ -42,17 +42,10 @@ namespace Zeckoxe.Graphics
 
         public MultisampleCount MultisampleCount => (MultisampleCount)Tools.ExtractMaxSampleCount(NativeDevice.NativeAdapter.Properties);
 
-        public PixelFormat SupportedDepthFormat => NativeDevice.NativeAdapter.GetSupportedDepthFormat(new List<PixelFormat>()
-        {
-                PixelFormat.D32SfloatS8Uint,
-                PixelFormat.D32Sfloat,
-                PixelFormat.D24UnormS8Uint,
-                PixelFormat.D16UnormS8Uint,
-                PixelFormat.D16Unorm,
-        });
+        public DeviceLimits(GraphicsDevice device) : base(device) 
+        { 
 
-
-        public DeviceLimits(GraphicsDevice device) : base(device) { }
+        }
 
 
 

@@ -399,7 +399,7 @@ namespace Zeckoxe.Graphics.Toolkit
                     //case PixelFormat.BC1_UNorm_SRgb:
                     //case PixelFormat.BC4_Typeless:
                     //case PixelFormat.BC4_UNorm:
-                    case PixelFormat.Bc4SnormBlock:
+                    case PixelFormat.BC4SNormBlock:
                         bc = true;
                         bcnumBytesPerBlock = 8;
                         break;
@@ -642,7 +642,7 @@ namespace Zeckoxe.Graphics.Toolkit
             private PixelFormat GetFormatDDPFRGB32()
             {
                 if (this.IsBitMask(0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000))
-                    return PixelFormat.R8g8b8a8Unorm;
+                    return PixelFormat.R8G8B8A8UNorm;
                 
 
                 //if (this.IsBitMask(0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000))

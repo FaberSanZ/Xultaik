@@ -66,6 +66,8 @@ namespace _02_Hello_Triangle
                 },
             };
 
+
+
         }
 
 
@@ -78,8 +80,6 @@ namespace _02_Hello_Triangle
             Adapter = new GraphicsAdapter(Instance);
 
             Device = new GraphicsDevice(Adapter);
-
-
 
             Framebuffer = new Framebuffer(Device);
 
