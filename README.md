@@ -26,8 +26,8 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 | Example   | Screenshot  | Description          |
 |---------------|-------------|----------------------|
-| [Clear Screen](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) | <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/01.PNG" width=250> | This example shows how to configure the device and clear the color using  Zeckoxe Engine. |
-| [Triangle](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) |  <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/02.PNG" width=250> | This example shows how to render simple triangle using  Zeckoxe Engine  |
+| [Clear Screen](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) | <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/01.PNG" width=200> | This example shows how to configure the device and clear the color using  Zeckoxe Engine. |
+| [Triangle](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) |  <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/02.PNG" width=200> | This example shows how to render simple triangle using  Zeckoxe Engine  |
 
 
 
