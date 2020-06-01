@@ -207,12 +207,20 @@ namespace Zeckoxe.Graphics
                 buffer[i] = buffers[i].Handle;
             }
 
+            //fixed(VkBuffer* bufferptr = &buffers[0].Handle)
+            //{
+
+            //}
+
             vkCmdBindVertexBuffers(NativeCommandBuffer, 0, 1, buffer, &offsets);
         }
 
         public void SetIndexBuffer(Buffer buffer, ulong offsets = 0)
         {
-            vkCmdBindIndexBuffer(NativeCommandBuffer, buffer.Handle, offsets, VkIndexType.Uint32);
+            if (buffer.Handle != VkBuffer.Null)
+            {
+                vkCmdBindIndexBuffer(NativeCommandBuffer, buffer.Handle, offsets, VkIndexType.Uint32);
+            }
         }
 
         public void Draw(int vertexCount, int instanceCount, int firstVertex, int firstInstance)

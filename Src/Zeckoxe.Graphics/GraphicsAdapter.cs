@@ -66,10 +66,10 @@ namespace Zeckoxe.Graphics
                 string description = Interop.String.FromPointer(deviceProperties.deviceName);
 
 
-                //if (VendorId != null || VendorId > 0)
-                //{
+                if (VendorId != 0x0 || VendorId > 0)
+                {
 
-                //}
+                }
 
                 description += $" - {VendorNameString(VendorId)}";
                 
@@ -225,11 +225,11 @@ namespace Zeckoxe.Graphics
 
             // Enumerate devices
             VkPhysicalDevice[] physicalDevices = new VkPhysicalDevice[(int)Count];
+
             fixed (VkPhysicalDevice* ptr = physicalDevices)
             {
                 vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, ptr);
             }
-
 
             return physicalDevices;
         }
