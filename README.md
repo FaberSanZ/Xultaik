@@ -3,7 +3,7 @@
    Zeckoxe Engine
   <br>
   
-  ##  Zeckoxe Engine is a 2D/3D game engine implemented in [Vulkan®](https://www.khronos.org/vulkan/)
+  ##  Zeckoxe Engine is a 2D/3D renderer implemented in [Vulkan®](https://www.khronos.org/vulkan/)
   
 </h1>
 
