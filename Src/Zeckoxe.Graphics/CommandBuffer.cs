@@ -145,12 +145,6 @@ namespace Zeckoxe.Graphics
         }
 
 
-
-        public void DrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance)
-        {
-
-        }
-
         public void SetScissor(int width, int height, int x, int y)
         {
             // Update dynamic scissor state
@@ -228,6 +222,12 @@ namespace Zeckoxe.Graphics
             vkCmdDraw(NativeCommandBuffer, (uint)vertexCount, (uint)instanceCount, (uint)firstVertex, (uint)firstInstance);
         }
 
+
+
+        public void DrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance)
+        {
+            vkCmdDrawIndexed(NativeCommandBuffer, (uint)indexCount, (uint)instanceCount, (uint)firstIndex, vertexOffset, (uint)firstInstance);
+        }
 
 
 

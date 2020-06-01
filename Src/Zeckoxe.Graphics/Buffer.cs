@@ -164,6 +164,14 @@ namespace Zeckoxe.Graphics
             vkUnmapMemory(NativeDevice.Device, memory);
 
             vkBindBufferMemory(NativeDevice.Device, Handle, memory, 0);
+
+
+            if (Usage == GraphicsResourceUsage.Staging)
+            {
+
+            }
+
+
         }
 
 

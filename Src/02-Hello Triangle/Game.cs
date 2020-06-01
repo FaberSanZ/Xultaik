@@ -36,6 +36,12 @@ namespace _02_Hello_Triangle
                 new Vertex(new Vector2(-0.5f, 0.5f), new Vector3(0.0f, 0.0f, 1.0f)),
         };
 
+
+        public int[] indices = new[]
+        {
+            0,1,2
+        };
+
         public Window Window { get; set; }
         public PresentationParameters Parameters { get; set; }
         public GraphicsInstance Instance { get; set; }
@@ -45,6 +51,7 @@ namespace _02_Hello_Triangle
         public GraphicsContext Context { get; set; }
         public PipelineState PipelineState { get; set; }
         public Buffer VertexBuffer { get; set; }
+        public Buffer IndexBuffer { get; set; }
 
 
 
@@ -98,6 +105,18 @@ namespace _02_Hello_Triangle
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = vertices.Length * Interop.SizeOf<Vertex>(),
             });
+
+
+
+
+            IndexBuffer = new Buffer(Device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.IndexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = indices.Length * Interop.SizeOf<int>(),
+            });
+
+
 
         }
 
@@ -162,7 +181,7 @@ namespace _02_Hello_Triangle
             //vertices[1].color.X += 0.001f;
             //vertices[2].color.Z += 0.001f;
             VertexBuffer.SetData(vertices);
-
+            IndexBuffer.SetData(indices);
         }
 
         public void Draw()
@@ -179,7 +198,8 @@ namespace _02_Hello_Triangle
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
-            commandBuffer.Draw(6, 1, 0, 0);
+            commandBuffer.SetIndexBuffer(IndexBuffer);
+            commandBuffer.DrawIndexed(3, 1, 0, 0, 0);
 
             commandBuffer.Close();
             commandBuffer.Submit();
