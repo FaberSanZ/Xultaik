@@ -5,27 +5,6 @@
 =============================================================================*/
 
 
-/*
-
-
-                                                                                        <<GraphicsSwapChain>>
-                            |-----------------------------------------------|-----------→ vkCreateSurface()
-                            |                                               |
-                            |                                               |
-   <<GraphicsInstance>>     |        <<GraphicsAdapter>>                 <<this>>
-    vkCreateInstance() ---------→ vkEnumeratePhysicalDevices() -----→ vkCreateDevice()
-                                                                             |
-                                                                             |
-                                     |-------------------------------------------------------------------------------|------------------|
-                                     |                                       |                                       |                  | 
-                                     |                                       |                                       |                  |
-                                 <<Texture>>                           <<CommandBuffer>>                         <<Fence>>           <<Buffer>> 
-                                    Todo:                          vkAllocateCommandBuffers() -----------------→   Todo:          vkCreateBuffer()
-
-
-
-*/
-
 
 using System;
 using System.Collections.Generic;
@@ -81,6 +60,7 @@ namespace Zeckoxe.Graphics
         public List<string> EnumerateInstanceExtensions { get; private set; } = new List<string>();
         public List<string> ValidationLayer { get; private set; } = new List<string>();
         public PresentationParameters Parameters { get; set; }
+        public bool PhysicalDeviceProperties2Support = false;
 
 
 
@@ -146,6 +126,14 @@ namespace Zeckoxe.Graphics
                     InstanceExtensions.Add("VK_KHR_wayland_surface");
                 }
             }
+
+
+            if (EnumerateInstanceExtensions.Contains("VK_KHR_get_physical_device_properties2"))
+            {
+                InstanceExtensions.Add("VK_KHR_get_physical_device_properties2");
+                PhysicalDeviceProperties2Support = true;
+            }
+
 
 
             if (Parameters.Settings.Validation)

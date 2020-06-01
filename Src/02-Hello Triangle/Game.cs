@@ -135,7 +135,7 @@ namespace _02_Hello_Triangle
 
             BeginRun();
 
-            Window.Title = ("Zeckoxe Engine - (Hello Triangle) " + Device.NativeAdapter.DeviceName);
+            Window.Title = ("Zeckoxe Engine - (Hello Triangle) " + Device.NativeAdapter.Description);
 
             Window?.Show();
 
@@ -153,6 +153,7 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
+            Console.WriteLine(Device.NativeAdapter.RayTracingSupport);
         }
 
         public void Update()

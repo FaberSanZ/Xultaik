@@ -50,6 +50,19 @@ namespace Zeckoxe.Graphics
         };
 
 
+
+        private static readonly Dictionary<uint, string> VendorNames = new Dictionary<uint, string>
+        {
+            [0x1002] = "AMD",
+            [0x1010] = "ImgTec",
+            [0x10DE] = "NVIDIA",
+            [0x13B5] = "ARM",
+            [0x5143] = "Qualcomm",
+            [0x8086] = "INTEL",
+        };
+
+
+
         // -> https://khronos.org/registry/OpenGL/specs/gl/glspec44.core.pdf
         public Dictionary<uint, PixelFormat> GLFormatToPixelFormat = new Dictionary<uint, PixelFormat>()
         {
