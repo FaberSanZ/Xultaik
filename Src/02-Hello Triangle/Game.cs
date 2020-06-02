@@ -31,9 +31,9 @@ namespace _02_Hello_Triangle
     {
         public Vertex[] vertices = new[]
         {
-                new Vertex(new Vector2(0.0f, -0.5f), new Vector3(1.0f, 0.0f, 0.0f)),
-                new Vertex(new Vector2(0.5f, 0.5f), new Vector3(0.0f, 1.0f, 0.0f)),
-                new Vertex(new Vector2(-0.5f, 0.5f), new Vector3(0.0f, 0.0f, 1.0f)),
+                new Vertex(new Vector2(0.0f, -0.65f), new Vector3(1.8f, 0.0f, 0.0f)),
+                new Vertex(new Vector2(0.5f, 0.65f), new Vector3(0.0f, 1.8f, 0.0f)),
+                new Vertex(new Vector2(-0.5f, 0.65f), new Vector3(0.0f, 0.0f, 1.8f)),
         };
 
 
@@ -102,7 +102,7 @@ namespace _02_Hello_Triangle
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = vertices.Length * Interop.SizeOf<Vertex>(),
+                SizeInBytes = Interop.SizeOf<Vertex>(vertices),
             });
 
 
@@ -110,7 +110,7 @@ namespace _02_Hello_Triangle
             {
                 BufferFlags = BufferFlags.IndexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = indices.Length * Interop.SizeOf<int>(),
+                SizeInBytes = Interop.SizeOf<int>(indices),
             });
         }
 
