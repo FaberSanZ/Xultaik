@@ -42,7 +42,6 @@ PR are always welcome!
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [ ] Multithreaded rendering
 - [x] GLTF 2.0
-- [ ] Push constants
 - [ ] Push descriptors (VK_KHR_push_descriptor)
 
 
