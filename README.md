@@ -36,7 +36,7 @@ TODO:
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [ ] Multithreaded rendering
-- [ ] GLTF 2.0
+- [x] GLTF 2.0
 - [ ] Push constants
 - [ ] Push descriptors (VK_KHR_push_descriptor)
 
