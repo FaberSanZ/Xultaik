@@ -20,9 +20,39 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 <br>
 
 
+
+## Low-level rendering backend
+
+The rendering backend is completely focused on Vulkan, however the API greatly simplifies the most painful points of writing Vulkan. It is likely to be a happy medium ground between "perfect" Vulkan and OpenGL / D3D11 w.r.t. CPU overload in .NET
+
+TODO:
+
+- [ ] KHR Ray Tracing
+- [ ] Memory manager (VMA)
+- [ ] Physically-Based Rendering
+- [ ] Instancing, Indirect drawing
+- [ ] Tessellation (Phong, PN Triangles, and Displacement Mapping)
+- [ ] Automatic loadOp/storeOp usage
+- [ ] Post-AA (FXAA, SMAA and TAA)
+- [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
+- [ ] Multithreaded rendering
+- [ ] GLTF 2.0
+- [ ] Push constants
+- [ ] Push descriptors (VK_KHR_push_descriptor)
+
+
+<hr>
+<br>
+
+## Research or code used:
+- Granite (<https://github.com/Themaister/Granite>)
+- Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
+- Vortice.Vulkan from Amer Koleci (<https://github.com/amerkoleci/Vortice.Vulkan>)
+
+<hr>
+<br>
+
 ## Examples
-
-
 
 | Example   | Screenshot  | Description          |
 |---------------|-------------|----------------------|
