@@ -25,12 +25,30 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 The rendering backend is completely focused on Vulkan, however the API greatly simplifies the most painful points of writing Vulkan. It is likely to be a happy medium ground between "perfect" Vulkan and OpenGL / D3D11 w.r.t. CPU overload in .NET
 
+TODO:
+
+- [ ] KHR Ray Tracing
+- [ ] Memory manager
+- [ ] Deferred destruction and release of API objects and memory
+- [ ] Automatic descriptor set management
+- [ ] Linear allocators for vertex/index/uniform/staging data
+- [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
+- [ ] Automatic pipeline creation
+- [ ] Multithreaded rendering
+- [ ] Automatic pipeline creation
+
+<hr>
+<br>
+
+## Research or code used:
+- Granite (<https://github.com/Themaister/Granite>)
+- Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
+- Vortice.Vulkan from Amer Koleci (<https://github.com/amerkoleci/Vortice.Vulkan>)
+
 <hr>
 <br>
 
 ## Examples
-
-
 
 | Example   | Screenshot  | Description          |
 |---------------|-------------|----------------------|
