@@ -29,11 +29,7 @@ The rendering backend is completely focused on Vulkan, however the API greatly s
 
 TODO:
 
-<br>
-
 PR are always welcome!
-
-<br>
 
 - [ ] KHR Ray Tracing
 - [ ] Memory manager (VMA)
