@@ -10,14 +10,15 @@ using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Zeckoxe.GLTF
 {
     internal class GLTFLoader
     {
-        private readonly IList<System.Numerics.Vector3> _Positions;
-        private readonly IList<System.Numerics.Vector3> _NORMAL;
-        private readonly IList<System.Numerics.Vector2> _Textute;
+        private readonly IList<Vector3> _Positions;
+        private readonly IList<Vector3> _NORMAL;
+        private readonly IList<Vector2> _Textute;
 
 
         public GLTFLoader(string FileName)
@@ -30,16 +31,16 @@ namespace Zeckoxe.GLTF
 
 
             ModelRoot model = ModelRoot.Load(FileName);
-            Console.WriteLine(model.LogicalTextures[0].Name);
 
             SceneTemplate[] templates = model.LogicalScenes.Select(item => SceneTemplate.Create(item, true)).ToArray();
-            Dictionary<int, SharpGLTF.Schema2.Mesh> meshes = templates.SelectMany(item => item.LogicalMeshIds).ToDictionary(k => k, k => model.LogicalMeshes[k]);
+            Dictionary<int, Mesh> meshes = templates.SelectMany(item => item.LogicalMeshIds).ToDictionary(k => k, k => model.LogicalMeshes[k]);
 
             //Console.WriteLine("Logical Images Count {0}", model.LogicalImages.Count);
 
             foreach (Image image in model.LogicalImages)
             {
-
+                //var i = image.OpenImageFile();
+                //i.
             }
 
 

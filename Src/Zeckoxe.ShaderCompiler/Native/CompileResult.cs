@@ -22,17 +22,17 @@ namespace Zeckoxe.ShaderCompiler
 
         internal IntPtr NativeHandle => _handle;
 
-        internal ulong NumberOfWarnings => ShadercNative.shaderc_result_get_num_warnings(_handle).ToUInt64();
+        internal ulong NumberOfWarnings => ShadercNative.ResultGetNumWarnings(_handle).ToUInt64();
 
-        internal ulong NumberOfErrors => ShadercNative.shaderc_result_get_num_errors(_handle).ToUInt64();
+        internal ulong NumberOfErrors => ShadercNative.ResultGetNumErrors(_handle).ToUInt64();
 
-        internal Status CompileStatus => (Status)ShadercNative.shaderc_result_get_compilation_status(_handle);
+        internal Status CompileStatus => (Status)ShadercNative.ResultGetCompilationStatus(_handle);
 
         internal string ErrorMessage
         {
             get
             {
-                IntPtr ptr = ShadercNative.shaderc_result_get_error_message(_handle);
+                IntPtr ptr = ShadercNative.ResultGetErrorMessage(_handle);
                 return Marshal.PtrToStringAnsi(ptr);
             }
         }
@@ -40,8 +40,8 @@ namespace Zeckoxe.ShaderCompiler
 
         internal byte[] GetBytes()
         {
-            int size = (int)ShadercNative.shaderc_result_get_length(_handle);
-            IntPtr nativeBuf = ShadercNative.shaderc_result_get_bytes(_handle);
+            int size = (int)ShadercNative.ResultGetLength(_handle);
+            IntPtr nativeBuf = ShadercNative.ResultGetBytes(_handle);
 
             byte[] result = new byte[size];
             if (nativeBuf != IntPtr.Zero)

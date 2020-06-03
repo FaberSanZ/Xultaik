@@ -68,7 +68,7 @@ namespace Zeckoxe.ShaderCompiler
             set
             {
                 _debug = value;
-                ShadercNative.shaderc_compile_options_set_generate_debug_info(_handle);
+                ShadercNative.CompileOptionsSetGenerateDebugInfo(_handle);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Zeckoxe.ShaderCompiler
             set
             {
                 _level = value;
-                ShadercNative.shaderc_compile_options_set_optimization_level(_handle,(int)_level);
+                ShadercNative.CompileOptionsSetOptimizationLevel(_handle,(int)_level);
             }
         }
 
@@ -88,7 +88,7 @@ namespace Zeckoxe.ShaderCompiler
             set
             {
                 _env = value;
-                ShadercNative.shaderc_compile_options_set_target_env(_handle, (int)_env, 0);
+                ShadercNative.CompileOptionsSetTarget(_handle, (int)_env, 0);
             }
         }
 
