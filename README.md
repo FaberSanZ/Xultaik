@@ -31,13 +31,14 @@ TODO:
 - [ ] Memory manager (VMA)
 - [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
-- [ ] Tessellation 
+- [ ] Tessellation (Phong, PN Triangles, and Displacement Mapping)
 - [ ] Automatic loadOp/storeOp usage
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [ ] Multithreaded rendering
 - [ ] GLTF 2.0
-- [ ] Push constants, Push descriptors (VK_KHR_push_descriptor)
+- [ ] Push constants
+- [ ] Push descriptors (VK_KHR_push_descriptor)
 
 
 <hr>
