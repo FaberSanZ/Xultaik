@@ -28,14 +28,15 @@ The rendering backend is completely focused on Vulkan, however the API greatly s
 TODO:
 
 - [ ] KHR Ray Tracing
-- [ ] Memory manager
+- [ ] Memory manager (VMA)
 - [ ] Deferred destruction and release of API objects and memory
 - [ ] Automatic descriptor set management
 - [ ] Linear allocators for vertex/index/uniform/staging data
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [ ] Automatic pipeline creation
 - [ ] Multithreaded rendering
-- [ ] Automatic pipeline creation
+- [ ] GLTF 2.0
+- [ ] KTX
 
 <hr>
 <br>
