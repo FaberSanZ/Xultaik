@@ -36,7 +36,7 @@ TODO:
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [ ] Multithreaded rendering
-- [ ] GLTF 2.0
+- [x] GLTF 2.0
 - [ ] Push constants
 - [ ] Push descriptors (VK_KHR_push_descriptor)
 
@@ -47,7 +47,8 @@ TODO:
 ## Research or code used:
 - Granite (<https://github.com/Themaister/Granite>)
 - Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
-- Vortice.Vulkan from Amer Koleci (<https://github.com/amerkoleci/Vortice.Vulkan>)
+- Vortice.Vulkan (<https://github.com/amerkoleci/Vortice.Vulkan>)
+- SharpGLTF (<https://github.com/vpenades/SharpGLTF>)
 
 <hr>
 <br>
