@@ -25,9 +25,16 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 The rendering backend is completely focused on Vulkan, however the API greatly simplifies the most painful points of writing Vulkan. It is likely to be a happy medium ground between "perfect" Vulkan and OpenGL / D3D11 w.r.t. CPU overload in .NET
 
+
+
 TODO:
-PR are always welcome!
+
 <br>
+
+PR are always welcome!
+
+<br>
+
 - [ ] KHR Ray Tracing
 - [ ] Memory manager (VMA)
 - [ ] Physically-Based Rendering
