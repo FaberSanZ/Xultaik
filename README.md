@@ -29,14 +29,16 @@ TODO:
 
 - [ ] KHR Ray Tracing
 - [ ] Memory manager (VMA)
-- [ ] Deferred destruction and release of API objects and memory
-- [ ] Automatic descriptor set management
-- [ ] Linear allocators for vertex/index/uniform/staging data
+- [ ] Physically-Based Rendering
+- [ ] Instancing, Indirect drawing
+- [ ] Tessellation 
+- [ ] Automatic loadOp/storeOp usage
+- [ ] Post-AA (FXAA, SMAA and TAA)
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
-- [ ] Automatic pipeline creation
 - [ ] Multithreaded rendering
 - [ ] GLTF 2.0
-- [ ] KTX
+- [ ] Push constants, Push descriptors (VK_KHR_push_descriptor)
+
 
 <hr>
 <br>
