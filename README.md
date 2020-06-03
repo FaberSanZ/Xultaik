@@ -47,7 +47,8 @@ TODO:
 ## Research or code used:
 - Granite (<https://github.com/Themaister/Granite>)
 - Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
-- Vortice.Vulkan from Amer Koleci (<https://github.com/amerkoleci/Vortice.Vulkan>)
+- Vortice.Vulkan (<https://github.com/amerkoleci/Vortice.Vulkan>)
+- SharpGLTF (<https://github.com/vpenades/SharpGLTF>)
 
 <hr>
 <br>
