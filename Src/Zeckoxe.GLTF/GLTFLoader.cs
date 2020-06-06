@@ -7,13 +7,11 @@
 
 using SharpGLTF.Runtime;
 using SharpGLTF.Schema2;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Zeckoxe.Core;
 using Zeckoxe.Graphics;
-using Zeckoxe.Graphics.Toolkit;
 using Buffer = Zeckoxe.Graphics.Buffer;
 
 
@@ -39,8 +37,8 @@ namespace Zeckoxe.GLTF
         private readonly IList<Vector2> _Texture;
         private readonly IList<Vector3> _Color;
 
-        private List<Vertex> vertices;
-        private List<int> indices;
+        private readonly List<Vertex> vertices;
+        private readonly List<int> indices;
 
 
         public Buffer VertexBuffer { get; set; }
@@ -78,7 +76,7 @@ namespace Zeckoxe.GLTF
 
 
 
-            List<MeshPrimitive> srcPrims = GetValidPrimitives(meshes[0]).ToList();
+            IEnumerable<MeshPrimitive> srcPrims = GetValidPrimitives(meshes[0]);
 
             foreach (MeshPrimitive srcPrim in srcPrims)
             {
