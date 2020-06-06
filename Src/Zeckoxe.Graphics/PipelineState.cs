@@ -244,10 +244,12 @@ namespace Zeckoxe.Graphics
             }
 
 
-
-            VkPipelineMultisampleStateCreateInfo multisampleState = new VkPipelineMultisampleStateCreateInfo()
+            VkPipelineMultisampleStateCreateInfo multisampleState_info = new VkPipelineMultisampleStateCreateInfo()
             {
-                rasterizationSamples = VkSampleCountFlags.Count1,
+                sType = VkStructureType.PipelineMultisampleStateCreateInfo,
+                pNext = null,
+                flags = 0,
+                rasterizationSamples = (VkSampleCountFlags)PipelineStateDescription.MultisampleState.MultisampleCount,
                 minSampleShading = 1f,
             };
 
@@ -277,7 +279,7 @@ namespace Zeckoxe.Graphics
                 pVertexInputState = &vertexInputStateCreate_info,
                 pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo,
                 pRasterizationState = &rasterizerState,
-                pMultisampleState = &multisampleState,
+                pMultisampleState = &multisampleState_info,
                 pColorBlendState = &colorBlendState,
                 layout = pipelineLayout,
                 renderPass = description.Framebuffer.NativeRenderPass,
@@ -301,8 +303,7 @@ namespace Zeckoxe.Graphics
                 flags = VkPipelineLayoutCreateFlags.None,
             };
 
-            VkPipelineLayout vkpipelineLayout;
-            vkCreatePipelineLayout(NativeDevice.Device, &pipelineLayoutCI, null, out vkpipelineLayout);
+            vkCreatePipelineLayout(NativeDevice.Device, &pipelineLayoutCI, null, out VkPipelineLayout vkpipelineLayout);
             pipelineLayout = vkpipelineLayout;
         }
 

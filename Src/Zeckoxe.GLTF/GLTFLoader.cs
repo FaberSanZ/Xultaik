@@ -11,17 +11,46 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Zeckoxe.Core;
+using Zeckoxe.Graphics;
+using Zeckoxe.Graphics.Toolkit;
+using Buffer = Zeckoxe.Graphics.Buffer;
+
 
 namespace Zeckoxe.GLTF
 {
-    internal class GLTFLoader
+
+    public struct Vertex
+    {
+        public Vector3 Position;
+        public Vector3 color;
+        public Vertex(Vector3 pos, Vector3 color)
+        {
+            Position = pos;
+            this.color = color;
+        }
+    }
+
+
+    public unsafe class GLTFLoader
     {
         private readonly IList<Vector3> _Positions;
-        private readonly IList<Vector3> _NORMAL;
-        private readonly IList<Vector2> _Textute;
+        private readonly IList<Vector3> _Normal;
+        private readonly IList<Vector2> _Texture;
+        private readonly IList<Vector3> _Color;
+
+        private List<Vertex> vertices;
+        private List<int> indices;
 
 
-        public GLTFLoader(string FileName)
+        public Buffer VertexBuffer { get; set; }
+        public Buffer IndexBuffer { get; set; }
+
+        public PipelineState GLTFPipeline { get; set; }
+
+
+
+        public GLTFLoader(string FileName, GraphicsDevice device)
         {
 
             //Vertices = new ModelPart<Vertex>();
@@ -44,60 +73,78 @@ namespace Zeckoxe.GLTF
             }
 
 
+            vertices = new List<Vertex>();
+            indices = new List<int>();
+
+
 
             List<MeshPrimitive> srcPrims = GetValidPrimitives(meshes[0]).ToList();
 
             foreach (MeshPrimitive srcPrim in srcPrims)
             {
                 _Positions = srcPrim.GetVertexAccessor("POSITION")?.AsVector3Array();
-                _NORMAL = srcPrim.GetVertexAccessor("NORMAL")?.AsVector3Array();
-                _Textute = srcPrim.GetVertexAccessor("TEXCOORD_0")?.AsVector2Array();
-                float s = srcPrim.Material.AlphaCutoff;
-
-            }
-
-            //for (int i = 0; i < _Positions.Count; i++)
-            //{
-            //    Vertices.Data.Add(new Vertex()
-            //    {
-            //        Position = _Positions[i],
-            //        Normal = _NORMAL[i],
-            //        Tex = _Textute[i],
-            //    });
-            //}
-
-
-
-            foreach (MeshPrimitive srcPrim in srcPrims)
-            {
+                //_Normal = srcPrim.GetVertexAccessor("NORMAL")?.AsVector3Array();
+                //_Texture = srcPrim.GetVertexAccessor("TEXCOORD_0")?.AsVector2Array();
+                //_Color = srcPrim.GetVertexAccessor("")?.AsVector3Array();
 
                 IEnumerable<(int A, int B, int C)> front = srcPrim.GetTriangleIndices();
                 IEnumerable<(int A, int C, int B)> back = front.Select(item => (item.A, item.C, item.B));
                 (int A, int, int)[] _Triangles = front.Concat(back).ToArray();
-                //Indices.Data = CreateIndexBuffer(srcPrim.GetTriangleIndices())/*.Select(item => item).ToArray().ToList()*/;
+
+
+                indices = CreateIndexBuffer(srcPrim.GetTriangleIndices());
+
+            }
+
+            for (int i = 0; i < _Positions.Count; i++)
+            {
+                vertices.Add(new Vertex()
+                {
+                    Position = _Positions[i],
+                    //Normal = _NORMAL[i],
+                    //Tex = _Textute[i],
+                });
             }
 
 
+            CreateBuffers(device);
+
+
+            VertexBuffer.SetData(vertices.ToArray());
+            IndexBuffer.SetData(indices.ToArray());
+        }
 
 
 
+        public void Update()
+        {
 
-            //Vertices.Count = Vertices.Data.Count();
-
-            //Vertices.SizeInBytes = Utilities.SizeOf<Vertex>() * Vertices.Data.Count();
-
-            //Vertices.Size = Utilities.SizeOf<Vertex>();
+        }
 
 
+        public void Draw(CommandBuffer commandBuffer)
+        {
+            commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
+            commandBuffer.SetIndexBuffer(IndexBuffer);
+            commandBuffer.DrawIndexed(indices.Count, 1, 0, 0, 0);
+        }
+
+        public void CreateBuffers(GraphicsDevice device)
+        {
+            VertexBuffer = new Buffer(device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.VertexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf<Vertex>(vertices.ToArray()),
+            });
 
 
-
-            //Indices.Count = Indices.Data.Count();
-
-            //Indices.SizeInBytes = Utilities.SizeOf<int>() * Indices.Data.Count();
-
-            //Indices.Size = Utilities.SizeOf<int>();
-
+            IndexBuffer = new Buffer(device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.IndexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf<int>(indices.ToArray()),
+            });
         }
 
 
@@ -113,22 +160,22 @@ namespace Zeckoxe.GLTF
                     continue;
                 }
 
-                if (srcPrim.DrawPrimitiveType == PrimitiveType.POINTS)
+                if (srcPrim.DrawPrimitiveType == SharpGLTF.Schema2.PrimitiveType.POINTS)
                 {
                     continue;
                 }
 
-                if (srcPrim.DrawPrimitiveType == PrimitiveType.LINES)
+                if (srcPrim.DrawPrimitiveType == SharpGLTF.Schema2.PrimitiveType.LINES)
                 {
                     continue;
                 }
 
-                if (srcPrim.DrawPrimitiveType == PrimitiveType.LINE_LOOP)
+                if (srcPrim.DrawPrimitiveType == SharpGLTF.Schema2.PrimitiveType.LINE_LOOP)
                 {
                     continue;
                 }
 
-                if (srcPrim.DrawPrimitiveType == PrimitiveType.LINE_STRIP)
+                if (srcPrim.DrawPrimitiveType == SharpGLTF.Schema2.PrimitiveType.LINE_STRIP)
                 {
                     continue;
                 }

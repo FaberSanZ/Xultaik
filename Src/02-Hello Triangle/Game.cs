@@ -132,6 +132,10 @@ namespace _02_Hello_Triangle
                     CullMode = CullMode.Back,
                     FrontFace = FrontFace.Clockwise
                 },
+                MultisampleState = new MultisampleState()
+                {
+                    MultisampleCount = MultisampleCount.X1,
+                },
 
                 Vertex = ShaderLoader.LoadFromFile("Shaders/shader.vert", Stage.Vertex),
                 Pixel = ShaderLoader.LoadFromFile("Shaders/shader.frag", Stage.Fragment),

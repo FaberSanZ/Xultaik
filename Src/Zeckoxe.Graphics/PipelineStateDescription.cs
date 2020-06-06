@@ -27,6 +27,9 @@ namespace Zeckoxe.Graphics
 
         public InputAssemblyState InputAssemblyState { get; set; }
         public RasterizationState RasterizationState { get; set; } = new RasterizationState();
+        public MultisampleState MultisampleState { get; set; } = new MultisampleState();
+
+         
 
 
         public GLSLByteCode GLSLByteCode { get; set; }
