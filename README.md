@@ -25,7 +25,12 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 The rendering backend is completely focused on Vulkan, however the API greatly simplifies the most painful points of writing Vulkan. It is likely to be a happy medium ground between "perfect" Vulkan and OpenGL / D3D11 w.r.t. CPU overload in .NET
 
-TODO:
+<br>
+
+
+## TODO:
+
+PR are always welcome!
 
 - [ ] KHR Ray Tracing
 - [ ] Memory manager (VMA)
@@ -37,7 +42,6 @@ TODO:
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [ ] Multithreaded rendering
 - [x] GLTF 2.0
-- [ ] Push constants
 - [ ] Push descriptors (VK_KHR_push_descriptor)
 
 
