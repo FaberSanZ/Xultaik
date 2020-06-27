@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Zeckoxe.Core;
-using Vortice.Vulkan;
+﻿using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
@@ -12,8 +8,8 @@ namespace Zeckoxe.Graphics
     {
 
 
-        internal VkRenderPass NativeRenderPass;
-        internal VkFramebuffer[] SwapChainFramebuffers;
+        internal VkRenderPass renderPass;
+        internal VkFramebuffer[] framebuffers;
 
 
         public Framebuffer(GraphicsDevice device) : base(device)
@@ -30,15 +26,15 @@ namespace Zeckoxe.Graphics
 
         internal void CreateFrameBuffers()
         {
-            var SwapChainImageViews = NativeDevice.NativeSwapChain.SwapChainImageViews;
-            SwapChainFramebuffers = new VkFramebuffer[SwapChainImageViews.Length];
+            VkImageView[] SwapChainImageViews = NativeDevice.NativeSwapChain.SwapChainImageViews;
+            framebuffers = new VkFramebuffer[SwapChainImageViews.Length];
 
             for (uint i = 0; i < SwapChainImageViews.Length; i++)
             {
                 VkFramebufferCreateInfo frameBufferInfo = new VkFramebufferCreateInfo()
                 {
                     sType = VkStructureType.FramebufferCreateInfo,
-                    renderPass = NativeRenderPass,
+                    renderPass = renderPass,
                     attachmentCount = 1,
                     pAttachments = Interop.AllocToPointer(ref SwapChainImageViews[i]),
                     width = (uint)NativeDevice.NativeParameters.BackBufferWidth,
@@ -46,9 +42,7 @@ namespace Zeckoxe.Graphics
                     layers = 1,
                 };
 
-                VkFramebuffer vkFramebuffer;
-                vkCreateFramebuffer(NativeDevice.Device, &frameBufferInfo, null, out vkFramebuffer);
-                SwapChainFramebuffers[i] = vkFramebuffer;
+                vkCreateFramebuffer(NativeDevice.Device, &frameBufferInfo, null, out framebuffers[i]);
             }
 
         }
@@ -109,9 +103,8 @@ namespace Zeckoxe.Graphics
                 pDependencies = &dependency,
             };
 
-            VkRenderPass RenderPass;
-            vkCreateRenderPass(NativeDevice.Device, &renderPassCI, null, out RenderPass);
-            NativeRenderPass = RenderPass;
+            vkCreateRenderPass(NativeDevice.Device, &renderPassCI, null, out VkRenderPass RenderPass);
+            renderPass = RenderPass;
 
         }
     }

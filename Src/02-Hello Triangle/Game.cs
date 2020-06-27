@@ -27,6 +27,18 @@ namespace _02_Hello_Triangle
         }
     }
 
+    public struct ConstVS
+    {
+        public Matrix4x4 Word;
+        public Matrix4x4 View;
+        public Matrix4x4 Projection;
+
+        //public ConstVS()
+        //{
+
+        //}
+    }
+
     public class Game : IDisposable
     {
         public Vertex[] vertices = new[]
@@ -42,7 +54,7 @@ namespace _02_Hello_Triangle
             0, 1, 2
         };
 
-
+        public ConstVS ConstVS;
 
         public Window Window { get; set; }
         public PresentationParameters Parameters { get; set; }
@@ -52,8 +64,10 @@ namespace _02_Hello_Triangle
         public Framebuffer Framebuffer { get; set; }
         public GraphicsContext Context { get; set; }
         public PipelineState PipelineState { get; set; }
+        public Fence Fence { get; set; } // Synchronization Primitives
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
+        public Buffer ConstBuffer { get; set; } // W-V-P
 
 
 
@@ -74,6 +88,7 @@ namespace _02_Hello_Triangle
                     VSync = false,
                 },
             };
+
         }
 
 
@@ -111,6 +126,14 @@ namespace _02_Hello_Triangle
                 BufferFlags = BufferFlags.IndexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<int>(indices),
+            });
+
+
+            ConstBuffer = new Buffer(Device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.ConstantBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf<ConstVS>(ConstVS),
             });
         }
 
@@ -174,6 +197,15 @@ namespace _02_Hello_Triangle
             //vertices[2].color.Z += 0.001f;
             VertexBuffer.SetData(vertices);
             IndexBuffer.SetData(indices);
+
+
+
+            ConstVS.Projection = Matrix4x4.CreatePerspectiveFieldOfView(DegreesToRadians(60f), Parameters.BackBufferWidth / (float)Parameters.BackBufferHeight, 0.1f, 256.0f);
+            ConstVS.View = Matrix4x4.CreateTranslation(0, 0, -2.5f);
+            ConstVS.Word = Matrix4x4.Identity;
+            ConstVS.Word = ConstVS.Word * Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, 0);
+            ConstVS.Word = ConstVS.Word * Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, 0);
+            ConstVS.Word = ConstVS.Word * Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, 0);
         }
 
         public void Update()
@@ -200,7 +232,7 @@ namespace _02_Hello_Triangle
 
 
             commandBuffer.Close();
-            commandBuffer.Submit();
+            commandBuffer.Submit(/*Fence*/);
 
             Device.NativeSwapChain.Present();
         }
@@ -208,6 +240,12 @@ namespace _02_Hello_Triangle
         public void Dispose()
         {
             Instance.Dispose();
+        }
+
+
+        public static float DegreesToRadians(float degrees)
+        {
+            return degrees * (float)Math.PI / 180f;
         }
 
     }

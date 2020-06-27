@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Vortice.Vulkan;
 using Zeckoxe.Core;
 
 
@@ -15,6 +16,25 @@ namespace Zeckoxe.Graphics
 {
     public unsafe class Texture : GraphicsResource
     {
+        internal VkImage Image;
+        internal VkDeviceMemory Mem;
+        internal VkImageView View;
+
+
+        public struct DepthStencil
+        {
+            public VkImage Image;
+            public VkDeviceMemory Mem;
+            public VkImageView View;
+        }
+
+
+
+
+        public Texture(GraphicsDevice device) : base(device)
+        {
+            Recreate();
+        }
         public TextureDescription Description { get; set; }
 
         public TextureDimension Dimension
@@ -56,15 +76,6 @@ namespace Zeckoxe.Graphics
         {
             get => Description.Format;
         }
-
-
-
-
-        public Texture(GraphicsDevice device) : base(device)
-        {
-            Recreate();
-        }
-
 
         public void Recreate()
         {

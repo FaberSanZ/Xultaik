@@ -1,17 +1,54 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
 
 /*=============================================================================
-	QueryPool.cs
+	QueryPool.cs   
 =============================================================================*/
 
-
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Vortice.Vulkan;
+using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
-    class QueryPool
+    // TODO:  
+    public unsafe class QueryPool : GraphicsResource, IDisposable
     {
+        internal VkQueryPool handle;
+
+        public QueryPool(GraphicsDevice device) : base(device)
+        {
+            QueryCount = 1; 
+            VkQueryPoolCreateInfo createInfo = new VkQueryPoolCreateInfo
+            {
+                sType = VkStructureType.QueryPoolCreateInfo,
+                pNext = null,
+                queryCount = (uint)QueryCount,
+            };
+        }
+
+        public int QueryCount { get; }
+
+
+
+
+        public bool TryGetData(long[] dataArray)
+        {
+            fixed (long* dataPointer = &dataArray[0])
+            {
+                VkResult result = vkGetQueryPoolResults(NativeDevice.Device, handle, 0, (uint)QueryCount, (uint)QueryCount * 8, dataPointer, 8, VkQueryResultFlags._64);
+
+                if (result == VkResult.NotReady)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public void Dispose()
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

@@ -40,16 +40,6 @@ namespace Zeckoxe.Graphics
         internal VkSemaphore ImageAvailableSemaphore;
         internal VkSemaphore RenderFinishedSemaphore;
 
-        public List<PixelFormat> DepthFormats => new List<PixelFormat>()
-        {
-            PixelFormat.D32SFloatS8UInt,
-            PixelFormat.D32SFloat,
-            PixelFormat.D24UNormS8UInt,
-            PixelFormat.D16UNormS8UInt,
-            PixelFormat.D16UNorm,
-        };
-
-
 
         private static readonly Dictionary<uint, string> VendorNames = new Dictionary<uint, string>
         {
@@ -60,50 +50,6 @@ namespace Zeckoxe.Graphics
             [0x5143] = "Qualcomm",
             [0x8086] = "INTEL",
         };
-
-
-
-        // -> https://khronos.org/registry/OpenGL/specs/gl/glspec44.core.pdf
-        public Dictionary<uint, PixelFormat> GLFormatToPixelFormat = new Dictionary<uint, PixelFormat>()
-        {
-            // -> 8 bits per component
-            [0x8229] = PixelFormat.R8UNorm,                 //  1-component, 8-bit unsigned normalized,      GL_R8
-            [0x8F94] = PixelFormat.R8G8B8A8UNorm,           //  1-component, 8-bit signed normalized ,       GL_R8_SNORM, 
-            [0x8F95] = PixelFormat.R8G8SNorm,               //  2-component, 8-bit signed normalized ,       GL_RG8_SNORM, 
-            [0x8F96] = PixelFormat.R8G8B8SNorm,             //  3-component, 8-bit signed normalized ,       GL_RGB8_SNORM, 
-
-
-            // ->  16 bits per component
-
-
-            // -> 32 bits per component
-
-
-            // -> Packed
-
-
-            // -> S3TC/DXT/BC
-
-
-            // -> ETC
-
-
-            // -> PVRTC
-
-
-            //-> ASTC
-
-
-            // -> ATC
-
-
-            // -> Palletized
-
-
-            // -> Depth/stencil
-
-        };
-
 
         public GraphicsDevice(GraphicsAdapter adapter)
         {
@@ -630,64 +576,6 @@ namespace Zeckoxe.Graphics
         }
 
 
-
-        public int GetFormatVertexSize(PixelFormat format)
-        {
-            switch (format)
-            {
-                case PixelFormat.R8UNorm:
-                    return 4;
-
-                case PixelFormat.R16UNorm:
-                    return 4;
-
-                case PixelFormat.R16G16UNorm:
-                    return 4;
-
-                case PixelFormat.R16G16B16UNorm:
-                    return 8;
-
-                default:
-                    return 0;
-            }
-        }
-
-
-        public uint GetImageFormatPixelSize(PixelFormat format)
-        {
-            switch (format)
-            {
-                case PixelFormat.R4G4UNormPack8:
-                    return 1;
-
-                case PixelFormat.R4G4B4A4UNormPack16:
-                    return 2;
-
-                default:
-                    throw new ArgumentOutOfRangeException("Format not handled, bug");
-            }
-        }
-
-
-
-        //-> https://www.khronos.org/registry/DataFormat/specs/1.1/dataformat.1.1.pdf
-        public void GetCompressedImageFormatBlockDimensions(PixelFormat format, out uint w, out uint h)
-        {
-            w = 1;
-            h = 1;
-        }
-
-        public PixelFormat GetFormatFromOpenGLFormat(uint internalFormat)
-        {
-
-            if (!GLFormatToPixelFormat.TryGetValue(internalFormat, out PixelFormat format))
-            {
-                throw new NotImplementedException("Format not handled, bug");
-            }
-
-
-            return format;
-        }
 
         public void Dispose()
         {

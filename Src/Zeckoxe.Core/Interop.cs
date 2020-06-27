@@ -21,7 +21,7 @@ namespace Zeckoxe.Core
         public static IntPtr GetFunctionPointerForDelegate<TDelegate>(TDelegate @delegate) => Marshal.GetFunctionPointerForDelegate(@delegate);
 
 
-        public static int SizeOf<T>(T[] values) => Unsafe.SizeOf<T>() * values.Length;
+        public static int SizeOf<T>(params T[] values) => Unsafe.SizeOf<T>() * values.Length;
         public static int SizeOf<T>() => Unsafe.SizeOf<T>();
 
         public static IntPtr Alloc<T>(int count = 1) => Alloc(Unsafe.SizeOf<T>() * count);

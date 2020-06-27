@@ -282,7 +282,7 @@ namespace Zeckoxe.Graphics
                 pMultisampleState = &multisampleState_info,
                 pColorBlendState = &colorBlendState,
                 layout = pipelineLayout,
-                renderPass = description.Framebuffer.NativeRenderPass,
+                renderPass = description.Framebuffer.renderPass,
                 subpass = 0,
             };
 

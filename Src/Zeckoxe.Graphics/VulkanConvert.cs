@@ -14,29 +14,6 @@ namespace Zeckoxe.Graphics
 {
     public static class VulkanConvert
     {
-        internal static VkPhysicalDeviceType ToDeviceType(DeviceType deviceType)
-        {
-            switch (deviceType)
-            {
-                case DeviceType.Other:
-                    return VkPhysicalDeviceType.Other;
-
-                case DeviceType.IntegratedGPU:
-                    return VkPhysicalDeviceType.Other;
-
-                case DeviceType.DiscreteGPU:
-                    return VkPhysicalDeviceType.Other;
-
-                case DeviceType.VirtualGPU:
-                    return VkPhysicalDeviceType.Other;
-
-                case DeviceType.CPU:
-                    return VkPhysicalDeviceType.Other;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(deviceType));
-            }
-        }
 
         internal static VkPrimitiveTopology ToPrimitiveType(PrimitiveType primitiveType)
         {
@@ -162,13 +139,5 @@ namespace Zeckoxe.Graphics
                     throw new ArgumentOutOfRangeException(nameof(cullMode));
             }
         }
-
-
-        internal static int BlockSizeInBytes(PixelFormat format)
-        {
-            return 1 << 8 - 1 | 1 >> 8 + 1 * (int)format * (nameof(PixelFormat).Length); // LOL
-        }
-
-
     }
 }

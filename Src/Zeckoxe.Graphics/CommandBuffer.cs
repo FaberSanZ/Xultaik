@@ -58,8 +58,8 @@ namespace Zeckoxe.Graphics
             VkRenderPassBeginInfo renderPassInfo = new VkRenderPassBeginInfo()
             {
                 sType = VkStructureType.RenderPassBeginInfo,
-                renderPass = framebuffer.NativeRenderPass,
-                framebuffer = framebuffer.SwapChainFramebuffers[imageIndex],
+                renderPass = framebuffer.renderPass,
+                framebuffer = framebuffer.framebuffers[imageIndex],
                 renderArea = new Vortice.Mathematics.Rectangle()
                 {
                     Height = NativeDevice.NativeParameters.BackBufferHeight,
@@ -89,9 +89,9 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public ulong srcOffset;
-        public ulong dstOffset;
-        public ulong size;
+        //public ulong srcOffset;
+        //public ulong dstOffset;
+        //public ulong size;
 
         public struct BufferCopy
         {
@@ -102,13 +102,12 @@ namespace Zeckoxe.Graphics
 
         public void CopyBuffer(Buffer sourceBuffer, Buffer destinationBuffer, BufferCopy bufferCopy)
         {
-            VkBufferCopy region = new VkBufferCopy()
-            {
-                srcOffset = bufferCopy.SourceOffset,
-                dstOffset = bufferCopy.DestinationOffset,
-                size = bufferCopy.Size
-            };
+            CopyBuffer(sourceBuffer.Handle, destinationBuffer.Handle, *(VkBufferCopy*)&bufferCopy);
+        }
 
+
+        internal void CopyBuffer(VkBuffer sourceBuffer, VkBuffer destinationBuffer, VkBufferCopy bufferCopy)
+        {
 
             VkBufferMemoryBarrier* bufferBarriers = stackalloc VkBufferMemoryBarrier[2];
             bufferBarriers[0x0] = new VkBufferMemoryBarrier()
@@ -123,7 +122,7 @@ namespace Zeckoxe.Graphics
                 pNext = null,
             };
             //vkCmdPipelineBarrier()
-            vkCmdCopyBuffer(NativeCommandBuffer, sourceBuffer.Handle, destinationBuffer.Handle, 1, &region);
+            vkCmdCopyBuffer(NativeCommandBuffer, sourceBuffer, destinationBuffer, 1, &bufferCopy);
 
         }
 
@@ -150,16 +149,12 @@ namespace Zeckoxe.Graphics
             // Update dynamic scissor state
             Rectangle scissor = new Rectangle()
             {
-
                 Width = width,
                 Height = height,
 
-
                 X = x,
                 Y = y,
-
             };
-
 
             vkCmdSetScissor(NativeCommandBuffer, 0, 1, &scissor);
         }
