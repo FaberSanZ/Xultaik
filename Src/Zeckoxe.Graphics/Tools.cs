@@ -71,7 +71,7 @@ namespace Zeckoxe.Graphics
 
         public static TDelegate GetDeviceProcAddr<TDelegate>(this GraphicsDevice device, string name) where TDelegate : class
         {
-            IntPtr funcPtr = vkGetDeviceProcAddr(device.Device, Interop.String.ToPointer(name));
+            IntPtr funcPtr = vkGetDeviceProcAddr(device.handle, Interop.String.ToPointer(name));
 
             return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
         }
@@ -113,17 +113,23 @@ namespace Zeckoxe.Graphics
             return VkSampleCountFlags.Count1;
         }
 
-        public static int BlockSizeInBytes(PixelFormat format)
+
+        private static readonly Dictionary<uint, string> VendorNames = new Dictionary<uint, string>
         {
-            return 1;
-        }
+            [0x1002] = "AMD",
+            [0x1010] = "ImgTec",
+            [0x10DE] = "NVIDIA",
+            [0x13B5] = "ARM",
+            [0x5143] = "Qualcomm",
+            [0x8086] = "INTEL",
+        };
 
         public static void ImGuiAddFontFromMemoryTTF(string path = "ARIAL.TTF")
         {
             byte[] bytes = File.ReadAllBytes(path);
             fixed (byte* ptr = bytes)
             {
-                //ImGui.GetIO().Fonts.AddFontFromMemoryTTF(new IntPtr(ptr), 32, 15);
+                //ImGui.GetIO().Fonts.AddFontFromMemoryTTF((IntPtr)ptr, 32, 15);
             }
         }
     }

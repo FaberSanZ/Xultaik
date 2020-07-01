@@ -42,7 +42,7 @@ namespace Zeckoxe.Graphics
                     layers = 1,
                 };
 
-                vkCreateFramebuffer(NativeDevice.Device, &frameBufferInfo, null, out framebuffers[i]);
+                vkCreateFramebuffer(NativeDevice.handle, &frameBufferInfo, null, out framebuffers[i]);
             }
 
         }
@@ -103,7 +103,7 @@ namespace Zeckoxe.Graphics
                 pDependencies = &dependency,
             };
 
-            vkCreateRenderPass(NativeDevice.Device, &renderPassCI, null, out VkRenderPass RenderPass);
+            vkCreateRenderPass(NativeDevice.handle, &renderPassCI, null, out VkRenderPass RenderPass);
             renderPass = RenderPass;
 
         }

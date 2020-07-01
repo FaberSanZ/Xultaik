@@ -65,9 +65,9 @@ namespace Zeckoxe.Graphics
 
             // Get the images
             uint Count = 0;
-            vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, &Count, null);
+            vkGetSwapchainImagesKHR(NativeDevice.handle, SwapChain, &Count, null);
             VkImage* vkImages = stackalloc VkImage[(int)Count];
-            vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, &Count, vkImages);
+            vkGetSwapchainImagesKHR(NativeDevice.handle, SwapChain, &Count, vkImages);
 
 
             for (int i = 0; i < Count; i++)
@@ -89,7 +89,7 @@ namespace Zeckoxe.Graphics
                     }
                 };
 
-                vkCreateImageView(NativeDevice.Device, &imageViewCI, null, out SwapChainImageViews[i]);
+                vkCreateImageView(NativeDevice.handle, &imageViewCI, null, out SwapChainImageViews[i]);
 
 
 
@@ -378,7 +378,7 @@ namespace Zeckoxe.Graphics
             }
 
 
-                vkCreateSwapchainKHR(NativeDevice.Device, &swapchainCI, null, out SwapChain).CheckResult();
+                vkCreateSwapchainKHR(NativeDevice.handle, &swapchainCI, null, out SwapChain).CheckResult();
             
 
 
@@ -387,9 +387,9 @@ namespace Zeckoxe.Graphics
 
 
             uint imageCount;
-            vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, &imageCount, null);
+            vkGetSwapchainImagesKHR(NativeDevice.handle, SwapChain, &imageCount, null);
             VkImage* VkImages = stackalloc VkImage[(int)imageCount];
-            vkGetSwapchainImagesKHR(NativeDevice.Device, SwapChain, &imageCount, VkImages);
+            vkGetSwapchainImagesKHR(NativeDevice.handle, SwapChain, &imageCount, VkImages);
 
 
 
@@ -406,7 +406,7 @@ namespace Zeckoxe.Graphics
 
         public void Present()
         {
-            VkSemaphore Semaphore = NativeDevice.RenderFinishedSemaphore;
+            VkSemaphore Semaphore = NativeDevice.renderFinishedSemaphore;
             VkSwapchainKHR swapchain = SwapChain;
             CommandBuffer commandBuffer = NativeDevice.NativeCommand;
 
@@ -421,7 +421,7 @@ namespace Zeckoxe.Graphics
             };
 
 
-            vkQueuePresentKHR(NativeDevice.NativeCommandQueue, &presentInfo);
+            vkQueuePresentKHR(NativeDevice.nativeCommandQueue, &presentInfo);
         }
 
     }

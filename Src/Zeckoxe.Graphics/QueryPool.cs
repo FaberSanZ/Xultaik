@@ -35,7 +35,7 @@ namespace Zeckoxe.Graphics
         {
             fixed (long* dataPointer = &dataArray[0])
             {
-                VkResult result = vkGetQueryPoolResults(NativeDevice.Device, handle, 0, (uint)QueryCount, (uint)QueryCount * 8, dataPointer, 8, VkQueryResultFlags._64);
+                VkResult result = vkGetQueryPoolResults(NativeDevice.handle, handle, 0, (uint)QueryCount, (uint)QueryCount * 8, dataPointer, 8, VkQueryResultFlags._64);
 
                 if (result == VkResult.NotReady)
                 {

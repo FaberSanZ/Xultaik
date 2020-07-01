@@ -38,7 +38,7 @@ namespace Zeckoxe.Graphics
         {
             // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
             // With that we don't have to handle VK_NOT_READY
-            vkAcquireNextImageKHR(NativeDevice.Device, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.ImageAvailableSemaphore, new VkFence(), out uint i);
+            vkAcquireNextImageKHR(NativeDevice.handle, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.imageAvailableSemaphore, new VkFence(), out uint i);
             imageIndex = i;
 
 
@@ -242,8 +242,8 @@ namespace Zeckoxe.Graphics
 
         public void Submit()
         {
-            VkSemaphore signalSemaphore = NativeDevice.RenderFinishedSemaphore;
-            VkSemaphore waitSemaphore = NativeDevice.ImageAvailableSemaphore;
+            VkSemaphore signalSemaphore = NativeDevice.renderFinishedSemaphore;
+            VkSemaphore waitSemaphore = NativeDevice.imageAvailableSemaphore;
             VkPipelineStageFlags waitStages = VkPipelineStageFlags.ColorAttachmentOutput;
             VkCommandBuffer commandBuffer = NativeCommandBuffer;
 
@@ -260,7 +260,7 @@ namespace Zeckoxe.Graphics
                 pSignalSemaphores = &signalSemaphore,
             };
 
-            vkQueueSubmit(NativeDevice.NativeCommandQueue, 1, &submitInfo, VkFence.Null);
+            vkQueueSubmit(NativeDevice.nativeCommandQueue, 1, &submitInfo, VkFence.Null);
         }
 
 

@@ -26,11 +26,11 @@ namespace Zeckoxe.Graphics
             };
 
 
-            vkCreateFence(NativeDevice.Device, &fenceCreateInfo, null, out handle);
+            vkCreateFence(NativeDevice.handle, &fenceCreateInfo, null, out handle);
         }
 
 
-        public bool IsSignaled => vkGetFenceStatus(NativeDevice.Device, handle) == VkResult.Success;
+        public bool IsSignaled => vkGetFenceStatus(NativeDevice.handle, handle) == VkResult.Success;
 
 
 
@@ -38,7 +38,7 @@ namespace Zeckoxe.Graphics
         {
             fixed (VkFence* ptr = &handle)
             {
-                vkWaitForFences(NativeDevice.Device, 1, ptr, true, ulong.MaxValue).CheckResult();
+                vkWaitForFences(NativeDevice.handle, 1, ptr, true, ulong.MaxValue).CheckResult();
             }
         }
 
@@ -51,13 +51,13 @@ namespace Zeckoxe.Graphics
         {
             fixed (VkFence* ptr = &handle)
             {
-                vkResetFences(NativeDevice.Device, 1, ptr).CheckResult();
+                vkResetFences(NativeDevice.handle, 1, ptr).CheckResult();
             }
         }
 
         public void Dispose()
         {
-            vkDestroyFence(NativeDevice.Device, handle, null);
+            vkDestroyFence(NativeDevice.handle, handle, null);
         }
     }
 }

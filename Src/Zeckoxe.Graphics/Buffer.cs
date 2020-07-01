@@ -116,11 +116,11 @@ namespace Zeckoxe.Graphics
 
 
             // Copy vertex data to a buffer visible to the host
-            vkCreateBuffer(NativeDevice.Device, &buffer_info, null, out _buffer);
+            vkCreateBuffer(NativeDevice.handle, &buffer_info, null, out _buffer);
             Handle = _buffer;
             VkMemoryRequirements memReqs;
 
-            vkGetBufferMemoryRequirements(NativeDevice.Device, Handle, out memReqs);
+            vkGetBufferMemoryRequirements(NativeDevice.handle, Handle, out memReqs);
 
             VkMemoryAllocateInfo MemoryAlloc_info = new VkMemoryAllocateInfo()
             {
@@ -132,7 +132,7 @@ namespace Zeckoxe.Graphics
 
 
 
-            vkAllocateMemory(NativeDevice.Device, &MemoryAlloc_info, null, &_memory);
+            vkAllocateMemory(NativeDevice.handle, &MemoryAlloc_info, null, &_memory);
             memory = _memory;
 
             size = memReqs.size;
@@ -149,7 +149,7 @@ namespace Zeckoxe.Graphics
             //vkAllocateMemory(device, &MemoryAlloc_info, null, &_memory);
             //memory = _memory;
             void* ppData;
-            vkMapMemory(NativeDevice.Device, memory, 0, size, 0, &ppData);
+            vkMapMemory(NativeDevice.handle, memory, 0, size, 0, &ppData);
 
             //Copy Data
             {
@@ -161,9 +161,9 @@ namespace Zeckoxe.Graphics
 
             Interop.MemoryHelper.CopyBlocks<T>(ppData, Data);
 
-            vkUnmapMemory(NativeDevice.Device, memory);
+            vkUnmapMemory(NativeDevice.handle, memory);
 
-            vkBindBufferMemory(NativeDevice.Device, Handle, memory, 0);
+            vkBindBufferMemory(NativeDevice.handle, Handle, memory, 0);
 
 
             if (Usage == GraphicsResourceUsage.Staging)

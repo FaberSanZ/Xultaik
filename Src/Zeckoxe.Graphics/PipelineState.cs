@@ -289,7 +289,7 @@ namespace Zeckoxe.Graphics
 
 
             VkPipeline pipeline;
-            vkCreateGraphicsPipelines(NativeDevice.Device, /*new VkPipelineCache(0)*/ VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
+            vkCreateGraphicsPipelines(NativeDevice.handle, /*new VkPipelineCache(0)*/ VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
             graphicsPipeline = pipeline;
         }
 
@@ -303,7 +303,7 @@ namespace Zeckoxe.Graphics
                 flags = VkPipelineLayoutCreateFlags.None,
             };
 
-            vkCreatePipelineLayout(NativeDevice.Device, &pipelineLayoutCI, null, out VkPipelineLayout vkpipelineLayout);
+            vkCreatePipelineLayout(NativeDevice.handle, &pipelineLayoutCI, null, out VkPipelineLayout vkpipelineLayout);
             pipelineLayout = vkpipelineLayout;
         }
 
