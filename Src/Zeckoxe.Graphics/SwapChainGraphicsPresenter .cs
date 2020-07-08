@@ -108,7 +108,7 @@ namespace Zeckoxe.Graphics
 
         internal VkSurfaceKHR CreateSurface()
         {
-            VkInstance instance = NativeDevice.NativeInstance.NativeInstance;
+            VkInstance instance = NativeDevice.NativeInstance.handle;
             VkSurfaceKHR defSurface = default;
 
             VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfo = new VkWin32SurfaceCreateInfoKHR()

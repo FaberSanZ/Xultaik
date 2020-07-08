@@ -63,7 +63,7 @@ namespace Zeckoxe.Graphics
 
         public static TDelegate GetInstanceProcAddr<TDelegate>(this GraphicsInstance instance, string name) where TDelegate : class
         {
-            IntPtr funcPtr = vkGetInstanceProcAddr(instance.NativeInstance, Interop.String.ToPointer(name));
+            IntPtr funcPtr = vkGetInstanceProcAddr(instance.handle, Interop.String.ToPointer(name));
 
             return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
         }

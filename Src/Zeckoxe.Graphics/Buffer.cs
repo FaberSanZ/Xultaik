@@ -4,10 +4,6 @@
 	Buffer.cs
 =============================================================================*/
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Zeckoxe.Core;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -16,39 +12,16 @@ namespace Zeckoxe.Graphics
 {
     public unsafe class Buffer : GraphicsResource
     {
-        public BufferDescription BufferDescription { get; set; }
 
-
-        public int SizeInBytes
-        {
-            get => BufferDescription.SizeInBytes;
-        }
-
-        public int ByteStride
-        {
-            get => BufferDescription.ByteStride;
-        }
-
-        public GraphicsResourceUsage Usage
-        {
-            get => BufferDescription.Usage;
-        }
-
-        public BufferFlags Flags
-        {
-            get => BufferDescription.BufferFlags;
-        }
-
-
-
-
-
-
-        // internal
         internal VkBuffer Handle;
         internal VkBufferView NativeBufferView;
         internal VkAccessFlags NativeAccessMask;
         internal VkDeviceMemory memory;
+        internal ulong size;
+
+
+
+
 
         public Buffer(GraphicsDevice graphicsDevice, BufferDescription description) : base(graphicsDevice)
         {
@@ -57,7 +30,18 @@ namespace Zeckoxe.Graphics
             Recreate();
         }
 
-        private void Recreate()
+
+        public BufferDescription BufferDescription { get; set; }
+        public int SizeInBytes => BufferDescription.SizeInBytes;
+        public int ByteStride => BufferDescription.ByteStride;
+        public GraphicsResourceUsage Usage => BufferDescription.Usage;
+        public BufferFlags Flags => BufferDescription.BufferFlags;
+
+
+
+
+
+        internal void Recreate()
         {
             VkBufferCreateInfo buffer_info = new VkBufferCreateInfo()
             {
@@ -73,8 +57,9 @@ namespace Zeckoxe.Graphics
 
 
             if (Usage == GraphicsResourceUsage.Staging)
+            {
                 NativeAccessMask = VkAccessFlags.HostRead | VkAccessFlags.HostWrite;
-            
+            }
             else
             {
                 if ((Flags/*.HasFlag()*/& BufferFlags.VertexBuffer) != 0)
@@ -111,16 +96,14 @@ namespace Zeckoxe.Graphics
 
             uint vertexBufferSize = (uint)SizeInBytes;
             VkDeviceMemory _memory;
-            VkBuffer _buffer;
 
 
 
             // Copy vertex data to a buffer visible to the host
-            vkCreateBuffer(NativeDevice.handle, &buffer_info, null, out _buffer);
+            vkCreateBuffer(NativeDevice.handle, &buffer_info, null, out VkBuffer _buffer);
             Handle = _buffer;
-            VkMemoryRequirements memReqs;
 
-            vkGetBufferMemoryRequirements(NativeDevice.handle, Handle, out memReqs);
+            vkGetBufferMemoryRequirements(NativeDevice.handle, Handle, out VkMemoryRequirements memReqs);
 
             VkMemoryAllocateInfo MemoryAlloc_info = new VkMemoryAllocateInfo()
             {
@@ -140,9 +123,6 @@ namespace Zeckoxe.Graphics
         }
 
 
-
-        public ulong size;
-
         public void SetData<T>(params T[] Data) where T : struct
         {
 
@@ -156,7 +136,7 @@ namespace Zeckoxe.Graphics
                 //int stride = Interop.SizeOf<Vertex>();
                 //uint size = (uint)(stride * vertices.Length);
                 //void* srcPtr = Unsafe.AsPointer(ref Data[0]);
-                //Interop.MemoryHelper.CopyBlock(srcPtr, size);
+                //Interop.MemoryHelper.CopyBlock(srcPtr, size++);
             }
 
             Interop.MemoryHelper.CopyBlocks<T>(ppData, Data);
@@ -172,6 +152,13 @@ namespace Zeckoxe.Graphics
             }
 
 
+        }
+
+
+        public void* Map(void* pData)
+        {
+            vkMapMemory(NativeDevice.handle, memory, 0, size, 0, pData);
+            return pData;
         }
 
 

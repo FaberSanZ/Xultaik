@@ -16,18 +16,17 @@ namespace Zeckoxe.Graphics
 {
     public unsafe class Texture : GraphicsResource
     {
-        internal VkImage Image;
-        internal VkDeviceMemory Mem;
-        internal VkImageView View;
-
-
-        public struct DepthStencil
+        private struct DepthStencil
         {
             public VkImage Image;
             public VkDeviceMemory Mem;
             public VkImageView View;
         }
 
+        internal VkImage Image;
+        internal VkDeviceMemory Mem;
+        internal VkImageView View;
+        //internal DepthStencil depthStencil_;
 
 
 
@@ -35,47 +34,20 @@ namespace Zeckoxe.Graphics
         {
             Recreate();
         }
+
+
         public TextureDescription Description { get; set; }
+        public TextureDimension Dimension => Description.Dimension;
+        public PixelFormat ViewFormat => Description.Format;
+        public int MipLevels=> Description.MipLevels;
+        public int ArraySize => Description.ArraySize;
+        public int Width => Description.Width;
+        public int Height => Description.Height;
+        public int Depth => Description.Depth;
+        public PixelFormat Formatt => Description.Format;
+        
 
-        public TextureDimension Dimension
-        {
-            get => Description.Dimension;
-        }
 
-        public PixelFormat ViewFormat
-        {
-            get => Description.Format;
-        }
-
-        public int MipLevels
-        {
-            get => Description.MipLevels;
-        }
-
-        public int ArraySize
-        {
-            get => Description.ArraySize;
-        }
-
-        public int Width
-        {
-            get => Description.Width;
-        }
-
-        public int Height
-        {
-            get => Description.Height;
-        }
-
-        public int Depth
-        {
-            get => Description.Depth;
-        }
-
-        public PixelFormat Format
-        {
-            get => Description.Format;
-        }
 
         public void Recreate()
         {

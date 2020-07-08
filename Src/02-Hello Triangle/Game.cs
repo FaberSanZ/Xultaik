@@ -174,7 +174,7 @@ namespace _02_Hello_Triangle
 
             BeginRun();
 
-            Window.Title = ("Zeckoxe Engine - (Hello Triangle) " + Device.NativeAdapter.Description);
+            Window.Title += ("Zeckoxe Engine - (Hello Triangle) " + Device.NativeAdapter.Description);
 
             Window?.Show();
 

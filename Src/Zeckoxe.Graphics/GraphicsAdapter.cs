@@ -16,19 +16,17 @@ namespace Zeckoxe.Graphics
 {
     public unsafe class GraphicsAdapter
     {
-        // number of GPUs we're rendering to --- if DG is disabled, this is 1
-        private readonly int device_count;
-
-
-
-
-
-        internal VkPhysicalDevice NativePhysicalDevice { get; private set; }
-        internal VkPhysicalDevice[] NativePhysicalDevices { get; private set; }
-        internal VkPhysicalDeviceProperties Properties { get; private set; }
-        internal VkPhysicalDeviceFeatures2 Features2 { get; private set; }
-        internal VkPhysicalDeviceRayTracingFeaturesKHR DeviceRayTracingFeatures { get; private set; }
         
+        internal int device_count; // number of GPUs we're rendering to --- if DG is disabled, this is 1
+        internal VkPhysicalDevice NativePhysicalDevice;
+        internal VkPhysicalDevice[] NativePhysicalDevices;
+        internal VkPhysicalDeviceProperties Properties;
+        internal VkPhysicalDeviceFeatures2 Features2;
+        internal VkPhysicalDeviceRayTracingFeaturesKHR DeviceRayTracingFeatures;
+
+
+        
+
         public GraphicsAdapter(GraphicsInstance Instance)
         {
 
@@ -38,13 +36,13 @@ namespace Zeckoxe.Graphics
         }
 
 
-
-
         public GraphicsInstance DefaultInstance { get; private set; }
 
         public DeviceType DeviceType => (DeviceType)Properties.deviceType;
 
         public uint VendorId => Properties.vendorID;
+
+        public bool RayTracingSupport => DeviceRayTracingFeatures.rayTracing;
 
         public string DeviceName
         {
@@ -55,8 +53,6 @@ namespace Zeckoxe.Graphics
             }
         }
 
-
-
         public string Description
         {
             get
@@ -66,10 +62,8 @@ namespace Zeckoxe.Graphics
                 string description = Interop.String.FromPointer(deviceProperties.deviceName);
 
 
-                if (VendorId != 0x0 || VendorId > 0)
-                {
+                // if (VendorId != 0x0)
 
-                }
 
                 description += $" - {VendorNameString(VendorId)}";
                 
@@ -80,27 +74,6 @@ namespace Zeckoxe.Graphics
 
 
 
-        public bool RayTracingSupport
-        {
-            get
-            {
-                if (DefaultInstance.PhysicalDeviceProperties2Support)
-                {
-                    if (DeviceRayTracingFeatures.rayTracing)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
 
 
 
@@ -145,22 +118,14 @@ namespace Zeckoxe.Graphics
             }
 
             Properties = GetProperties();
+            Features2 = GetPhysicalDeviceFeatures2();
+            DeviceRayTracingFeatures = GetPhysicalDeviceFeaturesRayTracing();
 
-
-            if (DefaultInstance.PhysicalDeviceProperties2Support)
-            {
-                Features2 = GetPhysicalDeviceFeatures2();
-                DeviceRayTracingFeatures = GetPhysicalDeviceFeaturesRayTracing();
-            }
-            else
-            {
-                Features2 = new VkPhysicalDeviceFeatures2();
-            }
-
+            //Features2 = new VkPhysicalDeviceFeatures2();
         }
 
 
-        public VkPhysicalDeviceRayTracingFeaturesKHR GetPhysicalDeviceFeaturesRayTracing()
+        internal VkPhysicalDeviceRayTracingFeaturesKHR GetPhysicalDeviceFeaturesRayTracing()
         {
             VkPhysicalDeviceRayTracingFeaturesKHR rayTracingFeatures = new VkPhysicalDeviceRayTracingFeaturesKHR()
             {
@@ -182,7 +147,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public VkPhysicalDeviceFeatures2 GetPhysicalDeviceFeatures2()
+        internal VkPhysicalDeviceFeatures2 GetPhysicalDeviceFeatures2()
         {
             VkPhysicalDeviceRayTracingFeaturesKHR rayTracingFeatures = new VkPhysicalDeviceRayTracingFeaturesKHR()
             {
@@ -205,14 +170,6 @@ namespace Zeckoxe.Graphics
         internal VkPhysicalDeviceProperties GetProperties()
         {
             vkGetPhysicalDeviceProperties(NativePhysicalDevice, out VkPhysicalDeviceProperties physicalDeviceProperties);
-
-            if (true)
-            {
-
-            }
-
-
-
             return physicalDeviceProperties;
         }
 
@@ -221,14 +178,14 @@ namespace Zeckoxe.Graphics
         {
             // Physical Device
             uint Count = 0;
-            vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, null);
+            vkEnumeratePhysicalDevices(DefaultInstance.handle, &Count, null);
 
             // Enumerate devices
             VkPhysicalDevice[] physicalDevices = new VkPhysicalDevice[(int)Count];
 
             fixed (VkPhysicalDevice* ptr = physicalDevices)
             {
-                vkEnumeratePhysicalDevices(DefaultInstance.NativeInstance, &Count, ptr);
+                vkEnumeratePhysicalDevices(DefaultInstance.handle, &Count, ptr);
             }
 
             return physicalDevices;

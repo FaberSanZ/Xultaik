@@ -26,7 +26,7 @@ namespace Zeckoxe.Graphics
 
         internal unsafe delegate void vkDestroyDebugReportCallbackEXT_d(VkInstance instance, VkDebugReportCallbackEXT callback, VkAllocationCallbacks* pAllocator);
 
-        internal VkInstance NativeInstance { get; private set; }
+        internal VkInstance handle { get; private set; }
 
         internal VkDebugReportCallbackEXT _debugReportCallbackHandle;
 
@@ -38,8 +38,8 @@ namespace Zeckoxe.Graphics
         {
             Parameters = parameters;
             vkInitialize();
-            NativeInstance = CreateInstance();
-            vkLoadInstance(NativeInstance);
+            handle = CreateInstance();
+            vkLoadInstance(handle);
 
             if (Parameters.Settings.Validation)
             {
@@ -203,14 +203,14 @@ namespace Zeckoxe.Graphics
                 return VkResult.ErrorValidationFailedEXT;
             }
 
-            return vkCreateDebugReportCallbackEXT(NativeInstance, &debugCallbackInfo, IntPtr.Zero, out _debugReportCallbackHandle);
+            return vkCreateDebugReportCallbackEXT(handle, &debugCallbackInfo, IntPtr.Zero, out _debugReportCallbackHandle);
         }
 
         private unsafe void DestroyDebugReportCallback()
         {
             _debugCallbackFunc = null;
             vkDestroyDebugReportCallbackEXT_d vkDestroyDebugReportCallbackEXT = this.GetInstanceProcAddr<vkDestroyDebugReportCallbackEXT_d>("vkDestroyDebugReportCallbackEXT");
-            vkDestroyDebugReportCallbackEXT(NativeInstance, _debugReportCallbackHandle, null);
+            vkDestroyDebugReportCallbackEXT(handle, _debugReportCallbackHandle, null);
         }
 
         public void Dispose()

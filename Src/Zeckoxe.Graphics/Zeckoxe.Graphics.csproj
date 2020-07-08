@@ -8,7 +8,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Vortice.Vulkan" Version="1.2.141-alpha-001" />
+    <PackageReference Include="Vortice.Vulkan" Version="1.2.146-alpha-001" />
   </ItemGroup>
 
   <ItemGroup>
