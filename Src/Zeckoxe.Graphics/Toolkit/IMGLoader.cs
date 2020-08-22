@@ -7,91 +7,66 @@
 
 
 
-
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.PixelFormats;
+
 
 namespace Zeckoxe.Graphics.Toolkit
 {
 
-	public unsafe class IMGLoader
-	{
-		public TextureData TextureData { get; set; }
+    public unsafe class IMGLoader
+    {
 
-		public IMGLoader(string filename)
-		{
-			//using FileStream fs = File.OpenRead(filename);
-			 byte[] fs = File.ReadAllBytes(filename);
+        public IMGLoader(string filename)
+        {
+            using Image<Rgba32> image = Image.Load<Rgba32>(filename);
 
-			TextureData = Load(fs);
-		}
+            Span<Rgba32> pixels = image.GetPixelSpan();
 
+            //for (int i = 0; i < pixels.Length; i++)
+            //{
+            //    ref Rgba32 pixel = ref pixels[i];
+            //    byte a = pixel.A;
+            //
+            //    if (a is 0)
+            //    {
+            //        pixel.PackedValue = 0;
+            //    }
+            //    else
+            //    {
+            //        pixel.R = (byte)((pixel.R * a) >> 8);
+            //        pixel.G = (byte)((pixel.G * a) >> 8);
+            //        pixel.B = (byte)((pixel.B * a) >> 8);
+            //    }
+            //}
 
-
-
-
-		internal TextureData Load(byte[] stream)
-		{
-			//_stream = stream;
-			int req_comp = ImageNative.rgb_alpha;
-			int x;
-			int y;
-			int comp;
-			byte* result;
-			fixed (byte* ptr = stream)
-			{
-				result = ImageNative.load_from_memory(ptr, stream.Length, &x, &y, &comp, req_comp);
-			}
-
-
-
-			int bpp = 4; // R8G8B8A8Unorm -> Red - Green - Blue - Alpha
-
-			int rowPitch = x * bpp;
-			int slicePitch = rowPitch * y;
-
-
-			TextureData image = new TextureData
-			{
-				Width = x,
-				Height = y,
-				Depth = 1,
-				Size = slicePitch,
-				IsCubeMap = false,
-				MipMaps = (int)Math.Floor(Math.Log(Math.Max(x, y), 2)) + 1,
-				Format = PixelFormat.R8G8B8A8UNorm
-			};
-
-			if (result is null)
-			{
-				throw new Exception(ImageNative.LastError);
-			}
+            TextureData data = new TextureData()
+            {
+                Width = image.Width,
+                Height = image.Height,
+                Format = PixelFormat.R8G8B8A8UNorm,
+                Size = 4,
+                Depth = 1,
+                IsCubeMap = false,
+                MipMaps = 1, // TODO: MipMaps 
+                Data = MemoryMarshal.AsBytes(pixels).ToArray(),
+            };
 
 
-			// Convert to array
-			byte[] data = new byte[slicePitch];
+            TextureData = data;
+
+        }
 
 
-			Marshal.Copy((IntPtr)result, data, 0, data.Length);
-			ImageNative.free(result);
-
-			image.Data = data;
-
-			return image;
-		}
+        public TextureData TextureData { get; private set; }
 
 
-
-		public static TextureData LoadFromFile(string filename)
-		{
-			return new IMGLoader(filename).TextureData;
-		}
-
-
-		//public static TextureData LoadFromFile(Stream stream)
-		//{
-		//	return new IMGLoader(stream).TextureData;
-		//}
-	}
+        public static TextureData LoadFromFile(string filename)
+        {
+            return new IMGLoader(filename).TextureData;
+        }
+    }
 }

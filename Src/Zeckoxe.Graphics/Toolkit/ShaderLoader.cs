@@ -16,7 +16,6 @@ namespace Zeckoxe.Graphics.Toolkit
         {
             return new ShaderBytecode(Compiler.LoadFromFile(path, stage))
             {
-
             };
         }
     }
