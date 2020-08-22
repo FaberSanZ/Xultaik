@@ -17,14 +17,14 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Zeckoxe.Graphics.Toolkit
 {
 
-    public unsafe class IMGLoader
+    public unsafe class IMGLoader : IDisposable
     {
+        private Image<Rgba32> _image;
 
         public IMGLoader(string filename)
         {
-            using Image<Rgba32> image = Image.Load<Rgba32>(filename);
-
-            Span<Rgba32> pixels = image.GetPixelSpan();
+            _image = Image.Load<Rgba32>(filename);
+            Span<Rgba32> pixels = _image.GetPixelSpan();
 
             //for (int i = 0; i < pixels.Length; i++)
             //{
@@ -45,8 +45,8 @@ namespace Zeckoxe.Graphics.Toolkit
 
             TextureData data = new TextureData()
             {
-                Width = image.Width,
-                Height = image.Height,
+                Width = _image.Width,
+                Height = _image.Height,
                 Format = PixelFormat.R8G8B8A8UNorm,
                 Size = 4,
                 Depth = 1,
@@ -63,10 +63,36 @@ namespace Zeckoxe.Graphics.Toolkit
 
         public TextureData TextureData { get; private set; }
 
+        public int Width => _image.Width;
+
+        public int Height => _image.Height;
+
+        public int Mipmaps => 1;
+
+        public int Size => 4;
+
+        public byte[] Data => GetAllTextureData();
+
+        public bool IsCubemap => false;
+
+
+
 
         public static TextureData LoadFromFile(string filename)
         {
             return new IMGLoader(filename).TextureData;
+        }
+
+        public void Dispose()
+        {
+            _image.Dispose();
+        }
+
+        private byte[] GetAllTextureData()
+        {
+            Span<Rgba32> pixels = _image.GetPixelSpan();
+
+            return MemoryMarshal.AsBytes(pixels).ToArray();
         }
     }
 }

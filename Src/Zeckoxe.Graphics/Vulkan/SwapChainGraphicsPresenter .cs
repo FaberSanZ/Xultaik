@@ -207,7 +207,7 @@ namespace Zeckoxe.Graphics
             }
 
 
-            // todo : Add support for separate graphics and presenting queue
+            // TODO : Add support for separate graphics and presenting queue
             if (graphicsQueueNodeIndex != presentQueueNodeIndex)
             {
                 throw new InvalidOperationException("Separate graphics and presenting queues are not supported yet!");

@@ -161,7 +161,7 @@ namespace _02_Hello_Triangle
                 },
 
                 Vertex = ShaderLoader.LoadFromFile("Shaders/shader.vert", Stage.Vertex),
-                Pixel = ShaderLoader.LoadFromFile("Shaders/shader.frag", Stage.Fragment),
+                Fragment = ShaderLoader.LoadFromFile("Shaders/shader.frag", Stage.Fragment),
             };
 
             PipelineState = new PipelineState(Pipelinedescription);

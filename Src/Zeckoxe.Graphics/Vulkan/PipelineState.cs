@@ -45,7 +45,6 @@ namespace Zeckoxe.Graphics
             uint stageCount = 0;
             bool Vertex = PipelineStateDescription.Vertex.Data.Length != 0;
             bool Fragment = PipelineStateDescription.Fragment.Data.Length != 0;
-            bool Pixel = PipelineStateDescription.Pixel.Data.Length != 0;
             bool Compute = PipelineStateDescription.Compute.Data.Length != 0;
             VkShaderModule vertexShader = VkShaderModule.Null;
             VkShaderModule fragmentShader = VkShaderModule.Null;
@@ -64,12 +63,6 @@ namespace Zeckoxe.Graphics
             {
                 stageCount++;
                 fragmentShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Fragment.Data);
-            }
-
-            if (Pixel)
-            {
-                stageCount++;
-                pixelShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Pixel.Data);
             }
 
 
@@ -129,12 +122,12 @@ namespace Zeckoxe.Graphics
                 shaderStageCreateInfos[0] = vertCreateInfo;
             }
 
-            if (Fragment || Pixel)
+            if (Fragment)
             {
                 shaderStageCreateInfos[1] = fragCreateInfo;
             }
 
-            // TODO:is Compute?
+            // TODO: is Compute?
             if (Compute)
             {
                 shaderStageCreateInfos[2] = ComputeCreateInfo;

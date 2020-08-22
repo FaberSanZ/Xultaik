@@ -6,7 +6,7 @@ using Vortice.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
-    // ( Use the new VK_EXT_debug_utils extension )
+    // TODO: Use the new VK_EXT_debug_utils extension 
     public class DebugReport : GraphicsResource
     {
         internal VkInstance _instance;
