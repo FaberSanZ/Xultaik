@@ -15,7 +15,7 @@ namespace Zeckoxe.Graphics
     public static class VulkanConvert
     {
 
-        internal static VkPrimitiveTopology ToPrimitiveType(PrimitiveType primitiveType)
+        internal static VkPrimitiveTopology ToPrimitiveType(this PrimitiveType primitiveType)
         {
             switch (primitiveType)
             {
@@ -51,7 +51,7 @@ namespace Zeckoxe.Graphics
             }
         }
 
-        internal static MultisampleCount ToSampleCountFlags_Invert(VkSampleCountFlags countFlags)
+        internal static MultisampleCount ToSampleCountFlags_Invert(this VkSampleCountFlags countFlags)
         {
             switch (countFlags)
             {
@@ -84,7 +84,7 @@ namespace Zeckoxe.Graphics
             }
         }
 
-        internal static VkPolygonMode ToFillMode(FillMode fillMode)
+        internal static VkPolygonMode ToFillMode(this FillMode fillMode)
         {
             switch (fillMode)
             {
@@ -102,7 +102,7 @@ namespace Zeckoxe.Graphics
             }
         }
 
-        internal static VkFrontFace ToFrontFace(FrontFace frontFace)
+        internal static VkFrontFace ToFrontFace(this FrontFace frontFace)
         {
             switch (frontFace)
             {
@@ -119,7 +119,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        internal static VkCullModeFlags ToCullMode(CullMode cullMode)
+        internal static VkCullModeFlags ToCullMode(this CullMode cullMode)
         {
             switch (cullMode)
             {

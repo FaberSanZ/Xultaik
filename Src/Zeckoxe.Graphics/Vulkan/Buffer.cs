@@ -125,7 +125,30 @@ namespace Zeckoxe.Graphics
 
         public void SetData<T>(params T[] Data) where T : struct
         {
+            switch (Usage)
+            {
+                case GraphicsResourceUsage.Default:
+                    break;
 
+                case GraphicsResourceUsage.Immutable:
+                    break;
+
+                case GraphicsResourceUsage.Dynamic:
+                    DynamicData(Data);
+                    break;
+
+                case GraphicsResourceUsage.Staging:
+                    break;
+
+                default:
+                    break;
+            }
+
+
+        }
+
+        private void DynamicData<T>(params T[] Data) where T : struct
+        {
             //vkAllocateMemory(device, &MemoryAlloc_info, null, &_memory);
             //memory = _memory;
             void* ppData;
@@ -133,8 +156,8 @@ namespace Zeckoxe.Graphics
 
             //Copy Data
             {
-                //int stride = Interop.SizeOf<Vertex>();
-                //uint size = (uint)(stride * vertices.Length);
+                //int stride = Interop.SizeOf<T>();
+                //uint size = (uint)(stride * Data.Length);
                 //void* srcPtr = Unsafe.AsPointer(ref Data[0]);
                 //Interop.MemoryHelper.CopyBlock(srcPtr, size++);
             }
@@ -144,14 +167,6 @@ namespace Zeckoxe.Graphics
             vkUnmapMemory(NativeDevice.handle, memory);
 
             vkBindBufferMemory(NativeDevice.handle, Handle, memory, 0);
-
-
-            if (Usage == GraphicsResourceUsage.Staging)
-            {
-
-            }
-
-
         }
 
 

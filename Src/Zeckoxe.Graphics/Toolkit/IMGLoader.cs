@@ -67,13 +67,13 @@ namespace Zeckoxe.Graphics.Toolkit
 
         public int Height => _image.Height;
 
-        public int Mipmaps => 1;
+        public int MipMaps => 1; // TODO: MipMaps 
 
         public int Size => 4;
 
         public byte[] Data => GetAllTextureData();
 
-        public bool IsCubemap => false;
+        public bool IsCubeMap => false;
 
 
 

@@ -6,22 +6,22 @@
 
 namespace Zeckoxe.Graphics
 {
-    public struct TextureDescription
+    public class TextureDescription
     {
-        public TextureDimension Dimension;
+        public TextureDimension Dimension { get; set; }
 
-        public int Width;
+        public int Width { get; set; }
 
-        public int Height;
+        public int Height { get; set; }
 
-        public int Depth;
+        public int Depth { get; set; }
 
-        public int ArraySize;
+        public int ArraySize { get; set; }
 
-        public int MipLevels;
+        public int MipLevels { get; set; }
 
-        public PixelFormat Format;
+        public PixelFormat Format { get; set; }
 
-        public GraphicsResourceUsage Usage;
+        public GraphicsResourceUsage Usage { get; set; }
     }
 }

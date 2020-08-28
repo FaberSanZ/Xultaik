@@ -37,7 +37,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public static PixelFormat GetSupportedDepthFormat(this GraphicsAdapter adapter, List<PixelFormat> depthFormats)
+        public static PixelFormat GetSupportedDepthFormat(this GraphicsAdapter adapter, IEnumerable<PixelFormat> depthFormats)
         {
             // Since all depth formats may be optional, we need to find a suitable depth format to use
             // Start with the highest precision packed format

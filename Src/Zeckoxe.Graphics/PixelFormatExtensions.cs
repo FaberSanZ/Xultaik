@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using Vortice.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
@@ -279,14 +280,580 @@ namespace Zeckoxe.Graphics
 		//const uint GL_FLOAT_32_UNSIGNED_INT_24_8_REV = 0x8DAD;
 
 
-		public static readonly List<PixelFormat> DepthFormats = new List<PixelFormat>()
+
+
+		public static IEnumerable<PixelFormat> DepthFormats 
+        {
+            get
+            {
+				yield return PixelFormat.D32SFloatS8UInt;
+				yield return PixelFormat.D32SFloat;
+				yield return PixelFormat.D24UNormS8UInt;
+				yield return PixelFormat.D16UNormS8UInt;
+				yield return PixelFormat.D16UNorm;
+			}
+		}
+
+
+		internal static VkFormat ToVkFormat(this PixelFormat format)
 		{
-			PixelFormat.D32SFloatS8UInt,
-			PixelFormat.D32SFloat,
-			PixelFormat.D24UNormS8UInt,
-			PixelFormat.D16UNormS8UInt,
-			PixelFormat.D16UNorm,
-		};
+            switch (format)
+            {
+                case PixelFormat.Undefined:
+                    break;
+                case PixelFormat.R4G4UNormPack8:
+                    break;
+                case PixelFormat.R4G4B4A4UNormPack16:
+                    break;
+                case PixelFormat.B4G4R4A4UNormPack16:
+                    break;
+                case PixelFormat.R5G6B5UNormPack16:
+                    break;
+                case PixelFormat.B5G6R5UNormPack16:
+                    break;
+                case PixelFormat.R5G5B5A1UNormPack16:
+                    break;
+                case PixelFormat.B5G5R5A1UNormPack16:
+                    break;
+                case PixelFormat.A1R5G5B5UNormPack16:
+                    break;
+                case PixelFormat.R8UNorm:
+                    break;
+                case PixelFormat.R8SNorm:
+                    break;
+                case PixelFormat.R8UScaled:
+                    break;
+                case PixelFormat.R8SScaled:
+                    break;
+                case PixelFormat.R8UInt:
+                    break;
+                case PixelFormat.R8SInt:
+                    break;
+                case PixelFormat.R8SRgb:
+                    break;
+                case PixelFormat.R8G8UNorm:
+                    break;
+                case PixelFormat.R8G8SNorm:
+                    break;
+                case PixelFormat.R8G8UScaled:
+                    break;
+                case PixelFormat.R8G8SScaled:
+                    break;
+                case PixelFormat.R8G8UInt:
+                    break;
+                case PixelFormat.R8G8SInt:
+                    break;
+                case PixelFormat.R8G8SRgb:
+                    break;
+                case PixelFormat.R8G8B8UNorm:
+                    break;
+                case PixelFormat.R8G8B8SNorm:
+                    break;
+                case PixelFormat.R8G8B8UScaled:
+                    break;
+                case PixelFormat.R8G8B8SScaled:
+                    break;
+                case PixelFormat.R8G8B8UInt:
+                    break;
+                case PixelFormat.R8G8B8SInt:
+                    break;
+                case PixelFormat.R8G8B8SRgb:
+                    break;
+                case PixelFormat.B8G8R8UNorm:
+                    break;
+                case PixelFormat.B8G8R8SNorm:
+                    break;
+                case PixelFormat.B8G8R8UScaled:
+                    break;
+                case PixelFormat.B8G8R8SScaled:
+                    break;
+                case PixelFormat.B8G8R8UInt:
+                    break;
+                case PixelFormat.B8G8R8SInt:
+                    break;
+                case PixelFormat.B8G8R8SRgb:
+                    break;
+                case PixelFormat.R8G8B8A8UNorm:
+                    break;
+                case PixelFormat.R8G8B8A8SNorm:
+                    break;
+                case PixelFormat.R8G8B8A8UScaled:
+                    break;
+                case PixelFormat.R8G8B8A8SScaled:
+                    break;
+                case PixelFormat.R8G8B8A8UInt:
+                    break;
+                case PixelFormat.R8G8B8A8SInt:
+                    break;
+                case PixelFormat.R8G8B8A8SRgb:
+                    break;
+                case PixelFormat.B8G8R8A8UNorm:
+                    break;
+                case PixelFormat.B8G8R8A8SNorm:
+                    break;
+                case PixelFormat.B8G8R8A8UScaled:
+                    break;
+                case PixelFormat.B8G8R8A8SScaled:
+                    break;
+                case PixelFormat.B8G8R8A8UInt:
+                    break;
+                case PixelFormat.B8G8R8A8SInt:
+                    break;
+                case PixelFormat.B8G8R8A8SRgb:
+                    break;
+                case PixelFormat.A8B8G8R8UNormPack32:
+                    break;
+                case PixelFormat.A8B8G8R8SNormPack32:
+                    break;
+                case PixelFormat.A8B8G8R8UScaledPack32:
+                    break;
+                case PixelFormat.A8B8G8R8SScaledPack32:
+                    break;
+                case PixelFormat.A8B8G8R8UIntPack32:
+                    break;
+                case PixelFormat.A8B8G8R8SIntPack32:
+                    break;
+                case PixelFormat.A8B8G8R8SRgbPack32:
+                    break;
+                case PixelFormat.A2R10G10B10UNormPack32:
+                    break;
+                case PixelFormat.A2R10G10B10SNormPack32:
+                    break;
+                case PixelFormat.A2R10G10B10UScaledPack32:
+                    break;
+                case PixelFormat.A2R10G10B10SScaledPack32:
+                    break;
+                case PixelFormat.A2R10G10B10UIntPack32:
+                    break;
+                case PixelFormat.A2R10G10B10SIntPack32:
+                    break;
+                case PixelFormat.A2B10G10R10UNormPack32:
+                    break;
+                case PixelFormat.A2B10G10R10SNormPack32:
+                    break;
+                case PixelFormat.A2B10G10R10UScaledPack32:
+                    break;
+                case PixelFormat.A2B10G10R10SScaledPack32:
+                    break;
+                case PixelFormat.A2B10G10R10UIntPack32:
+                    break;
+                case PixelFormat.A2B10G10R10SIntPack32:
+                    break;
+                case PixelFormat.R16UNorm:
+                    break;
+                case PixelFormat.R16SNorm:
+                    break;
+                case PixelFormat.R16UScaled:
+                    break;
+                case PixelFormat.R16SScaled:
+                    break;
+                case PixelFormat.R16UInt:
+                    break;
+                case PixelFormat.R16SInt:
+                    break;
+                case PixelFormat.R16SFloat:
+                    break;
+                case PixelFormat.R16G16UNorm:
+                    break;
+                case PixelFormat.R16G16SNorm:
+                    break;
+                case PixelFormat.R16G16UScaled:
+                    break;
+                case PixelFormat.R16G16SScaled:
+                    break;
+                case PixelFormat.R16G16UInt:
+                    break;
+                case PixelFormat.R16G16SInt:
+                    break;
+                case PixelFormat.R16G16SFloat:
+                    break;
+                case PixelFormat.R16G16B16UNorm:
+                    break;
+                case PixelFormat.R16G16B16SNorm:
+                    break;
+                case PixelFormat.R16G16B16UScaled:
+                    break;
+                case PixelFormat.R16G16B16SScaled:
+                    break;
+                case PixelFormat.R16G16B16UInt:
+                    break;
+                case PixelFormat.R16G16B16SInt:
+                    break;
+                case PixelFormat.R16G16B16SFloat:
+                    break;
+                case PixelFormat.R16G16B16A16UNorm:
+                    break;
+                case PixelFormat.R16G16B16A16SNorm:
+                    break;
+                case PixelFormat.R16G16B16A16UScaled:
+                    break;
+                case PixelFormat.R16G16B16A16SScaled:
+                    break;
+                case PixelFormat.R16G16B16A16UInt:
+                    break;
+                case PixelFormat.R16G16B16A16SInt:
+                    break;
+                case PixelFormat.R16G16B16A16SFloat:
+                    break;
+                case PixelFormat.R32UInt:
+                    break;
+                case PixelFormat.R32SInt:
+                    break;
+                case PixelFormat.R32SFloat:
+                    break;
+                case PixelFormat.R32G32UInt:
+                    break;
+                case PixelFormat.R32G32SInt:
+                    break;
+                case PixelFormat.R32G32SFloat:
+                    break;
+                case PixelFormat.R32G32B32UInt:
+                    break;
+                case PixelFormat.R32G32B32SInt:
+                    break;
+                case PixelFormat.R32G32B32SFloat:
+                    break;
+                case PixelFormat.R32G32B32A32UInt:
+                    break;
+                case PixelFormat.R32G32B32A32SInt:
+                    break;
+                case PixelFormat.R32G32B32A32SFloat:
+                    break;
+                case PixelFormat.R64UInt:
+                    break;
+                case PixelFormat.R64SInt:
+                    break;
+                case PixelFormat.R64SFloat:
+                    break;
+                case PixelFormat.R64G64UInt:
+                    break;
+                case PixelFormat.R64G64SInt:
+                    break;
+                case PixelFormat.R64G64SFloat:
+                    break;
+                case PixelFormat.R64G64B64UInt:
+                    break;
+                case PixelFormat.R64G64B64SInt:
+                    break;
+                case PixelFormat.R64G64B64SFloat:
+                    break;
+                case PixelFormat.R64G64B64A64UInt:
+                    break;
+                case PixelFormat.R64G64B64A64SInt:
+                    break;
+                case PixelFormat.R64G64B64A64SFloat:
+                    break;
+                case PixelFormat.B10G11R11UFloatPack32:
+                    break;
+                case PixelFormat.E5B9G9R9UFloatPack32:
+                    break;
+                case PixelFormat.D16UNorm:
+                    break;
+                case PixelFormat.X8D24UNormPack32:
+                    break;
+                case PixelFormat.D32SFloat:
+                    break;
+                case PixelFormat.S8UInt:
+                    break;
+                case PixelFormat.D16UNormS8UInt:
+                    break;
+                case PixelFormat.D24UNormS8UInt:
+                    break;
+                case PixelFormat.D32SFloatS8UInt:
+                    break;
+                case PixelFormat.BC1RGBUNormBlock:
+                    break;
+                case PixelFormat.BC1RGBSRgbBlock:
+                    break;
+                case PixelFormat.BC1RGBAUNormBlock:
+                    break;
+                case PixelFormat.BC1RGBASRgbBlock:
+                    break;
+                case PixelFormat.BC2UNormBlock:
+                    break;
+                case PixelFormat.BC2SRgbBlock:
+                    break;
+                case PixelFormat.BC3UNormBlock:
+                    break;
+                case PixelFormat.BC3SRgbBlock:
+                    break;
+                case PixelFormat.BC4UNormBlock:
+                    break;
+                case PixelFormat.BC4SNormBlock:
+                    break;
+                case PixelFormat.BC5UNormBlock:
+                    break;
+                case PixelFormat.BC5SNormBlock:
+                    break;
+                case PixelFormat.BC6HUFloatBlock:
+                    break;
+                case PixelFormat.BC6HSFloatBlock:
+                    break;
+                case PixelFormat.BC7UNormBlock:
+                    break;
+                case PixelFormat.BC7SRgbBlock:
+                    break;
+                case PixelFormat.ETC2R8G8B8UNormBlock:
+                    break;
+                case PixelFormat.ETC2R8G8B8SRgbBlock:
+                    break;
+                case PixelFormat.ETC2R8G8B8A1UNormBlock:
+                    break;
+                case PixelFormat.ETC2R8G8B8A1SRgbBlock:
+                    break;
+                case PixelFormat.ETC2R8G8B8A8UNormBlock:
+                    break;
+                case PixelFormat.ETC2R8G8B8A8SRgbBlock:
+                    break;
+                case PixelFormat.EACR11UNormBlock:
+                    break;
+                case PixelFormat.EACR11SNormBlock:
+                    break;
+                case PixelFormat.EACR11G11UNormBlock:
+                    break;
+                case PixelFormat.EACR11G11SNormBlock:
+                    break;
+                case PixelFormat.ASTC4x4UNormBlock:
+                    break;
+                case PixelFormat.ASTC4x4SRgbBlock:
+                    break;
+                case PixelFormat.ASTC5x4UNormBlock:
+                    break;
+                case PixelFormat.ASTC5x4SRgbBlock:
+                    break;
+                case PixelFormat.ASTC5x5UNormBlock:
+                    break;
+                case PixelFormat.ASTC5x5SRgbBlock:
+                    break;
+                case PixelFormat.ASTC6x5UNormBlock:
+                    break;
+                case PixelFormat.ASTC6x5SRgbBlock:
+                    break;
+                case PixelFormat.ASTC6x6UNormBlock:
+                    break;
+                case PixelFormat.ASTC6x6SRgbBlock:
+                    break;
+                case PixelFormat.ASTC8x5UNormBlock:
+                    break;
+                case PixelFormat.ASTC8x5SRgbBlock:
+                    break;
+                case PixelFormat.ASTC8x6UNormBlock:
+                    break;
+                case PixelFormat.ASTC8x6SRgbBlock:
+                    break;
+                case PixelFormat.ASTC8x8UNormBlock:
+                    break;
+                case PixelFormat.ASTC8x8SRgbBlock:
+                    break;
+                case PixelFormat.ASTC10x5UNormBlock:
+                    break;
+                case PixelFormat.ASTC10x5SRgbBlock:
+                    break;
+                case PixelFormat.ASTC10x6UNormBlock:
+                    break;
+                case PixelFormat.ASTC10x6SRgbBlock:
+                    break;
+                case PixelFormat.ASTC10x8UNormBlock:
+                    break;
+                case PixelFormat.ASTC10x8SRgbBlock:
+                    break;
+                case PixelFormat.ASTC10x10UNormBlock:
+                    break;
+                case PixelFormat.ASTC10x10SRgbBlock:
+                    break;
+                case PixelFormat.ASTC12x10UNormBlock:
+                    break;
+                case PixelFormat.ASTC12x10SRgbBlock:
+                    break;
+                case PixelFormat.ASTC12x12UNormBlock:
+                    break;
+                case PixelFormat.ASTC12x12SRgbBlock:
+                    break;
+                case PixelFormat.G8B8G8R8422UNorm:
+                    break;
+                case PixelFormat.B8G8R8G8422UNorm:
+                    break;
+                case PixelFormat.G8B8R83Plane420UNorm:
+                    break;
+                case PixelFormat.G8B8R82Plane420UNorm:
+                    break;
+                case PixelFormat.G8B8R83Plane422UNorm:
+                    break;
+                case PixelFormat.G8B8R82Plane422UNorm:
+                    break;
+                case PixelFormat.G8B8R83Plane444UNorm:
+                    break;
+                case PixelFormat.R10X6UNormPack16:
+                    break;
+                case PixelFormat.R10X6G10X6UNorm2Pack16:
+                    break;
+                case PixelFormat.R10X6G10X6B10X6A10X6UNorm4Pack16:
+                    break;
+                case PixelFormat.G10X6B10X6G10X6R10X6422UNorm4Pack16:
+                    break;
+                case PixelFormat.B10X6G10X6R10X6G10X6422UNorm4Pack16:
+                    break;
+                case PixelFormat.G10X6B10X6R10X63Plane420UNorm3Pack16:
+                    break;
+                case PixelFormat.G10X6B10X6R10X62Plane420UNorm3Pack16:
+                    break;
+                case PixelFormat.G10X6B10X6R10X63Plane422UNorm3Pack16:
+                    break;
+                case PixelFormat.G10X6B10X6R10X62Plane422UNorm3Pack16:
+                    break;
+                case PixelFormat.G10X6B10X6R10X63Plane444UNorm3Pack16:
+                    break;
+                case PixelFormat.R12X4UNormPack16:
+                    break;
+                case PixelFormat.R12X4G12X4UNorm2Pack16:
+                    break;
+                case PixelFormat.R12X4G12X4B12X4A12X4UNorm4Pack16:
+                    break;
+                case PixelFormat.G12X4B12X4G12X4R12X4422UNorm4Pack16:
+                    break;
+                case PixelFormat.B12X4G12X4R12X4G12X4422UNorm4Pack16:
+                    break;
+                case PixelFormat.G12X4B12X4R12X43Plane420UNorm3Pack16:
+                    break;
+                case PixelFormat.G12X4B12X4R12X42Plane420UNorm3Pack16:
+                    break;
+                case PixelFormat.G12X4B12X4R12X43Plane422UNorm3Pack16:
+                    break;
+                case PixelFormat.G12X4B12X4R12X42Plane422UNorm3Pack16:
+                    break;
+                case PixelFormat.G12X4B12X4R12X43Plane444UNorm3Pack16:
+                    break;
+                case PixelFormat.G16B16G16R16422UNorm:
+                    break;
+                case PixelFormat.B16G16R16G16422UNorm:
+                    break;
+                case PixelFormat.G16B16R163Plane420UNorm:
+                    break;
+                case PixelFormat.G16B16R162Plane420UNorm:
+                    break;
+                case PixelFormat.G16B16R163Plane422UNorm:
+                    break;
+                case PixelFormat.G16B16R162Plane422UNorm:
+                    break;
+                case PixelFormat.G16B16R163Plane444UNorm:
+                    break;
+                case PixelFormat.PVRTC12BPPUNormBlockImg:
+                    break;
+                case PixelFormat.PVRTC14BPPUNormBlockImg:
+                    break;
+                case PixelFormat.PVRTC22BPPUNormBlockImg:
+                    break;
+                case PixelFormat.PVRTC24BPPUNormBlockImg:
+                    break;
+                case PixelFormat.PVRTC12BPPSRgbBlockImg:
+                    break;
+                case PixelFormat.PVRTC14BPPSRgbBlockImg:
+                    break;
+                case PixelFormat.PVRTC22BPPSRgbBlockImg:
+                    break;
+                case PixelFormat.PVRTC24BPPSRgbBlockImg:
+                    break;
+                case PixelFormat.ASTC4x4SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC5x4SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC5x5SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC6x5SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC6x6SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC8x5SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC8x6SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC8x8SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC10x5SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC10x6SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC10x8SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC10x10SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC12x10SFloatBlockEXT:
+                    break;
+                case PixelFormat.ASTC12x12SFloatBlockEXT:
+                    break;
+                //case PixelFormat.G8B8G8R8422UNormKHR:
+                //    break;
+                //case PixelFormat.B8G8R8G8422UNormKHR:
+                //    break;
+                //case PixelFormat.G8B8R83Plane420UNormKHR:
+                //    break;
+                //case PixelFormat.G8B8R82Plane420UNormKHR:
+                //    break;
+                //case PixelFormat.G8B8R83Plane422UNormKHR:
+                //    break;
+                //case PixelFormat.G8B8R82Plane422UNormKHR:
+                //    break;
+                //case PixelFormat.G8B8R83Plane444UNormKHR:
+                //    break;
+                //case PixelFormat.R10X6UNormPack16KHR:
+                //    break;
+                //case PixelFormat.R10X6G10X6UNorm2Pack16KHR:
+                //    break;
+                //case PixelFormat.R10X6G10X6B10X6A10X6UNorm4Pack16KHR:
+                //    break;
+                //case PixelFormat.G10X6B10X6G10X6R10X6422UNorm4Pack16KHR:
+                //    break;
+                //case PixelFormat.B10X6G10X6R10X6G10X6422UNorm4Pack16KHR:
+                //    break;
+                //case PixelFormat.G10X6B10X6R10X63Plane420UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.G10X6B10X6R10X62Plane420UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.G10X6B10X6R10X63Plane422UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.G10X6B10X6R10X62Plane422UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.G10X6B10X6R10X63Plane444UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.R12X4UNormPack16KHR:
+                //    break;
+                //case PixelFormat.R12X4G12X4UNorm2Pack16KHR:
+                //    break;
+                //case PixelFormat.R12X4G12X4B12X4A12X4UNorm4Pack16KHR:
+                //    break;
+                //case PixelFormat.G12X4B12X4G12X4R12X4422UNorm4Pack16KHR:
+                //    break;
+                //case PixelFormat.B12X4G12X4R12X4G12X4422UNorm4Pack16KHR:
+                //    break;
+                //case PixelFormat.G12X4B12X4R12X43Plane420UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.G12X4B12X4R12X42Plane420UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.G12X4B12X4R12X43Plane422UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.G12X4B12X4R12X42Plane422UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.G12X4B12X4R12X43Plane444UNorm3Pack16KHR:
+                //    break;
+                //case PixelFormat.G16B16G16R16422UNormKHR:
+                //    break;
+                //case PixelFormat.B16G16R16G16422UNormKHR:
+                //    break;
+                //case PixelFormat.G16B16R163Plane420UNormKHR:
+                //    break;
+                //case PixelFormat.G16B16R162Plane420UNormKHR:
+                //    break;
+                //case PixelFormat.G16B16R163Plane422UNormKHR:
+                //    break;
+                //case PixelFormat.G16B16R162Plane422UNormKHR:
+                //    break;
+                //case PixelFormat.G16B16R163Plane444UNormKHR:
+                //    break;
+                default:
+                    break;
+            }
+            return VkFormat.Undefined;
+        }
 
 
 		public static bool IsSRGB(this PixelFormat format)

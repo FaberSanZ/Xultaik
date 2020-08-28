@@ -1,8 +1,8 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. Faber.reach@gmail.com
 
-/*=============================================================================
+/*===================================================================================
 	KTXLoader.cs
-=============================================================================*/
+====================================================================================*/
 
 
 using System;
@@ -145,7 +145,7 @@ namespace Zeckoxe.Graphics.Toolkit
 
         public int ArraySlices => (int)Header.NumberOfArrayElements;
 
-        public int Mipmaps => (int)Header.NumberOfMipmapLevels;
+        public int MipMaps => (int)Header.NumberOfMipmapLevels;
 
         public int Size => (int)GetTotalSize();
 
@@ -157,7 +157,7 @@ namespace Zeckoxe.Graphics.Toolkit
 
         public bool Is3D => Header.PixelHeight > 1 && Header.PixelDepth > 1;
 
-        public bool IsCubemap => Header.NumberOfFaces is 6;
+        public bool IsCubeMap => Header.NumberOfFaces is 6;
 
         public bool IsArray => Header.NumberOfArrayElements > 1;
 
@@ -192,11 +192,12 @@ namespace Zeckoxe.Graphics.Toolkit
             }
 
 
-            int keySize = i; // Don't include null terminator.
+            int keySize = i;                                                    // Don't include null terminator.
             string key = Encoding.UTF8.GetString(keyAndValueBytes, keySize);
-            byte* valueStart = keyAndValueBytes + i + 1; // Skip null terminator
+            byte* valueStart = keyAndValueBytes + i + 1;                        // Skip null terminator
             int valueSize = (int)(keyAndValueByteSize - keySize - 1);
             byte[] value = new byte[valueSize];
+
             for (int v = 0; v < valueSize; v++)
             {
                 value[v] = valueStart[v];

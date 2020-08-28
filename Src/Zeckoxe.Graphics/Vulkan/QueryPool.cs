@@ -10,7 +10,7 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
-    // TODO:  
+    // TODO: QueryPool
     public unsafe class QueryPool : GraphicsResource, IDisposable
     {
         internal VkQueryPool handle;
