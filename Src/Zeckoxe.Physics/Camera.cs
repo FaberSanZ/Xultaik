@@ -191,15 +191,15 @@ namespace Zeckoxe.Physics
             {
                 mode = value;
 
-                if (mode == CameraType.FreeIsometric)
+                if (mode is CameraType.FreeIsometric)
                 {
                     SetIsometric(IsometricAxis.SE, Vector3.Zero, ZoomMin * 2f);
                 }
-                else if (mode == CameraType.Free)
+                else if (mode is CameraType.Free)
                 {
                     SetFree(position, interest);
                 }
-                else if (mode == CameraType.Ortho)
+                else if (mode is CameraType.Ortho)
                 {
                     SetOrtho();
                 }
