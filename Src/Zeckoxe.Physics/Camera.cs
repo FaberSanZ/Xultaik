@@ -1,19 +1,14 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. Faber.reach@gmail.com
 
 /*===================================================================================
-	CameraTranslations.cs
+	Camera.cs
 ====================================================================================*/
+
+
+using System;
+using System.Numerics;
 
 namespace Zeckoxe.Physics
 {
-    public enum CameraTranslations
-    {
-        None,
 
-        UseDelta,
-
-        UseSlowDelta,
-
-        Quick,
-    }
 }

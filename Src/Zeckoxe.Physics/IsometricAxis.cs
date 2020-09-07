@@ -1,19 +1,21 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. Faber.reach@gmail.com
 
 /*===================================================================================
-	CameraTranslations.cs
+	IsometricAxis.cs
 ====================================================================================*/
+
 
 namespace Zeckoxe.Physics
 {
-    public enum CameraTranslations
+
+    public enum IsometricAxis
     {
-        None,
+        NW = 0,
 
-        UseDelta,
+        NE = 1,
 
-        UseSlowDelta,
+        SE = 2,
 
-        Quick,
+        SW = 3,
     }
 }
