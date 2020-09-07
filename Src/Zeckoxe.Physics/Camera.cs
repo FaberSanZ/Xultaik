@@ -7,6 +7,7 @@
 
 using System;
 using System.Numerics;
+using Zeckoxe.Core;
 
 namespace Zeckoxe.Physics
 {
@@ -302,11 +303,11 @@ namespace Zeckoxe.Physics
             UpdateLens();
         }
 
-        public void Update(float gameTime)
+        public void Update(GameTime gameTime)
         {
             Velocity = Vector3.Zero;
 
-            //UpdateTranslations(gameTime);
+            UpdateTranslations(gameTime);
 
             if (mode == CameraType.Ortho)
             {
@@ -366,72 +367,72 @@ namespace Zeckoxe.Physics
             }
         }
 
-        //public void MoveForward(float gameTime, bool slow)
-        //{
-        //    Move(gameTime, Forward, slow);
-        //}
+        public void MoveForward(GameTime gameTime, bool slow)
+        {
+            Move(gameTime, Forward, slow);
+        }
 
-        //public void MoveBackward(float gameTime, bool slow)
-        //{
-        //    Move(gameTime, Backward, slow);
-        //}
+        public void MoveBackward(GameTime gameTime, bool slow)
+        {
+            Move(gameTime, Backward, slow);
+        }
 
-        //public void MoveLeft(float gameTime, bool slow)
-        //{
-        //    Move(gameTime, Left, slow);
-        //}
+        public void MoveLeft(GameTime gameTime, bool slow)
+        {
+            Move(gameTime, Left, slow);
+        }
 
-        //public void MoveRight(float gameTime, bool slow)
-        //{
-        //    Move(gameTime, Right, slow);
-        //}
+        public void MoveRight(GameTime gameTime, bool slow)
+        {
+            Move(gameTime, Right, slow);
+        }
 
-        //public void RotateUp(float gameTime, bool slow)
-        //{
-        //    Rotate(gameTime, Left, slow);
-        //}
+        public void RotateUp(GameTime gameTime, bool slow)
+        {
+            Rotate(gameTime, Left, slow);
+        }
 
-        //public void RotateDown(float gameTime, bool slow)
-        //{
-        //    Rotate(gameTime, Right, slow);
-        //}
+        public void RotateDown(GameTime gameTime, bool slow)
+        {
+            Rotate(gameTime, Right, slow);
+        }
 
-        //public void RotateLeft(float gameTime, bool slow)
-        //{
-        //    Rotate(gameTime, Down, slow);
-        //}
+        public void RotateLeft(GameTime gameTime, bool slow)
+        {
+            Rotate(gameTime, Down, slow);
+        }
 
-        //public void RotateRight(float gameTime, bool slow)
-        //{
-        //    Rotate(gameTime, Up, slow);
-        //}
+        public void RotateRight(GameTime gameTime, bool slow)
+        {
+            Rotate(gameTime, Up, slow);
+        }
 
-        //public void RotateMouse(float gameTime, float deltaX, float deltaY)
-        //{
-        //    if (deltaX != 0f)
-        //    {
-        //        Rotate(Up, gameTime.ElapsedSeconds * deltaX * 10f);
-        //    }
-        //    if (deltaY != 0f)
-        //    {
-        //        if (InvertY)
-        //        {
-        //            deltaY = -deltaY;
-        //        }
+        public void RotateMouse(GameTime gameTime, float deltaX, float deltaY)
+        {
+            if (deltaX != 0f)
+            {
+                Rotate(Up, gameTime.ElapsedSeconds * deltaX * 10f);
+            }
+            if (deltaY != 0f)
+            {
+                if (InvertY)
+                {
+                    deltaY = -deltaY;
+                }
 
-        //        Rotate(Left, gameTime.ElapsedSeconds * -deltaY * 10f, true, -85, 85);
-        //    }
-        //}
+                Rotate(Left, gameTime.ElapsedSeconds * -deltaY * 10f, true, -85, 85);
+            }
+        }
 
-        //public void ZoomIn(float gameTime, bool slow)
-        //{
-        //    Zoom(gameTime, true, slow);
-        //}
+        public void ZoomIn(GameTime gameTime, bool slow)
+        {
+            Zoom(gameTime, true, slow);
+        }
 
-        //public void ZoomOut(flaoty gameTime, bool slow)
-        //{
-        //    Zoom(gameTime, false, slow);
-        //}
+        public void ZoomOut(GameTime gameTime, bool slow)
+        {
+            Zoom(gameTime, false, slow);
+        }
 
 
         private void SetFree(Vector3 newPosition, Vector3 newInterest)
@@ -572,73 +573,73 @@ namespace Zeckoxe.Physics
             }
         }
 
-        //private void Move(GameTime gameTime, Vector3 vector, bool slow)
-        //{
-        //    StopTranslations();
+        private void Move(GameTime gameTime, Vector3 vector, bool slow)
+        {
+            StopTranslations();
 
-        //    float delta = (slow) ? SlowMovementDelta : MovementDelta;
+            float delta = (slow) ? SlowMovementDelta : MovementDelta;
 
-        //    Velocity = vector * delta * gameTime.ElapsedSeconds;
-        //    if (Velocity != Vector3.Zero)
-        //    {
-        //        Position += Velocity;
-        //        Interest += Velocity;
-        //    }
-        //}
+            Velocity = vector * delta * gameTime.ElapsedSeconds;
+            if (Velocity != Vector3.Zero)
+            {
+                Position += Velocity;
+                Interest += Velocity;
+            }
+        }
 
-        //private void Rotate(GameTime gameTime, Vector3 axis, bool slow)
-        //{
-        //    float degrees = (slow) ? SlowRotationDelta : RotationDelta;
+        private void Rotate(GameTime gameTime, Vector3 axis, bool slow)
+        {
+            float degrees = (slow) ? SlowRotationDelta : RotationDelta;
 
-        //    Rotate(axis, degrees * gameTime.ElapsedSeconds);
-        //}
+            Rotate(axis, degrees * gameTime.ElapsedSeconds);
+        }
 
-        //private void Rotate(Vector3 axis, float degrees, bool clampY = false, float clampFrom = 0, float clampTo = 0)
-        //{
-        //    StopTranslations();
+        private void Rotate(Vector3 axis, float degrees, bool clampY = false, float clampFrom = 0, float clampTo = 0)
+        {
+            StopTranslations();
 
-        //    //Smooth rotation
-        //    Quaternion sourceRotation = Quaternion.RotationAxis(axis, 0);
-        //    Quaternion targetRotation = Quaternion.RotationAxis(axis, MathUtil.DegreesToRadians(degrees));
-        //    Quaternion r = Quaternion.Lerp(sourceRotation, targetRotation, 0.5f);
+            //Smooth rotation
+            //Quaternion sourceRotation = Quaternion.RotationAxis(axis, 0);
+            //Quaternion targetRotation = Quaternion.RotationAxis(axis, MathUtil.DegreesToRadians(degrees));
+            //Quaternion r = Quaternion.Lerp(sourceRotation, targetRotation, 0.5f);
 
-        //    Vector3 curDir = Vector3.Normalize(Interest - Position);
-        //    Vector3 newDir = Vector3.Transform(curDir, r);
+            //Vector3 curDir = Vector3.Normalize(Interest - Position);
+            //Vector3 newDir = Vector3.Transform(curDir, r);
 
-        //    if (clampY)
-        //    {
-        //        float newAngle = Helper.Angle(Vector3.Up, newDir) - MathUtil.PiOverTwo;
-        //        if (newAngle >= MathUtil.DegreesToRadians(clampFrom) && newAngle <= MathUtil.DegreesToRadians(clampTo))
-        //        {
-        //            Interest = position + newDir;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Interest = position + newDir;
-        //    }
-        //}
+            //if (clampY)
+            //{
+            //    float newAngle = Helper.Angle(Vector3.Up, newDir) - MathUtil.PiOverTwo;
+            //    if (newAngle >= MathUtil.DegreesToRadians(clampFrom) && newAngle <= MathUtil.DegreesToRadians(clampTo))
+            //    {
+            //        Interest = position + newDir;
+            //    }
+            //}
+            //else
+            //{
+            //    Interest = position + newDir;
+            //}
+        }
 
-        //private void Zoom(GameTime gameTime, bool zoomIn, bool slow)
-        //{
-        //    StopTranslations();
+        private void Zoom(GameTime gameTime, bool zoomIn, bool slow)
+        {
+            StopTranslations();
 
-        //    float delta = (slow) ? SlowZoomDelta : ZoomDelta;
-        //    float zooming = (zoomIn) ? +delta : -delta;
+            float delta = (slow) ? SlowZoomDelta : ZoomDelta;
+            float zooming = (zoomIn) ? +delta : -delta;
 
-        //    if (zooming != 0f)
-        //    {
-        //        float s = gameTime.ElapsedSeconds;
+            if (zooming != 0f)
+            {
+                float s = gameTime.ElapsedSeconds;
 
-        //        Vector3 newPosition = Position + (Direction * zooming * s);
+                Vector3 newPosition = Position + (Direction * zooming * s);
 
-        //        float distance = Vector3.Distance(newPosition, Interest);
-        //        if (distance < ZoomMax && distance > ZoomMin)
-        //        {
-        //            Position = newPosition;
-        //        }
-        //    }
-        //}
+                float distance = Vector3.Distance(newPosition, Interest);
+                if (distance < ZoomMax && distance > ZoomMin)
+                {
+                    Position = newPosition;
+                }
+            }
+        }
 
 
         private void StartTranslations(CameraTranslations translation, Vector3 newInterest)
@@ -658,59 +659,65 @@ namespace Zeckoxe.Physics
             }
         }
 
-        //private void UpdateTranslations(GameTime gameTime)
-        //{
-        //    if (translationMode != CameraTranslations.None)
-        //    {
-        //        Vector3 diff = translationInterest - Interest;
-        //        Vector3 pos = Position + diff;
-        //        Vector3 dir = pos - Position;
+        private void UpdateTranslations(GameTime gameTime)
+        {
+            if (translationMode != CameraTranslations.None)
+            {
+                Vector3 diff = translationInterest - Interest;
+                Vector3 pos = Position + diff;
+                Vector3 dir = pos - Position;
 
-        //        float distanceToTarget = dir.Length();
-        //        float distanceThisMove = 0f;
+                float distanceToTarget = dir.Length();
+                float distanceThisMove = 0f;
 
-        //        if (translationMode == CameraTranslations.UseDelta)
-        //        {
-        //            distanceThisMove = MovementDelta * gameTime.ElapsedSeconds;
-        //        }
-        //        else if (translationMode == CameraTranslations.UseSlowDelta)
-        //        {
-        //            distanceThisMove = SlowMovementDelta * gameTime.ElapsedSeconds;
-        //        }
-        //        else if (translationMode == CameraTranslations.Quick)
-        //        {
-        //            distanceThisMove = distanceToTarget * translationOutOfRadius;
-        //        }
+                if (translationMode == CameraTranslations.UseDelta)
+                {
+                    distanceThisMove = MovementDelta * gameTime.ElapsedSeconds;
+                }
+                else if (translationMode == CameraTranslations.UseSlowDelta)
+                {
+                    distanceThisMove = SlowMovementDelta * gameTime.ElapsedSeconds;
+                }
+                else if (translationMode == CameraTranslations.Quick)
+                {
+                    distanceThisMove = distanceToTarget * translationOutOfRadius;
+                }
 
-        //        Vector3 movingVector;
-        //        if (distanceThisMove >= distanceToTarget)
-        //        {
-        //            //This movement goes beyond the destination.
-        //            movingVector = Vector3.Normalize(dir) * distanceToTarget * translationIntoRadius;
-        //        }
-        //        else if (distanceToTarget < translationRadius)
-        //        {
-        //            //Into slow radius
-        //            movingVector = Vector3.Normalize(dir) * distanceThisMove * (distanceToTarget / translationRadius);
-        //        }
-        //        else
-        //        {
-        //            //On flight
-        //            movingVector = Vector3.Normalize(dir) * distanceThisMove;
-        //        }
+                Vector3 movingVector;
+                if (distanceThisMove >= distanceToTarget)
+                {
+                    //This movement goes beyond the destination.
+                    movingVector = Vector3.Normalize(dir) * distanceToTarget * translationIntoRadius;
+                }
+                else if (distanceToTarget < translationRadius)
+                {
+                    //Into slow radius
+                    movingVector = Vector3.Normalize(dir) * distanceThisMove * (distanceToTarget / translationRadius);
+                }
+                else
+                {
+                    //On flight
+                    movingVector = Vector3.Normalize(dir) * distanceThisMove;
+                }
 
-        //        if (movingVector != Vector3.Zero)
-        //        {
-        //            Position += movingVector;
-        //            Interest += movingVector;
-        //        }
+                if (movingVector != Vector3.Zero)
+                {
+                    Position += movingVector;
+                    Interest += movingVector;
+                }
 
-        //        if (Vector3.NearEqual(Interest, translationInterest, new Vector3(0.1f, 0.1f, 0.1f)))
-        //        {
-        //            StopTranslations();
-        //        }
-        //    }
-        //}
+                // TODO:  epsilon
+                if (MathUtil.WithinEpsilon(Interest.X, translationInterest.X, 0.1f) &&
+                    MathUtil.WithinEpsilon(Interest.Y, translationInterest.Y, 0.1f) &&
+                    MathUtil.WithinEpsilon(Interest.Z, translationInterest.Z, 0.1f))
+                {
+                    StopTranslations();
+
+                }
+
+
+            }
+        }
 
 
 
