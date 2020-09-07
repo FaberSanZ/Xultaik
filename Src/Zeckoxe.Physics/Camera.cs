@@ -594,30 +594,32 @@ namespace Zeckoxe.Physics
             Rotate(axis, degrees * gameTime.ElapsedSeconds);
         }
 
+
+
         private void Rotate(Vector3 axis, float degrees, bool clampY = false, float clampFrom = 0, float clampTo = 0)
         {
             StopTranslations();
 
-            //Smooth rotation
-            //Quaternion sourceRotation = Quaternion.RotationAxis(axis, 0);
-            //Quaternion targetRotation = Quaternion.RotationAxis(axis, MathUtil.DegreesToRadians(degrees));
-            //Quaternion r = Quaternion.Lerp(sourceRotation, targetRotation, 0.5f);
+            // Smooth rotation
+            Quaternion sourceRotation = Quaternion.RotationAxis(axis, 0);
+            Quaternion targetRotation = Quaternion.RotationAxis(axis, MathUtil.DegreesToRadians(degrees));
+            Quaternion r = Quaternion.Lerp(sourceRotation, targetRotation, 0.5f);
 
-            //Vector3 curDir = Vector3.Normalize(Interest - Position);
-            //Vector3 newDir = Vector3.Transform(curDir, r);
+            Vector3 curDir = Vector3.Normalize(Interest - Position);
+            Vector3 newDir = MathUtil.Transform(curDir, r);
 
-            //if (clampY)
-            //{
-            //    float newAngle = Helper.Angle(Vector3.Up, newDir) - MathUtil.PiOverTwo;
-            //    if (newAngle >= MathUtil.DegreesToRadians(clampFrom) && newAngle <= MathUtil.DegreesToRadians(clampTo))
-            //    {
-            //        Interest = position + newDir;
-            //    }
-            //}
-            //else
-            //{
-            //    Interest = position + newDir;
-            //}
+            if (clampY)
+            {
+                float newAngle = MathUtil.Angle(Vector3.UnitY, newDir) - MathUtil.PiOverTwo;
+                if (newAngle >= MathUtil.DegreesToRadians(clampFrom) && newAngle <= MathUtil.DegreesToRadians(clampTo))
+                {
+                    Interest = position + newDir;
+                }
+            }
+            else
+            {
+                Interest = position + newDir;
+            }
         }
 
         private void Zoom(GameTime gameTime, bool zoomIn, bool slow)

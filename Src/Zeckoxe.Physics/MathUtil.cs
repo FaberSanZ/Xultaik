@@ -6,6 +6,7 @@
 
 
 using System;
+using System.Numerics;
 
 namespace Zeckoxe.Physics
 {
@@ -67,6 +68,61 @@ namespace Zeckoxe.Physics
         {
             float num = a - b;
             return ((-epsilon <= num) && (num <= epsilon));
+        }
+
+        public static float Angle(Vector2 one, Vector2 two)
+        {
+            //Get the dot product
+            float dot = Vector2.Dot(one, two);
+
+            // Divide the dot by the product of the magnitudes of the vectors
+            dot /= (one.Length() * two.Length());
+
+            //Get the arc cosin of the angle, you now have your angle in radians 
+            return (float)Math.Acos(dot);
+        }
+
+        public static float Angle(Vector3 one, Vector3 two)
+        {
+            //Get the dot product
+            float dot = Vector3.Dot(one, two);
+
+            // Divide the dot by the product of the magnitudes of the vectors
+            dot /= one.Length() * two.Length();
+            dot = MathUtil.Clamp(dot, 0, 1);
+
+            //Get the arc cosin of the angle, you now have your angle in radians 
+            return (float)Math.Acos(dot);
+        }
+
+
+        private static void Transform(ref Vector3 vector, ref Quaternion rotation, out Vector3 result)
+        {
+            float x = rotation.X + rotation.X;
+            float y = rotation.Y + rotation.Y;
+            float z = rotation.Z + rotation.Z;
+            float wx = rotation.W * x;
+            float wy = rotation.W * y;
+            float wz = rotation.W * z;
+            float xx = rotation.X * x;
+            float xy = rotation.X * y;
+            float xz = rotation.X * z;
+            float yy = rotation.Y * y;
+            float yz = rotation.Y * z;
+            float zz = rotation.Z * z;
+
+            result = new Vector3(
+                ((vector.X * ((1.0f - yy) - zz)) + (vector.Y * (xy - wz))) + (vector.Z * (xz + wy)),
+                ((vector.X * (xy + wz)) + (vector.Y * ((1.0f - xx) - zz))) + (vector.Z * (yz - wx)),
+                ((vector.X * (xz - wy)) + (vector.Y * (yz + wx))) + (vector.Z * ((1.0f - xx) - yy)));
+        }
+
+
+        public static Vector3 Transform(Vector3 vector, Quaternion rotation)
+        {
+            Vector3 result;
+            Transform(ref vector, ref rotation, out result);
+            return result;
         }
 
 
