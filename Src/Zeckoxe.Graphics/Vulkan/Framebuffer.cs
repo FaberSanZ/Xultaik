@@ -4,6 +4,8 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
+    // TODO: Framebuffer
+
     public unsafe class Framebuffer : GraphicsResource
     {
 

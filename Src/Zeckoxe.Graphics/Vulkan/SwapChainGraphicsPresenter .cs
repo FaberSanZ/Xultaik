@@ -19,16 +19,6 @@ namespace Zeckoxe.Graphics
 {
     public unsafe class GraphicsSwapChain : GraphicsResource
     {
-        public PresentationParameters Parameters { get; set; }
-
-        public PixelFormat ColorFormat { get; private set; }
-
-        public Texture Backbuffer { get; private set; }
-
-
-
-
-
         internal VkSurfaceKHR Surface;
         internal VkFormat VkColorFormat;
         internal VkColorSpaceKHR ColorSpace;
@@ -54,6 +44,11 @@ namespace Zeckoxe.Graphics
             CreateBackBuffers();
 
         }
+
+        public PresentationParameters Parameters { get; set; }
+        public PixelFormat ColorFormat { get; private set; }
+        public Texture Backbuffer { get; private set; }
+
 
 
 
@@ -410,7 +405,7 @@ namespace Zeckoxe.Graphics
             VkSwapchainKHR swapchain = SwapChain;
             CommandBuffer commandBuffer = NativeDevice.NativeCommand;
 
-            VkPresentInfoKHR presentInfo = new VkPresentInfoKHR()
+            VkPresentInfoKHR present_info = new VkPresentInfoKHR()
             {
                 sType = VkStructureType.PresentInfoKHR,
                 waitSemaphoreCount = 1,
@@ -421,7 +416,7 @@ namespace Zeckoxe.Graphics
             };
 
 
-            vkQueuePresentKHR(NativeDevice.nativeCommandQueue, &presentInfo);
+            vkQueuePresentKHR(NativeDevice.nativeCommandQueue, &present_info);
         }
 
     }

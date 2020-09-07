@@ -12,6 +12,7 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
+    // TODO: Vulkan Memory Allocator
     public unsafe class Texture : GraphicsResource
     {
         internal struct DepthStencil
@@ -124,6 +125,7 @@ namespace Zeckoxe.Graphics
         }
 
 
+        // TODO: Texture, Image 
         public void Imple(TextureData tex2D)
         {
             IntPtr pixelsPtr = IntPtr.Zero;
@@ -184,7 +186,8 @@ namespace Zeckoxe.Graphics
                     new VkBufferImageCopy
                     {
                         imageSubresource = new VkImageSubresourceLayers(VkImageAspectFlags.Color, (uint)i, 0, 1),
-                        //imageExtent = tex2D.Mipmaps[0].Extent,
+                        // TODO: Mipmaps
+                        //imageExtent = tex2D.Mipmaps[0].Extent, 
                         bufferOffset = (ulong)offset
                     }
                 };
@@ -198,7 +201,7 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 imageType = VkImageType.Image2D,
                 format = (VkFormat)tex2D.Format, // TODO: ToVkFormat 
-                //mipLevels = (uint)tex2D.Mipmaps.Length,
+                mipLevels = 1, // TODO: Mipmaps
                 arrayLayers = 1,
                 samples = VkSampleCountFlags.Count1,
                 tiling = VkImageTiling.Optimal,
@@ -208,8 +211,8 @@ namespace Zeckoxe.Graphics
                 usage = VkImageUsageFlags.Sampled | VkImageUsageFlags.TransferDst
             };
 
-            result = vkCreateImage(NativeDevice.handle, &createInfo, null, out VkImage image);
-            result.CheckResult();
+            vkCreateImage(NativeDevice.handle, &createInfo, null, out VkImage image);
+
 
             vkGetImageMemoryRequirements(NativeDevice.handle, image, out VkMemoryRequirements imageMemReq);
 

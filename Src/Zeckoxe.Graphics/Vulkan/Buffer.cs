@@ -10,6 +10,7 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
+    // TODO: Vulkan Memory Allocator
     public unsafe class Buffer : GraphicsResource
     {
 

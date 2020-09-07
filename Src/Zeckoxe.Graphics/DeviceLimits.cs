@@ -16,6 +16,9 @@ namespace Zeckoxe.Graphics
 {
     public class DeviceLimits : GraphicsResource
     {
+        public DeviceLimits(GraphicsDevice device) : base(device) { }
+
+
         public int DescriptorSets => 8;
 
         public int Bindings => 16;
@@ -40,13 +43,7 @@ namespace Zeckoxe.Graphics
 
         public int MaxDrawIndirectCount => (int)NativeDevice.NativeAdapter.Properties.limits.maxDrawIndirectCount;
 
-        public MultisampleCount MultisampleCount => (MultisampleCount)Tools.ExtractMaxSampleCount(NativeDevice.NativeAdapter.Properties);
-
-        public DeviceLimits(GraphicsDevice device) : base(device) 
-        { 
-
-        }
-
+        public MultisampleCount MultisampleCount => (MultisampleCount)Tools.ExtractMaxSampleCount(NativeDevice.NativeAdapter.Properties); // TODO: MultisampleCount.ToVkSampleCountFlags
 
 
     }

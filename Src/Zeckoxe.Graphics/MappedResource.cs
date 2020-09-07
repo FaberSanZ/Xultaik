@@ -10,6 +10,7 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
+    // TODO: MappedResource
     class MappedResource
     {
     }
