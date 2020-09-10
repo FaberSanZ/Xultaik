@@ -10,8 +10,10 @@
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
   </ItemGroup>
 
+
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Core\Zeckoxe.Core.csproj" />
+    <ProjectReference Include="..\Zeckoxe.Games\Zeckoxe.Games.csproj" />
   </ItemGroup>
 
 </Project>

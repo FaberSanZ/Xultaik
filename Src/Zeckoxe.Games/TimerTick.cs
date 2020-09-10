@@ -8,7 +8,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Zeckoxe.Core
+namespace Zeckoxe.Games
 {
     public class TimerTick
     {

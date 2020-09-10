@@ -7,26 +7,12 @@ using Zeckoxe.Core;
 
 namespace Zeckoxe.Physics
 {
+    // TODO: Quaternion
 
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct Quaternion : IEquatable<Quaternion>, IFormattable
     {
 
-        public static readonly int SizeInBytes = Interop.SizeOf<Quaternion>();
-
-        public static readonly Quaternion Zero = new Quaternion();
-
-        public static readonly Quaternion One = new Quaternion(1.0f, 1.0f, 1.0f, 1.0f);
-
-        public static readonly Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
-
-        public float X;
-
-        public float Y;
-
-        public float Z;
-
-        public float W;
 
 
         public Quaternion(float value)
@@ -61,13 +47,6 @@ namespace Zeckoxe.Physics
             W = w;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
-        /// </summary>
-        /// <param name="x">Initial value for the X component of the quaternion.</param>
-        /// <param name="y">Initial value for the Y component of the quaternion.</param>
-        /// <param name="z">Initial value for the Z component of the quaternion.</param>
-        /// <param name="w">Initial value for the W component of the quaternion.</param>
         public Quaternion(float x, float y, float z, float w)
         {
             X = x;
@@ -76,15 +55,9 @@ namespace Zeckoxe.Physics
             W = w;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
-        /// </summary>
-        /// <param name="values">The values to assign to the X, Y, Z, and W components of the quaternion. This must be an array with four elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than four elements.</exception>
         public Quaternion(float[] values)
         {
-            if (values == null)
+            if (values is null)
             {
                 throw new ArgumentNullException("values");
             }
@@ -100,47 +73,32 @@ namespace Zeckoxe.Physics
             W = values[3];
         }
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is equivalent to the identity quaternion.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is an identity quaternion; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsIdentity
-        {
-            get { return this.Equals(Identity); }
-        }
 
-        /// <summary>
-        /// Gets a value indicting whether this instance is normalized.
-        /// </summary>
-        public bool IsNormalized
-        {
-            get { return MathUtil.IsOne((X * X) + (Y * Y) + (Z * Z) + (W * W)); }
-        }
 
-        /// <summary>
-        /// Gets the angle of the quaternion.
-        /// </summary>
-        /// <value>The quaternion's angle.</value>
-        public float Angle
-        {
-            get
-            {
-                float length = (X * X) + (Y * Y) + (Z * Z);
-                if (MathUtil.IsZero(length))
-                {
-                    return 0.0f;
-                }
+        public static readonly int SizeInBytes = Interop.SizeOf<Quaternion>();
 
-                return (float)(2.0 * Math.Acos(MathUtil.Clamp(W, -1f, 1f)));
-            }
-        }
+        public static readonly Quaternion Zero = new Quaternion();
 
-        /// <summary>
-        /// Gets the axis components of the quaternion.
-        /// </summary>
-        /// <value>The axis components of the quaternion.</value>
+        public static readonly Quaternion One = new Quaternion(1.0f, 1.0f, 1.0f, 1.0f);
+
+        public static readonly Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
+        public float X;
+
+        public float Y;
+
+        public float Z;
+
+        public float W;
+
+        public bool IsIdentity => Equals(Identity);
+
+        public bool IsNormalized => MathUtil.IsOne((X * X) + (Y * Y) + (Z * Z) + (W * W));
+
+        public float Angle => MathUtil.IsZero((X * X) + (Y * Y) + (Z * Z)) ? 0.0f : (float)(2.0 * Math.Acos(MathUtil.Clamp(W, -1f, 1f)));
+
+
+
         public Vector3 Axis
         {
             get
@@ -156,13 +114,7 @@ namespace Zeckoxe.Physics
             }
         }
 
-        /// <summary>
-        /// Gets or sets the component at the specified index.
-        /// </summary>
-        /// <value>The value of the X, Y, Z, or W component, depending on the index.</value>
-        /// <param name="index">The index of the component to access. Use 0 for the X component, 1 for the Y component, 2 for the Z component, and 3 for the W component.</param>
-        /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 3].</exception>
+
         public float this[int index]
         {
             get
@@ -191,9 +143,7 @@ namespace Zeckoxe.Physics
             }
         }
 
-        /// <summary>
-        /// Conjugates the quaternion.
-        /// </summary>
+
         public void Conjugate()
         {
             X = -X;
@@ -201,9 +151,7 @@ namespace Zeckoxe.Physics
             Z = -Z;
         }
 
-        /// <summary>
-        /// Conjugates and renormalizes the quaternion.
-        /// </summary>
+
         public void Invert()
         {
             float lengthSq = LengthSquared();
@@ -218,35 +166,11 @@ namespace Zeckoxe.Physics
             }
         }
 
-        /// <summary>
-        /// Calculates the length of the quaternion.
-        /// </summary>
-        /// <returns>The length of the quaternion.</returns>
-        /// <remarks>
-        /// <see cref="Quaternion.LengthSquared"/> may be preferred when only the relative length is needed
-        /// and speed is of the essence.
-        /// </remarks>
-        public float Length()
-        {
-            return (float)Math.Sqrt((X * X) + (Y * Y) + (Z * Z) + (W * W));
-        }
 
-        /// <summary>
-        /// Calculates the squared length of the quaternion.
-        /// </summary>
-        /// <returns>The squared length of the quaternion.</returns>
-        /// <remarks>
-        /// This method may be preferred to <see cref="Quaternion.Length"/> when only a relative length is needed
-        /// and speed is of the essence.
-        /// </remarks>
-        public float LengthSquared()
-        {
-            return (X * X) + (Y * Y) + (Z * Z) + (W * W);
-        }
+        public float Length() => (float)Math.Sqrt((X * X) + (Y * Y) + (Z * Z) + (W * W));
 
-        /// <summary>
-        /// Converts the quaternion into a unit quaternion.
-        /// </summary>
+        public float LengthSquared() => (X * X) + (Y * Y) + (Z * Z) + (W * W);
+
         public void Normalize()
         {
             float length = Length();
@@ -260,21 +184,11 @@ namespace Zeckoxe.Physics
             }
         }
 
-        /// <summary>
-        /// Creates an array containing the elements of the quaternion.
-        /// </summary>
-        /// <returns>A four-element array containing the components of the quaternion.</returns>
-        public float[] ToArray()
-        {
-            return new float[] { X, Y, Z, W };
-        }
 
-        /// <summary>
-        /// Adds two quaternions.
-        /// </summary>
-        /// <param name="left">The first quaternion to add.</param>
-        /// <param name="right">The second quaternion to add.</param>
-        /// <param name="result">When the method completes, contains the sum of the two quaternions.</param>
+        public float[] ToArray() => new float[] { X, Y, Z, W };
+        
+
+
         public static void Add(ref Quaternion left, ref Quaternion right, out Quaternion result)
         {
             result.X = left.X + right.X;
@@ -283,24 +197,14 @@ namespace Zeckoxe.Physics
             result.W = left.W + right.W;
         }
 
-        /// <summary>
-        /// Adds two quaternions.
-        /// </summary>
-        /// <param name="left">The first quaternion to add.</param>
-        /// <param name="right">The second quaternion to add.</param>
-        /// <returns>The sum of the two quaternions.</returns>
+
         public static Quaternion Add(Quaternion left, Quaternion right)
         {
             Add(ref left, ref right, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Subtracts two quaternions.
-        /// </summary>
-        /// <param name="left">The first quaternion to subtract.</param>
-        /// <param name="right">The second quaternion to subtract.</param>
-        /// <param name="result">When the method completes, contains the difference of the two quaternions.</param>
+
         public static void Subtract(ref Quaternion left, ref Quaternion right, out Quaternion result)
         {
             result.X = left.X - right.X;
@@ -309,24 +213,14 @@ namespace Zeckoxe.Physics
             result.W = left.W - right.W;
         }
 
-        /// <summary>
-        /// Subtracts two quaternions.
-        /// </summary>
-        /// <param name="left">The first quaternion to subtract.</param>
-        /// <param name="right">The second quaternion to subtract.</param>
-        /// <returns>The difference of the two quaternions.</returns>
+
         public static Quaternion Subtract(Quaternion left, Quaternion right)
         {
             Subtract(ref left, ref right, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Scales a quaternion by the given value.
-        /// </summary>
-        /// <param name="value">The quaternion to scale.</param>
-        /// <param name="scale">The amount by which to scale the quaternion.</param>
-        /// <param name="result">When the method completes, contains the scaled quaternion.</param>
+
         public static void Multiply(ref Quaternion value, float scale, out Quaternion result)
         {
             result.X = value.X * scale;
@@ -335,24 +229,14 @@ namespace Zeckoxe.Physics
             result.W = value.W * scale;
         }
 
-        /// <summary>
-        /// Scales a quaternion by the given value.
-        /// </summary>
-        /// <param name="value">The quaternion to scale.</param>
-        /// <param name="scale">The amount by which to scale the quaternion.</param>
-        /// <returns>The scaled quaternion.</returns>
+
         public static Quaternion Multiply(Quaternion value, float scale)
         {
             Multiply(ref value, scale, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Multiplies a quaternion by another.
-        /// </summary>
-        /// <param name="left">The first quaternion to multiply.</param>
-        /// <param name="right">The second quaternion to multiply.</param>
-        /// <param name="result">When the method completes, contains the multiplied quaternion.</param>
+
         public static void Multiply(ref Quaternion left, ref Quaternion right, out Quaternion result)
         {
             float lx = left.X;
@@ -373,23 +257,13 @@ namespace Zeckoxe.Physics
             result.W = lw * rw - d;
         }
 
-        /// <summary>
-        /// Multiplies a quaternion by another.
-        /// </summary>
-        /// <param name="left">The first quaternion to multiply.</param>
-        /// <param name="right">The second quaternion to multiply.</param>
-        /// <returns>The multiplied quaternion.</returns>
+
         public static Quaternion Multiply(Quaternion left, Quaternion right)
         {
             Multiply(ref left, ref right, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Reverses the direction of a given quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to negate.</param>
-        /// <param name="result">When the method completes, contains a quaternion facing in the opposite direction.</param>
         public static void Negate(ref Quaternion value, out Quaternion result)
         {
             result.X = -value.X;
@@ -398,26 +272,14 @@ namespace Zeckoxe.Physics
             result.W = -value.W;
         }
 
-        /// <summary>
-        /// Reverses the direction of a given quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to negate.</param>
-        /// <returns>A quaternion facing in the opposite direction.</returns>
+
         public static Quaternion Negate(Quaternion value)
         {
             Negate(ref value, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Returns a <see cref="Quaternion"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
-        /// </summary>
-        /// <param name="value1">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
-        /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
-        /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
-        /// <param name="result">When the method completes, contains a new <see cref="Quaternion"/> containing the 4D Cartesian coordinates of the specified point.</param>
+
         public static void Barycentric(ref Quaternion value1, ref Quaternion value2, ref Quaternion value3, float amount1, float amount2, out Quaternion result)
         {
             Slerp(ref value1, ref value2, amount1 + amount2, out Quaternion start);
@@ -425,26 +287,14 @@ namespace Zeckoxe.Physics
             Slerp(ref start, ref end, amount2 / (amount1 + amount2), out result);
         }
 
-        /// <summary>
-        /// Returns a <see cref="Quaternion"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
-        /// </summary>
-        /// <param name="value1">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
-        /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
-        /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
-        /// <returns>A new <see cref="Quaternion"/> containing the 4D Cartesian coordinates of the specified point.</returns>
+
         public static Quaternion Barycentric(Quaternion value1, Quaternion value2, Quaternion value3, float amount1, float amount2)
         {
             Barycentric(ref value1, ref value2, ref value3, amount1, amount2, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Conjugates a quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to conjugate.</param>
-        /// <param name="result">When the method completes, contains the conjugated quaternion.</param>
+
         public static void Conjugate(ref Quaternion value, out Quaternion result)
         {
             result.X = -value.X;
@@ -453,44 +303,19 @@ namespace Zeckoxe.Physics
             result.W = value.W;
         }
 
-        /// <summary>
-        /// Conjugates a quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to conjugate.</param>
-        /// <returns>The conjugated quaternion.</returns>
+
         public static Quaternion Conjugate(Quaternion value)
         {
             Conjugate(ref value, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Calculates the dot product of two quaternions.
-        /// </summary>
-        /// <param name="left">First source quaternion.</param>
-        /// <param name="right">Second source quaternion.</param>
-        /// <param name="result">When the method completes, contains the dot product of the two quaternions.</param>
-        public static void Dot(ref Quaternion left, ref Quaternion right, out float result)
-        {
-            result = (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
-        }
+        public static void Dot(ref Quaternion left, ref Quaternion right, out float result) => result = (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
+        
+        public static float Dot(Quaternion left, Quaternion right) => (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
+        
 
-        /// <summary>
-        /// Calculates the dot product of two quaternions.
-        /// </summary>
-        /// <param name="left">First source quaternion.</param>
-        /// <param name="right">Second source quaternion.</param>
-        /// <returns>The dot product of the two quaternions.</returns>
-        public static float Dot(Quaternion left, Quaternion right)
-        {
-            return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
-        }
 
-        /// <summary>
-        /// Exponentiates a quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to exponentiate.</param>
-        /// <param name="result">When the method completes, contains the exponentiated quaternion.</param>
         public static void Exponential(ref Quaternion value, out Quaternion result)
         {
             float angle = (float)Math.Sqrt((value.X * value.X) + (value.Y * value.Y) + (value.Z * value.Z));
@@ -511,51 +336,28 @@ namespace Zeckoxe.Physics
             result.W = (float)Math.Cos(angle);
         }
 
-        /// <summary>
-        /// Exponentiates a quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to exponentiate.</param>
-        /// <returns>The exponentiated quaternion.</returns>
+
         public static Quaternion Exponential(Quaternion value)
         {
             Exponential(ref value, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Conjugates and renormalizes the quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to conjugate and renormalize.</param>
-        /// <param name="result">When the method completes, contains the conjugated and renormalized quaternion.</param>
+
         public static void Invert(ref Quaternion value, out Quaternion result)
         {
             result = value;
             result.Invert();
         }
 
-        /// <summary>
-        /// Conjugates and renormalizes the quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to conjugate and renormalize.</param>
-        /// <returns>The conjugated and renormalized quaternion.</returns>
+
         public static Quaternion Invert(Quaternion value)
         {
             Invert(ref value, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Performs a linear interpolation between two quaternions.
-        /// </summary>
-        /// <param name="start">Start quaternion.</param>
-        /// <param name="end">End quaternion.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        /// <param name="result">When the method completes, contains the linear interpolation of the two quaternions.</param>
-        /// <remarks>
-        /// This method performs the linear interpolation based on the following formula.
-        /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
-        /// </remarks>
+
         public static void Lerp(ref Quaternion start, ref Quaternion end, float amount, out Quaternion result)
         {
             float inverse = 1.0f - amount;
@@ -578,29 +380,14 @@ namespace Zeckoxe.Physics
             result.Normalize();
         }
 
-        /// <summary>
-        /// Performs a linear interpolation between two quaternion.
-        /// </summary>
-        /// <param name="start">Start quaternion.</param>
-        /// <param name="end">End quaternion.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        /// <returns>The linear interpolation of the two quaternions.</returns>
-        /// <remarks>
-        /// This method performs the linear interpolation based on the following formula.
-        /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
-        /// </remarks>
+
         public static Quaternion Lerp(Quaternion start, Quaternion end, float amount)
         {
             Lerp(ref start, ref end, amount, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Calculates the natural logarithm of the specified quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion whose logarithm will be calculated.</param>
-        /// <param name="result">When the method completes, contains the natural logarithm of the quaternion.</param>
+
         public static void Logarithm(ref Quaternion value, out Quaternion result)
         {
             if (Math.Abs(value.W) < 1.0)
@@ -628,22 +415,13 @@ namespace Zeckoxe.Physics
             result.W = 0.0f;
         }
 
-        /// <summary>
-        /// Calculates the natural logarithm of the specified quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion whose logarithm will be calculated.</param>
-        /// <returns>The natural logarithm of the quaternion.</returns>
+
         public static Quaternion Logarithm(Quaternion value)
         {
             Logarithm(ref value, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Converts the quaternion into a unit quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to normalize.</param>
-        /// <param name="result">When the method completes, contains the normalized quaternion.</param>
         public static void Normalize(ref Quaternion value, out Quaternion result)
         {
             Quaternion temp = value;
@@ -651,23 +429,13 @@ namespace Zeckoxe.Physics
             result.Normalize();
         }
 
-        /// <summary>
-        /// Converts the quaternion into a unit quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to normalize.</param>
-        /// <returns>The normalized quaternion.</returns>
+
         public static Quaternion Normalize(Quaternion value)
         {
             value.Normalize();
             return value;
         }
 
-        /// <summary>
-        /// Creates a quaternion given a rotation and an axis.
-        /// </summary>
-        /// <param name="axis">The axis of rotation.</param>
-        /// <param name="angle">The angle of rotation.</param>
-        /// <param name="result">When the method completes, contains the newly created quaternion.</param>
         public static void RotationAxis(ref Vector3 axis, float angle, out Quaternion result)
         {
             Vector3 normalized = Vector3.Normalize(axis);
@@ -682,23 +450,14 @@ namespace Zeckoxe.Physics
             result.W = cos;
         }
 
-        /// <summary>
-        /// Creates a quaternion given a rotation and an axis.
-        /// </summary>
-        /// <param name="axis">The axis of rotation.</param>
-        /// <param name="angle">The angle of rotation.</param>
-        /// <returns>The newly created quaternion.</returns>
+
         public static Quaternion RotationAxis(Vector3 axis, float angle)
         {
             RotationAxis(ref axis, angle, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Creates a quaternion given a rotation matrix.
-        /// </summary>
-        /// <param name="matrix">The rotation matrix.</param>
-        /// <param name="result">When the method completes, contains the newly created quaternion.</param>
+
         public static void RotationMatrix(ref Matrix4x4 matrix, out Quaternion result)
         {
             float sqrt;
@@ -747,37 +506,12 @@ namespace Zeckoxe.Physics
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /// <summary>
-        /// Creates a quaternion given a rotation matrix.
-        /// </summary>
-        /// <param name="matrix">The rotation matrix.</param>
-        /// <returns>The newly created quaternion.</returns>
         public static Quaternion RotationMatrix(Matrix4x4 matrix)
         {
             RotationMatrix(ref matrix, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Creates a quaternion given a yaw, pitch, and roll value.
-        /// </summary>
-        /// <param name="yaw">The yaw of rotation.</param>
-        /// <param name="pitch">The pitch of rotation.</param>
-        /// <param name="roll">The roll of rotation.</param>
-        /// <param name="result">When the method completes, contains the newly created quaternion.</param>
         public static void RotationYawPitchRoll(float yaw, float pitch, float roll, out Quaternion result)
         {
             float halfRoll = roll * 0.5f;
@@ -797,26 +531,12 @@ namespace Zeckoxe.Physics
             result.W = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);
         }
 
-        /// <summary>
-        /// Creates a quaternion given a yaw, pitch, and roll value.
-        /// </summary>
-        /// <param name="yaw">The yaw of rotation.</param>
-        /// <param name="pitch">The pitch of rotation.</param>
-        /// <param name="roll">The roll of rotation.</param>
-        /// <returns>The newly created quaternion.</returns>
         public static Quaternion RotationYawPitchRoll(float yaw, float pitch, float roll)
         {
             RotationYawPitchRoll(yaw, pitch, roll, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Interpolates between two quaternions, using spherical linear interpolation.
-        /// </summary>
-        /// <param name="start">Start quaternion.</param>
-        /// <param name="end">End quaternion.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        /// <param name="result">When the method completes, contains the spherical linear interpolation of the two quaternions.</param>
         public static void Slerp(ref Quaternion start, ref Quaternion end, float amount, out Quaternion result)
         {
             float opposite;
@@ -843,28 +563,12 @@ namespace Zeckoxe.Physics
             result.W = (inverse * start.W) + (opposite * end.W);
         }
 
-        /// <summary>
-        /// Interpolates between two quaternions, using spherical linear interpolation.
-        /// </summary>
-        /// <param name="start">Start quaternion.</param>
-        /// <param name="end">End quaternion.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        /// <returns>The spherical linear interpolation of the two quaternions.</returns>
         public static Quaternion Slerp(Quaternion start, Quaternion end, float amount)
         {
             Slerp(ref start, ref end, amount, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Interpolates between quaternions, using spherical quadrangle interpolation.
-        /// </summary>
-        /// <param name="value1">First source quaternion.</param>
-        /// <param name="value2">Second source quaternion.</param>
-        /// <param name="value3">Third source quaternion.</param>
-        /// <param name="value4">Fourth source quaternion.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of interpolation.</param>
-        /// <param name="result">When the method completes, contains the spherical quadrangle interpolation of the quaternions.</param>
         public static void Squad(ref Quaternion value1, ref Quaternion value2, ref Quaternion value3, ref Quaternion value4, float amount, out Quaternion result)
         {
             Slerp(ref value1, ref value4, amount, out Quaternion start);
@@ -872,29 +576,12 @@ namespace Zeckoxe.Physics
             Slerp(ref start, ref end, 2.0f * amount * (1.0f - amount), out result);
         }
 
-        /// <summary>
-        /// Interpolates between quaternions, using spherical quadrangle interpolation.
-        /// </summary>
-        /// <param name="value1">First source quaternion.</param>
-        /// <param name="value2">Second source quaternion.</param>
-        /// <param name="value3">Third source quaternion.</param>
-        /// <param name="value4">Fourth source quaternion.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of interpolation.</param>
-        /// <returns>The spherical quadrangle interpolation of the quaternions.</returns>
         public static Quaternion Squad(Quaternion value1, Quaternion value2, Quaternion value3, Quaternion value4, float amount)
         {
             Squad(ref value1, ref value2, ref value3, ref value4, amount, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Sets up control points for spherical quadrangle interpolation.
-        /// </summary>
-        /// <param name="value1">First source quaternion.</param>
-        /// <param name="value2">Second source quaternion.</param>
-        /// <param name="value3">Third source quaternion.</param>
-        /// <param name="value4">Fourth source quaternion.</param>
-        /// <returns>An array of three quaternions that represent control points for spherical quadrangle interpolation.</returns>
         public static Quaternion[] SquadSetup(Quaternion value1, Quaternion value2, Quaternion value3, Quaternion value4)
         {
             Quaternion q0 = (value1 + value2).LengthSquared() < (value1 - value2).LengthSquared() ? -value1 : value1;
@@ -912,120 +599,60 @@ namespace Zeckoxe.Physics
 
             return results;
         }
-
-        /// <summary>
-        /// Adds two quaternions.
-        /// </summary>
-        /// <param name="left">The first quaternion to add.</param>
-        /// <param name="right">The second quaternion to add.</param>
-        /// <returns>The sum of the two quaternions.</returns>
         public static Quaternion operator +(Quaternion left, Quaternion right)
         {
             Add(ref left, ref right, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Subtracts two quaternions.
-        /// </summary>
-        /// <param name="left">The first quaternion to subtract.</param>
-        /// <param name="right">The second quaternion to subtract.</param>
-        /// <returns>The difference of the two quaternions.</returns>
         public static Quaternion operator -(Quaternion left, Quaternion right)
         {
             Subtract(ref left, ref right, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Reverses the direction of a given quaternion.
-        /// </summary>
-        /// <param name="value">The quaternion to negate.</param>
-        /// <returns>A quaternion facing in the opposite direction.</returns>
         public static Quaternion operator -(Quaternion value)
         {
             Negate(ref value, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Scales a quaternion by the given value.
-        /// </summary>
-        /// <param name="value">The quaternion to scale.</param>
-        /// <param name="scale">The amount by which to scale the quaternion.</param>
-        /// <returns>The scaled quaternion.</returns>
         public static Quaternion operator *(float scale, Quaternion value)
         {
             Multiply(ref value, scale, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Scales a quaternion by the given value.
-        /// </summary>
-        /// <param name="value">The quaternion to scale.</param>
-        /// <param name="scale">The amount by which to scale the quaternion.</param>
-        /// <returns>The scaled quaternion.</returns>
         public static Quaternion operator *(Quaternion value, float scale)
         {
             Multiply(ref value, scale, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Multiplies a quaternion by another.
-        /// </summary>
-        /// <param name="left">The first quaternion to multiply.</param>
-        /// <param name="right">The second quaternion to multiply.</param>
-        /// <returns>The multiplied quaternion.</returns>
         public static Quaternion operator *(Quaternion left, Quaternion right)
         {
             Multiply(ref left, ref right, out Quaternion result);
             return result;
         }
 
-        /// <summary>
-        /// Tests for equality between two objects.
-        /// </summary>
-        /// <param name="left">The first value to compare.</param>
-        /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
         [MethodImpl((MethodImplOptions)0x100)] // MethodImplOptions.AggressiveInlining
         public static bool operator ==(Quaternion left, Quaternion right)
         {
             return left.Equals(ref right);
         }
 
-        /// <summary>
-        /// Tests for inequality between two objects.
-        /// </summary>
-        /// <param name="left">The first value to compare.</param>
-        /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
         [MethodImpl((MethodImplOptions)0x100)] // MethodImplOptions.AggressiveInlining
         public static bool operator !=(Quaternion left, Quaternion right)
         {
             return !left.Equals(ref right);
         }
 
-        /// <summary>
-        /// Returns a <see cref="string"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="string"/> that represents this instance.
-        /// </returns>
         public override string ToString()
         {
             return string.Format(CultureInfo.CurrentCulture, "X:{0} Y:{1} Z:{2} W:{3}", X, Y, Z, W);
         }
 
-        /// <summary>
-        /// Returns a <see cref="string"/> that represents this instance.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <returns>
-        /// A <see cref="string"/> that represents this instance.
-        /// </returns>
+
         public string ToString(string format)
         {
             if (format == null)
@@ -1037,26 +664,12 @@ namespace Zeckoxe.Physics
                 Y.ToString(format, CultureInfo.CurrentCulture), Z.ToString(format, CultureInfo.CurrentCulture), W.ToString(format, CultureInfo.CurrentCulture));
         }
 
-        /// <summary>
-        /// Returns a <see cref="string"/> that represents this instance.
-        /// </summary>
-        /// <param name="formatProvider">The format provider.</param>
-        /// <returns>
-        /// A <see cref="string"/> that represents this instance.
-        /// </returns>
         public string ToString(IFormatProvider formatProvider)
         {
             return string.Format(formatProvider, "X:{0} Y:{1} Z:{2} W:{3}", X, Y, Z, W);
         }
 
-        /// <summary>
-        /// Returns a <see cref="string"/> that represents this instance.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="formatProvider">The format provider.</param>
-        /// <returns>
-        /// A <see cref="string"/> that represents this instance.
-        /// </returns>
+
         public string ToString(string format, IFormatProvider formatProvider)
         {
             if (format == null)
@@ -1068,12 +681,7 @@ namespace Zeckoxe.Physics
                 Y.ToString(format, formatProvider), Z.ToString(format, formatProvider), W.ToString(format, formatProvider));
         }
 
-        /// <summary>
-        /// Returns a hash code for this instance.
-        /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
-        /// </returns>
+
         public override int GetHashCode()
         {
             unchecked
@@ -1086,39 +694,19 @@ namespace Zeckoxe.Physics
             }
         }
 
-        /// <summary>
-        /// Determines whether the specified <see cref="Quaternion"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="Quaternion"/> to compare with this instance.</param>
-        /// <returns>
-        /// <c>true</c> if the specified <see cref="Quaternion"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
         [MethodImpl((MethodImplOptions)0x100)] // MethodImplOptions.AggressiveInlining
         public bool Equals(ref Quaternion other)
         {
             return MathUtil.NearEqual(other.X, X) && MathUtil.NearEqual(other.Y, Y) && MathUtil.NearEqual(other.Z, Z) && MathUtil.NearEqual(other.W, W);
         }
 
-        /// <summary>
-        /// Determines whether the specified <see cref="Quaternion"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="Quaternion"/> to compare with this instance.</param>
-        /// <returns>
-        /// <c>true</c> if the specified <see cref="Quaternion"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
+
         [MethodImpl((MethodImplOptions)0x100)] // MethodImplOptions.AggressiveInlining
         public bool Equals(Quaternion other)
         {
             return Equals(ref other);
         }
 
-        /// <summary>
-        /// Determines whether the specified <see cref="object"/> is equal to this instance.
-        /// </summary>
-        /// <param name="value">The <see cref="object"/> to compare with this instance.</param>
-        /// <returns>
-        /// <c>true</c> if the specified <see cref="object"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
         public override bool Equals(object value)
         {
             if (!(value is Quaternion))

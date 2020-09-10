@@ -6,6 +6,7 @@
 
 
 
+using System.Collections.Generic;
 using Vortice.Vulkan;
 using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
@@ -15,8 +16,6 @@ namespace Zeckoxe.Graphics
 {
     public unsafe class PipelineState : GraphicsResource
     {
-        public PipelineStateDescription PipelineStateDescription { get; set; }
-
 
         internal VkPipelineLayout pipelineLayout;
         internal VkPipeline graphicsPipeline;
@@ -27,6 +26,7 @@ namespace Zeckoxe.Graphics
             Recreate();
         }
 
+        public PipelineStateDescription PipelineStateDescription { get; set; }
 
 
 
@@ -38,18 +38,14 @@ namespace Zeckoxe.Graphics
         }
 
 
-
-        internal void CreateGraphicsPipeline(PipelineStateDescription description)
+        private void CreateGraphicsPipeline(PipelineStateDescription description)
         {
 
             uint stageCount = 0;
             bool Vertex = PipelineStateDescription.Vertex.Data.Length != 0;
             bool Fragment = PipelineStateDescription.Fragment.Data.Length != 0;
-            bool Compute = PipelineStateDescription.Compute.Data.Length != 0;
             VkShaderModule vertexShader = VkShaderModule.Null;
             VkShaderModule fragmentShader = VkShaderModule.Null;
-            VkShaderModule pixelShader = VkShaderModule.Null;
-            VkShaderModule computeShader = VkShaderModule.Null;
 
 
             if (Vertex)
@@ -65,12 +61,6 @@ namespace Zeckoxe.Graphics
                 fragmentShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Fragment.Data);
             }
 
-
-            if (Compute)
-            {
-                stageCount++;
-                computeShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Compute.Data);
-            }
 
 
 
@@ -93,23 +83,9 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 flags = 0,
                 stage = VkShaderStageFlags.Fragment,
-                module = fragmentShader == VkShaderModule.Null ? pixelShader : fragmentShader,
+                module = fragmentShader,
                 pName = Interop.String.ToPointer("main"),
             };
-
-
-            VkPipelineShaderStageCreateInfo ComputeCreateInfo = new VkPipelineShaderStageCreateInfo
-            {
-                sType = VkStructureType.PipelineShaderStageCreateInfo,
-                pNext = null,
-                flags = 0,
-                stage = VkShaderStageFlags.Compute,
-                module = computeShader,
-                pName = Interop.String.ToPointer("main"),
-            };
-
-
-
 
 
 
@@ -127,39 +103,40 @@ namespace Zeckoxe.Graphics
                 shaderStageCreateInfos[1] = fragCreateInfo;
             }
 
-            // TODO: is Compute?
-            if (Compute)
+
+
+
+
+
+            var VertexAttributeDescriptions = description.PipelineVertexInput.VertexAttributeDescriptions;
+            var VertexBindingDescriptions = description.PipelineVertexInput.VertexBindingDescriptions;
+
+            VkVertexInputAttributeDescription* attributeDescr = stackalloc VkVertexInputAttributeDescription[VertexAttributeDescriptions.Count];
+            VkVertexInputBindingDescription* vertexBindingDesc = stackalloc VkVertexInputBindingDescription[VertexBindingDescriptions.Count];
+
+
+
+            for (int i = 0; i < VertexAttributeDescriptions.Count; i++)
             {
-                shaderStageCreateInfos[2] = ComputeCreateInfo;
+                attributeDescr[i] = new VkVertexInputAttributeDescription
+                {
+                    binding = (uint)VertexAttributeDescriptions[i].Binding,
+                    format = (VkFormat)VertexAttributeDescriptions[i].Format,
+                    location = (uint)VertexAttributeDescriptions[i].Location,
+                    offset = (uint)VertexAttributeDescriptions[i].Offset,
+                };
             }
 
-            VkVertexInputBindingDescription* vertexBindingDesc = stackalloc VkVertexInputBindingDescription[1];
 
-            vertexBindingDesc[0] = new VkVertexInputBindingDescription()
+            for (int i = 0; i < VertexBindingDescriptions.Count; i++)
             {
-                binding = 0,
-                inputRate = VkVertexInputRate.Vertex,
-                stride = 20,// (uint)Interop.SizeOf<Vertex>(),
-            };
-
-
-
-            VkVertexInputAttributeDescription* attributeDescr = stackalloc VkVertexInputAttributeDescription[2];
-
-            attributeDescr[0] = new VkVertexInputAttributeDescription()
-            {
-                binding = 0,
-                location = 0,
-                format = VkFormat.R32G32SFloat,
-                offset = 0,
-            };
-            attributeDescr[1] = new VkVertexInputAttributeDescription()
-            {
-                binding = 0,
-                location = 1,
-                format = VkFormat.R32G32B32SFloat,
-                offset = 8// (uint)Interop.SizeOf<Vector2>(),
-            };
+                vertexBindingDesc[i] = new VkVertexInputBindingDescription
+                {
+                    binding = (uint)VertexBindingDescriptions[i].Binding,
+                    inputRate = VertexBindingDescriptions[i].InputRate is VertexInputRate.Vertex ? VkVertexInputRate.Vertex : VkVertexInputRate.Instance,
+                    stride = (uint)VertexBindingDescriptions[i].Stride
+                };
+            }
 
             VkPipelineVertexInputStateCreateInfo vertexInputStateCreate_info = new VkPipelineVertexInputStateCreateInfo()
             {
@@ -167,10 +144,10 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 flags = VkPipelineVertexInputStateCreateFlags.None,
 
-                vertexBindingDescriptionCount = 1,
+                vertexBindingDescriptionCount = (uint)VertexBindingDescriptions.Count,
                 pVertexBindingDescriptions = vertexBindingDesc,
 
-                vertexAttributeDescriptionCount = 2,
+                vertexAttributeDescriptionCount = (uint)VertexAttributeDescriptions.Count,
                 pVertexAttributeDescriptions = attributeDescr,
             };
 

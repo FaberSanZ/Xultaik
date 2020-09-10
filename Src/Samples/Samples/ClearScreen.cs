@@ -1,18 +1,12 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
-
-/*=============================================================================
-	Game.cs
-=============================================================================*/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
 
-namespace _01_ClearScreen
+namespace Samples.Samples
 {
-    public class Game : IDisposable
+    public class ClearScreen : IDisposable
     {
         public Window Window { get; set; }
 
@@ -31,7 +25,7 @@ namespace _01_ClearScreen
 
 
 
-        public Game()
+        public ClearScreen()
         {
             Window = new Window("Zeckoxe Engine - (Clear Screen)", 1000, 720)
             {
@@ -47,7 +41,7 @@ namespace _01_ClearScreen
                 Settings = new Settings()
                 {
                     Validation = true,
-                    Fullscreen = true,
+                    Fullscreen = false,
                     VSync = false,
                 },
             };
@@ -120,6 +114,5 @@ namespace _01_ClearScreen
         {
             //Device.Dispose();
         }
-
     }
 }

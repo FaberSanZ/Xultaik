@@ -19,7 +19,9 @@ namespace Zeckoxe.Graphics
         public RasterizationState RasterizationState { get; set; } = new RasterizationState();
         public MultisampleState MultisampleState { get; set; } = new MultisampleState();
 
-         
+        public PipelineVertexInput PipelineVertexInput;
+
+
         public ShaderBytecode Vertex { get; set; } = new ShaderBytecode(Array.Empty<byte>());
         public ShaderBytecode TessellationControl { get; set; } = new ShaderBytecode(Array.Empty<byte>());
         public ShaderBytecode TessellationEvaluation { get; set; } = new ShaderBytecode(Array.Empty<byte>());

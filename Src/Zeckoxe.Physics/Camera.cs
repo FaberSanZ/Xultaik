@@ -7,10 +7,11 @@
 
 using System;
 using System.Numerics;
-using Zeckoxe.Core;
+using Zeckoxe.Games;
 
 namespace Zeckoxe.Physics
 {
+    // TODO: Camera
     public class Camera : IDisposable
     {
         private Vector3 position;

@@ -1,10 +1,4 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
-
-/*=============================================================================
-	Game.cs
-=============================================================================*/
-
-using System;
+﻿using System;
 using System.Numerics;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
@@ -13,34 +7,24 @@ using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.ShaderCompiler;
 using Buffer = Zeckoxe.Graphics.Buffer;
 
-
-namespace _02_Hello_Triangle
+namespace Samples.Samples
 {
-    public struct Vertex
+    public class Triangle : IDisposable
     {
-        public Vector2 pos;
-        public Vector3 color;
-        public Vertex(Vector2 pos, Vector3 color)
+        public struct Vertex
         {
-            this.pos = pos;
-            this.color = color;
+            public Vertex(Vector2 position, Vector3 color)
+            {
+                Position = position;
+                Color = color;
+            }
+
+            public Vector2 Position;
+            public Vector3 Color;
         }
-    }
 
-    public struct ConstVS
-    {
-        public Matrix4x4 Word;
-        public Matrix4x4 View;
-        public Matrix4x4 Projection;
 
-        //public ConstVS()
-        //{
 
-        //}
-    }
-
-    public class Game : IDisposable
-    {
         public Vertex[] vertices = new[]
         {
                 new Vertex(new Vector2(0.0f, -0.65f), new Vector3(1.8f, 0.0f, 0.0f)),
@@ -54,7 +38,6 @@ namespace _02_Hello_Triangle
             0, 1, 2
         };
 
-        public ConstVS ConstVS;
 
         public Window Window { get; set; }
         public PresentationParameters Parameters { get; set; }
@@ -67,11 +50,9 @@ namespace _02_Hello_Triangle
         public Fence Fence { get; set; } // Synchronization Primitives
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
-        public Buffer ConstBuffer { get; set; } // W-V-P
 
 
-
-        public Game()
+        public Triangle()
         {
             Window = new Window(string.Empty, 1000, 720);
 
@@ -83,7 +64,7 @@ namespace _02_Hello_Triangle
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = false,
+                    Validation = true,
                     Fullscreen = false,
                     VSync = false,
                 },
@@ -127,14 +108,6 @@ namespace _02_Hello_Triangle
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<int>(indices),
             });
-
-
-            ConstBuffer = new Buffer(Device, new BufferDescription()
-            {
-                BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<ConstVS>(ConstVS),
-            });
         }
 
 
@@ -147,7 +120,6 @@ namespace _02_Hello_Triangle
                 InputAssemblyState = new InputAssemblyState()
                 {
                     PrimitiveType = PrimitiveType.TriangleList,
-                    //PrimitiveRestartEnable = false,
                 },
                 RasterizationState = new RasterizationState()
                 {
@@ -155,11 +127,35 @@ namespace _02_Hello_Triangle
                     CullMode = CullMode.Back,
                     FrontFace = FrontFace.Clockwise
                 },
-                MultisampleState = new MultisampleState()
+                PipelineVertexInput = new PipelineVertexInput
                 {
-                    MultisampleCount = MultisampleCount.X1,
+                    VertexAttributeDescriptions =
+                    {
+                        new VertexInputAttribute
+                        {
+                            Binding = 0,
+                            Location = 0,
+                            Format = PixelFormat.R32G32SFloat,
+                            Offset = 0,
+                        },
+                        new VertexInputAttribute
+                        {
+                            Binding = 0,
+                            Location = 1,
+                            Format = PixelFormat.R32G32B32SFloat,
+                            Offset = 8,
+                        }
+                    },
+                    VertexBindingDescriptions =
+                    {
+                        new VertexInputBinding
+                        {
+                            Binding = 0,
+                            InputRate = VertexInputRate.Vertex,
+                            Stride = 20,
+                        }
+                    },
                 },
-
                 Vertex = ShaderLoader.LoadFromFile("Shaders/shader.vert", Stage.Vertex),
                 Fragment = ShaderLoader.LoadFromFile("Shaders/shader.frag", Stage.Fragment),
             };
@@ -174,7 +170,7 @@ namespace _02_Hello_Triangle
 
             BeginRun();
 
-            Window.Title += ("Zeckoxe Engine - (Hello Triangle) " + Device.NativeAdapter.Description);
+            Window.Title += "Zeckoxe Engine - (Hello Triangle) ";
 
             Window?.Show();
 
@@ -192,20 +188,8 @@ namespace _02_Hello_Triangle
 
         public void BeginRun()
         {
-            //vertices[0].color.Y += 0.001f;
-            //vertices[1].color.X += 0.001f;
-            //vertices[2].color.Z += 0.001f;
             VertexBuffer.SetData(vertices);
             IndexBuffer.SetData(indices);
-
-
-
-            ConstVS.Projection = Matrix4x4.CreatePerspectiveFieldOfView(DegreesToRadians(60f), Parameters.BackBufferWidth / (float)Parameters.BackBufferHeight, 0.1f, 256.0f);
-            ConstVS.View = Matrix4x4.CreateTranslation(0, 0, -2.5f);
-            ConstVS.Word = Matrix4x4.Identity;
-            ConstVS.Word = ConstVS.Word * Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, 0);
-            ConstVS.Word = ConstVS.Word * Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, 0);
-            ConstVS.Word = ConstVS.Word * Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, 0);
         }
 
         public void Update()
@@ -241,12 +225,5 @@ namespace _02_Hello_Triangle
         {
             Instance.Dispose();
         }
-
-
-        public static float DegreesToRadians(float degrees)
-        {
-            return degrees * (float)Math.PI / 180f;
-        }
-
     }
 }

@@ -254,6 +254,7 @@ namespace Zeckoxe.Graphics
                 waitSemaphoreCount = 1,
                 pWaitSemaphores = &waitSemaphore,
                 pWaitDstStageMask = &waitStages,
+                pNext = null,
                 commandBufferCount = 1,
                 pCommandBuffers = &commandBuffer,
                 signalSemaphoreCount = 1,

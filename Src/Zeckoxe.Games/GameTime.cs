@@ -8,7 +8,7 @@
 
 using System;
 
-namespace Zeckoxe.Core
+namespace Zeckoxe.Games
 {
     public class GameTime
     {
