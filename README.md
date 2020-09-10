@@ -61,8 +61,8 @@ PR are always welcome!
 
 | Example   | Screenshot  | Description          |
 |---------------|-------------|----------------------|
-| [Clear Screen](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) | <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/01.PNG" width=200> | This example shows how to configure the device and clear the color. |
-| [Triangle](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) |  <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/02.PNG" width=200> | This example shows how to render simple triangle.  |
+| [Clear Screen](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) | <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/01.PNG" width=230> | This example shows how to configure the device and clear the color. |
+| [Triangle](https://github.com/Zeckoxe/Zeckoxe-Engine/tree/master/Src/01-ClearScreen) |  <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/02.PNG" width=230> | This example shows how to render simple triangle.  |
 
 
 
