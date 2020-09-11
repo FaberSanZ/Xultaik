@@ -11,50 +11,50 @@ namespace Zeckoxe.ShaderCompiler
     {
 
 
-        internal static ShaderCompiler.Stage ToStage(Stage stage)
+        internal static ShaderCompiler.Stage ToStage(int stage)
         {
             switch (stage)
             {
-                case Stage.Vertex:
+                case 0:
                     return ShaderCompiler.Stage.Vertex;
 
-                case Stage.Fragment:
+                case 1:
                     return ShaderCompiler.Stage.Fragment;
 
-                case Stage.Compute:
+                case 2:
                     return ShaderCompiler.Stage.Compute;
 
-                case Stage.Geometry:
+                case 3:
                     return ShaderCompiler.Stage.Geometry;
 
-                case Stage.TessControl:
+                case 4:
                     return ShaderCompiler.Stage.TessControl;
 
-                case Stage.TessEvaluation:
+                case 5:
                     return ShaderCompiler.Stage.TessEvaluation;
 
-                case Stage.Raygen:
+                case 6:
                     return ShaderCompiler.Stage.Raygen;
 
-                case Stage.Anyhit:
+                case 7:
                     return ShaderCompiler.Stage.Anyhit;
 
-                case Stage.Closesthit:
+                case 8:
                     return ShaderCompiler.Stage.Closesthit;
 
-                case Stage.Miss:
+                case 9:
                     return ShaderCompiler.Stage.Miss;
 
-                case Stage.Intersection:
+                case 10:
                     return ShaderCompiler.Stage.Intersection;
 
-                case Stage.Callable:
+                case 11:
                     return ShaderCompiler.Stage.Callable;
 
-                case Stage.Task:
+                case 12:
                     return ShaderCompiler.Stage.Task;
 
-                case Stage.Mesh:
+                case 13:
                     return ShaderCompiler.Stage.Mesh;
 
                 default:
@@ -66,28 +66,12 @@ namespace Zeckoxe.ShaderCompiler
 
 
 
-    public enum Stage
-    {
-        Vertex,
-        Fragment,
-        Compute,
-        Geometry,
-        TessControl,
-        TessEvaluation,
-        Raygen,
-        Anyhit,
-        Closesthit,
-        Miss,
-        Intersection,
-        Callable,
-        Task,
-        Mesh,
-    }
+
 
     public class Compiler
     {
 
-        public static byte[] LoadFromFile(string path, Stage stage)
+        public static byte[] LoadFromFile(string path, int stage)
         {
             return new Compiler().LoadSPIR_V_ShaderGLSL(path, Convert.ToStage(stage));
         }

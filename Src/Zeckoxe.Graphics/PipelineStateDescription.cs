@@ -16,17 +16,14 @@ namespace Zeckoxe.Graphics
         public Framebuffer Framebuffer { get; set; }
 
         public InputAssemblyState InputAssemblyState { get; set; }
+
         public RasterizationState RasterizationState { get; set; } = new RasterizationState();
+
         public MultisampleState MultisampleState { get; set; } = new MultisampleState();
 
-        public PipelineVertexInput PipelineVertexInput;
+        public PipelineVertexInput PipelineVertexInput { get; set; }
 
+        public List<ShaderBytecode> Shaders { get; set; } = new List<ShaderBytecode>();
 
-        public ShaderBytecode Vertex { get; set; } = new ShaderBytecode(Array.Empty<byte>());
-        public ShaderBytecode TessellationControl { get; set; } = new ShaderBytecode(Array.Empty<byte>());
-        public ShaderBytecode TessellationEvaluation { get; set; } = new ShaderBytecode(Array.Empty<byte>());
-        public ShaderBytecode Geometry { get; set; } = new ShaderBytecode(Array.Empty<byte>());
-        public ShaderBytecode Fragment { get; set; } = new ShaderBytecode(Array.Empty<byte>());
-        public ShaderBytecode Compute { get; set; } = new ShaderBytecode(Array.Empty<byte>());
     }
 }

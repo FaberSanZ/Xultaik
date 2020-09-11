@@ -156,8 +156,11 @@ namespace Samples.Samples
                         }
                     },
                 },
-                Vertex = ShaderLoader.LoadFromFile("Shaders/shader.vert", Stage.Vertex),
-                Fragment = ShaderLoader.LoadFromFile("Shaders/shader.frag", Stage.Fragment),
+                Shaders = 
+                { 
+                    ShaderBytecode.LoadFromFile("Shaders/shader.frag", ShaderStage.Fragment),
+                    ShaderBytecode.LoadFromFile("Shaders/shader.vert", ShaderStage.Vertex),
+                },
             };
 
             PipelineState = new PipelineState(Pipelinedescription);

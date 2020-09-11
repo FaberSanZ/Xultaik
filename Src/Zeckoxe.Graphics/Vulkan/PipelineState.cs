@@ -8,7 +8,6 @@
 
 using System.Collections.Generic;
 using Vortice.Vulkan;
-using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
@@ -41,102 +40,54 @@ namespace Zeckoxe.Graphics
         private void CreateGraphicsPipeline(PipelineStateDescription description)
         {
 
-            uint stageCount = 0;
-            bool Vertex = PipelineStateDescription.Vertex.Data.Length != 0;
-            bool Fragment = PipelineStateDescription.Fragment.Data.Length != 0;
-            VkShaderModule vertexShader = VkShaderModule.Null;
-            VkShaderModule fragmentShader = VkShaderModule.Null;
+            List<ShaderBytecode> shaders = description.Shaders;
+            VkPipelineShaderStageCreateInfo* shaderStageCreateInfos = stackalloc VkPipelineShaderStageCreateInfo[shaders.Count];
 
-
-            if (Vertex)
+            for (int i = 0; i < shaders.Count; i++)
             {
-                stageCount++;
-                vertexShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Vertex.Data);
-
-            }
-
-            if (Fragment)
-            {
-                stageCount++;
-                fragmentShader = NativeDevice.LoadSPIR_V_Shader(PipelineStateDescription.Fragment.Data);
+                shaderStageCreateInfos[i] = new VkPipelineShaderStageCreateInfo
+                {
+                    sType = VkStructureType.PipelineShaderStageCreateInfo,
+                    pNext = null,
+                    stage = (VkShaderStageFlags)shaders[i].Stage,
+                    module = NativeDevice.LoadSPIR_V_Shader(shaders[i].Data),
+                    pName = Interop.String.ToPointer("main"),
+                };
             }
 
 
 
+            List<VertexInputAttribute> vertexAttribute = description.PipelineVertexInput.VertexAttributeDescriptions;
+            VkVertexInputAttributeDescription* attributeDescr = stackalloc VkVertexInputAttributeDescription[vertexAttribute.Count];
 
-
-
-
-            VkPipelineShaderStageCreateInfo vertCreateInfo = new VkPipelineShaderStageCreateInfo()
-            {
-                sType = VkStructureType.PipelineShaderStageCreateInfo,
-                pNext = null,
-                stage = VkShaderStageFlags.Vertex,
-                module = vertexShader,
-                pName = Interop.String.ToPointer("main"),
-            };
-
-
-            VkPipelineShaderStageCreateInfo fragCreateInfo = new VkPipelineShaderStageCreateInfo
-            {
-                sType = VkStructureType.PipelineShaderStageCreateInfo,
-                pNext = null,
-                flags = 0,
-                stage = VkShaderStageFlags.Fragment,
-                module = fragmentShader,
-                pName = Interop.String.ToPointer("main"),
-            };
-
-
-
-
-            VkPipelineShaderStageCreateInfo* shaderStageCreateInfos = stackalloc VkPipelineShaderStageCreateInfo[(int)stageCount];
-
-
-            if (Vertex)
-            {
-                shaderStageCreateInfos[0] = vertCreateInfo;
-            }
-
-            if (Fragment)
-            {
-                shaderStageCreateInfos[1] = fragCreateInfo;
-            }
-
-
-
-
-
-
-            var VertexAttributeDescriptions = description.PipelineVertexInput.VertexAttributeDescriptions;
-            var VertexBindingDescriptions = description.PipelineVertexInput.VertexBindingDescriptions;
-
-            VkVertexInputAttributeDescription* attributeDescr = stackalloc VkVertexInputAttributeDescription[VertexAttributeDescriptions.Count];
-            VkVertexInputBindingDescription* vertexBindingDesc = stackalloc VkVertexInputBindingDescription[VertexBindingDescriptions.Count];
-
-
-
-            for (int i = 0; i < VertexAttributeDescriptions.Count; i++)
+            for (int i = 0; i < vertexAttribute.Count; i++)
             {
                 attributeDescr[i] = new VkVertexInputAttributeDescription
                 {
-                    binding = (uint)VertexAttributeDescriptions[i].Binding,
-                    format = (VkFormat)VertexAttributeDescriptions[i].Format,
-                    location = (uint)VertexAttributeDescriptions[i].Location,
-                    offset = (uint)VertexAttributeDescriptions[i].Offset,
+                    binding = (uint)vertexAttribute[i].Binding,
+                    format = (VkFormat)vertexAttribute[i].Format,
+                    location = (uint)vertexAttribute[i].Location,
+                    offset = (uint)vertexAttribute[i].Offset,
                 };
             }
 
 
-            for (int i = 0; i < VertexBindingDescriptions.Count; i++)
+
+            List<VertexInputBinding> vertexBinding = description.PipelineVertexInput.VertexBindingDescriptions;
+            VkVertexInputBindingDescription* vertexBindingDesc = stackalloc VkVertexInputBindingDescription[vertexBinding.Count];
+
+            for (int i = 0; i < vertexBinding.Count; i++)
             {
                 vertexBindingDesc[i] = new VkVertexInputBindingDescription
                 {
-                    binding = (uint)VertexBindingDescriptions[i].Binding,
-                    inputRate = VertexBindingDescriptions[i].InputRate is VertexInputRate.Vertex ? VkVertexInputRate.Vertex : VkVertexInputRate.Instance,
-                    stride = (uint)VertexBindingDescriptions[i].Stride
+                    binding = (uint)vertexBinding[i].Binding,
+                    inputRate = vertexBinding[i].InputRate is VertexInputRate.Vertex ? VkVertexInputRate.Vertex : VkVertexInputRate.Instance,
+                    stride = (uint)vertexBinding[i].Stride
                 };
             }
+
+
+
 
             VkPipelineVertexInputStateCreateInfo vertexInputStateCreate_info = new VkPipelineVertexInputStateCreateInfo()
             {
@@ -144,16 +95,15 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 flags = VkPipelineVertexInputStateCreateFlags.None,
 
-                vertexBindingDescriptionCount = (uint)VertexBindingDescriptions.Count,
+                vertexBindingDescriptionCount = (uint)vertexBinding.Count,
                 pVertexBindingDescriptions = vertexBindingDesc,
 
-                vertexAttributeDescriptionCount = (uint)VertexAttributeDescriptions.Count,
+                vertexAttributeDescriptionCount = (uint)vertexAttribute.Count,
                 pVertexAttributeDescriptions = attributeDescr,
             };
 
 
 
-            // PipelineInputAssemblyStateCreateInfo -------------
             VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo = new VkPipelineInputAssemblyStateCreateInfo()
             {
                 sType = VkStructureType.PipelineInputAssemblyStateCreateInfo,
@@ -171,7 +121,6 @@ namespace Zeckoxe.Graphics
                 pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = true;
                 pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology.PointList;
             }
-            // PipelineInputAssemblyStateCreateInfo -------------
 
 
 
@@ -181,7 +130,7 @@ namespace Zeckoxe.Graphics
             VkPipelineRasterizationStateCreateInfo rasterizerState = new VkPipelineRasterizationStateCreateInfo()
             {
                 sType = VkStructureType.PipelineRasterizationStateCreateInfo,
-                pNext = (void*)null,
+                pNext = null,
             };
 
             if (PipelineStateDescription.RasterizationState != null)
@@ -243,8 +192,8 @@ namespace Zeckoxe.Graphics
             VkGraphicsPipelineCreateInfo graphicsPipelineCI = new VkGraphicsPipelineCreateInfo()
             {
                 sType = VkStructureType.GraphicsPipelineCreateInfo,
-                pNext = (void*)null,
-                stageCount = stageCount,
+                pNext = null,
+                stageCount = (uint)shaders.Count,
                 pStages = shaderStageCreateInfos,
                 pVertexInputState = &vertexInputStateCreate_info,
                 pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo,
