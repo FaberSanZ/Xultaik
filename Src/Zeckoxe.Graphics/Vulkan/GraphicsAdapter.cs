@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 
 /*=============================================================================
 	GraphicsAdapter.cs
@@ -53,9 +53,7 @@ namespace Zeckoxe.Graphics
 
         public GraphicsAdapter(GraphicsInstance Instance)
         {
-
             DefaultInstance = Instance;
-
             Recreate();
         }
 
@@ -100,8 +98,8 @@ namespace Zeckoxe.Graphics
         {
             get
             {
-                VkPhysicalDeviceProperties deviceProperties = Properties;
-                return Interop.String.FromPointer(deviceProperties.deviceName);
+                VkPhysicalDeviceProperties properties = Properties;
+                return Interop.String.FromPointer(properties.deviceName);
             }
         }
 
@@ -109,18 +107,8 @@ namespace Zeckoxe.Graphics
         {
             get
             {
-                VkPhysicalDeviceProperties deviceProperties = Properties;
-
-                string description = Interop.String.FromPointer(deviceProperties.deviceName);
-
-
-                // if (VendorId != 0x0)
-
-
-                description += $" - {VendorNameString(VendorId)}";
-                
-
-                return description;
+                VkPhysicalDeviceProperties properties = Properties;
+                return Interop.String.FromPointer(properties.deviceName) + $" - {VendorNameString(VendorId)}";
             }
         }
 
