@@ -50,7 +50,7 @@ namespace Zeckoxe.Graphics
                     sType = VkStructureType.PipelineShaderStageCreateInfo,
                     pNext = null,
                     stage = (VkShaderStageFlags)shaders[i].Stage,
-                    module = NativeDevice.LoadSPIR_V_Shader(shaders[i].Data),
+                    module = NativeDevice.LoadSpir_V_Shader(shaders[i].Data),
                     pName = Interop.String.ToPointer("main"),
                 };
             }
@@ -203,6 +203,7 @@ namespace Zeckoxe.Graphics
                 layout = pipelineLayout,
                 renderPass = description.Framebuffer.renderPass,
                 subpass = 0,
+                pDepthStencilState = null,
             };
 
 

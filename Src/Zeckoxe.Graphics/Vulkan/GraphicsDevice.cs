@@ -75,7 +75,6 @@ namespace Zeckoxe.Graphics
             nativeCommandBufferSecondary = CreateCommandBufferSecondary();
 
 
-            //GetSupportedDepthFormat(depthFormats);
         }
 
 
@@ -303,7 +302,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        internal VkShaderModule LoadSPIR_V_Shader(byte[] bytes)
+        internal VkShaderModule LoadSpir_V_Shader(byte[] bytes)
         {
 
             fixed (byte* scPtr = bytes)

@@ -45,7 +45,7 @@ namespace Zeckoxe.Graphics
     {
         public ShaderBytecode(string path, ShaderStage stage)
         {
-            Data = File.ReadAllBytes(path);
+            Data = Compiler.LoadFromFile(path, ToStage(stage));
             Stage = stage;
         }
 
@@ -114,10 +114,9 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage)
-        {
-            return new ShaderBytecode(Compiler.LoadFromFile(path, ToStage(stage)), stage);
-        }
+        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage) => new ShaderBytecode(path, stage);
+        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage) => new ShaderBytecode(bytes, stage);
+
 
 
         public static implicit operator byte[](ShaderBytecode shaderBytecode) => shaderBytecode.Data;

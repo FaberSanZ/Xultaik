@@ -25,7 +25,31 @@ namespace Zeckoxe.Graphics
         internal VkPhysicalDeviceRayTracingFeaturesKHR DeviceRayTracingFeatures;
 
 
-        
+        VkPhysicalDeviceSubgroupProperties subgroup_properties;
+        VkPhysicalDevice8BitStorageFeatures storage_8bit_features;
+        VkPhysicalDevice16BitStorageFeatures storage_16bit_features;
+        VkPhysicalDeviceShaderFloat16Int8Features float16_int8_features;
+        VkPhysicalDeviceFeatures enabled_features;
+        VkPhysicalDeviceExternalMemoryHostPropertiesEXT host_memory_properties;
+        VkPhysicalDeviceMultiviewFeatures multiview_features;
+        VkPhysicalDeviceImagelessFramebufferFeatures imageless_features;
+        VkPhysicalDeviceSubgroupSizeControlFeaturesEXT subgroup_size_control_features;
+        VkPhysicalDeviceSubgroupSizeControlPropertiesEXT subgroup_size_control_properties;
+        VkPhysicalDeviceComputeShaderDerivativesFeaturesNV compute_shader_derivative_features;
+        VkPhysicalDeviceHostQueryResetFeatures host_query_reset_features;
+        VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT demote_to_helper_invocation_features;
+        VkPhysicalDeviceScalarBlockLayoutFeatures scalar_block_features;
+        VkPhysicalDeviceUniformBufferStandardLayoutFeatures ubo_std430_features;
+        VkPhysicalDeviceTimelineSemaphoreFeatures timeline_semaphore_features;
+        VkPhysicalDeviceDescriptorIndexingFeatures descriptor_indexing_features;
+        VkPhysicalDeviceDescriptorIndexingProperties descriptor_indexing_properties;
+        VkPhysicalDeviceConservativeRasterizationPropertiesEXT conservative_rasterization_properties;
+        VkPhysicalDevicePerformanceQueryFeaturesKHR performance_query_features;
+        VkPhysicalDeviceSamplerYcbcrConversionFeatures sampler_ycbcr_conversion_features;
+        VkPhysicalDeviceDriverProperties driver_properties;
+
+
+
 
         public GraphicsAdapter(GraphicsInstance Instance)
         {
@@ -34,6 +58,34 @@ namespace Zeckoxe.Graphics
 
             Recreate();
         }
+
+
+        public bool SupportsPhysicalDeviceProperties2;
+        bool supports_external = false;
+        bool supports_dedicated = false;
+        bool supports_image_format_list = false;
+        bool supports_debug_marker = false;
+        bool supports_debug_utils = false;
+        bool supports_mirror_clamp_to_edge = false;
+        bool supports_google_display_timing = false;
+        bool supports_nv_device_diagnostic_checkpoints = false;
+        bool supports_vulkan_11_instance = false;
+        bool supports_vulkan_11_device = false;
+        bool supports_external_memory_host = false;
+        bool supports_surface_capabilities2 = false;
+        bool supports_full_screen_exclusive = false;
+        bool supports_update_template = false;
+        bool supports_maintenance_1 = false;
+        bool supports_maintenance_2 = false;
+        bool supports_maintenance_3 = false;
+        bool supports_descriptor_indexing = false;
+        bool supports_conservative_rasterization = false;
+        bool supports_bind_memory2 = false;
+        bool supports_get_memory_requirements2 = false;
+        bool supports_draw_indirect_count = false;
+        bool supports_draw_parameters = false;
+        bool supports_driver_properties = false;
+        bool supports_calibrated_timestamps = false;
 
 
         public GraphicsInstance DefaultInstance { get; private set; }
@@ -119,6 +171,7 @@ namespace Zeckoxe.Graphics
 
             Properties = GetProperties();
             Features2 = GetPhysicalDeviceFeatures2();
+            SupportsPhysicalDeviceProperties2 = true;
             DeviceRayTracingFeatures = GetPhysicalDeviceFeaturesRayTracing();
 
             //Features2 = new VkPhysicalDeviceFeatures2();

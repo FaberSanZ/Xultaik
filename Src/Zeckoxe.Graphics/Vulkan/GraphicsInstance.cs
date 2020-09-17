@@ -71,7 +71,7 @@ namespace Zeckoxe.Graphics
             VkApplicationInfo AppInfo = new VkApplicationInfo()
             {
                 sType = VkStructureType.ApplicationInfo,
-                apiVersion = new VkVersion(1, 0, 0),
+                apiVersion = VkVersion.Version_1_1,
                 applicationVersion = new VkVersion(0, 0, 1),
                 engineVersion = new VkVersion(0, 0, 2),
                 pApplicationName = Interop.String.ToPointer("Zeckoxe Engine"),
@@ -138,7 +138,7 @@ namespace Zeckoxe.Graphics
 
             if (Parameters.Settings.Validation)
             {
-                // TODO: Validation complete?
+                // TODO: Validation complete
                 ValidationLayer.Add("VK_LAYER_LUNARG_standard_validation");
                 InstanceExtensions.Add("VK_EXT_debug_report");
             }
