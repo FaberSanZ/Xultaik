@@ -103,7 +103,7 @@ namespace Zeckoxe.Graphics
 
         internal VkSurfaceKHR CreateSurface()
         {
-            VkInstance instance = NativeDevice.NativeInstance.handle;
+            VkInstance instance = NativeDevice.NativeAdapter.instance;
             VkSurfaceKHR defSurface = default;
 
             VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfo = new VkWin32SurfaceCreateInfoKHR()
@@ -114,7 +114,7 @@ namespace Zeckoxe.Graphics
                 hwnd = Parameters.Win32Handle,
             };
 
-            vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.NativeInstance.GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
+            vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.NativeAdapter.GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

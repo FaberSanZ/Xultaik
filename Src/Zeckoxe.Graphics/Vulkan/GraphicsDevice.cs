@@ -33,9 +33,7 @@ namespace Zeckoxe.Graphics
         {
             NativeAdapter = adapter;
 
-            NativeInstance = NativeAdapter.DefaultInstance;
-
-            NativeParameters = NativeInstance.Parameters;
+            NativeParameters = NativeAdapter.Parameters;
 
 
             Recreate();
@@ -43,7 +41,6 @@ namespace Zeckoxe.Graphics
 
 
         public GraphicsAdapter NativeAdapter { get; set; }
-        public GraphicsInstance NativeInstance { get; set; }
         public GraphicsSwapChain NativeSwapChain { get; set; }
         public PresentationParameters NativeParameters { get; set; }
         public CommandBuffer NativeCommand { get; set; }

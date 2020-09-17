@@ -41,7 +41,6 @@ namespace Samples.Samples
 
         public Window Window { get; set; }
         public PresentationParameters Parameters { get; set; }
-        public GraphicsInstance Instance { get; set; }
         public GraphicsAdapter Adapter { get; set; }
         public GraphicsDevice Device { get; set; }
         public Framebuffer Framebuffer { get; set; }
@@ -64,7 +63,7 @@ namespace Samples.Samples
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = false,
+                    Validation = true,
                     Fullscreen = false,
                     VSync = false,
                 },
@@ -77,9 +76,7 @@ namespace Samples.Samples
 
         public void Initialize()
         {
-            Instance = new GraphicsInstance(Parameters);
-
-            Adapter = new GraphicsAdapter(Instance);
+            Adapter = new GraphicsAdapter(Parameters);
 
             Device = new GraphicsDevice(Adapter);
 
@@ -226,7 +223,6 @@ namespace Samples.Samples
 
         public void Dispose()
         {
-            Instance.Dispose();
         }
     }
 }

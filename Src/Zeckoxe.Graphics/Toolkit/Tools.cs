@@ -18,52 +18,12 @@ namespace Zeckoxe.Graphics
 {
     public static unsafe class Tools
     {
-        public static List<string> EnumerateInstanceExtensions()
+
+
+
+        public static TDelegate GetInstanceProcAddr<TDelegate>(this GraphicsAdapter instance, string name) where TDelegate : class
         {
-            uint count = 0;
-
-            vkEnumerateInstanceExtensionProperties((byte*)null, &count, null);
-            VkExtensionProperties* ext = stackalloc VkExtensionProperties[(int)count];
-            vkEnumerateInstanceExtensionProperties((byte*)null, &count, ext);
-
-
-            List<string> extensionName = new List<string>();
-            for (int i = 0; i < count; i++)
-            {
-                extensionName.Add(Interop.String.FromPointer(ext[i].extensionName));
-            }
-
-            return extensionName;
-        }
-
-
-        public static PixelFormat GetSupportedDepthFormat(this GraphicsAdapter adapter, IEnumerable<PixelFormat> depthFormats)
-        {
-            // Since all depth formats may be optional, we need to find a suitable depth format to use
-            // Start with the highest precision packed format
-
-            PixelFormat depthFormat = PixelFormat.Undefined;
-
-            foreach (PixelFormat format in depthFormats)
-            {
-                vkGetPhysicalDeviceFormatProperties(adapter.NativePhysicalDevice, (VkFormat)format, out VkFormatProperties formatProps);
-
-                // Format must support depth stencil attachment for optimal tiling
-                if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) != 0)
-                {
-                    depthFormat = format;
-                }
-            }
-
-            
-
-            return depthFormat;
-        }
-
-
-        public static TDelegate GetInstanceProcAddr<TDelegate>(this GraphicsInstance instance, string name) where TDelegate : class
-        {
-            IntPtr funcPtr = vkGetInstanceProcAddr(instance.handle, Interop.String.ToPointer(name));
+            IntPtr funcPtr = vkGetInstanceProcAddr(instance.instance, Interop.String.ToPointer(name));
 
             return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
         }

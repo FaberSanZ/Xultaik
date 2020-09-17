@@ -12,7 +12,6 @@ namespace Samples.Samples
 
         public PresentationParameters Parameters { get; set; }
 
-        public GraphicsInstance Instance { get; set; }
 
         public GraphicsAdapter Adapter { get; set; }
 
@@ -49,9 +48,8 @@ namespace Samples.Samples
 
         public void Initialize()
         {
-            Instance = new GraphicsInstance(Parameters);
 
-            Adapter = new GraphicsAdapter(Instance);
+            Adapter = new GraphicsAdapter(Parameters);
 
             Device = new GraphicsDevice(Adapter);
 

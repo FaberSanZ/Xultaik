@@ -16,7 +16,7 @@ namespace Zeckoxe.Graphics
 
         public DebugReport(GraphicsDevice device) : base(device)
         {
-            _instance = device.NativeInstance.handle;
+            _instance = device.NativeAdapter.instance;
         }
 
 
