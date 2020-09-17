@@ -14,9 +14,14 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class GraphicsAdapter
+    public unsafe class GraphicsAdapter : IDisposable
     {
+        internal VkInstance instance;
         
+        internal vkDebugUtilsMessengerCallbackEXT _debugMessengerCallbackFunc;
+        internal VkDebugUtilsMessengerEXT _debugMessenger = VkDebugUtilsMessengerEXT.Null;
+
+
         internal int device_count; // number of GPUs we're rendering to --- if DG is disabled, this is 1
         internal VkPhysicalDevice NativePhysicalDevice;
         internal VkPhysicalDevice[] NativePhysicalDevices;
@@ -114,38 +119,6 @@ namespace Zeckoxe.Graphics
 
 
 
-
-
-
-        internal string VendorNameString(uint vendorId)
-        {
-            switch (vendorId)
-            {
-                case 0x1002:
-                    return "AMD";
-
-                case 0x1010:
-                    return "ImgTec";
-
-                case 0x10DE:
-                    return "NVIDIA";
-
-                case 0x13B5:
-                    return "ARM";
-
-                case 0x5143:
-                    return "Qualcomm";
-
-                case 0x8086:
-                    return "Intel";
-
-                default:
-                    return "Unknown";
-            }
-        }
-
-
-
         public void Recreate()
         {
             NativePhysicalDevices = Array.Empty<VkPhysicalDevice>();
@@ -159,7 +132,7 @@ namespace Zeckoxe.Graphics
 
             Properties = GetProperties();
             Features2 = GetPhysicalDeviceFeatures2();
-            SupportsPhysicalDeviceProperties2 = true;
+            //SupportsPhysicalDeviceProperties2 = true;
             DeviceRayTracingFeatures = GetPhysicalDeviceFeaturesRayTracing();
 
             //Features2 = new VkPhysicalDeviceFeatures2();
@@ -218,19 +191,52 @@ namespace Zeckoxe.Graphics
         internal VkPhysicalDevice[] GetPhysicalDevices()
         {
             // Physical Device
-            uint Count = 0;
-            vkEnumeratePhysicalDevices(DefaultInstance.handle, &Count, null);
+            uint count = 0;
+            vkEnumeratePhysicalDevices(DefaultInstance.handle, &count, null);
 
             // Enumerate devices
-            VkPhysicalDevice[] physicalDevices = new VkPhysicalDevice[(int)Count];
+            VkPhysicalDevice[] physicalDevices = new VkPhysicalDevice[(int)count];
 
             fixed (VkPhysicalDevice* ptr = physicalDevices)
             {
-                vkEnumeratePhysicalDevices(DefaultInstance.handle, &Count, ptr);
+                vkEnumeratePhysicalDevices(DefaultInstance.handle, &count, ptr);
             }
 
             return physicalDevices;
         }
 
+
+
+        internal string VendorNameString(uint vendorId)
+        {
+            switch (vendorId)
+            {
+                case 0x1002:
+                    return "AMD";
+
+                case 0x1010:
+                    return "ImgTec";
+
+                case 0x10DE:
+                    return "NVIDIA";
+
+                case 0x13B5:
+                    return "ARM";
+
+                case 0x5143:
+                    return "Qualcomm";
+
+                case 0x8086:
+                    return "Intel";
+
+                default:
+                    return "Unknown";
+            }
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

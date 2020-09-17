@@ -26,7 +26,7 @@ namespace Zeckoxe.Graphics
 
         internal unsafe delegate void vkDestroyDebugReportCallbackEXT_d(VkInstance instance, VkDebugReportCallbackEXT callback, VkAllocationCallbacks* pAllocator);
 
-        internal VkInstance handle { get; private set; }
+        internal VkInstance handle;
 
         internal VkDebugReportCallbackEXT _debugReportCallbackHandle;
 
@@ -71,7 +71,7 @@ namespace Zeckoxe.Graphics
             VkApplicationInfo AppInfo = new VkApplicationInfo()
             {
                 sType = VkStructureType.ApplicationInfo,
-                apiVersion = VkVersion.Version_1_1,
+                apiVersion = new VkVersion(1, 0, 0),
                 applicationVersion = new VkVersion(0, 0, 1),
                 engineVersion = new VkVersion(0, 0, 2),
                 pApplicationName = Interop.String.ToPointer("Zeckoxe Engine"),
