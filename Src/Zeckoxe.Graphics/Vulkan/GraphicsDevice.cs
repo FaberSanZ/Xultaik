@@ -120,7 +120,7 @@ namespace Zeckoxe.Graphics
 
         internal void CreateFeatures()
         {
-            vkGetPhysicalDeviceFeatures(NativeAdapter.NativePhysicalDevice, out VkPhysicalDeviceFeatures features);
+            vkGetPhysicalDeviceFeatures(NativeAdapter.handle, out VkPhysicalDeviceFeatures features);
 
             _features = features;
         }
@@ -129,7 +129,7 @@ namespace Zeckoxe.Graphics
 
         internal void CreateMemoryProperties()
         {
-            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.NativePhysicalDevice, out VkPhysicalDeviceMemoryProperties memoryProperties);
+            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.handle, out VkPhysicalDeviceMemoryProperties memoryProperties);
 
             _memoryProperties = memoryProperties;
         }
@@ -137,7 +137,7 @@ namespace Zeckoxe.Graphics
 
         internal void CreateQueueFamilyProperties()
         {
-            VkPhysicalDevice physicalDevice = NativeAdapter.NativePhysicalDevice;
+            VkPhysicalDevice physicalDevice = NativeAdapter.handle;
 
             uint Count = 0;
 
@@ -157,7 +157,7 @@ namespace Zeckoxe.Graphics
         {
             uint extCount = 0;
 
-            vkEnumerateDeviceExtensionProperties(NativeAdapter.NativePhysicalDevice, (byte*)null, &extCount, null);
+            vkEnumerateDeviceExtensionProperties(NativeAdapter.handle, (byte*)null, &extCount, null);
         }
 
 
@@ -275,7 +275,7 @@ namespace Zeckoxe.Graphics
                 deviceCreateInfo.ppEnabledExtensionNames = Interop.String.AllocToPointers(deviceExtensions.ToArray());
             }
 
-            vkCreateDevice(NativeAdapter.NativePhysicalDevice, &deviceCreateInfo, null, out VkDevice device);
+            vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out VkDevice device);
 
             handle = device;
         }

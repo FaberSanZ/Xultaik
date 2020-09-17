@@ -131,7 +131,7 @@ namespace Zeckoxe.Graphics
         public void CreateSwapChain()
         {
 
-            VkPhysicalDevice PhysicalDevice = NativeDevice.NativeAdapter.NativePhysicalDevice;
+            VkPhysicalDevice PhysicalDevice = NativeDevice.NativeAdapter.handle;
 
             int width = Parameters.BackBufferWidth;
 

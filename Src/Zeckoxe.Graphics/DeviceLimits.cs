@@ -14,10 +14,8 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
-    public class DeviceLimits : GraphicsResource
+    public class DeviceLimits 
     {
-        public DeviceLimits(GraphicsDevice device) : base(device) { }
-
 
         public int DescriptorSets => 8;
 
@@ -38,13 +36,6 @@ namespace Zeckoxe.Graphics
         public int MaxUboSize => 16 * 1024;
 
         public int SpecConstants => 8;
-
-        public float TimestampPeriod => NativeDevice.NativeAdapter.Properties.limits.timestampPeriod;
-
-        public int MaxDrawIndirectCount => (int)NativeDevice.NativeAdapter.Properties.limits.maxDrawIndirectCount;
-
-        public MultisampleCount MultisampleCount => (MultisampleCount)Tools.ExtractMaxSampleCount(NativeDevice.NativeAdapter.Properties); // TODO: MultisampleCount.ToVkSampleCountFlags
-
 
     }
 }

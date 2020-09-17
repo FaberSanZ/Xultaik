@@ -63,7 +63,7 @@ namespace Samples.Samples
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = true,
+                    Validation = false,
                     Fullscreen = false,
                     VSync = false,
                 },

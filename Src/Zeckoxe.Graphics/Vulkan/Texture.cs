@@ -143,7 +143,7 @@ namespace Zeckoxe.Graphics
             };
             vkCreateBuffer(NativeDevice.handle, &bufferCreateInfo, null, out VkBuffer stagingBuffer);
 
-            vkGetPhysicalDeviceMemoryProperties(NativeDevice.NativeAdapter.NativePhysicalDevice, out VkPhysicalDeviceMemoryProperties memoryProperties);
+            vkGetPhysicalDeviceMemoryProperties(NativeDevice.NativeAdapter.handle, out VkPhysicalDeviceMemoryProperties memoryProperties);
             vkGetBufferMemoryRequirements(NativeDevice.handle, stagingBuffer, out VkMemoryRequirements stagingMemReq);
             uint heapIndex = NativeDevice.GetMemoryTypeIndex(stagingMemReq.memoryTypeBits, VkMemoryPropertyFlags.HostVisible);
 

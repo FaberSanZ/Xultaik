@@ -27,33 +27,32 @@ namespace Zeckoxe.Graphics
         internal uint instance_extensions_count;
         internal uint device_count; // number of GPUs we're rendering to --- if DG is disabled, this is 1
 
-        internal VkPhysicalDevice NativePhysicalDevice;
-        internal VkPhysicalDevice[] NativePhysicalDevices;
-        internal VkPhysicalDeviceProperties Properties;
-        internal VkPhysicalDeviceFeatures2 Features2;
+        internal VkPhysicalDevice handle;
+        internal VkPhysicalDevice[] handles;
+        internal VkPhysicalDeviceProperties device_properties;
         internal VkPhysicalDeviceRayTracingFeaturesKHR DeviceRayTracingFeatures;
-        private VkPhysicalDeviceSubgroupProperties subgroup_properties;
-        private VkPhysicalDevice8BitStorageFeatures storage_8bit_features;
-        private VkPhysicalDevice16BitStorageFeatures storage_16bit_features;
-        private VkPhysicalDeviceShaderFloat16Int8Features float16_int8_features;
-        private VkPhysicalDeviceFeatures enabled_features;
-        private VkPhysicalDeviceExternalMemoryHostPropertiesEXT host_memory_properties;
-        private VkPhysicalDeviceMultiviewFeatures multiview_features;
-        private VkPhysicalDeviceImagelessFramebufferFeatures imageless_features;
-        private VkPhysicalDeviceSubgroupSizeControlFeaturesEXT subgroup_size_control_features;
-        private VkPhysicalDeviceSubgroupSizeControlPropertiesEXT subgroup_size_control_properties;
-        private VkPhysicalDeviceComputeShaderDerivativesFeaturesNV compute_shader_derivative_features;
-        private VkPhysicalDeviceHostQueryResetFeatures host_query_reset_features;
-        private VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT demote_to_helper_invocation_features;
-        private VkPhysicalDeviceScalarBlockLayoutFeatures scalar_block_features;
-        private VkPhysicalDeviceUniformBufferStandardLayoutFeatures ubo_std430_features;
-        private VkPhysicalDeviceTimelineSemaphoreFeatures timeline_semaphore_features;
-        private VkPhysicalDeviceDescriptorIndexingFeatures descriptor_indexing_features;
-        private VkPhysicalDeviceDescriptorIndexingProperties descriptor_indexing_properties;
-        private VkPhysicalDeviceConservativeRasterizationPropertiesEXT conservative_rasterization_properties;
-        private VkPhysicalDevicePerformanceQueryFeaturesKHR performance_query_features;
-        private VkPhysicalDeviceSamplerYcbcrConversionFeatures sampler_ycbcr_conversion_features;
-        private VkPhysicalDeviceDriverProperties driver_properties;
+        internal VkPhysicalDeviceSubgroupProperties subgroup_properties;
+        internal VkPhysicalDevice8BitStorageFeatures storage_8bit_features;
+        internal VkPhysicalDevice16BitStorageFeatures storage_16bit_features;
+        internal VkPhysicalDeviceShaderFloat16Int8Features float16_int8_features;
+        internal VkPhysicalDeviceFeatures enabled_features;
+        internal VkPhysicalDeviceExternalMemoryHostPropertiesEXT host_memory_properties;
+        internal VkPhysicalDeviceMultiviewFeatures multiview_features;
+        internal VkPhysicalDeviceImagelessFramebufferFeatures imageless_features;
+        internal VkPhysicalDeviceSubgroupSizeControlFeaturesEXT subgroup_size_control_features;
+        internal VkPhysicalDeviceSubgroupSizeControlPropertiesEXT subgroup_size_control_properties;
+        internal VkPhysicalDeviceComputeShaderDerivativesFeaturesNV compute_shader_derivative_features;
+        internal VkPhysicalDeviceHostQueryResetFeatures host_query_reset_features;
+        internal VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT demote_to_helper_invocation_features;
+        internal VkPhysicalDeviceScalarBlockLayoutFeatures scalar_block_features;
+        internal VkPhysicalDeviceUniformBufferStandardLayoutFeatures ubo_std430_features;
+        internal VkPhysicalDeviceTimelineSemaphoreFeatures timeline_semaphore_features;
+        internal VkPhysicalDeviceDescriptorIndexingFeatures descriptor_indexing_features;
+        internal VkPhysicalDeviceDescriptorIndexingProperties descriptor_indexing_properties;
+        internal VkPhysicalDeviceConservativeRasterizationPropertiesEXT conservative_rasterization_properties;
+        internal VkPhysicalDevicePerformanceQueryFeaturesKHR performance_query_features;
+        internal VkPhysicalDeviceSamplerYcbcrConversionFeatures sampler_ycbcr_conversion_features;
+        internal VkPhysicalDeviceDriverProperties driver_properties;
 
 
 
@@ -67,58 +66,86 @@ namespace Zeckoxe.Graphics
             Recreate();
         }
 
-
-
         public PresentationParameters Parameters { get; set; }
 
-        public List<string> InstanceExtensionsNames;
+        public List<string> InstanceExtensionsNames { get; private set; }
 
-        //public List<string> EnumerateInstanceExtensions;
+        public List<string> ValidationLayer { get; private set; }
 
-        //public List<string> ValidationLayer;
+        public ILog Log { get; set; }
 
-        public ILog Log;
-        
-        public bool SupportsPhysicalDeviceProperties2;
-        public bool SupportsSurface;
-        private readonly bool supports_external = false;
-        private readonly bool supports_dedicated = false;
-        private readonly bool supports_image_format_list = false;
-        private readonly bool supports_debug_marker = false;
-        private readonly bool supports_debug_utils = false;
-        private readonly bool supports_mirror_clamp_to_edge = false;
-        private readonly bool supports_google_display_timing = false;
-        private readonly bool supports_nv_device_diagnostic_checkpoints = false;
-        private readonly bool supports_vulkan_11_instance = false;
-        private readonly bool supports_vulkan_11_device = false;
-        private readonly bool supports_external_memory_host = false;
-        private readonly bool supports_surface_capabilities2 = false;
-        private readonly bool supports_full_screen_exclusive = false;
-        private readonly bool supports_update_template = false;
-        private readonly bool supports_maintenance_1 = false;
-        private readonly bool supports_maintenance_2 = false;
-        private readonly bool supports_maintenance_3 = false;
-        private readonly bool supports_descriptor_indexing = false;
-        private readonly bool supports_conservative_rasterization = false;
-        private readonly bool supports_bind_memory2 = false;
-        private readonly bool supports_get_memory_requirements2 = false;
-        private readonly bool supports_draw_indirect_count = false;
-        private readonly bool supports_draw_parameters = false;
-        private readonly bool supports_driver_properties = false;
-        private readonly bool supports_calibrated_timestamps = false;
+        public DeviceType DeviceType => (DeviceType)device_properties.deviceType;
 
-
-        public DeviceType DeviceType => (DeviceType)Properties.deviceType;
-
-        public uint VendorId => Properties.vendorID;
+        public uint VendorId => device_properties.vendorID;
 
         public bool RayTracingSupport => DeviceRayTracingFeatures.rayTracing;
+
+        public float TimestampPeriod => device_properties.limits.timestampPeriod;
+
+        public uint MaxDrawIndirectCount => device_properties.limits.maxDrawIndirectCount;
+
+        public MultisampleCount MultisampleCount => (MultisampleCount)Tools.ExtractMaxSampleCount(device_properties); // TODO: MultisampleCount.ToVkSampleCountFlags
+
+        public bool SupportsPhysicalDeviceProperties2 { get; private set; }
+
+        public bool SupportsSurface { get; private set; }
+
+        public bool supports_external { get; private set; }
+
+        public bool supports_dedicated { get; private set; }
+
+        public bool supports_image_format_list { get; private set; }
+
+        public bool supports_debug_marker { get; private set; }
+
+        public bool supports_debug_utils { get; private set; }
+
+        public bool supports_mirror_clamp_to_edge { get; private set; }
+
+        public bool supports_google_display_timing { get; private set; }
+
+        public bool supports_nv_device_diagnostic_checkpoints { get; private set; }
+
+        public bool supports_vulkan_11_instance { get; private set; }
+
+        public bool supports_vulkan_11_device { get; private set; }
+
+        public bool supports_external_memory_host { get; private set; }
+
+        public bool supports_surface_capabilities2 { get; private set; }
+
+        public bool supports_full_screen_exclusive { get; private set; }
+
+        public bool supports_update_template { get; private set; }
+
+        public bool supports_maintenance_1 { get; private set; }
+
+        public bool supports_maintenance_2 { get; private set; }
+
+        public bool supports_maintenance_3 { get; private set; }
+
+        public bool supports_descriptor_indexing { get; private set; }
+
+        public bool supports_conservative_rasterization { get; private set; }
+
+        public bool supports_bind_memory2 { get; private set; }
+
+        public bool supports_get_memory_requirements2 { get; private set; }
+
+        public bool supports_draw_indirect_count { get; private set; }
+
+        public bool supports_draw_parameters { get; private set; }
+
+        public bool supports_driver_properties { get; private set; }
+
+        public bool supports_calibrated_timestamps { get; private set; }
+
 
         public string DeviceName
         {
             get
             {
-                VkPhysicalDeviceProperties properties = Properties;
+                VkPhysicalDeviceProperties properties = device_properties;
                 return Interop.String.FromPointer(properties.deviceName);
             }
         }
@@ -127,7 +154,7 @@ namespace Zeckoxe.Graphics
         {
             get
             {
-                VkPhysicalDeviceProperties properties = Properties;
+                VkPhysicalDeviceProperties properties = device_properties;
                 return Interop.String.FromPointer(properties.deviceName) + $" - {VendorNameString(VendorId)}";
             }
         }
@@ -144,13 +171,11 @@ namespace Zeckoxe.Graphics
 
             CreatePhysicalDevice();
 
+            CreatePhysicalDeviceProperties();
 
-            Properties = GetProperties();
-            Features2 = GetPhysicalDeviceFeatures2();
-            //SupportsPhysicalDeviceProperties2 = true;
-            DeviceRayTracingFeatures = GetPhysicalDeviceFeaturesRayTracing();
 
-            //Features2 = new VkPhysicalDeviceFeatures2();
+            //Features2 = GetPhysicalDeviceFeatures2();
+            //DeviceRayTracingFeatures = GetPhysicalDeviceFeaturesRayTracing();
         }
 
 
@@ -286,11 +311,17 @@ namespace Zeckoxe.Graphics
             VkPhysicalDevice[] physicalDevices = new VkPhysicalDevice[(int)count];
             VkPhysicalDevice* physicalDevicesptr = stackalloc VkPhysicalDevice[(int)count];
 
-            if (device_count is 1)
+
+            if (device_count is 0)
+            {
+                // TODO: physicalDevices is 0
+                return;
+            }
+            else if (device_count is 1)
             {
                 vkEnumeratePhysicalDevices(instance, &count, physicalDevicesptr);
             }
-            else
+            else if (device_count > 1)
             {
                 fixed (VkPhysicalDevice* ptr = physicalDevices)
                 {
@@ -298,8 +329,8 @@ namespace Zeckoxe.Graphics
                 }
             }
 
-            NativePhysicalDevice = physicalDevicesptr[0];
-            NativePhysicalDevices = device_count is 1 ? new VkPhysicalDevice[] { physicalDevicesptr[0] } : physicalDevices;
+            handle = physicalDevicesptr[0];
+            handles = device_count is 1 ? new[] { physicalDevicesptr[0] } : physicalDevices;
 
         }
 
@@ -342,7 +373,7 @@ namespace Zeckoxe.Graphics
 
             foreach (PixelFormat format in depthFormats)
             {
-                vkGetPhysicalDeviceFormatProperties(NativePhysicalDevice, (VkFormat)format, out VkFormatProperties formatProps);
+                vkGetPhysicalDeviceFormatProperties(handle, (VkFormat)format, out VkFormatProperties formatProps);
 
                 // Format must support depth stencil attachment for optimal tiling
                 if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) != 0)
@@ -408,7 +439,7 @@ namespace Zeckoxe.Graphics
             };
 
 
-            vkGetPhysicalDeviceFeatures2(NativePhysicalDevice, out deviceFeatures2);
+            vkGetPhysicalDeviceFeatures2(handle, out deviceFeatures2);
 
             return rayTracingFeatures;
         }
@@ -430,15 +461,14 @@ namespace Zeckoxe.Graphics
             };
 
 
-            vkGetPhysicalDeviceFeatures2(NativePhysicalDevice, out deviceFeatures2);
+            vkGetPhysicalDeviceFeatures2(handle, out deviceFeatures2);
 
             return deviceFeatures2;
         }
 
-        internal VkPhysicalDeviceProperties GetProperties()
+        internal void CreatePhysicalDeviceProperties()
         {
-            vkGetPhysicalDeviceProperties(NativePhysicalDevice, out VkPhysicalDeviceProperties physicalDeviceProperties);
-            return physicalDeviceProperties;
+            vkGetPhysicalDeviceProperties(handle, out device_properties);
         }
 
 
@@ -473,7 +503,8 @@ namespace Zeckoxe.Graphics
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
+            vkDestroyInstance(instance, null);
         }
     }
 }
