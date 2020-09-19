@@ -63,7 +63,7 @@ namespace Samples.Samples
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = false,
+                    Validation = true,
                     Fullscreen = false,
                     VSync = false,
                 },
@@ -223,6 +223,7 @@ namespace Samples.Samples
 
         public void Dispose()
         {
+            Adapter.Dispose();
         }
     }
 }

@@ -6,6 +6,7 @@
 
 
 
+using System;
 using System.Collections.Generic;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
@@ -211,6 +212,16 @@ namespace Zeckoxe.Graphics
             VkPipeline pipeline;
             vkCreateGraphicsPipelines(NativeDevice.handle, /*new VkPipelineCache(0)*/ VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
             graphicsPipeline = pipeline;
+
+
+            for (int i = 0; i < shaders.Count; i++)
+            {
+                if (shaderStageCreateInfos[i].module != VkShaderModule.Null)
+                {
+                    vkDestroyShaderModule(NativeDevice.handle, shaderStageCreateInfos[i].module, null);
+                }
+            }
+            shaders.Clear();
         }
 
         internal void CreatePipelineLayout()

@@ -66,6 +66,9 @@ namespace Zeckoxe.Graphics
             Recreate();
         }
 
+
+
+
         public PresentationParameters Parameters { get; set; }
 
         public List<string> InstanceExtensionsNames { get; private set; }
@@ -503,7 +506,7 @@ namespace Zeckoxe.Graphics
 
         public void Dispose()
         {
-            vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
+            //vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
             vkDestroyInstance(instance, null);
         }
     }
