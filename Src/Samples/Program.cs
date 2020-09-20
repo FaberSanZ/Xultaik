@@ -8,7 +8,8 @@ namespace Samples
         static void Main(string[] args)
         {
             //using var App = new ClearScreen();
-            using var App = new Triangle();
+            //using var App = new Triangle();
+            using var App = new Transformations();
             App.Run();
         }
     }

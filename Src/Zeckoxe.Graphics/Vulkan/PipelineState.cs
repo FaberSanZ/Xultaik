@@ -35,6 +35,16 @@ namespace Zeckoxe.Graphics
             CreatePipelineLayout();
 
             CreateGraphicsPipeline(PipelineStateDescription);
+            CreatePipelineCache();
+        }
+
+        private void CreatePipelineCache()
+        {
+            VkPipelineCacheCreateInfo pipelineCacheCreateInfo = new VkPipelineCacheCreateInfo
+            {
+                sType = VkStructureType.PipelineCacheCreateInfo,
+            };
+            //vkCreatePipelineCache(device, &pipelineCacheCreateInfo, null, out _pipelineCache);
         }
 
 
@@ -189,6 +199,22 @@ namespace Zeckoxe.Graphics
             };
 
 
+            // Depth and stencil state containing depth and stencil compare and test operations
+            // We only use depth tests and want depth tests and writes to be enabled and compare with less or equal
+            VkPipelineDepthStencilStateCreateInfo depthStencilState = new VkPipelineDepthStencilStateCreateInfo()
+            {
+                sType = VkStructureType.PipelineDepthStencilStateCreateInfo
+            };
+            depthStencilState.depthTestEnable = true;
+            depthStencilState.depthWriteEnable = true;
+            depthStencilState.depthCompareOp = VkCompareOp.LessOrEqual;
+            depthStencilState.depthBoundsTestEnable = false;
+            depthStencilState.back.failOp = VkStencilOp.Keep;
+            depthStencilState.back.passOp = VkStencilOp.Keep;
+            depthStencilState.back.compareOp = VkCompareOp.Always;
+            depthStencilState.stencilTestEnable = false;
+            depthStencilState.front = depthStencilState.back;
+
 
             VkGraphicsPipelineCreateInfo graphicsPipelineCI = new VkGraphicsPipelineCreateInfo()
             {
@@ -204,13 +230,13 @@ namespace Zeckoxe.Graphics
                 layout = pipelineLayout,
                 renderPass = description.Framebuffer.renderPass,
                 subpass = 0,
-                pDepthStencilState = null,
+                pDepthStencilState = &depthStencilState,
             };
 
 
 
             VkPipeline pipeline;
-            vkCreateGraphicsPipelines(NativeDevice.handle, /*new VkPipelineCache(0)*/ VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
+            vkCreateGraphicsPipelines(NativeDevice.handle,VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
             graphicsPipeline = pipeline;
 
 
@@ -219,6 +245,7 @@ namespace Zeckoxe.Graphics
                 if (shaderStageCreateInfos[i].module != VkShaderModule.Null)
                 {
                     vkDestroyShaderModule(NativeDevice.handle, shaderStageCreateInfos[i].module, null);
+                    //shaderStageCreateInfos[i] = *(VkPipelineShaderStageCreateInfo*)null;
                 }
             }
             shaders.Clear();

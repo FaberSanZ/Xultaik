@@ -45,6 +45,11 @@ namespace Zeckoxe.Graphics
 
             CreateBackBuffers();
 
+            int width = Parameters.BackBufferWidth;
+
+            int height = Parameters.BackBufferHeight;
+
+            Backbuffer.CreateDepthStencil(width, height);
         }
 
         public PresentationParameters Parameters { get; set; }

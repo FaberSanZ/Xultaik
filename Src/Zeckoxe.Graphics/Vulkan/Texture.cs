@@ -70,8 +70,7 @@ namespace Zeckoxe.Graphics
                 extent = new Vortice.Mathematics.Size3
                 {
                     Width = width,
-                    Height =
-                    height,
+                    Height = height,
                     Depth = 1
                 },
                 mipLevels = 1,
