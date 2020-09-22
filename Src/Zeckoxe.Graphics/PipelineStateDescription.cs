@@ -25,5 +25,10 @@ namespace Zeckoxe.Graphics
 
         public List<ShaderBytecode> Shaders { get; set; } = new List<ShaderBytecode>();
 
+        public List<DescriptorSetLayout> Layouts { get; set; } = new List<DescriptorSetLayout>();
+
+        
+
+
     }
 }

@@ -4,9 +4,7 @@ using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Games;
 using Zeckoxe.Graphics;
-using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.Physics;
-using Zeckoxe.ShaderCompiler;
 using Buffer = Zeckoxe.Graphics.Buffer;
 
 
@@ -35,8 +33,7 @@ namespace Samples.Samples
             public Matrix4x4 viewMatrix;
         }
 
-
-        Vertex[] vertices = new Vertex[]
+        private readonly Vertex[] vertices = new[]
         {
             // front face
             new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
@@ -152,7 +149,7 @@ namespace Samples.Samples
         public void Initialize()
         {
             Adapter = new GraphicsAdapter(Parameters);
-              
+
             Device = new GraphicsDevice(Adapter);
 
             Framebuffer = new Framebuffer(Device);
@@ -168,7 +165,7 @@ namespace Samples.Samples
                 Position = new Vector3(0, 0, -3.0f),
             };
 
-            Camera.SetLens(Window.Width,Window.Height);
+            Camera.SetLens(Window.Width, Window.Height);
 
 
 
@@ -204,7 +201,7 @@ namespace Samples.Samples
                 SizeInBytes = Interop.SizeOf<CameraUbo>(),
             });
 
-            
+
         }
 
 
@@ -214,6 +211,17 @@ namespace Samples.Samples
             {
                 Framebuffer = Framebuffer,
 
+                Layouts =
+                {
+                    // Binding 0: Uniform buffer (Vertex shader)
+                    new DescriptorSetLayout()
+                    {
+                        Stage = ShaderStage.Vertex,
+                        Type = DescriptorType.UniformBuffer,
+                        Binding = 0,
+                    }
+                },
+
                 InputAssemblyState = new InputAssemblyState()
                 {
                     PrimitiveType = PrimitiveType.TriangleList,
@@ -222,7 +230,7 @@ namespace Samples.Samples
                 {
                     FillMode = FillMode.Solid,
                     CullMode = CullMode.None,
-                    FrontFace = FrontFace.Clockwise
+                    FrontFace = FrontFace.Clockwise,
                 },
                 PipelineVertexInput = new PipelineVertexInput
                 {
@@ -296,7 +304,7 @@ namespace Samples.Samples
         public void Update()
         {
             Camera.Update(GameTime);
-            Camera.ModelRotate(new Vector3(r, r, r));
+            Camera.ModelRotate(new Vector3(-r, -r, -r));
 
             ConstBuffer.SetData(Camera.CameraUbo);
 

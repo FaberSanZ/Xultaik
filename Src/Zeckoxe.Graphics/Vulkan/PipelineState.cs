@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 
 /*=============================================================================
 	PipelineState.cs
@@ -6,8 +6,8 @@
 
 
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -37,20 +37,63 @@ namespace Zeckoxe.Graphics
         private void Recreate()
         {
             SetupDescriptorSetLayout();
+            CreatePipelineLayout();
+            SetupDescriptorPool();
             CreatePipelineCache();
 
+
+
             CreateGraphicsPipeline(PipelineStateDescription);
-            SetupDescriptorPool();
+        }
+
+        private void SetupDescriptorSetLayout()
+        {
+            // Setup layout of descriptors used in this example
+            // Basically connects the different shader stages to descriptors for binding uniform buffers, image samplers, etc.
+            // So every shader binding should map to one descriptor set layout binding
+            List<DescriptorSetLayout> Layouts = PipelineStateDescription.Layouts;
+
+            VkDescriptorSetLayoutBinding* layoutBinding = stackalloc VkDescriptorSetLayoutBinding[Layouts.Count];
+
+            for (int i = 0; i < Layouts.Count; i++)
+            {
+                layoutBinding[i] = new VkDescriptorSetLayoutBinding
+                {
+                    binding = (uint)Layouts[i].Binding,
+                    descriptorCount = (uint)1, // TODO: descriptorCount
+                    descriptorType = (VkDescriptorType)Layouts[i].Type, // TODO: TOVkDescriptorType
+                    stageFlags = (VkShaderStageFlags)Layouts[i].Stage, // TODO: TOVkVkShaderStageFlags
+                    pImmutableSamplers = null,
+                };
+            }
+
+            VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
+            {
+                sType = VkStructureType.DescriptorSetLayoutCreateInfo,
+                bindingCount = (uint)Layouts.Count,
+                pBindings = layoutBinding
+            };
+
+            vkCreateDescriptorSetLayout(NativeDevice.handle, &descriptorLayout, null, out _descriptorSetLayout);
+
+
         }
 
 
-        private void CreatePipelineCache()
+        internal void CreatePipelineLayout()
         {
-            VkPipelineCacheCreateInfo pipelineCacheCreateInfo = new VkPipelineCacheCreateInfo
+            // Create the Pipeline layout that is used to generate the rendering pipelines that are based on this descriptor set layout
+            // In a more complex scenario you would have different Pipeline layouts for different descriptor set layouts that could be reused
+            VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = new VkPipelineLayoutCreateInfo
             {
-                sType = VkStructureType.PipelineCacheCreateInfo,
+                sType = VkStructureType.PipelineLayoutCreateInfo,
+                pNext = null,
+                setLayoutCount = 1
             };
-            vkCreatePipelineCache(NativeDevice.handle, &pipelineCacheCreateInfo, null, out _pipelineCache);
+            VkDescriptorSetLayout descriptorSetLayout = _descriptorSetLayout;
+            pPipelineLayoutCreateInfo.pSetLayouts = &descriptorSetLayout;
+
+            vkCreatePipelineLayout(NativeDevice.handle, &pPipelineLayoutCreateInfo, null, out _pipelineLayout);
         }
 
 
@@ -81,43 +124,6 @@ namespace Zeckoxe.Graphics
             _descriptorPool = descriptorPool;
         }
 
-        private void SetupDescriptorSetLayout()
-        {
-            // Setup layout of descriptors used in this example
-            // Basically connects the different shader stages to descriptors for binding uniform buffers, image samplers, etc.
-            // So every shader binding should map to one descriptor set layout binding
-
-            // Binding 0: Uniform buffer (Vertex shader)
-            VkDescriptorSetLayoutBinding layoutBinding = new VkDescriptorSetLayoutBinding
-            {
-                descriptorType = VkDescriptorType.UniformBuffer,
-                descriptorCount = 1,
-                stageFlags = VkShaderStageFlags.Vertex,
-                pImmutableSamplers = null
-            };
-
-            VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
-            {
-                sType = VkStructureType.DescriptorSetLayoutCreateInfo,
-                bindingCount = 1,
-                pBindings = &layoutBinding
-            };
-
-            vkCreateDescriptorSetLayout(NativeDevice.handle, &descriptorLayout, null, out _descriptorSetLayout);
-
-            // Create the Pipeline layout that is used to generate the rendering pipelines that are based on this descriptor set layout
-            // In a more complex scenario you would have different Pipeline layouts for different descriptor set layouts that could be reused
-            VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = new VkPipelineLayoutCreateInfo
-            {
-                sType = VkStructureType.PipelineLayoutCreateInfo,
-                pNext = null,
-                setLayoutCount = 1
-            };
-            VkDescriptorSetLayout dsl = _descriptorSetLayout;
-            pPipelineLayoutCreateInfo.pSetLayouts = &dsl;
-
-            vkCreatePipelineLayout(NativeDevice.handle, &pPipelineLayoutCreateInfo, null, out _pipelineLayout);
-        }
 
 
         public void SetupDescriptorSet(Buffer buffer)
@@ -161,6 +167,21 @@ namespace Zeckoxe.Graphics
 
             vkUpdateDescriptorSets(NativeDevice.handle, 1, &writeDescriptorSet, 0, null);
         }
+
+
+
+
+
+        private void CreatePipelineCache()
+        {
+            VkPipelineCacheCreateInfo pipelineCacheCreateInfo = new VkPipelineCacheCreateInfo
+            {
+                sType = VkStructureType.PipelineCacheCreateInfo,
+            };
+            vkCreatePipelineCache(NativeDevice.handle, &pipelineCacheCreateInfo, null, out _pipelineCache);
+        }
+
+
 
 
 
@@ -363,7 +384,7 @@ namespace Zeckoxe.Graphics
                 pRasterizationState = &rasterizerState,
                 pMultisampleState = &multisampleState_info,
                 pColorBlendState = &colorBlendState,
-                layout = _pipelineLayout,
+                layout = description.Layouts.Any() ? _pipelineLayout : _pipelineLayout, // TODO: _pipelineLayout
                 renderPass = description.Framebuffer.renderPass,
                 subpass = 0,
                 pDepthStencilState = &depthStencilState,
