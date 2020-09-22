@@ -17,8 +17,12 @@ namespace Zeckoxe.Graphics
     public unsafe class PipelineState : GraphicsResource
     {
 
-        internal VkPipelineLayout pipelineLayout;
         internal VkPipeline graphicsPipeline;
+        internal VkDescriptorSetLayout _descriptorSetLayout;
+        internal VkPipelineCache _pipelineCache;
+        internal VkDescriptorPool _descriptorPool;
+        private VkDescriptorSet _descriptorSet;
+        private VkPipelineLayout _pipelineLayout;
 
         public PipelineState(PipelineStateDescription description) : base(description.Framebuffer.NativeDevice)
         {
@@ -32,11 +36,13 @@ namespace Zeckoxe.Graphics
 
         private void Recreate()
         {
-            CreatePipelineLayout();
+            SetupDescriptorSetLayout();
+            CreatePipelineCache();
 
             CreateGraphicsPipeline(PipelineStateDescription);
-            CreatePipelineCache();
+            SetupDescriptorPool();
         }
+
 
         private void CreatePipelineCache()
         {
@@ -44,8 +50,120 @@ namespace Zeckoxe.Graphics
             {
                 sType = VkStructureType.PipelineCacheCreateInfo,
             };
-            //vkCreatePipelineCache(device, &pipelineCacheCreateInfo, null, out _pipelineCache);
+            vkCreatePipelineCache(NativeDevice.handle, &pipelineCacheCreateInfo, null, out _pipelineCache);
         }
+
+
+        public void SetupDescriptorPool()
+        {
+            // We need to tell the API the number of max. requested descriptors per type
+            VkDescriptorPoolSize typeCount;
+            // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
+            typeCount.type = VkDescriptorType.UniformBuffer;
+            typeCount.descriptorCount = 1;
+            // For additional types you need to add new entries in the type count list
+            // E.g. for two combined image samplers :
+            // typeCounts[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            // typeCounts[1].descriptorCount = 2;
+
+            // Create the global descriptor pool
+            // All descriptors used in this example are allocated from this pool
+            VkDescriptorPoolCreateInfo descriptorPoolInfo = new VkDescriptorPoolCreateInfo
+            {
+                sType = VkStructureType.DescriptorPoolCreateInfo,
+                poolSizeCount = 1,
+                pPoolSizes = &typeCount,
+                // Set the max. number of descriptor sets that can be requested from this pool (requesting beyond this limit will result in an error)
+                maxSets = 1
+            };
+
+            vkCreateDescriptorPool(NativeDevice.handle, &descriptorPoolInfo, null, out VkDescriptorPool descriptorPool);
+            _descriptorPool = descriptorPool;
+        }
+
+        private void SetupDescriptorSetLayout()
+        {
+            // Setup layout of descriptors used in this example
+            // Basically connects the different shader stages to descriptors for binding uniform buffers, image samplers, etc.
+            // So every shader binding should map to one descriptor set layout binding
+
+            // Binding 0: Uniform buffer (Vertex shader)
+            VkDescriptorSetLayoutBinding layoutBinding = new VkDescriptorSetLayoutBinding
+            {
+                descriptorType = VkDescriptorType.UniformBuffer,
+                descriptorCount = 1,
+                stageFlags = VkShaderStageFlags.Vertex,
+                pImmutableSamplers = null
+            };
+
+            VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
+            {
+                sType = VkStructureType.DescriptorSetLayoutCreateInfo,
+                bindingCount = 1,
+                pBindings = &layoutBinding
+            };
+
+            vkCreateDescriptorSetLayout(NativeDevice.handle, &descriptorLayout, null, out _descriptorSetLayout);
+
+            // Create the Pipeline layout that is used to generate the rendering pipelines that are based on this descriptor set layout
+            // In a more complex scenario you would have different Pipeline layouts for different descriptor set layouts that could be reused
+            VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = new VkPipelineLayoutCreateInfo
+            {
+                sType = VkStructureType.PipelineLayoutCreateInfo,
+                pNext = null,
+                setLayoutCount = 1
+            };
+            VkDescriptorSetLayout dsl = _descriptorSetLayout;
+            pPipelineLayoutCreateInfo.pSetLayouts = &dsl;
+
+            vkCreatePipelineLayout(NativeDevice.handle, &pPipelineLayoutCreateInfo, null, out _pipelineLayout);
+        }
+
+
+        public void SetupDescriptorSet(Buffer buffer)
+        {
+            // Allocate a new descriptor set from the global descriptor pool
+            VkDescriptorSetAllocateInfo allocInfo = new VkDescriptorSetAllocateInfo
+            {
+                sType = VkStructureType.DescriptorSetAllocateInfo,
+                descriptorPool = _descriptorPool,
+                descriptorSetCount = 1
+            };
+            VkDescriptorSetLayout dsl = _descriptorSetLayout;
+            allocInfo.pSetLayouts = &dsl;
+
+            VkDescriptorSet descriptorSetptr;
+            vkAllocateDescriptorSets(NativeDevice.handle, &allocInfo, &descriptorSetptr);
+            _descriptorSet = descriptorSetptr;
+
+            // Update the descriptor set determining the shader binding points
+            // For every binding point used in a shader there needs to be one
+            // descriptor set matching that binding point
+
+            VkWriteDescriptorSet writeDescriptorSet = new VkWriteDescriptorSet()
+            {
+                sType = VkStructureType.WriteDescriptorSet
+            };
+
+            // Binding 0 : Uniform buffer
+            writeDescriptorSet.dstSet = _descriptorSet;
+            writeDescriptorSet.descriptorCount = 1;
+            writeDescriptorSet.descriptorType = VkDescriptorType.UniformBuffer;
+            VkDescriptorBufferInfo descriptor = new VkDescriptorBufferInfo
+            {
+                buffer = buffer.Handle,
+                offset = 0,
+                range = (ulong)buffer.SizeInBytes
+            };
+            writeDescriptorSet.pBufferInfo = &descriptor;
+            // Binds this uniform buffer to binding point 0
+            writeDescriptorSet.dstBinding = 0;
+
+            vkUpdateDescriptorSets(NativeDevice.handle, 1, &writeDescriptorSet, 0, null);
+        }
+
+
+
 
 
         private void CreateGraphicsPipeline(PipelineStateDescription description)
@@ -169,7 +287,7 @@ namespace Zeckoxe.Graphics
             {
                 rasterizerState.polygonMode = VkPolygonMode.Fill;
                 rasterizerState.cullMode = VkCullModeFlags.None;
-                rasterizerState.frontFace = VkFrontFace.Clockwise;
+                rasterizerState.frontFace = VkFrontFace.CounterClockwise;
                 rasterizerState.lineWidth = 1.0F;
             }
 
@@ -216,6 +334,24 @@ namespace Zeckoxe.Graphics
             depthStencilState.front = depthStencilState.back;
 
 
+
+            // Enable dynamic states
+            // Most states are baked into the Pipeline, but there are still a few dynamic states that can be changed within a command buffer
+            // To be able to change these we need do specify which dynamic states will be changed using this Pipeline. Their actual states are set later on in the command buffer.
+            // For this example we will set the viewport and scissor using dynamic states
+            VkDynamicState* dynamicStateEnables = stackalloc VkDynamicState[2]
+            {
+                VkDynamicState.Viewport,
+                VkDynamicState.Scissor
+            };
+            VkPipelineDynamicStateCreateInfo dynamicState = new VkPipelineDynamicStateCreateInfo()
+            {
+                sType = VkStructureType.PipelineDynamicStateCreateInfo
+            };
+            dynamicState.pDynamicStates = dynamicStateEnables;
+            dynamicState.dynamicStateCount = 2;
+
+
             VkGraphicsPipelineCreateInfo graphicsPipelineCI = new VkGraphicsPipelineCreateInfo()
             {
                 sType = VkStructureType.GraphicsPipelineCreateInfo,
@@ -227,16 +363,17 @@ namespace Zeckoxe.Graphics
                 pRasterizationState = &rasterizerState,
                 pMultisampleState = &multisampleState_info,
                 pColorBlendState = &colorBlendState,
-                layout = pipelineLayout,
+                layout = _pipelineLayout,
                 renderPass = description.Framebuffer.renderPass,
                 subpass = 0,
                 pDepthStencilState = &depthStencilState,
+                pDynamicState = &dynamicState
             };
 
 
 
             VkPipeline pipeline;
-            vkCreateGraphicsPipelines(NativeDevice.handle,VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
+            vkCreateGraphicsPipelines(NativeDevice.handle, _pipelineCache, 1, &graphicsPipelineCI, null, &pipeline);
             graphicsPipeline = pipeline;
 
 
@@ -251,18 +388,12 @@ namespace Zeckoxe.Graphics
             shaders.Clear();
         }
 
-        internal void CreatePipelineLayout()
-        {
-            VkPipelineLayoutCreateInfo pipelineLayoutCI = new VkPipelineLayoutCreateInfo()
-            {
-                sType = VkStructureType.PipelineLayoutCreateInfo,
-                pNext = null,
-                setLayoutCount = 0,
-                flags = VkPipelineLayoutCreateFlags.None,
-            };
 
-            vkCreatePipelineLayout(NativeDevice.handle, &pipelineLayoutCI, null, out VkPipelineLayout vkpipelineLayout);
-            pipelineLayout = vkpipelineLayout;
+        public void CmdBindDescriptorSets(CommandBuffer buffer)
+        {
+            // Bind descriptor sets describing shader binding points
+            VkDescriptorSet ds = _descriptorSet;
+            vkCmdBindDescriptorSets(buffer.NativeCommandBuffer, VkPipelineBindPoint.Graphics, _pipelineLayout, 0, 1, &ds, 0, null);
         }
 
 

@@ -41,7 +41,7 @@ namespace Zeckoxe.Graphics
 
             CreateSwapChain();
 
-            Backbuffer = new Texture(device);
+            DepthStencil = new Texture(device);
 
             CreateBackBuffers();
 
@@ -49,12 +49,12 @@ namespace Zeckoxe.Graphics
 
             int height = Parameters.BackBufferHeight;
 
-            Backbuffer.CreateDepthStencil(width, height);
+            DepthStencil.CreateDepthStencil(width, height);
         }
 
         public PresentationParameters Parameters { get; set; }
         public PixelFormat ColorFormat { get; private set; }
-        public Texture Backbuffer { get; private set; }
+        public Texture DepthStencil { get; private set; }
 
 
 

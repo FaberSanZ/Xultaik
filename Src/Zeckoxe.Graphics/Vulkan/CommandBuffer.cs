@@ -17,6 +17,7 @@ namespace Zeckoxe.Graphics
         internal uint imageIndex;
         internal VkCommandBuffer NativeCommandBuffer;
 
+        public VkFence waitFences;
 
 
 
@@ -31,6 +32,15 @@ namespace Zeckoxe.Graphics
         public void Recreate()
         {
             NativeCommandBuffer = NativeDevice.CreateCommandBufferPrimary();
+            // Fences (Used to check draw command buffer completion)
+            VkFenceCreateInfo fenceCreateInfo = new VkFenceCreateInfo()
+            {
+                sType = VkStructureType.FenceCreateInfo
+            };
+            // Create in signaled state so we don't wait on first render of each command buffer
+            fenceCreateInfo.flags = VkFenceCreateFlags.Signaled;
+            vkCreateFence(NativeDevice.handle, &fenceCreateInfo, null, out waitFences);
+
         }
 
 
@@ -42,6 +52,15 @@ namespace Zeckoxe.Graphics
             imageIndex = i;
 
 
+
+            // Use a fence to wait until the command buffer has finished execution before using it again
+            fixed (VkFence* ptrfence = &waitFences)
+            {
+                vkWaitForFences(NativeDevice.handle, 1, ptrfence, true, ulong.MaxValue);
+                vkResetFences(NativeDevice.handle, 1, ptrfence);
+            }
+
+
             VkCommandBufferBeginInfo beginInfo = new VkCommandBufferBeginInfo()
             {
                 sType = VkStructureType.CommandBufferBeginInfo,
@@ -49,26 +68,57 @@ namespace Zeckoxe.Graphics
             };
 
             vkBeginCommandBuffer(NativeCommandBuffer, &beginInfo);
+
+
+
         }
 
 
         public void BeginFramebuffer(Framebuffer framebuffer)
         {
-
-            VkRenderPassBeginInfo renderPassInfo = new VkRenderPassBeginInfo()
+            // Set clear values for all framebuffer attachments with loadOp set to clear
+            // We use two attachments (color and depth) that are cleared at the start of the subpass and as such we need to set clear values for both
+            VkClearValue* clearValues = stackalloc VkClearValue[2];
+            clearValues[0].color = new VkClearColorValue(0.0f, 0.2f, 0.4f);
+            clearValues[1].depthStencil = new VkClearDepthStencilValue()
             {
-                sType = VkStructureType.RenderPassBeginInfo,
-                renderPass = framebuffer.renderPass,
-                framebuffer = framebuffer.framebuffers[imageIndex],
-                renderArea = new Vortice.Mathematics.Rectangle()
-                {
-                    Height = NativeDevice.NativeParameters.BackBufferHeight,
-                    Width = NativeDevice.NativeParameters.BackBufferWidth,
-                    //extent = new VkExtent2D((uint)NativeDevice.NativeParameters.BackBufferWidth, (uint)NativeDevice.NativeParameters.BackBufferHeight)
-                },
+                depth = 1.0f,
+                stencil = 0
             };
 
-            vkCmdBeginRenderPass(NativeCommandBuffer, &renderPassInfo, VkSubpassContents.Inline);
+            VkRenderPassBeginInfo renderPassBeginInfo = new VkRenderPassBeginInfo()
+            {
+                sType = VkStructureType.RenderPassBeginInfo,
+                renderArea = new Rectangle()
+                {
+                    Height = (int)NativeDevice.NativeParameters.BackBufferHeight,
+                    Width = (int)NativeDevice.NativeParameters.BackBufferWidth,
+                    X = 0,
+                    Y = 0,
+                },
+            };
+            renderPassBeginInfo.renderPass = framebuffer.renderPass;
+            renderPassBeginInfo.clearValueCount = 2;
+            renderPassBeginInfo.pClearValues = clearValues;
+            // Set target frame buffer
+            renderPassBeginInfo.framebuffer = framebuffer.framebuffers[imageIndex];
+
+
+
+            //VkRenderPassBeginInfo renderPassInfo = new VkRenderPassBeginInfo()
+            //{
+            //    sType = VkStructureType.RenderPassBeginInfo,
+            //    renderPass = framebuffer.renderPass,
+            //    framebuffer = framebuffer.framebuffers[imageIndex],
+            //    renderArea = new Vortice.Mathematics.Rectangle()
+            //    {
+            //        Height = NativeDevice.NativeParameters.BackBufferHeight,
+            //        Width = NativeDevice.NativeParameters.BackBufferWidth,
+            //        //extent = new VkExtent2D((uint)NativeDevice.NativeParameters.BackBufferWidth, (uint)NativeDevice.NativeParameters.BackBufferHeight)
+            //    },
+            //};
+
+            vkCmdBeginRenderPass(NativeCommandBuffer, &renderPassBeginInfo, VkSubpassContents.Inline);
         }
 
 
@@ -164,15 +214,12 @@ namespace Zeckoxe.Graphics
             Viewport Viewport = new Viewport()
             {
                 Width = Width,
-
                 Height = Height,
 
                 X = X,
-
                 Y = Y,
 
                 MinDepth = MinDepth,
-
                 MaxDepth = MaxDepth
             };
 
@@ -261,7 +308,7 @@ namespace Zeckoxe.Graphics
                 pSignalSemaphores = &signalSemaphore,
             };
 
-            vkQueueSubmit(NativeDevice.nativeCommandQueue, 1, &submitInfo, VkFence.Null);
+            vkQueueSubmit(NativeDevice.nativeCommandQueue, 1, &submitInfo, waitFences);
         }
 
 

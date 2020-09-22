@@ -26,6 +26,7 @@ namespace Zeckoxe.Graphics
         internal VkDeviceMemory Mem;
         internal VkImageView View;
         internal DepthStencil _depthStencil;
+        internal VkFormat vkformat;
 
 
 
@@ -120,7 +121,9 @@ namespace Zeckoxe.Graphics
                 Mem = memory,
                 View = view
             };
-            Description.Format = (PixelFormat)format /* *(PixelFormat*)&format */; // TODO: ToVkFormat
+
+            vkformat = format;
+            //Description.Format = (PixelFormat)format /* *(PixelFormat*)&format */; // TODO: ToVkFormat
         }
 
 

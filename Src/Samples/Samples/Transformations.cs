@@ -2,8 +2,10 @@
 using System.Numerics;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
+using Zeckoxe.Games;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
+using Zeckoxe.Physics;
 using Zeckoxe.ShaderCompiler;
 using Buffer = Zeckoxe.Graphics.Buffer;
 
@@ -25,22 +27,31 @@ namespace Samples.Samples
         }
 
 
+        // Note: You should use data types that align with the GPU in order to avoid manual padding (vec4, mat4)
+        public struct UboVS
+        {
+            public Matrix4x4 projectionMatrix;
+            public Matrix4x4 modelMatrix;
+            public Matrix4x4 viewMatrix;
+        }
+
+
         Vertex[] vertices = new Vertex[]
-            {
-                // front face
-                new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-                new Vertex { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-                new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-                new Vertex { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+        {
+            // front face
+            new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new Vertex { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
-                // right side face
-                new Vertex { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-                new Vertex { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3(0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            // right side face
+            new Vertex { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new Vertex { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3(0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
 
-                    // left side face
+            // left side face
                     new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
                     new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
                     new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
@@ -99,6 +110,7 @@ namespace Samples.Samples
                 20, 21, 22, // first triangle
                 20, 23, 21, // second triangle
         };
+        private float r = 0;
 
 
         public Window Window { get; set; }
@@ -108,14 +120,15 @@ namespace Samples.Samples
         public Framebuffer Framebuffer { get; set; }
         public GraphicsContext Context { get; set; }
         public PipelineState PipelineState { get; set; }
-        public Fence Fence { get; set; } // Synchronization Primitives
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
-
+        public Buffer ConstBuffer { get; set; }
+        public Camera Camera { get; set; }
+        public GameTime GameTime { get; set; }
 
         public Transformations()
         {
-            Window = new Window(string.Empty, 1000, 720);
+            Window = new Window(string.Empty, 1200, 800);
 
 
             Parameters = new PresentationParameters()
@@ -125,7 +138,7 @@ namespace Samples.Samples
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = true,
+                    Validation = false,
                     Fullscreen = false,
                     VSync = false,
                 },
@@ -139,12 +152,26 @@ namespace Samples.Samples
         public void Initialize()
         {
             Adapter = new GraphicsAdapter(Parameters);
-
+              
             Device = new GraphicsDevice(Adapter);
 
             Framebuffer = new Framebuffer(Device);
 
             Context = new GraphicsContext(Device);
+
+            GameTime = new GameTime();
+
+
+            Camera = new Camera()
+            {
+                Mode = CameraType.Free,
+                Position = new Vector3(0, 0, -3.0f),
+            };
+
+            Camera.SetLens(Window.Width,Window.Height);
+
+
+
 
             CreateBuffers();
             CreatePipelineState();
@@ -167,6 +194,17 @@ namespace Samples.Samples
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<int>(indices),
             });
+
+
+
+            ConstBuffer = new Buffer(Device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.ConstantBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf<CameraUbo>(),
+            });
+
+            
         }
 
 
@@ -223,6 +261,7 @@ namespace Samples.Samples
             };
 
             PipelineState = new PipelineState(Pipelinedescription);
+            PipelineState.SetupDescriptorSet(ConstBuffer);
         }
 
 
@@ -256,7 +295,12 @@ namespace Samples.Samples
 
         public void Update()
         {
+            Camera.Update(GameTime);
+            Camera.ModelRotate(new Vector3(r, r, r));
 
+            ConstBuffer.SetData(Camera.CameraUbo);
+
+            r += 0.002f;
         }
 
         public void Draw()
@@ -267,14 +311,14 @@ namespace Samples.Samples
 
             commandBuffer.Begin();
             commandBuffer.BeginFramebuffer(Framebuffer);
-            commandBuffer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
-
+            PipelineState.CmdBindDescriptorSets(commandBuffer);
             commandBuffer.SetGraphicPipeline(PipelineState);
+
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
             commandBuffer.SetIndexBuffer(IndexBuffer);
-            commandBuffer.DrawIndexed(3, 1, 0, 0, 0);
+            commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);
 
 
             commandBuffer.Close();

@@ -4,6 +4,7 @@
 	Buffer.cs
 =============================================================================*/
 
+using System.Runtime.CompilerServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -52,7 +53,6 @@ namespace Zeckoxe.Graphics
                 flags = VkBufferCreateFlags.None,
                 //sharingMode = VkSharingMode.Exclusive
             };
-
 
             buffer_info.usage |= VkBufferUsageFlags.TransferSrc;
 
@@ -104,6 +104,16 @@ namespace Zeckoxe.Graphics
             vkCreateBuffer(NativeDevice.handle, &buffer_info, null, out VkBuffer _buffer);
             Handle = _buffer;
 
+
+
+
+            // Allocate memory
+            var memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
+            if (BufferDescription.Usage == GraphicsResourceUsage.Staging || Usage == GraphicsResourceUsage.Dynamic)
+            {
+                //memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
+            }
+
             vkGetBufferMemoryRequirements(NativeDevice.handle, Handle, out VkMemoryRequirements memReqs);
 
             VkMemoryAllocateInfo MemoryAlloc_info = new VkMemoryAllocateInfo()
@@ -111,7 +121,7 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.MemoryAllocateInfo,
                 pNext = null,
                 allocationSize = memReqs.size,
-                memoryTypeIndex = NativeDevice.GetMemoryTypeIndex(memReqs.memoryTypeBits, VkMemoryPropertyFlags.HostVisible),
+                memoryTypeIndex = NativeDevice.GetMemoryTypeIndex(memReqs.memoryTypeBits, memoryProperties),
             };
 
 
@@ -120,22 +130,37 @@ namespace Zeckoxe.Graphics
             memory = _memory;
 
             size = memReqs.size;
+            vkBindBufferMemory(NativeDevice.handle, Handle, memory, 0);
 
         }
 
+        public void SetData<T>(T Data) where T : unmanaged
+        {
+            // Map uniform buffer and update it
+            void* ppData;
+            vkMapMemory(NativeDevice.handle, memory, 0, size, 0, &ppData);
+            Unsafe.CopyBlock(ppData, &Data, (uint)sizeof(T));
+            // Unmap after data has been copied
+            // Note: Since we requested a host coherent memory type for the uniform buffer, the write is instantly visible to the GPU
+            vkUnmapMemory(NativeDevice.handle, memory);
+
+
+        }
 
         public void SetData<T>(params T[] Data) where T : struct
         {
             switch (Usage)
             {
+
                 case GraphicsResourceUsage.Default:
+
                     break;
 
                 case GraphicsResourceUsage.Immutable:
+
                     break;
 
                 case GraphicsResourceUsage.Dynamic:
-                    DynamicData(Data);
                     break;
 
                 case GraphicsResourceUsage.Staging:
@@ -145,6 +170,7 @@ namespace Zeckoxe.Graphics
                     break;
             }
 
+            DynamicData(Data);
 
         }
 
@@ -167,7 +193,6 @@ namespace Zeckoxe.Graphics
 
             vkUnmapMemory(NativeDevice.handle, memory);
 
-            vkBindBufferMemory(NativeDevice.handle, Handle, memory, 0);
         }
 
 

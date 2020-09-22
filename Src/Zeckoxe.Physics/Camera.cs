@@ -11,9 +11,18 @@ using Zeckoxe.Games;
 
 namespace Zeckoxe.Physics
 {
+    public struct CameraUbo
+    {
+        public Matrix4x4 Projection;
+        public Matrix4x4 Model;
+        public Matrix4x4 View;
+    }
+
+
     // TODO: Camera
     public class Camera : IDisposable
     {
+
         private Vector3 position;
         private Vector3 interest;
         private float fieldOfView = MathUtil.PiOverFour;
@@ -43,8 +52,23 @@ namespace Zeckoxe.Physics
 
             Projection = Matrix4x4.Identity;
 
+            Model = Matrix4x4.Identity;
+
             InvertY = false;
+
         }
+
+        internal void CreateCameraUbo()
+        {
+            CameraUbo = new CameraUbo
+            {
+                Model = Model,
+                Projection = Projection,
+                View = View,
+            };
+        }
+
+        public CameraUbo CameraUbo;
 
         public Vector3 Forward
         {
@@ -286,6 +310,8 @@ namespace Zeckoxe.Physics
 
         public Matrix4x4 View { get; private set; }
 
+        public Matrix4x4 Model { get; private set; }
+        
         public Matrix4x4 Projection { get; private set; }
 
         public IFollower Following { get; set; }
@@ -302,6 +328,14 @@ namespace Zeckoxe.Physics
             aspectRelation = viewportWidth / viewportHeight;
 
             UpdateLens();
+        }
+
+        public void ModelRotate(Vector3 rotate)
+        {
+            Model = Matrix4x4.Identity;
+            Model = Model * Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, rotate.X);
+            Model = Model * Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, rotate.Y);
+            Model = Model * Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotate.Z);
         }
 
         public void Update(GameTime gameTime)
@@ -326,6 +360,14 @@ namespace Zeckoxe.Physics
             }
 
             //Frustum = new BoundingFrustum(View * Projection);
+
+            CreateCameraUbo();
+        }
+
+
+        public void CreateTranslation()
+        {
+            View = Matrix4x4.CreateTranslation(0, 0, -2.5f);
         }
 
         public void PreviousIsometricAxis()
