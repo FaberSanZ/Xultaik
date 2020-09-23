@@ -53,7 +53,7 @@ namespace Samples.Samples
 
         public Triangle()
         {
-            Window = new Window(string.Empty, 1000, 720);
+            Window = new Window(string.Empty, 1200, 800);
 
 
             Parameters = new PresentationParameters()

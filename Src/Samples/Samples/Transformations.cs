@@ -49,82 +49,65 @@ namespace Samples.Samples
 
 
             // left side face
-                    new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-                    new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
 
-                    // back face
-                    new Vertex { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-                    new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
-
-
-
-                    // top face
-                    new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-                    new Vertex { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3( 0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
-
-
-                    // bottom face
-                    new Vertex { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-                    new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3( 0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-                    new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
-
-            };
+            // back face
+            new Vertex { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
 
 
+            // top face
+            new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new Vertex { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3( 0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+
+
+            // bottom face
+            new Vertex { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3( 0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+
+        };
 
         public int[] indices = new[]
         {
-                // ffront face
-                0, 1, 2, // first triangle
-                0, 3, 1, // second triangle
+            // ffront face
+            0, 1, 2, // first triangle
+            0, 3, 1, // second triangle
 
-                // left face
-                4, 5, 6, // first triangle
-                4, 7, 5, // second triangle
+            // left face
+            4, 5, 6, // first triangle
+            4, 7, 5, // second triangle
 
-                // right face
-                8, 9, 10, // first triangle
-                8, 11, 9, // second triangle
+            // right face
+            8, 9, 10, // first triangle
+            8, 11, 9, // second triangle
 
-                // back face
-                12, 13, 14, // first triangle
-                12, 15, 13, // second triangle
+            // back face
+            12, 13, 14, // first triangle
+            12, 15, 13, // second triangle
 
-                // top face
-                16, 17, 18, // first triangle
-                16, 19, 17, // second triangle
+            // top face
+            16, 17, 18, // first triangle
+            16, 19, 17, // second triangle
 
-                // bottom face
-                20, 21, 22, // first triangle
-                20, 23, 21, // second triangle
+            // bottom face
+            20, 21, 22, // first triangle
+            20, 23, 21, // second triangle
         };
+
         private float r = 0;
 
 
-        public Window Window { get; set; }
-        public PresentationParameters Parameters { get; set; }
-        public GraphicsAdapter Adapter { get; set; }
-        public GraphicsDevice Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public GraphicsContext Context { get; set; }
-        public PipelineState PipelineState { get; set; }
-        public Buffer VertexBuffer { get; set; }
-        public Buffer IndexBuffer { get; set; }
-        public Buffer ConstBuffer { get; set; }
-        public Buffer ConstBuffer2 { get; set; }
-        public Camera Camera { get; set; }
-        public GameTime GameTime { get; set; }
-        public DescriptorSet Descriptor1 { get; set; }
-        public DescriptorSet Descriptor2 { get; set; }
 
         public Transformations()
         {
@@ -145,8 +128,21 @@ namespace Samples.Samples
             };
 
         }
-
-
+        public Window Window { get; set; }
+        public PresentationParameters Parameters { get; set; }
+        public GraphicsAdapter Adapter { get; set; }
+        public GraphicsDevice Device { get; set; }
+        public Framebuffer Framebuffer { get; set; }
+        public GraphicsContext Context { get; set; }
+        public PipelineState PipelineState { get; set; }
+        public Buffer VertexBuffer { get; set; }
+        public Buffer IndexBuffer { get; set; }
+        public Buffer ConstBuffer { get; set; }
+        public Buffer ConstBuffer2 { get; set; }
+        public Camera Camera { get; set; }
+        public GameTime GameTime { get; set; }
+        public DescriptorSet Descriptor1 { get; set; }
+        public DescriptorSet Descriptor2 { get; set; }
 
 
         public void Initialize()

@@ -26,7 +26,7 @@ namespace Samples.Samples
 
         public ClearScreen()
         {
-            Window = new Window("Zeckoxe Engine - (Clear Screen)", 1000, 720)
+            Window = new Window("Zeckoxe Engine - (Clear Screen)", 1200, 800)
             {
                 //StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
             };
