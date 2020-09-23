@@ -20,13 +20,16 @@ namespace Zeckoxe.GLTF
 
     public struct Vertex
     {
-        public Vector3 Position;
-        public Vector3 color;
-        public Vertex(Vector3 pos, Vector3 color)
+        public Vertex(Vector3 position, Vector3 normal,  Vector3 color)
         {
-            Position = pos;
-            this.color = color;
+            Position = position;
+            Normal = normal;
+            Color = color;
         }
+
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Vector3 Color;
     }
 
 
@@ -81,9 +84,9 @@ namespace Zeckoxe.GLTF
             foreach (MeshPrimitive srcPrim in srcPrims)
             {
                 _Positions = srcPrim.GetVertexAccessor("POSITION")?.AsVector3Array();
-                //_Normal = srcPrim.GetVertexAccessor("NORMAL")?.AsVector3Array();
+                _Normal = srcPrim.GetVertexAccessor("NORMAL")?.AsVector3Array();
                 //_Texture = srcPrim.GetVertexAccessor("TEXCOORD_0")?.AsVector2Array();
-                //_Color = srcPrim.GetVertexAccessor("")?.AsVector3Array();
+                _Color = srcPrim.GetVertexAccessor("COLOR_0")?.AsVector3Array();
 
                 IEnumerable<(int A, int B, int C)> front = srcPrim.GetTriangleIndices();
                 IEnumerable<(int A, int C, int B)> back = front.Select(item => (item.A, item.C, item.B));
@@ -99,7 +102,8 @@ namespace Zeckoxe.GLTF
                 vertices.Add(new Vertex()
                 {
                     Position = _Positions[i],
-                    //Normal = _NORMAL[i],
+                    Color = Vector3.One,
+                    Normal = _Normal[i],
                     //Tex = _Textute[i],
                 });
             }

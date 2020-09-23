@@ -45,8 +45,7 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.DescriptorPoolCreateInfo,
                 poolSizeCount = 1,
                 pPoolSizes = &typeCount,
-                // Set the max. number of descriptor sets that can be requested from this pool (requesting beyond this limit will result in an error)
-                maxSets = 1
+                maxSets = 1   // Set the max. number of descriptor sets that can be requested from this pool (requesting beyond this limit will result in an error)
             };
 
             vkCreateDescriptorPool(NativeDevice.handle, &descriptorPoolInfo, null, out VkDescriptorPool descriptorPool);
@@ -55,7 +54,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public void SetUniformBuffer(int binding, Buffer buffer)
+        public void SetUniformBuffer(int binding, Buffer buffer, ulong offset = 0)
         {
             VkDescriptorSetLayout descriptorSetLayout = _pipelineState._descriptorSetLayout;
 
@@ -81,7 +80,7 @@ namespace Zeckoxe.Graphics
             VkDescriptorBufferInfo descriptor = new VkDescriptorBufferInfo
             {
                 buffer = buffer.Handle,
-                offset = 0,
+                offset = offset,
                 range = (ulong)buffer.SizeInBytes
             };
 
