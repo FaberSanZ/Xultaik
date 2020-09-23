@@ -91,8 +91,8 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.RenderPassBeginInfo,
                 renderArea = new Rectangle()
                 {
-                    Height = (int)NativeDevice.NativeParameters.BackBufferHeight,
-                    Width = (int)NativeDevice.NativeParameters.BackBufferWidth,
+                    Height = NativeDevice.NativeParameters.BackBufferHeight,
+                    Width = NativeDevice.NativeParameters.BackBufferWidth,
                     X = 0,
                     Y = 0,
                 },
@@ -283,6 +283,16 @@ namespace Zeckoxe.Graphics
         internal unsafe void CleanupRenderPass()
         {
             vkCmdEndRenderPass(NativeCommandBuffer);
+        }
+
+
+        public void BindDescriptorSets(DescriptorSet descriptor)
+        {
+            // Bind descriptor sets describing shader binding points
+            VkDescriptorSet descriptor_set = descriptor._descriptorSet;
+            VkPipelineLayout _pipelineLayout = descriptor._pipelineState._pipelineLayout;
+
+            vkCmdBindDescriptorSets(NativeCommandBuffer, VkPipelineBindPoint.Graphics, _pipelineLayout, 0, 1, &descriptor_set, 0, null);
         }
 
 

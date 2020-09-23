@@ -310,7 +310,7 @@ namespace Zeckoxe.Physics
 
         public Matrix4x4 View { get; private set; }
 
-        public Matrix4x4 Model { get; private set; }
+        public Matrix4x4 Model { get; set; }
         
         public Matrix4x4 Projection { get; private set; }
 

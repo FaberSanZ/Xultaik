@@ -120,8 +120,11 @@ namespace Samples.Samples
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
         public Buffer ConstBuffer { get; set; }
+        public Buffer ConstBuffer2 { get; set; }
         public Camera Camera { get; set; }
         public GameTime GameTime { get; set; }
+        public DescriptorSet Descriptor1 { get; set; }
+        public DescriptorSet Descriptor2 { get; set; }
 
         public Transformations()
         {
@@ -162,7 +165,7 @@ namespace Samples.Samples
             Camera = new Camera()
             {
                 Mode = CameraType.Free,
-                Position = new Vector3(0, 0, -3.0f),
+                Position = new Vector3(0, 0, -3.5f),
             };
 
             Camera.SetLens(Window.Width, Window.Height);
@@ -172,6 +175,15 @@ namespace Samples.Samples
 
             CreateBuffers();
             CreatePipelineState();
+
+
+            // Binding 0: Uniform buffer (Vertex shader)
+            Descriptor1 = new DescriptorSet(PipelineState);
+            Descriptor1.SetUniformBuffer(0, ConstBuffer);
+
+            Descriptor2 = new DescriptorSet(PipelineState);
+            Descriptor2.SetUniformBuffer(0, ConstBuffer2);
+
         }
 
 
@@ -184,7 +196,6 @@ namespace Samples.Samples
                 SizeInBytes = Interop.SizeOf<Vertex>(vertices),
             });
 
-
             IndexBuffer = new Buffer(Device, new BufferDescription()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
@@ -194,7 +205,15 @@ namespace Samples.Samples
 
 
 
+
             ConstBuffer = new Buffer(Device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.ConstantBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf<CameraUbo>(),
+            });
+
+            ConstBuffer2 = new Buffer(Device, new BufferDescription()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -269,7 +288,6 @@ namespace Samples.Samples
             };
 
             PipelineState = new PipelineState(Pipelinedescription);
-            PipelineState.SetupDescriptorSet(ConstBuffer);
         }
 
 
@@ -305,8 +323,14 @@ namespace Samples.Samples
         {
             Camera.Update(GameTime);
             Camera.ModelRotate(new Vector3(-r, -r, -r));
-
+            Camera.Model = Camera.Model * Matrix4x4.CreateTranslation(new Vector3(-0.45f, 0.0f, 0.0f));
             ConstBuffer.SetData(Camera.CameraUbo);
+
+
+            Camera.Update(GameTime);
+            Camera.ModelRotate(new Vector3(r, r, r));
+            Camera.Model = Camera.Model * Matrix4x4.CreateTranslation(new Vector3(0.45f, 0.0f, 0.0f));
+            ConstBuffer2.SetData(Camera.CameraUbo);
 
             r += 0.002f;
         }
@@ -321,9 +345,17 @@ namespace Samples.Samples
             commandBuffer.BeginFramebuffer(Framebuffer);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
-            PipelineState.CmdBindDescriptorSets(commandBuffer);
-            commandBuffer.SetGraphicPipeline(PipelineState);
 
+
+            commandBuffer.BindDescriptorSets(Descriptor1);
+            commandBuffer.SetGraphicPipeline(PipelineState);
+            commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
+            commandBuffer.SetIndexBuffer(IndexBuffer);
+            commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);
+
+
+            commandBuffer.BindDescriptorSets(Descriptor2);
+            commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
             commandBuffer.SetIndexBuffer(IndexBuffer);
             commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);

@@ -20,9 +20,7 @@ namespace Zeckoxe.Graphics
         internal VkPipeline graphicsPipeline;
         internal VkDescriptorSetLayout _descriptorSetLayout;
         internal VkPipelineCache _pipelineCache;
-        internal VkDescriptorPool _descriptorPool;
-        private VkDescriptorSet _descriptorSet;
-        private VkPipelineLayout _pipelineLayout;
+        internal VkPipelineLayout _pipelineLayout;
 
         public PipelineState(PipelineStateDescription description) : base(description.Framebuffer.NativeDevice)
         {
@@ -38,12 +36,13 @@ namespace Zeckoxe.Graphics
         {
             SetupDescriptorSetLayout();
             CreatePipelineLayout();
-            SetupDescriptorPool();
+
             CreatePipelineCache();
 
 
 
             CreateGraphicsPipeline(PipelineStateDescription);
+
         }
 
         private void SetupDescriptorSetLayout()
@@ -97,76 +96,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void SetupDescriptorPool()
-        {
-            // We need to tell the API the number of max. requested descriptors per type
-            VkDescriptorPoolSize typeCount;
-            // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
-            typeCount.type = VkDescriptorType.UniformBuffer;
-            typeCount.descriptorCount = 1;
-            // For additional types you need to add new entries in the type count list
-            // E.g. for two combined image samplers :
-            // typeCounts[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            // typeCounts[1].descriptorCount = 2;
 
-            // Create the global descriptor pool
-            // All descriptors used in this example are allocated from this pool
-            VkDescriptorPoolCreateInfo descriptorPoolInfo = new VkDescriptorPoolCreateInfo
-            {
-                sType = VkStructureType.DescriptorPoolCreateInfo,
-                poolSizeCount = 1,
-                pPoolSizes = &typeCount,
-                // Set the max. number of descriptor sets that can be requested from this pool (requesting beyond this limit will result in an error)
-                maxSets = 1
-            };
-
-            vkCreateDescriptorPool(NativeDevice.handle, &descriptorPoolInfo, null, out VkDescriptorPool descriptorPool);
-            _descriptorPool = descriptorPool;
-        }
-
-
-
-        public void SetupDescriptorSet(Buffer buffer)
-        {
-            // Allocate a new descriptor set from the global descriptor pool
-            VkDescriptorSetAllocateInfo allocInfo = new VkDescriptorSetAllocateInfo
-            {
-                sType = VkStructureType.DescriptorSetAllocateInfo,
-                descriptorPool = _descriptorPool,
-                descriptorSetCount = 1
-            };
-            VkDescriptorSetLayout dsl = _descriptorSetLayout;
-            allocInfo.pSetLayouts = &dsl;
-
-            VkDescriptorSet descriptorSetptr;
-            vkAllocateDescriptorSets(NativeDevice.handle, &allocInfo, &descriptorSetptr);
-            _descriptorSet = descriptorSetptr;
-
-            // Update the descriptor set determining the shader binding points
-            // For every binding point used in a shader there needs to be one
-            // descriptor set matching that binding point
-
-            VkWriteDescriptorSet writeDescriptorSet = new VkWriteDescriptorSet()
-            {
-                sType = VkStructureType.WriteDescriptorSet
-            };
-
-            // Binding 0 : Uniform buffer
-            writeDescriptorSet.dstSet = _descriptorSet;
-            writeDescriptorSet.descriptorCount = 1;
-            writeDescriptorSet.descriptorType = VkDescriptorType.UniformBuffer;
-            VkDescriptorBufferInfo descriptor = new VkDescriptorBufferInfo
-            {
-                buffer = buffer.Handle,
-                offset = 0,
-                range = (ulong)buffer.SizeInBytes
-            };
-            writeDescriptorSet.pBufferInfo = &descriptor;
-            // Binds this uniform buffer to binding point 0
-            writeDescriptorSet.dstBinding = 0;
-
-            vkUpdateDescriptorSets(NativeDevice.handle, 1, &writeDescriptorSet, 0, null);
-        }
 
 
 
@@ -408,15 +338,6 @@ namespace Zeckoxe.Graphics
             }
             shaders.Clear();
         }
-
-
-        public void CmdBindDescriptorSets(CommandBuffer buffer)
-        {
-            // Bind descriptor sets describing shader binding points
-            VkDescriptorSet ds = _descriptorSet;
-            vkCmdBindDescriptorSets(buffer.NativeCommandBuffer, VkPipelineBindPoint.Graphics, _pipelineLayout, 0, 1, &ds, 0, null);
-        }
-
 
     }
 }
