@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
+using Zeckoxe.Engine;
 using Zeckoxe.Games;
 using Zeckoxe.GLTF;
 using Zeckoxe.Graphics;
@@ -13,7 +14,7 @@ using Buffer = Zeckoxe.Graphics.Buffer;
 namespace Samples.Samples
 {
 
-    public class LoadGLTF : IDisposable
+    public class LoadGLTF : Game, IDisposable
     {
         [StructLayout(LayoutKind.Sequential)]
         public struct TransformUniform
@@ -39,34 +40,16 @@ namespace Samples.Samples
             }
         }
 
-        public LoadGLTF()
+
+        public LoadGLTF() : base()
         {
-            Window = new Window(string.Empty, 1200, 800);
-
-
-            Parameters = new PresentationParameters()
-            {
-                BackBufferWidth = Window.Width,
-                BackBufferHeight = Window.Height,
-                Win32Handle = Window.Win32Handle,
-                Settings = new Settings()
-                {
-                    Validation = false,
-                    Fullscreen = false,
-                    VSync = false,
-                },
-            };
-
+            Parameters.Settings.Validation = false;
+            Window.Title += "Zeckoxe Engine - (Transformations) ";
         }
 
 
 
-        public Window Window { get; set; }
-        public PresentationParameters Parameters { get; set; }
-        public GraphicsAdapter Adapter { get; set; }
-        public GraphicsDevice Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public GraphicsContext Context { get; set; }
+
         public Camera Camera { get; set; }
         public GameTime GameTime { get; set; }
         public GLTFLoader GLTFModel { get; set; }
@@ -87,27 +70,17 @@ namespace Samples.Samples
         public float roll;
 
 
-        public void Initialize()
+        public override void Initialize()
         {
-            Adapter = new GraphicsAdapter(Parameters);
-
-            Device = new GraphicsDevice(Adapter);
-
-            Framebuffer = new Framebuffer(Device);
-
-            Context = new GraphicsContext(Device);
-
-            GameTime = new GameTime();
-
+            base.Initialize();
 
             Camera = new Camera()
             {
                 Mode = CameraType.Free,
-                Position = new Vector3(1, -.3f, -3.5f),
+                Position = new Vector3(0, 0, -3.5f),
             };
 
             Camera.SetLens(Window.Width, Window.Height);
-
 
 
             // Reset Model

@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
+using Zeckoxe.Engine;
 using Zeckoxe.Games;
 using Zeckoxe.Graphics;
 using Zeckoxe.Physics;
@@ -12,22 +13,9 @@ using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Samples.Samples
 {
-    public class Transformations : IDisposable
+    public class Transformations : Game, IDisposable
     {
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Vertex
-        {
-            public Vertex(Vector3 position, Vector3 color)
-            {
-                Position = position;
-                Color = color;
-            }
-
-            public Vector3 Position;
-
-            public Vector3 Color;
-        }
 
 
         [StructLayout(LayoutKind.Sequential)]
@@ -54,48 +42,48 @@ namespace Samples.Samples
             }
         }
 
-        public Vertex[] vertices = new[]
+        public VertexPositionColor[] vertices = new[]
         {
             // front face
-            new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new Vertex { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
             // right side face
-            new Vertex { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new Vertex { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3(0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3(0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
 
             // left side face
-            new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
 
             // back face
-            new Vertex { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
 
 
             // top face
-            new Vertex { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new Vertex { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3( 0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3( 0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
 
             // bottom face
-            new Vertex { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new Vertex { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3( 0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new Vertex { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3( 0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
+            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
         };
 
@@ -129,31 +117,7 @@ namespace Samples.Samples
 
 
 
-        public Transformations()
-        {
-            Window = new Window(string.Empty, 1200, 800);
-
-
-            Parameters = new PresentationParameters()
-            {
-                BackBufferWidth = Window.Width,
-                BackBufferHeight = Window.Height,
-                Win32Handle = Window.Win32Handle,
-                Settings = new Settings()
-                {
-                    Validation = false,
-                    Fullscreen = false,
-                    VSync = false,
-                },
-            };
-
-        }
-        public Window Window { get; set; }
-        public PresentationParameters Parameters { get; set; }
-        public GraphicsAdapter Adapter { get; set; }
-        public GraphicsDevice Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public GraphicsContext Context { get; set; }
+        
         public PipelineState PipelineState { get; set; }
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
@@ -171,19 +135,16 @@ namespace Samples.Samples
         public float pitch;
         public float roll;
 
-
-        public void Initialize()
+        public Transformations() : base()
         {
-            Adapter = new GraphicsAdapter(Parameters);
+            Parameters.Settings.Validation = false;
+            Window.Title += "Zeckoxe Engine - (Transformations) ";
+        }
 
-            Device = new GraphicsDevice(Adapter);
 
-            Framebuffer = new Framebuffer(Device);
-
-            Context = new GraphicsContext(Device);
-
-            GameTime = new GameTime();
-
+        public override void Initialize()
+        {
+            base.Initialize();
 
             Camera = new Camera()
             {
@@ -223,7 +184,19 @@ namespace Samples.Samples
             Descriptor2 = new DescriptorSet(PipelineState, pool);
             Descriptor2.SetUniformBuffer(0, ConstBuffer2);
 
+
+            VertexBuffer.SetData(vertices);
+            IndexBuffer.SetData(indices);
+
+            Camera.Update(GameTime);
+
+
+            yaw = 0;
+            pitch = 0;
+            roll = 0;
         }
+
+
 
 
         public void CreateBuffers()
@@ -232,7 +205,7 @@ namespace Samples.Samples
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<Vertex>(vertices),
+                SizeInBytes = Interop.SizeOf<VertexPositionColor>(vertices),
             });
 
             IndexBuffer = new Buffer(Device, new BufferDescription()
@@ -315,7 +288,7 @@ namespace Samples.Samples
                         {
                             Binding = 0,
                             InputRate = VertexInputRate.Vertex,
-                            Stride = Interop.SizeOf<Vertex>(),
+                            Stride = VertexPositionColor.Size,
                         }
                     },
                 },
@@ -330,41 +303,8 @@ namespace Samples.Samples
         }
 
 
-        public void Run()
-        {
-            Initialize();
 
-            BeginRun();
-
-            Window.Title += "Zeckoxe Engine - (Transformations) ";
-
-            Window?.Show();
-
-            Tick();
-        }
-
-        public void Tick()
-        {
-            Window.RenderLoop(() =>
-            {
-                Update();
-                Draw();
-            });
-        }
-
-        public void BeginRun()
-        {
-            VertexBuffer.SetData(vertices);
-            IndexBuffer.SetData(indices);
-
-            Camera.Update(GameTime);
-
-
-            yaw = 0;
-            pitch = 0;
-            roll = 0;
-        }
-        public void Update()
+        public override void Update(GameTime game)
         {
 
             Model = Matrix4x4.CreateFromYawPitchRoll(-yaw, -pitch, -roll) * Matrix4x4.CreateTranslation(-0.45f, 0.0f, 0.0f);
@@ -383,13 +323,12 @@ namespace Samples.Samples
         }
 
 
-        public void Draw()
+        public override void BeginDraw()
         {
+            base.BeginDraw();
+
             CommandBuffer commandBuffer = Context.CommandBuffer;
 
-            Device.WaitIdle();
-
-            commandBuffer.Begin();
             commandBuffer.BeginFramebuffer(Framebuffer, .0f, .2f, .4f);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
@@ -406,13 +345,8 @@ namespace Samples.Samples
             // Draw Cube 2
             commandBuffer.BindDescriptorSets(Descriptor2);
             commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);
-
-
-            commandBuffer.Close();
-            commandBuffer.Submit(/*Fence*/);
-
-            Device.NativeSwapChain.Present();
         }
+
 
         public void Dispose()
         {

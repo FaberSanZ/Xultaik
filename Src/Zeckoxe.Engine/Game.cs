@@ -39,7 +39,6 @@ namespace Zeckoxe.Engine
 
         public GraphicsContext Context { get; set; }
 
-
         public Window? Window { get; set; }
 
 
@@ -77,6 +76,11 @@ namespace Zeckoxe.Engine
 
             base.BeginDraw();
         }
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+        }
+
 
         public override void EndDraw()
         {
