@@ -11,9 +11,8 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
-    public struct PresentationParameters
+    public class PresentationParameters
     {
-
         public int BackBufferWidth { get; set; }
 
         public int BackBufferHeight { get; set; }
@@ -21,7 +20,6 @@ namespace Zeckoxe.Graphics
         public IntPtr Win32Handle { get; set; }
 
         public Settings Settings { get; set; }
-
     }
 
 

@@ -9,7 +9,7 @@ namespace Zeckoxe.Engine
     {
         public Game() : base()
         {
-            Window = new Window("Zeckoxe Engine - (Clear Screen)", 1200, 800)
+            Window = new Window("Zeckoxe Engine", 1200, 800)
             {
                 //StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
             };
@@ -28,14 +28,6 @@ namespace Zeckoxe.Engine
                 },
             };
 
-
-            Adapter = new GraphicsAdapter(Parameters);
-
-            Device = new GraphicsDevice(Adapter);
-
-            Framebuffer = new Framebuffer(Device);
-
-            Context = new GraphicsContext(Device);
         }
         public PresentationParameters Parameters { get; set; }
 
@@ -54,6 +46,14 @@ namespace Zeckoxe.Engine
         public override void Initialize()
         {
             base.Initialize();
+
+            Adapter = new GraphicsAdapter(Parameters);
+
+            Device = new GraphicsDevice(Adapter);
+
+            Framebuffer = new Framebuffer(Device);
+
+            Context = new GraphicsContext(Device);
         }
 
         public override void BeginRun()
@@ -61,6 +61,12 @@ namespace Zeckoxe.Engine
             base.BeginRun();
 
             Window?.Show();
+
+
+            Window.RenderLoop(() =>
+            {
+                OnTickRequested();
+            });
         }
 
         public override void BeginDraw()
@@ -89,7 +95,7 @@ namespace Zeckoxe.Engine
 
             if (Window != null)
             {
-                Window.Dispose();
+                //Window.Dispose();
             }
         }
 
@@ -98,7 +104,7 @@ namespace Zeckoxe.Engine
 
         }
 
-        private void OnTickRequested(object? sender, EventArgs e)
+        internal void OnTickRequested()
         {
             Tick();
         }

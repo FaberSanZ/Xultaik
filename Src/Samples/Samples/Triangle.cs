@@ -41,47 +41,27 @@ namespace Samples.Samples
 
 
         public PipelineState PipelineState { get; set; }
-        public Fence Fence { get; set; } // Synchronization Primitives
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
 
 
-        public Triangle()
+        public Triangle() : base()
         {
-            Window = new Window(string.Empty, 1200, 800);
-
-
-            Parameters = new PresentationParameters()
-            {
-                BackBufferWidth = Window.Width,
-                BackBufferHeight = Window.Height,
-                Win32Handle = Window.Win32Handle,
-                Settings = new Settings()
-                {
-                    Validation = true,
-                    Fullscreen = false,
-                    VSync = false,
-                },
-            };
-
+            Parameters.Settings.Validation = false;
+            Window.Title += "Zeckoxe Engine - (LoadGLTF) ";
         }
 
 
-
-
-        public void Initialize()
+        public override void Initialize()
         {
-            Adapter = new GraphicsAdapter(Parameters);
-
-            Device = new GraphicsDevice(Adapter);
-
-            Framebuffer = new Framebuffer(Device);
-
-            Context = new GraphicsContext(Device);
+            base.Initialize();
 
             CreateBuffers();
+
             CreatePipelineState();
         }
+
+
 
 
         public void CreateBuffers()
@@ -100,6 +80,10 @@ namespace Samples.Samples
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<int>(indices),
             });
+
+
+            VertexBuffer.SetData(vertices);
+            IndexBuffer.SetData(indices);
         }
 
 
@@ -159,48 +143,15 @@ namespace Samples.Samples
         }
 
 
-        public void Run()
+        public override void BeginDraw()
         {
-            Initialize();
+            base.BeginDraw();
 
-            BeginRun();
-
-            Window.Title += "Zeckoxe Engine - (Hello Triangle) ";
-
-            Window?.Show();
-
-            Tick();
-        }
-
-        public void Tick()
-        {
-            Window.RenderLoop(() =>
-            {
-                Update();
-                Draw();
-            });
-        }
-
-        public void BeginRun()
-        {
-            VertexBuffer.SetData(vertices);
-            IndexBuffer.SetData(indices);
-        }
-
-        public void Update()
-        {
-
-        }
-
-        public void Draw()
-        {
             CommandBuffer commandBuffer = Context.CommandBuffer;
 
-            Device.WaitIdle();
 
-            commandBuffer.Begin();
             commandBuffer.BeginFramebuffer(Framebuffer);
-            commandBuffer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
+
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 
@@ -208,13 +159,9 @@ namespace Samples.Samples
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
             commandBuffer.SetIndexBuffer(IndexBuffer);
             commandBuffer.DrawIndexed(3, 1, 0, 0, 0);
-
-
-            commandBuffer.Close();
-            commandBuffer.Submit(/*Fence*/);
-
-            Device.NativeSwapChain.Present();
         }
+
+
 
         public void Dispose()
         {

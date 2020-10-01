@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
-    public struct Settings
+    public class Settings
     {
         public bool Validation { get; set; }
 
