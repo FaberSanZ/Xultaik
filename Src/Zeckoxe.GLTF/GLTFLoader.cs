@@ -22,17 +22,7 @@ namespace Zeckoxe.GLTF
 
 
 
-    public struct VertexPositionNormal
-    {
-        public VertexPositionNormal(Vector3 position, Vector3 normal)
-        {
-            Position = position;
-            Normal = normal;
-        }
 
-        public Vector3 Position;
-        public Vector3 Normal;
-    }
 
 
     //VertexPositionNormalTexture
@@ -117,7 +107,7 @@ namespace Zeckoxe.GLTF
             CreateBuffers(device);
 
 
-            VertexBuffer.SetData(vertices.ToArray());
+            VertexBuffer.SetData (vertices.ToArray());
             IndexBuffer.SetData(indices.ToArray());
         }
 

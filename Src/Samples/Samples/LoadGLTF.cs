@@ -172,7 +172,7 @@ namespace Samples.Samples
                         {
                             Binding = 0,
                             InputRate = VertexInputRate.Vertex,
-                            Stride = Interop.SizeOf<VertexPositionNormalColor>(),
+                            Stride = VertexPositionNormalColor.Size,
                         }
                     },
                 },
@@ -240,7 +240,7 @@ namespace Samples.Samples
                         {
                             Binding = 0,
                             InputRate = VertexInputRate.Vertex,
-                            Stride = Interop.SizeOf<VertexPositionNormalColor>(),
+                            Stride = VertexPositionNormalColor.Size,
                         }
                     },
                 },
@@ -287,12 +287,12 @@ namespace Samples.Samples
             Camera.Update(GameTime);
             Camera.ModelRotate(new Vector3(3.15f, 0, 0));
             Camera.Model = Camera.Model * Matrix4x4.CreateTranslation(new Vector3(1.0f, 0.0f, 0.0f));
-            ConstBuffer.SetData(Camera.CameraUbo);
+            ConstBuffer.SetData(ref Camera.CameraUbo);
 
             Camera.Update(GameTime);
             Camera.ModelRotate(new Vector3(3.15f, r, 0));
             Camera.Model = Camera.Model * Matrix4x4.CreateTranslation(new Vector3(-1.0f, 0.0f, 0.0f));
-            ConstBuffer2.SetData(Camera.CameraUbo);
+            ConstBuffer2.SetData(ref Camera.CameraUbo);
 
             r += 0.001f;
         }

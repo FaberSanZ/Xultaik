@@ -153,7 +153,15 @@ namespace Zeckoxe.Graphics
 
         }
 
-        public void SetData<T>(params T[] Data) where T : struct
+
+
+        public void SetData<T>(Span<T> Data) where T : struct
+        {
+            DynamicData(Data);
+        }
+
+
+        public void SetData<T>(T[] Data) where T : unmanaged
         {
             switch (Usage)
             {
@@ -167,6 +175,8 @@ namespace Zeckoxe.Graphics
                     break;
 
                 case GraphicsResourceUsage.Dynamic:
+                    DynamicData(Data);
+
                     break;
 
                 case GraphicsResourceUsage.Staging:
@@ -176,11 +186,13 @@ namespace Zeckoxe.Graphics
                     break;
             }
 
-            DynamicData(Data);
+
+            
 
         }
 
-        private void DynamicData<T>(params T[] Data) where T : struct
+
+        private void DynamicData<T>(Span<T> Data) where T : struct
         {
             //vkAllocateMemory(device, &MemoryAlloc_info, null, &_memory);
             //memory = _memory;
@@ -195,7 +207,30 @@ namespace Zeckoxe.Graphics
                 //Interop.MemoryHelper.CopyBlock(srcPtr, size++);
             }
 
+            Data.CopyTo(new Span<T>(ppData, Data.Length));
+
+            vkUnmapMemory(NativeDevice.handle, memory);
+
+        }
+
+
+        private void DynamicData<T>(T[] Data) where T : struct
+        {
+            //vkAllocateMemory(device, &MemoryAlloc_info, null, &_memory);
+            //memory = _memory;
+            void* ppData;
+            vkMapMemory(NativeDevice.handle, memory, 0, size, 0, &ppData);
+
+            //Copy Data
+            {
+                //int stride = Interop.SizeOf<T>();
+                //uint size = (uint)(stride * Data.Length);
+                //void* srcPtr = Unsafe.AsPointer(ref Data[0]);
+            }
+
             Interop.MemoryHelper.CopyBlocks<T>(ppData, Data);
+
+
 
             vkUnmapMemory(NativeDevice.handle, memory);
 
