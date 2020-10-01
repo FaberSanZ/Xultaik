@@ -1,39 +1,80 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 
 /*=============================================================================
-	Texture.cs
+	Image.cs
 =============================================================================*/
 
 
 using System;
 using Vortice.Vulkan;
+using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
 
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Graphics.Vulkan
 {
-    // TODO: Vulkan Memory Allocator
-    public unsafe class Texture : GraphicsResource
+    public unsafe class Image : GraphicsResource
     {
-        internal struct DepthStencil
+        internal struct ImageInitialData
         {
-            public VkImage Image;
-            public VkDeviceMemory Mem;
-            public VkImageView View;
-        }
+            internal void* data;
+            internal VkPointerSize row_length;
+            internal VkPointerSize image_height;
+        };
 
-        internal VkImage Image;
+
+        internal enum ImageMiscFlagBits
+        {
+            GenerateMipsBit = 1 << 0,
+
+            FORCE_ARRAY_BIT = 1 << 1,
+            MUTABLE_SRGB_BIT = 1 << 2,
+            CONCURRENT_QUEUE_GRAPHICS_BIT = 1 << 3,
+            CONCURRENT_QUEUE_ASYNC_COMPUTE_BIT = 1 << 4,
+            CONCURRENT_QUEUE_ASYNC_GRAPHICS_BIT = 1 << 5,
+            CONCURRENT_QUEUE_ASYNC_TRANSFER_BIT = 1 << 6,
+            VERIFY_FORMAT_FEATURE_SAMPLED_LINEAR_FILTER_BIT = 1 << 7,
+            LINEAR_IMAGE_IGNORE_DEVICE_LOCAL_BIT = 1 << 8,
+            FORCE_NO_DEDICATED_BIT = 1 << 9
+        };
+
+        internal enum ImageViewMiscFlagBits
+        {
+            IMAGE_VIEW_MISC_FORCE_ARRAY_BIT = 1 << 0
+        };
+
+        internal enum Layout
+        {
+            Optimal,
+            General
+        };
+
+
+        internal VkPointerSize row_pitch;
+        internal VkPointerSize row_offset;
+
+        internal GraphicsDevice device;
+        internal VkImage image;
+        internal Layout layout_type = Layout.Optimal;
+        internal VkPipelineStageFlags stage_flags = 0;
+        internal VkAccessFlags access_flags = 0;
+        internal VkImageLayout swapchain_layout = VkImageLayout.Undefined;
+        internal bool owns_image = true;
+        internal bool owns_memory_allocation = true;
+
         internal VkDeviceMemory Mem;
         internal VkImageView View;
-        internal DepthStencil _depthStencil;
         internal VkFormat vkformat;
+        internal VkBuffer buffer;
 
 
 
-        public Texture(GraphicsDevice device) : base(device)
+
+        public Image(GraphicsDevice device) : base(device)
         {
-            Recreate();
+            device = NativeDevice;
         }
+
 
 
         public TextureDescription Description { get; set; }
@@ -48,13 +89,34 @@ namespace Zeckoxe.Graphics
 
 
 
-
-        public void Recreate()
+        private unsafe void CreateBuffer(ulong size)
         {
+            VkBufferCreateInfo createInfo = new VkBufferCreateInfo
+            {
+                sType = VkStructureType.BufferCreateInfo,
+                flags = VkBufferCreateFlags.None
+            };
 
+            createInfo.size = size;
+
+            createInfo.usage = VkBufferUsageFlags.TransferSrc | VkBufferUsageFlags.TransferDst;
+
+            // Create buffer
+            vkCreateBuffer(device.handle, &createInfo, null, out buffer);
+
+            // Allocate and bind memory
+            vkGetBufferMemoryRequirements(device.handle, buffer, out VkMemoryRequirements memoryRequirements);
+
+            //VkDeviceMemory stagingMemory;
+            //VkResult result = vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, &stagingMemory);
+            //result.CheckResult();
+
+
+            if (Mem != VkDeviceMemory.Null)
+            {
+                vkBindBufferMemory(device.handle, buffer, Mem, 0);
+            }
         }
-
-
 
         public void CreateDepthStencil(int width, int height)
         {
@@ -81,7 +143,7 @@ namespace Zeckoxe.Graphics
                 usage = VkImageUsageFlags.DepthStencilAttachment | VkImageUsageFlags.TransferSrc
             };
 
-            VkResult result = vkCreateImage(NativeDevice.handle, &imageCreateInfo, null, out VkImage image);
+            VkResult result = vkCreateImage(NativeDevice.handle, &imageCreateInfo, null, out image);
             result.CheckResult();
 
             vkGetImageMemoryRequirements(NativeDevice.handle, image, out VkMemoryRequirements memReq);
@@ -115,19 +177,12 @@ namespace Zeckoxe.Graphics
             vkCreateImageView(NativeDevice.handle, &imageViewCreateInfo, null, out VkImageView view).CheckResult();
 
 
-            _depthStencil = new DepthStencil()
-            {
-                Image = image,
-                Mem = memory,
-                View = view
-            };
-
+            Mem = memory;
+            View = view;
             vkformat = format;
-            //Description.Format = (PixelFormat)format /* *(PixelFormat*)&format */; // TODO: ToVkFormat
         }
 
 
-        // TODO: Texture, Image 
         public void Imple(TextureData tex2D)
         {
             IntPtr pixelsPtr = IntPtr.Zero;
@@ -338,7 +393,6 @@ namespace Zeckoxe.Graphics
             vkCreateImageView(NativeDevice.handle, &imageViewCreateInfo, null, out VkImageView view);
 
         }
-
 
     }
 }

@@ -6,8 +6,10 @@
 
 
 
+using SixLabors.ImageSharp.Formats;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -29,7 +31,6 @@ namespace Zeckoxe.Graphics
         }
 
         public PipelineStateDescription PipelineStateDescription { get; set; }
-
 
 
         private void Recreate()

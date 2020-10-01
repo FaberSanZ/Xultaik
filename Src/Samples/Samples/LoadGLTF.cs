@@ -285,7 +285,7 @@ namespace Samples.Samples
             Camera.Model = Camera.Model * Matrix4x4.CreateTranslation(new Vector3(-1.0f, 0.0f, 0.0f));
             ConstBuffer2.SetData(Camera.CameraUbo);
 
-            //r += 0.002f;
+            r += 0.001f;
         }
 
         public void Draw()
@@ -295,7 +295,7 @@ namespace Samples.Samples
             Device.WaitIdle();
 
             commandBuffer.Begin();
-            commandBuffer.BeginFramebuffer(Framebuffer);
+            commandBuffer.BeginFramebuffer(Framebuffer, .5f, .5f, .5f);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 

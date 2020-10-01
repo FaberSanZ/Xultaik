@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 
 /*=============================================================================
 	CommandList.cs
@@ -74,12 +74,12 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void BeginFramebuffer(Framebuffer framebuffer)
+        public void BeginFramebuffer(Framebuffer framebuffer, float r = 0, float g = .2f, float b = .4f, float a = 1.0f)
         {
             // Set clear values for all framebuffer attachments with loadOp set to clear
             // We use two attachments (color and depth) that are cleared at the start of the subpass and as such we need to set clear values for both
             VkClearValue* clearValues = stackalloc VkClearValue[2];
-            clearValues[0].color = new VkClearColorValue(0.0f, 0.2f, 0.4f);
+            clearValues[0].color = new VkClearColorValue(r, g, b, a);
             clearValues[1].depthStencil = new VkClearDepthStencilValue()
             {
                 depth = 1.0f,
@@ -96,12 +96,12 @@ namespace Zeckoxe.Graphics
                     X = 0,
                     Y = 0,
                 },
+                renderPass = framebuffer.renderPass,
+                clearValueCount = 2,
+                pClearValues = clearValues,
+                framebuffer = framebuffer.framebuffers[imageIndex], // Set target frame buffer
             };
-            renderPassBeginInfo.renderPass = framebuffer.renderPass;
-            renderPassBeginInfo.clearValueCount = 2;
-            renderPassBeginInfo.pClearValues = clearValues;
-            // Set target frame buffer
-            renderPassBeginInfo.framebuffer = framebuffer.framebuffers[imageIndex];
+
 
 
 

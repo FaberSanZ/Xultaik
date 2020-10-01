@@ -107,6 +107,11 @@ namespace Zeckoxe.Core
                 Unsafe.Copy(dstPointer.ToPointer(), ref value);
             }
 
+            public static void Write<T>(void* dstPointer, ref T value)
+            {
+                Unsafe.Copy(dstPointer, ref value);
+            }
+
             public static void CopyBlocks<T>(void* dstPointer, T[] values)
             {
                 if (values is null || values.Length is 0)

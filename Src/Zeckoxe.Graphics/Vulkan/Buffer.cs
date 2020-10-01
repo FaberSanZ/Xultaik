@@ -4,6 +4,7 @@
 	Buffer.cs
 =============================================================================*/
 
+using System;
 using System.Runtime.CompilerServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
@@ -134,12 +135,17 @@ namespace Zeckoxe.Graphics
 
         }
 
-        public void SetData<T>(T Data) where T : unmanaged
+
+        public void SetData<T>(ref T Data) where T : unmanaged
         {
             // Map uniform buffer and update it
             void* ppData;
             vkMapMemory(NativeDevice.handle, memory, 0, size, 0, &ppData);
-            Unsafe.CopyBlock(ppData, &Data, (uint)sizeof(T));
+
+            // Copy
+            Interop.MemoryHelper.Write(ppData, ref Data);
+
+
             // Unmap after data has been copied
             // Note: Since we requested a host coherent memory type for the uniform buffer, the write is instantly visible to the GPU
             vkUnmapMemory(NativeDevice.handle, memory);
