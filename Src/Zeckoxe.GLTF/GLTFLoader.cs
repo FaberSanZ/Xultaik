@@ -7,6 +7,7 @@
 
 using SharpGLTF.Runtime;
 using SharpGLTF.Schema2;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -17,18 +18,6 @@ using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Zeckoxe.GLTF
 {
-
-
-
-
-
-
-
-
-    //VertexPositionNormalTexture
-
-
-
     public unsafe class GLTFLoader
     {
         private readonly IList<Vector3> _Positions;
@@ -36,18 +25,14 @@ namespace Zeckoxe.GLTF
         private readonly IList<Vector2> _Texture;
         private readonly IList<Vector3> _Color;
 
-        private readonly List<VertexPositionNormalColor> vertices;
-        private readonly List<int> indices;
 
-
-        public Buffer VertexBuffer { get; set; }
-        public Buffer IndexBuffer { get; set; }
+        public int[] Indices;
 
         public PipelineState GLTFPipeline { get; set; }
 
 
 
-        public GLTFLoader(string FileName, GraphicsDevice device)
+        public GLTFLoader(string FileName)
         {
 
             //Vertices = new ModelPart<Vertex>();
@@ -70,10 +55,6 @@ namespace Zeckoxe.GLTF
             }
 
 
-            vertices = new List<VertexPositionNormalColor>();
-            indices = new List<int>();
-
-
 
             IEnumerable<MeshPrimitive> srcPrims = GetValidPrimitives(meshes[0]);
 
@@ -81,7 +62,7 @@ namespace Zeckoxe.GLTF
             {
                 _Positions = srcPrim.GetVertexAccessor("POSITION")?.AsVector3Array();
                 _Normal = srcPrim.GetVertexAccessor("NORMAL")?.AsVector3Array();
-                //_Texture = srcPrim.GetVertexAccessor("TEXCOORD_0")?.AsVector2Array();
+                _Texture = srcPrim.GetVertexAccessor("TEXCOORD_0")?.AsVector2Array();
                 _Color = srcPrim.GetVertexAccessor("COLOR_0")?.AsVector3Array();
 
                 IEnumerable<(int A, int B, int C)> front = srcPrim.GetTriangleIndices();
@@ -89,29 +70,44 @@ namespace Zeckoxe.GLTF
                 (int A, int, int)[] _Triangles = front.Concat(back).ToArray();
 
 
-                indices = CreateIndexBuffer(srcPrim.GetTriangleIndices());
+                Indices = CreateIndexBuffer(srcPrim.GetTriangleIndices());
 
             }
+        }
+
+
+        public Span<VertexPositionNormal> GetPositionNormalAsSpan()
+        {
+            VertexPositionNormal[] vertices = new VertexPositionNormal[_Positions.Count];
 
             for (int i = 0; i < _Positions.Count; i++)
             {
-                vertices.Add(new VertexPositionNormalColor()
+                vertices[i] = new VertexPositionNormal()
                 {
-                    Position = _Positions[i],
-                    Color = Vector3.One,
-                    Normal = _Normal[i],
-                });
+                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
+                    Normal = _Normal[i] != null ? _Normal[i] : Vector3.One,
+                };
             }
 
-
-            CreateBuffers(device);
-
-
-            VertexBuffer.SetData (vertices.ToArray());
-            IndexBuffer.SetData(indices.ToArray());
+            return vertices.AsSpan(); // TODO: GetPositionNormal AsSpan
         }
 
-        
+        public VertexPositionNormal[] GetPositionNormalAsArray()
+        {
+            VertexPositionNormal[] vertices = new VertexPositionNormal[_Positions.Count];
+
+            for (int i = 0; i < _Positions.Count; i++)
+            {
+                vertices[i] = new VertexPositionNormal()
+                {
+                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
+                    Normal = _Normal[i] != null ? _Normal[i] : Vector3.One,
+                };
+            }
+
+            return vertices;
+        }
+
 
         public IEnumerable<VertexPositionNormal> GetPositionNormal()
         {
@@ -142,32 +138,6 @@ namespace Zeckoxe.GLTF
         public void Update()
         {
 
-        }
-
-
-        public void Draw(CommandBuffer commandBuffer)
-        {
-            commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
-            commandBuffer.SetIndexBuffer(IndexBuffer);
-            commandBuffer.DrawIndexed(indices.Count, 1, 0, 0, 0);
-        }
-
-        public void CreateBuffers(GraphicsDevice device)
-        {
-            VertexBuffer = new Buffer(device, new BufferDescription()
-            {
-                BufferFlags = BufferFlags.VertexBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<VertexPositionNormalColor>(vertices.ToArray()),
-            });
-
-
-            IndexBuffer = new Buffer(device, new BufferDescription()
-            {
-                BufferFlags = BufferFlags.IndexBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<int>(indices.ToArray()),
-            });
         }
 
 
@@ -208,15 +178,14 @@ namespace Zeckoxe.GLTF
         }
 
 
-        private List<int> CreateIndexBuffer(IEnumerable<(int A, int B, int C)> triangles)
+        private int[] CreateIndexBuffer(IEnumerable<(int A, int B, int C)> triangles)
         {
             int[] sequence32 = triangles.SelectMany(item => new[] { item.C, item.B, item.A }).ToArray();
 
             int max = sequence32.Max();
 
 
-            return sequence32.ToList();
-
+            return sequence32;
         }
     }
 }

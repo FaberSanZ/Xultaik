@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Games;
@@ -14,6 +15,30 @@ namespace Samples.Samples
 
     public class LoadGLTF : IDisposable
     {
+        [StructLayout(LayoutKind.Sequential)]
+        public struct TransformUniform
+        {
+            public TransformUniform(Matrix4x4 p, Matrix4x4 m, Matrix4x4 v)
+            {
+                P = p;
+                M = m;
+                V = v;
+            }
+
+            public Matrix4x4 P;
+
+            public Matrix4x4 M;
+
+            public Matrix4x4 V;
+
+            public void Update(Camera camera, Matrix4x4 m)
+            {
+                P = camera.Projection;
+                M = m;
+                V = camera.View;
+            }
+        }
+
         public LoadGLTF()
         {
             Window = new Window(string.Empty, 1200, 800);
@@ -42,19 +67,27 @@ namespace Samples.Samples
         public GraphicsDevice Device { get; set; }
         public Framebuffer Framebuffer { get; set; }
         public GraphicsContext Context { get; set; }
-        public PipelineState PipelineState1 { get; set; }
-        public PipelineState PipelineState2 { get; set; }
-        public Buffer ConstBuffer { get; set; }
-        public Buffer ConstBuffer2 { get; set; }
         public Camera Camera { get; set; }
         public GameTime GameTime { get; set; }
-        public DescriptorSet Descriptor1 { get; set; }
-        public DescriptorSet Descriptor2 { get; set; }
+        public GLTFLoader GLTFModel { get; set; }
+        public int[] Indices { get; set; }
+        public VertexPositionNormal[] Vertices { get; set; }
 
-        private Dictionary<string, DescriptorSet> DescriptorSets = new Dictionary<string, DescriptorSet>();
 
-        public GLTFLoader Model { get; set; }
+        public Dictionary<string, DescriptorSet> DescriptorSets = new Dictionary<string, DescriptorSet>();
+        public Dictionary<string, Buffer> Buffers = new Dictionary<string, Buffer>();
+        public Dictionary<string, PipelineState> PipelineStates = new Dictionary<string, PipelineState>();
+        public Dictionary<string, ShaderBytecode> Shaders = new Dictionary<string, ShaderBytecode>();
 
+
+
+
+        // TransformUniform 
+        public TransformUniform uniform;
+        public Matrix4x4 Model;
+        public float yaw;
+        public float pitch;
+        public float roll;
 
 
         public void Initialize()
@@ -79,50 +112,104 @@ namespace Samples.Samples
             Camera.SetLens(Window.Width, Window.Height);
 
 
-            Model = new GLTFLoader("Models/model.glb", Device);
+
+            // Reset Model
+            Model = Matrix4x4.Identity;
+
+            uniform = new TransformUniform(Camera.Projection, Model, Camera.View);
+
+
+            GLTFModel = new GLTFLoader("Models/model.glb");
+
+            Indices = GLTFModel.Indices;
+            Vertices = GLTFModel.GetPositionNormalAsArray();
+
 
             CreateBuffers();
             CreatePipelineState();
 
-            DescriptorSets["Descriptor1"] = new DescriptorSet(PipelineState1);
-            DescriptorSets["Descriptor1"].SetUniformBuffer(0, ConstBuffer);
+            DescriptorSets["Descriptor1"] = new DescriptorSet(PipelineStates["Wireframe"]);
+            DescriptorSets["Descriptor1"].SetUniformBuffer(0, Buffers["ConstBuffer1"]); // Binding 0: Uniform buffer (Vertex shader)
 
-            DescriptorSets["Descriptor2"] = new DescriptorSet(PipelineState2);
-            DescriptorSets["Descriptor2"].SetUniformBuffer(0, ConstBuffer2);
 
-            // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor1 = new DescriptorSet(PipelineState1);
-            Descriptor1.SetUniformBuffer(0, ConstBuffer);
+            DescriptorSets["Descriptor2"] = new DescriptorSet(PipelineStates["Solid"]);
+            DescriptorSets["Descriptor2"].SetUniformBuffer(0, Buffers["ConstBuffer2"]); // Binding 0: Uniform buffer (Vertex shader)
 
-            Descriptor2 = new DescriptorSet(PipelineState2);
-            Descriptor2.SetUniformBuffer(0, ConstBuffer2);
 
         }
 
 
         public void CreateBuffers()
         {
-            ConstBuffer = new Buffer(Device, new BufferDescription()
+            Buffers["VertexBuffer"] = new Buffer(Device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.VertexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf(Vertices),
+            });
+
+            Buffers["IndexBuffer"] = new Buffer(Device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.IndexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf(Indices),
+            });
+
+
+
+            Buffers["ConstBuffer1"] = new Buffer(Device, new BufferDescription()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<CameraUbo>(),
+                SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 
-            ConstBuffer2 = new Buffer(Device, new BufferDescription()
+            Buffers["ConstBuffer2"] = new Buffer(Device, new BufferDescription()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<CameraUbo>(),
+                SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
-
-
         }
 
 
         public void CreatePipelineState()
         {
-            PipelineStateDescription Pipelinedescription = new PipelineStateDescription()
+            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.frag", ShaderStage.Fragment);
+            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.vert", ShaderStage.Vertex);
+
+
+            List<VertexInputAttribute> VertexAttributeDescriptions = new()
+            {
+
+                new VertexInputAttribute
+                {
+                    Binding = 0,
+                    Location = 0,
+                    Format = PixelFormat.R32G32B32SFloat,
+                    Offset = 0,
+                },
+                new VertexInputAttribute
+                {
+                    Binding = 0,
+                    Location = 1,
+                    Format = PixelFormat.R32G32B32SFloat,
+                    Offset = 12,
+                }
+            };
+
+            List<VertexInputBinding> VertexBindingDescriptions = new()
+            {
+                new VertexInputBinding
+                {
+                    Binding = 0,
+                    InputRate = VertexInputRate.Vertex,
+                    Stride = VertexPositionNormal.Size,
+                }
+            };
+
+
+            PipelineStates["Wireframe"] = new PipelineState(new PipelineStateDescription() 
             {
                 Framebuffer = Framebuffer,
 
@@ -137,10 +224,8 @@ namespace Samples.Samples
                     }
                 },
 
-                InputAssemblyState = new InputAssemblyState()
-                {
-                    PrimitiveType = PrimitiveType.TriangleList,
-                },
+                InputAssemblyState = InputAssemblyState.Default(),
+
                 RasterizationState = new RasterizationState()
                 {
                     FillMode = FillMode.Wireframe,
@@ -149,48 +234,20 @@ namespace Samples.Samples
                 },
                 PipelineVertexInput = new PipelineVertexInput
                 {
-                    VertexAttributeDescriptions =
-                    {
-                        new VertexInputAttribute
-                        {
-                            Binding = 0,
-                            Location = 0,
-                            Format = PixelFormat.R32G32B32SFloat,
-                            Offset = 0,
-                        },
-                        new VertexInputAttribute
-                        {
-                            Binding = 0,
-                            Location = 1,
-                            Format = PixelFormat.R32G32B32SFloat,
-                            Offset = 12,
-                        }
-                    },
-                    VertexBindingDescriptions =
-                    {
-                        new VertexInputBinding
-                        {
-                            Binding = 0,
-                            InputRate = VertexInputRate.Vertex,
-                            Stride = VertexPositionNormalColor.Size,
-                        }
-                    },
+                    VertexAttributeDescriptions = VertexAttributeDescriptions,
+                    VertexBindingDescriptions = VertexBindingDescriptions,
                 },
                 Shaders =
                 {
-                    ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.frag", ShaderStage.Fragment),
-                    ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.vert", ShaderStage.Vertex),
+                    Shaders["Fragment"],
+                    Shaders["Vertex"],
                 },
-            };
-
-            PipelineState1 = new PipelineState(Pipelinedescription);
 
 
+            });
 
 
-
-
-            PipelineStateDescription Pipelinedescription2 = new PipelineStateDescription()
+            PipelineStates["Solid"] = new PipelineState(new PipelineStateDescription() 
             {
                 Framebuffer = Framebuffer,
 
@@ -205,10 +262,8 @@ namespace Samples.Samples
                     }
                 },
 
-                InputAssemblyState = new InputAssemblyState()
-                {
-                    PrimitiveType = PrimitiveType.TriangleList,
-                },
+                InputAssemblyState = InputAssemblyState.Default(),
+
                 RasterizationState = new RasterizationState()
                 {
                     FillMode = FillMode.Solid,
@@ -217,41 +272,16 @@ namespace Samples.Samples
                 },
                 PipelineVertexInput = new PipelineVertexInput
                 {
-                    VertexAttributeDescriptions =
-                    {
-                        new VertexInputAttribute
-                        {
-                            Binding = 0,
-                            Location = 0,
-                            Format = PixelFormat.R32G32B32SFloat,
-                            Offset = 0,
-                        },
-                        new VertexInputAttribute
-                        {
-                            Binding = 0,
-                            Location = 1,
-                            Format = PixelFormat.R32G32B32SFloat,
-                            Offset = 12,
-                        }
-                    },
-                    VertexBindingDescriptions =
-                    {
-                        new VertexInputBinding
-                        {
-                            Binding = 0,
-                            InputRate = VertexInputRate.Vertex,
-                            Stride = VertexPositionNormalColor.Size,
-                        }
-                    },
+                    VertexAttributeDescriptions = VertexAttributeDescriptions,
+                    VertexBindingDescriptions = VertexBindingDescriptions,
                 },
                 Shaders =
                 {
-                    ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.frag", ShaderStage.Fragment),
-                    ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.vert", ShaderStage.Vertex),
+                    Shaders["Fragment"],
+                    Shaders["Vertex"],
                 },
-            };
 
-            PipelineState2 = new PipelineState(Pipelinedescription2);
+            });
         }
 
 
@@ -279,22 +309,31 @@ namespace Samples.Samples
 
         public void BeginRun()
         {
+            Buffers["VertexBuffer"].SetData(Vertices);
+            Buffers["IndexBuffer"].SetData(Indices);
 
+            Camera.Update(GameTime);
+
+
+            yaw = 3.15f;
+            pitch = 0;
+            roll = 3.15f;
         }
-        float r = 0;
+
         public void Update()
         {
-            Camera.Update(GameTime);
-            Camera.ModelRotate(new Vector3(3.15f, 0, 0));
-            Camera.Model = Camera.Model * Matrix4x4.CreateTranslation(new Vector3(1.0f, 0.0f, 0.0f));
-            ConstBuffer.SetData(ref Camera.CameraUbo);
 
-            Camera.Update(GameTime);
-            Camera.ModelRotate(new Vector3(3.15f, r, 0));
-            Camera.Model = Camera.Model * Matrix4x4.CreateTranslation(new Vector3(-1.0f, 0.0f, 0.0f));
-            ConstBuffer2.SetData(ref Camera.CameraUbo);
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-1.0f, 0.0f, 0.0f);
+            uniform.Update(Camera, Model);
+            Buffers["ConstBuffer1"].SetData(ref uniform);
 
-            r += 0.001f;
+
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(1.0f, 0.0f, 0.0f);
+            uniform.Update(Camera, Model);
+            Buffers["ConstBuffer2"].SetData(ref uniform);
+
+
+            yaw += 0.0006f * MathF.PI;
         }
 
         public void Draw()
@@ -308,15 +347,19 @@ namespace Samples.Samples
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 
+            commandBuffer.SetVertexBuffers(new Buffer[] { Buffers["VertexBuffer"] });
+            commandBuffer.SetIndexBuffer(Buffers["IndexBuffer"]);
 
+
+
+            commandBuffer.SetGraphicPipeline(PipelineStates["Wireframe"]);
             commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor1"]);
-            commandBuffer.SetGraphicPipeline(PipelineState1);
-            Model.Draw(commandBuffer);
+            commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
 
 
+            commandBuffer.SetGraphicPipeline(PipelineStates["Solid"]);
             commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor2"]);
-            commandBuffer.SetGraphicPipeline(PipelineState2);
-            Model.Draw(commandBuffer);
+            commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
 
 
             commandBuffer.Close();

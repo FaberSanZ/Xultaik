@@ -348,6 +348,11 @@ namespace Samples.Samples
             IndexBuffer.SetData(indices);
 
             Camera.Update(GameTime);
+
+
+            yaw = 0;
+            pitch = 0;
+            roll = 0;
         }
         public void Update()
         {
