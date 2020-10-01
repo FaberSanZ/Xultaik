@@ -12,45 +12,17 @@ namespace Samples.Samples
 {
     public class Triangle : Game, IDisposable
     {
-        public struct Vertex
-        {
-            public Vertex(Vector2 position, Vector3 color)
-            {
-                Position = position;
-                Color = color;
-            }
 
-            public Vector2 Position;
-            public Vector3 Color;
+        public Triangle() : base()
+        {
+            Parameters.Settings.Validation = false;
+            Window.Title += "Zeckoxe Engine - (Triangle) ";
         }
-
-
-
-        public Vertex[] vertices = new[]
-        {
-                new Vertex(new Vector2(0.0f, -0.65f), new Vector3(1.8f, 0.0f, 0.0f)),
-                new Vertex(new Vector2(0.5f, 0.65f), new Vector3(0.0f, 1.8f, 0.0f)),
-                new Vertex(new Vector2(-0.5f, 0.65f), new Vector3(0.0f, 0.0f, 1.8f)),
-        };
-
-
-        public int[] indices = new[]
-        {
-            0, 1, 2
-        };
 
 
         public PipelineState PipelineState { get; set; }
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
-
-
-        public Triangle() : base()
-        {
-            Parameters.Settings.Validation = false;
-            Window.Title += "Zeckoxe Engine - (LoadGLTF) ";
-        }
-
 
         public override void Initialize()
         {
@@ -66,11 +38,26 @@ namespace Samples.Samples
 
         public void CreateBuffers()
         {
+
+            VertexPositionColor[] vertices = new[]
+            {
+                new VertexPositionColor(new Vector3(0.0f, -0.65f, 0), new Vector3(1.8f, 0.0f, 0.0f)),
+                new VertexPositionColor(new Vector3(0.5f, 0.65f, 0), new Vector3(0.0f, 1.8f, 0.0f)),
+                new VertexPositionColor(new Vector3(-0.5f, 0.65f, 0), new Vector3(0.0f, 0.0f, 1.8f)),
+            };
+
+
+            int[] indices = new[]
+            {
+                0, 1, 2
+            };
+
+
             VertexBuffer = new Buffer(Device, new BufferDescription()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<Vertex>(vertices),
+                SizeInBytes = Interop.SizeOf<VertexPositionColor>(vertices),
             });
 
 
@@ -111,7 +98,7 @@ namespace Samples.Samples
                         {
                             Binding = 0,
                             Location = 0,
-                            Format = PixelFormat.R32G32SFloat,
+                            Format = PixelFormat.R32G32B32SFloat,
                             Offset = 0,
                         },
                         new VertexInputAttribute
@@ -119,7 +106,7 @@ namespace Samples.Samples
                             Binding = 0,
                             Location = 1,
                             Format = PixelFormat.R32G32B32SFloat,
-                            Offset = 8,
+                            Offset = 12,
                         }
                     },
                     VertexBindingDescriptions =
@@ -128,7 +115,7 @@ namespace Samples.Samples
                         {
                             Binding = 0,
                             InputRate = VertexInputRate.Vertex,
-                            Stride = 20,
+                            Stride = VertexPositionColor.Size,
                         }
                     },
                 },
