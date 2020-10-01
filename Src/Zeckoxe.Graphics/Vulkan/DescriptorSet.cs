@@ -18,21 +18,32 @@ namespace Zeckoxe.Graphics
         internal VkDescriptorPool _descriptorPool;
         internal VkDescriptorSet _descriptorSet;
 
+        public DescriptorPool[] Descriptors { get; set; }
+        public int MaxSets { get; }
 
-
-        public DescriptorSet(PipelineState pipelineState) : base(pipelineState.NativeDevice)
+        public DescriptorSet(PipelineState pipelineState, DescriptorPool[] descriptors , int maxSets = 1) : base(pipelineState.NativeDevice)
         {
             _pipelineState = pipelineState;
+            Descriptors = descriptors;
+            MaxSets = maxSets;
             SetupDescriptorPool();
         }
 
         public void SetupDescriptorPool()
         {
+            VkDescriptorPoolSize* descriptor_pool_size = stackalloc VkDescriptorPoolSize[Descriptors.Length];
+
+            for (int i = 0; i < Descriptors.Length; i++)
+            {
+                descriptor_pool_size[i] = new VkDescriptorPoolSize
+                {
+                    descriptorCount = (uint)Descriptors[i].Count,
+                    type = (VkDescriptorType)Descriptors[i].Type,
+                };
+            }
             // We need to tell the API the number of max. requested descriptors per type
-            VkDescriptorPoolSize typeCount;
-            // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
-            typeCount.type = VkDescriptorType.UniformBuffer;
-            typeCount.descriptorCount = 1;
+            //typeCount.type = VkDescriptorType.UniformBuffer;
+            //typeCount.descriptorCount = 1;
             // For additional types you need to add new entries in the type count list
             // E.g. for two combined image samplers :
             // typeCounts[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -43,9 +54,9 @@ namespace Zeckoxe.Graphics
             VkDescriptorPoolCreateInfo descriptorPoolInfo = new VkDescriptorPoolCreateInfo
             {
                 sType = VkStructureType.DescriptorPoolCreateInfo,
-                poolSizeCount = 1,
-                pPoolSizes = &typeCount,
-                maxSets = 1   // Set the max. number of descriptor sets that can be requested from this pool (requesting beyond this limit will result in an error)
+                poolSizeCount = (uint)Descriptors.Length,
+                pPoolSizes = descriptor_pool_size,
+                maxSets = (uint)MaxSets   // Set the max. number of descriptor sets that can be requested from this pool (requesting beyond this limit will result in an error)
             };
 
             vkCreateDescriptorPool(NativeDevice.handle, &descriptorPoolInfo, null, out VkDescriptorPool descriptorPool);

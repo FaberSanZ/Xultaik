@@ -1,12 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using Vortice.Vulkan;
-using static Vortice.Vulkan.Vulkan;
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+
+/*=============================================================================
+	DescriptorPool.cs
+=============================================================================*/
 
 namespace Zeckoxe.Graphics
 {
-    internal unsafe class DescriptorPool
+    public class DescriptorPool
     {
+        public DescriptorPool(DescriptorType type, int count)
+        {
+            Type = type;
+            Count = count;
+        }
 
+        public DescriptorType Type { get; set; }
+        public int Count { get; set; }
     }
 }

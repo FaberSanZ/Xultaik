@@ -79,9 +79,6 @@ namespace Samples.Samples
         public Dictionary<string, PipelineState> PipelineStates = new Dictionary<string, PipelineState>();
         public Dictionary<string, ShaderBytecode> Shaders = new Dictionary<string, ShaderBytecode>();
 
-
-
-
         // TransformUniform 
         public TransformUniform uniform;
         public Matrix4x4 Model;
@@ -128,11 +125,18 @@ namespace Samples.Samples
             CreateBuffers();
             CreatePipelineState();
 
-            DescriptorSets["Descriptor1"] = new DescriptorSet(PipelineStates["Wireframe"]);
+
+            // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
+            DescriptorPool[] pool = new DescriptorPool[]
+            {
+                new  DescriptorPool(DescriptorType.UniformBuffer, 1),
+            };
+
+            DescriptorSets["Descriptor1"] = new DescriptorSet(PipelineStates["Wireframe"], pool);
             DescriptorSets["Descriptor1"].SetUniformBuffer(0, Buffers["ConstBuffer1"]); // Binding 0: Uniform buffer (Vertex shader)
 
 
-            DescriptorSets["Descriptor2"] = new DescriptorSet(PipelineStates["Solid"]);
+            DescriptorSets["Descriptor2"] = new DescriptorSet(PipelineStates["Solid"], pool);
             DescriptorSets["Descriptor2"].SetUniformBuffer(0, Buffers["ConstBuffer2"]); // Binding 0: Uniform buffer (Vertex shader)
 
 

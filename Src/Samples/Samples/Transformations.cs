@@ -204,13 +204,22 @@ namespace Samples.Samples
 
             CreatePipelineState();
 
+            // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
+            DescriptorPool[] pool = new DescriptorPool[]
+            {
+                new  DescriptorPool(DescriptorType.UniformBuffer, 1),
+
+                // For additional types you need to add new entries in the type count list
+                // E.g. for two combined image samplers :
+                //new  DescriptorPool(DescriptorType.CombinedImageSampler, 2),
+            };
 
             // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor1 = new DescriptorSet(PipelineState);
+            Descriptor1 = new DescriptorSet(PipelineState, pool);
             Descriptor1.SetUniformBuffer(0, ConstBuffer);
 
             // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor2 = new DescriptorSet(PipelineState);
+            Descriptor2 = new DescriptorSet(PipelineState, pool);
             Descriptor2.SetUniformBuffer(0, ConstBuffer2);
 
         }
