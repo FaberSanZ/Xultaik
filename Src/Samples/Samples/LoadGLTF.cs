@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
@@ -49,6 +50,9 @@ namespace Samples.Samples
         public GameTime GameTime { get; set; }
         public DescriptorSet Descriptor1 { get; set; }
         public DescriptorSet Descriptor2 { get; set; }
+
+        private Dictionary<string, DescriptorSet> DescriptorSets = new Dictionary<string, DescriptorSet>();
+
         public GLTFLoader Model { get; set; }
 
 
@@ -80,6 +84,11 @@ namespace Samples.Samples
             CreateBuffers();
             CreatePipelineState();
 
+            DescriptorSets["Descriptor1"] = new DescriptorSet(PipelineState1);
+            DescriptorSets["Descriptor1"].SetUniformBuffer(0, ConstBuffer);
+
+            DescriptorSets["Descriptor2"] = new DescriptorSet(PipelineState2);
+            DescriptorSets["Descriptor2"].SetUniformBuffer(0, ConstBuffer2);
 
             // Binding 0: Uniform buffer (Vertex shader)
             Descriptor1 = new DescriptorSet(PipelineState1);
@@ -163,7 +172,7 @@ namespace Samples.Samples
                         {
                             Binding = 0,
                             InputRate = VertexInputRate.Vertex,
-                            Stride = Interop.SizeOf<Vertex>(),
+                            Stride = Interop.SizeOf<VertexPositionNormalColor>(),
                         }
                     },
                 },
@@ -231,7 +240,7 @@ namespace Samples.Samples
                         {
                             Binding = 0,
                             InputRate = VertexInputRate.Vertex,
-                            Stride = Interop.SizeOf<Vertex>(),
+                            Stride = Interop.SizeOf<VertexPositionNormalColor>(),
                         }
                     },
                 },
@@ -300,12 +309,12 @@ namespace Samples.Samples
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 
 
-            commandBuffer.BindDescriptorSets(Descriptor1);
+            commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor1"]);
             commandBuffer.SetGraphicPipeline(PipelineState1);
             Model.Draw(commandBuffer);
 
 
-            commandBuffer.BindDescriptorSets(Descriptor2);
+            commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor2"]);
             commandBuffer.SetGraphicPipeline(PipelineState2);
             Model.Draw(commandBuffer);
 

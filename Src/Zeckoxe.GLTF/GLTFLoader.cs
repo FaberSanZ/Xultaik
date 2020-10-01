@@ -18,19 +18,25 @@ using Buffer = Zeckoxe.Graphics.Buffer;
 namespace Zeckoxe.GLTF
 {
 
-    public struct Vertex
+
+
+
+
+    public struct VertexPositionNormal
     {
-        public Vertex(Vector3 position, Vector3 normal,  Vector3 color)
+        public VertexPositionNormal(Vector3 position, Vector3 normal)
         {
             Position = position;
             Normal = normal;
-            Color = color;
         }
 
         public Vector3 Position;
         public Vector3 Normal;
-        public Vector3 Color;
     }
+
+
+    //VertexPositionNormalTexture
+
 
 
     public unsafe class GLTFLoader
@@ -40,7 +46,7 @@ namespace Zeckoxe.GLTF
         private readonly IList<Vector2> _Texture;
         private readonly IList<Vector3> _Color;
 
-        private readonly List<Vertex> vertices;
+        private readonly List<VertexPositionNormalColor> vertices;
         private readonly List<int> indices;
 
 
@@ -74,7 +80,7 @@ namespace Zeckoxe.GLTF
             }
 
 
-            vertices = new List<Vertex>();
+            vertices = new List<VertexPositionNormalColor>();
             indices = new List<int>();
 
 
@@ -99,12 +105,11 @@ namespace Zeckoxe.GLTF
 
             for (int i = 0; i < _Positions.Count; i++)
             {
-                vertices.Add(new Vertex()
+                vertices.Add(new VertexPositionNormalColor()
                 {
                     Position = _Positions[i],
                     Color = Vector3.One,
                     Normal = _Normal[i],
-                    //Tex = _Textute[i],
                 });
             }
 
@@ -116,6 +121,32 @@ namespace Zeckoxe.GLTF
             IndexBuffer.SetData(indices.ToArray());
         }
 
+        
+
+        public IEnumerable<VertexPositionNormal> GetPositionNormal()
+        {
+            for (int i = 0; i < _Positions.Count; i++)
+            {
+                yield return new VertexPositionNormal()
+                {
+                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
+                    Normal = _Normal[i] != null ? _Normal[i] : Vector3.One,
+                };
+            }
+        }
+
+        public IEnumerable<VertexPositionNormalColor> GetPositionNormalColor()
+        {
+            for (int i = 0; i < _Positions.Count; i++)
+            {
+                yield return new VertexPositionNormalColor()
+                {
+                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
+                    Normal = _Normal[i] != null ? _Normal[i] : Vector3.One,
+                    Color = _Color[i] != null ? _Color[i] :  Vector3.One,
+                };
+            }
+        }
 
 
         public void Update()
@@ -137,7 +168,7 @@ namespace Zeckoxe.GLTF
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<Vertex>(vertices.ToArray()),
+                SizeInBytes = Interop.SizeOf<VertexPositionNormalColor>(vertices.ToArray()),
             });
 
 
