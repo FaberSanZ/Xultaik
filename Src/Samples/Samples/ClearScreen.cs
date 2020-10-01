@@ -8,22 +8,6 @@ namespace Samples.Samples
 {
     public class ClearScreen : IDisposable
     {
-        public Window Window { get; set; }
-
-        public PresentationParameters Parameters { get; set; }
-
-
-        public GraphicsAdapter Adapter { get; set; }
-
-        public GraphicsDevice Device { get; set; }
-
-        public Framebuffer Framebuffer { get; set; }
-
-        public GraphicsContext Context { get; set; }
-
-
-
-
         public ClearScreen()
         {
             Window = new Window("Zeckoxe Engine - (Clear Screen)", 1200, 800)
@@ -45,6 +29,16 @@ namespace Samples.Samples
                 },
             };
         }
+
+
+        public Window Window { get; set; }
+        public PresentationParameters Parameters { get; set; }
+        public GraphicsAdapter Adapter { get; set; }
+        public GraphicsDevice Device { get; set; }
+        public Framebuffer Framebuffer { get; set; }
+        public GraphicsContext Context { get; set; }
+
+
 
         public void Initialize()
         {

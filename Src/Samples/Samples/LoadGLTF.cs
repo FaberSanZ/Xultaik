@@ -44,7 +44,7 @@ namespace Samples.Samples
         public LoadGLTF() : base()
         {
             Parameters.Settings.Validation = false;
-            Window.Title += "Zeckoxe Engine - (Transformations) ";
+            Window.Title += "Zeckoxe Engine - (LoadGLTF) ";
         }
 
 
@@ -147,6 +147,17 @@ namespace Samples.Samples
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
+
+
+            Buffers["VertexBuffer"].SetData(Vertices);
+            Buffers["IndexBuffer"].SetData(Indices);
+
+            Camera.Update(GameTime);
+
+
+            yaw = 3.15f;
+            pitch = 0;
+            roll = 3.15f;
         }
 
 
@@ -262,42 +273,8 @@ namespace Samples.Samples
         }
 
 
-        public void Run()
-        {
-            Initialize();
 
-            BeginRun();
-
-            Window.Title += "Zeckoxe Engine - (LoadGLTF) ";
-
-            Window?.Show();
-
-            Tick();
-        }
-
-        public void Tick()
-        {
-            Window.RenderLoop(() =>
-            {
-                Update();
-                Draw();
-            });
-        }
-
-        public void BeginRun()
-        {
-            Buffers["VertexBuffer"].SetData(Vertices);
-            Buffers["IndexBuffer"].SetData(Indices);
-
-            Camera.Update(GameTime);
-
-
-            yaw = 3.15f;
-            pitch = 0;
-            roll = 3.15f;
-        }
-
-        public void Update()
+        public override void Update(GameTime game)
         {
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-1.0f, 0.0f, 0.0f);
@@ -313,13 +290,15 @@ namespace Samples.Samples
             yaw += 0.0006f * MathF.PI;
         }
 
-        public void Draw()
+
+
+
+        public override void BeginDraw()
         {
+            base.BeginDraw();
+
             CommandBuffer commandBuffer = Context.CommandBuffer;
 
-            Device.WaitIdle();
-
-            commandBuffer.Begin();
             commandBuffer.BeginFramebuffer(Framebuffer, .5f, .5f, .5f);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
@@ -337,13 +316,9 @@ namespace Samples.Samples
             commandBuffer.SetGraphicPipeline(PipelineStates["Solid"]);
             commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor2"]);
             commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
-
-
-            commandBuffer.Close();
-            commandBuffer.Submit(/*Fence*/);
-
-            Device.NativeSwapChain.Present();
         }
+
+
 
         public void Dispose()
         {

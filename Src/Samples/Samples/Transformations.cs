@@ -15,9 +15,6 @@ namespace Samples.Samples
 {
     public class Transformations : Game, IDisposable
     {
-
-
-
         [StructLayout(LayoutKind.Sequential)]
         public struct TransformUniform
         {
@@ -232,7 +229,6 @@ namespace Samples.Samples
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 
-            uniform = new TransformUniform();
         }
 
 
