@@ -1,8 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+/*=============================================================================
+	VertexPositionNormalTexture.cs
+=============================================================================*/
+
+
+using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Zeckoxe.Graphics
 {
@@ -38,7 +44,11 @@ namespace Zeckoxe.Graphics
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
             return obj is VertexPositionNormalTexture && Equals((VertexPositionNormalTexture)obj);
         }
 

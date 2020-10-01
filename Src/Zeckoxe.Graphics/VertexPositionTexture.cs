@@ -2,38 +2,41 @@
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 /*=============================================================================
-	VertexPositionColor.cs
+	VertexPositionTexture.cs
 =============================================================================*/
 
 
-
-
-
+using System;
 using System.Numerics;
-using Zeckoxe.Core;
+using System.Runtime.InteropServices;
 
 namespace Zeckoxe.Graphics
 {
-    public struct VertexPositionColor
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    public struct VertexPositionTexture : IEquatable<VertexPositionTexture>
     {
-        public VertexPositionColor(Vector3 position, Vector3 color)
+
+        public VertexPositionTexture(Vector3 position, Vector2 textureCoordinate)
+            : this()
         {
             Position = position;
-            Color = color;
+            TextureCoordinate = textureCoordinate;
         }
+
 
         public Vector3 Position;
 
-        public Vector3 Color;
+
+        public Vector2 TextureCoordinate;
+
+
+        public static readonly int Size = 20;
 
 
 
-        public static readonly int Size = Interop.SizeOf<VertexPositionColor>();
-
-
-        public bool Equals(VertexPositionColor other)
+        public bool Equals(VertexPositionTexture other)
         {
-            return Position.Equals(other.Position) && Color.Equals(other.Color);
+            return Position.Equals(other.Position) && TextureCoordinate.Equals(other.TextureCoordinate);
         }
 
         public override bool Equals(object obj)
@@ -43,7 +46,7 @@ namespace Zeckoxe.Graphics
                 return false;
             }
 
-            return obj is VertexPositionColor v && Equals(v);
+            return obj is VertexPositionTexture && Equals((VertexPositionTexture)obj);
         }
 
         public override int GetHashCode()
@@ -51,28 +54,30 @@ namespace Zeckoxe.Graphics
             unchecked
             {
                 int hashCode = Position.GetHashCode();
-                hashCode = (hashCode * 397) ^ Color.GetHashCode();
+                hashCode = (hashCode * 397) ^ TextureCoordinate.GetHashCode();
                 return hashCode;
             }
         }
 
+
         public void FlipWinding()
         {
+            TextureCoordinate.X = (1.0f - TextureCoordinate.X);
         }
 
-        public static bool operator ==(VertexPositionColor left, VertexPositionColor right)
+        public static bool operator ==(VertexPositionTexture left, VertexPositionTexture right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(VertexPositionColor left, VertexPositionColor right)
+        public static bool operator !=(VertexPositionTexture left, VertexPositionTexture right)
         {
             return !left.Equals(right);
         }
 
         public override string ToString()
         {
-            return string.Format("Position: {0}, Color: {1}", Position, Color);
+            return string.Format("Position: {0}, Texcoord: {1}", Position, TextureCoordinate);
         }
     }
 }
