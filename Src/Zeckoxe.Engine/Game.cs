@@ -69,10 +69,7 @@ namespace Zeckoxe.Engine
             Window?.Show();
 
 
-            Window.RenderLoop(() =>
-            {
-                OnTickRequested();
-            });
+            Window.RenderLoop(OnTickRequested);
         }
 
         public override void BeginDraw()
@@ -96,7 +93,6 @@ namespace Zeckoxe.Engine
 
             Context.CommandBuffer.Close();
             Context.CommandBuffer.Submit();
-
             SwapChain.Present();
         }
 
@@ -115,7 +111,7 @@ namespace Zeckoxe.Engine
 
         }
 
-        internal void OnTickRequested()
+        public void OnTickRequested()
         {
             Tick();
         }
