@@ -41,7 +41,6 @@ namespace Zeckoxe.Graphics
 
 
         public GraphicsAdapter NativeAdapter { get; set; }
-        public GraphicsSwapChain NativeSwapChain { get; set; }
         public PresentationParameters NativeParameters { get; set; }
         public CommandBuffer NativeCommand { get; set; }
         public uint GraphicsFamily { get; private set; }
@@ -55,9 +54,6 @@ namespace Zeckoxe.Graphics
 
 
             InitializePlatformDevice();
-
-
-            NativeSwapChain = new GraphicsSwapChain(this);
 
 
             nativeCommandPool = CreateCommandPool();

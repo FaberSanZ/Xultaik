@@ -13,11 +13,14 @@ namespace Zeckoxe.Graphics
         internal VkFramebuffer[] framebuffers;
 
 
-        public Framebuffer(GraphicsDevice device) : base(device)
+        public Framebuffer(SwapChain swapChain) : base(swapChain.NativeDevice)
         {
+            SwapChain = swapChain;
+
             Recreate();
         }
 
+        public SwapChain SwapChain { get; }
 
         public void Recreate()
         {
@@ -27,7 +30,7 @@ namespace Zeckoxe.Graphics
 
         internal void CreateFrameBuffers()
         {
-            VkImageView[] SwapChainImageViews = NativeDevice.NativeSwapChain.SwapChainImageViews;
+            VkImageView[] SwapChainImageViews = SwapChain.SwapChainImageViews;
             framebuffers = new VkFramebuffer[SwapChainImageViews.Length];
 
             for (uint i = 0; i < SwapChainImageViews.Length; i++)
@@ -35,7 +38,7 @@ namespace Zeckoxe.Graphics
 
                 VkImageView* attachments = stackalloc VkImageView[2];
                 attachments[0] = SwapChainImageViews[i];                                 // Color attachment is the view of the swapchain image			
-                attachments[1] = NativeDevice.NativeSwapChain.DepthStencil._depthStencil.View;
+                attachments[1] = SwapChain.DepthStencil._depthStencil.View;
 
                 VkFramebufferCreateInfo frameBufferInfo = new VkFramebufferCreateInfo()
                 {
@@ -56,8 +59,8 @@ namespace Zeckoxe.Graphics
 
         internal void CreateRenderPass()
         {
-            VkFormat ColorFormat = NativeDevice.NativeSwapChain.VkColorFormat;
-            VkFormat DepthFormat = NativeDevice.NativeSwapChain.DepthStencil.vkformat;
+            VkFormat ColorFormat = SwapChain.VkColorFormat;
+            VkFormat DepthFormat = SwapChain.DepthStencil.vkformat;
 
 
             // Descriptors for the attachments used by this renderpass

@@ -36,6 +36,8 @@ namespace Samples.Samples
         public GraphicsAdapter Adapter { get; set; }
         public GraphicsDevice Device { get; set; }
         public Framebuffer Framebuffer { get; set; }
+        public SwapChain SwapChain { get; set; }
+
         public GraphicsContext Context { get; set; }
 
 
@@ -47,7 +49,9 @@ namespace Samples.Samples
 
             Device = new GraphicsDevice(Adapter);
 
-            Framebuffer = new Framebuffer(Device);
+            SwapChain = new SwapChain(Device);
+
+            Framebuffer = new Framebuffer(SwapChain);
 
             Context = new GraphicsContext(Device);
         }
@@ -92,14 +96,14 @@ namespace Samples.Samples
 
             Device.WaitIdle();
 
-            commandBuffer.Begin();
+            commandBuffer.Begin(SwapChain);
             commandBuffer.BeginFramebuffer(Framebuffer);
-            commandBuffer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
+            //commandBuffer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
 
             commandBuffer.Close();
             commandBuffer.Submit();
 
-            Device.NativeSwapChain.Present();
+            SwapChain.Present();
         }
 
         public void Dispose()

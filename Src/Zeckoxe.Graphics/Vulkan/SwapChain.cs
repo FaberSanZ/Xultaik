@@ -19,19 +19,19 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class GraphicsSwapChain : GraphicsResource
+    public unsafe class SwapChain : GraphicsResource
     {
         internal VkSurfaceKHR Surface;
         internal VkFormat VkColorFormat;
         internal VkColorSpaceKHR ColorSpace;
-        internal VkSwapchainKHR SwapChain;
+        internal VkSwapchainKHR handle;
         internal List<VkImage> Images;
         internal VkImageView[] SwapChainImageViews;
 
 
 
 
-        public GraphicsSwapChain(GraphicsDevice device) : base(device)
+        public SwapChain(GraphicsDevice device) : base(device)
         {
             Parameters = NativeDevice.NativeParameters;
 
@@ -67,9 +67,9 @@ namespace Zeckoxe.Graphics
 
             // Get the images
             uint Count = 0;
-            vkGetSwapchainImagesKHR(NativeDevice.handle, SwapChain, &Count, null);
+            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &Count, null);
             VkImage* vkImages = stackalloc VkImage[(int)Count];
-            vkGetSwapchainImagesKHR(NativeDevice.handle, SwapChain, &Count, vkImages);
+            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &Count, vkImages);
 
 
             for (int i = 0; i < Count; i++)
@@ -363,7 +363,7 @@ namespace Zeckoxe.Graphics
                 queueFamilyIndexCount = 0,
                 pQueueFamilyIndices = null,
                 presentMode = swapchainPresentMode,
-                oldSwapchain = SwapChain,
+                oldSwapchain = handle,
 
                 // Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
                 clipped = true,
@@ -380,7 +380,7 @@ namespace Zeckoxe.Graphics
             }
 
 
-                vkCreateSwapchainKHR(NativeDevice.handle, &swapchainCI, null, out SwapChain).CheckResult();
+                vkCreateSwapchainKHR(NativeDevice.handle, &swapchainCI, null, out handle).CheckResult();
             
 
 
@@ -389,9 +389,9 @@ namespace Zeckoxe.Graphics
 
 
             uint imageCount;
-            vkGetSwapchainImagesKHR(NativeDevice.handle, SwapChain, &imageCount, null);
+            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, null);
             VkImage* VkImages = stackalloc VkImage[(int)imageCount];
-            vkGetSwapchainImagesKHR(NativeDevice.handle, SwapChain, &imageCount, VkImages);
+            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, VkImages);
 
 
 
@@ -409,7 +409,7 @@ namespace Zeckoxe.Graphics
         public void Present()
         {
             VkSemaphore Semaphore = NativeDevice.renderFinishedSemaphore;
-            VkSwapchainKHR swapchain = SwapChain;
+            VkSwapchainKHR swapchain = handle;
             CommandBuffer commandBuffer = NativeDevice.NativeCommand;
 
             VkPresentInfoKHR present_info = new VkPresentInfoKHR()

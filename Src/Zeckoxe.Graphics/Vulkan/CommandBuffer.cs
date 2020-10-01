@@ -44,11 +44,11 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void Begin()
+        public void Begin(SwapChain swapChain)
         {
             // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
             // With that we don't have to handle VK_NOT_READY
-            vkAcquireNextImageKHR(NativeDevice.handle, NativeDevice.NativeSwapChain.SwapChain, ulong.MaxValue, NativeDevice.imageAvailableSemaphore, new VkFence(), out uint i);
+            vkAcquireNextImageKHR(NativeDevice.handle, swapChain.handle, ulong.MaxValue, NativeDevice.imageAvailableSemaphore, new VkFence(), out uint i);
             imageIndex = i;
 
 
@@ -135,7 +135,7 @@ namespace Zeckoxe.Graphics
                 levelCount = 1
             };
 
-            vkCmdClearColorImage(NativeCommandBuffer, NativeDevice.NativeSwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
+            //vkCmdClearColorImage(NativeCommandBuffer, NativeDevice.SwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
         }
 
 

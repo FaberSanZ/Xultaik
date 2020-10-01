@@ -37,7 +37,12 @@ namespace Zeckoxe.Engine
 
         public Framebuffer Framebuffer { get; set; }
 
+        public SwapChain SwapChain { get; set; }
+
+
         public GraphicsContext Context { get; set; }
+
+
 
         public Window? Window { get; set; }
 
@@ -50,7 +55,9 @@ namespace Zeckoxe.Engine
 
             Device = new GraphicsDevice(Adapter);
 
-            Framebuffer = new Framebuffer(Device);
+            SwapChain = new SwapChain(Device);
+
+            Framebuffer = new Framebuffer(SwapChain);
 
             Context = new GraphicsContext(Device);
         }
@@ -71,7 +78,7 @@ namespace Zeckoxe.Engine
         public override void BeginDraw()
         {
             Device.WaitIdle();
-            Context.CommandBuffer.Begin();
+            Context.CommandBuffer.Begin(SwapChain);
 
 
             base.BeginDraw();
@@ -90,7 +97,7 @@ namespace Zeckoxe.Engine
             Context.CommandBuffer.Close();
             Context.CommandBuffer.Submit();
 
-            Device.NativeSwapChain.Present();
+            SwapChain.Present();
         }
 
         public override void EndRun()

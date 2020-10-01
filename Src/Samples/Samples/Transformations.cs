@@ -182,12 +182,6 @@ namespace Samples.Samples
             Descriptor2.SetUniformBuffer(0, ConstBuffer2);
 
 
-            VertexBuffer.SetData(vertices);
-            IndexBuffer.SetData(indices);
-
-            Camera.Update(GameTime);
-
-
             yaw = 0;
             pitch = 0;
             roll = 0;
@@ -204,6 +198,8 @@ namespace Samples.Samples
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<VertexPositionColor>(vertices),
             });
+            VertexBuffer.SetData(vertices);
+
 
             IndexBuffer = new Buffer(Device, new BufferDescription()
             {
@@ -211,8 +207,7 @@ namespace Samples.Samples
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<int>(indices),
             });
-
-
+            IndexBuffer.SetData(indices);
 
 
             ConstBuffer = new Buffer(Device, new BufferDescription()
@@ -302,6 +297,8 @@ namespace Samples.Samples
 
         public override void Update(GameTime game)
         {
+            Camera.Update(GameTime);
+
 
             Model = Matrix4x4.CreateFromYawPitchRoll(-yaw, -pitch, -roll) * Matrix4x4.CreateTranslation(-0.45f, 0.0f, 0.0f);
             uniform.Update(Camera, Model);

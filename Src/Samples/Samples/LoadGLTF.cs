@@ -77,7 +77,7 @@ namespace Samples.Samples
             Camera = new Camera()
             {
                 Mode = CameraType.Free,
-                Position = new Vector3(0, 0, -3.5f),
+                Position = new Vector3(1, -.3f, -3.5f),
             };
 
             Camera.SetLens(Window.Width, Window.Height);
@@ -112,7 +112,9 @@ namespace Samples.Samples
             DescriptorSets["Descriptor2"] = new DescriptorSet(PipelineStates["Solid"], pool);
             DescriptorSets["Descriptor2"].SetUniformBuffer(0, Buffers["ConstBuffer2"]); // Binding 0: Uniform buffer (Vertex shader)
 
-
+            yaw = 3.15f;
+            pitch = 0;
+            roll = 3.15f;
         }
 
 
@@ -124,6 +126,8 @@ namespace Samples.Samples
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf(Vertices),
             });
+            Buffers["VertexBuffer"].SetData(Vertices);
+
 
             Buffers["IndexBuffer"] = new Buffer(Device, new BufferDescription()
             {
@@ -131,7 +135,7 @@ namespace Samples.Samples
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf(Indices),
             });
-
+            Buffers["IndexBuffer"].SetData(Indices);
 
 
             Buffers["ConstBuffer1"] = new Buffer(Device, new BufferDescription()
@@ -149,15 +153,8 @@ namespace Samples.Samples
             });
 
 
-            Buffers["VertexBuffer"].SetData(Vertices);
-            Buffers["IndexBuffer"].SetData(Indices);
-
-            Camera.Update(GameTime);
 
 
-            yaw = 3.15f;
-            pitch = 0;
-            roll = 3.15f;
         }
 
 
@@ -276,6 +273,8 @@ namespace Samples.Samples
 
         public override void Update(GameTime game)
         {
+            Camera.Update(game);
+
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-1.0f, 0.0f, 0.0f);
             uniform.Update(Camera, Model);
