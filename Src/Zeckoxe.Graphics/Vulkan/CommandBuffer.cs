@@ -290,7 +290,7 @@ namespace Zeckoxe.Graphics
         {
             // Bind descriptor sets describing shader binding points
             VkDescriptorSet descriptor_set = descriptor._descriptorSet;
-            VkPipelineLayout _pipelineLayout = descriptor._pipelineState._pipelineLayout;
+            VkPipelineLayout _pipelineLayout = descriptor.PipelineState._pipelineLayout;
 
             vkCmdBindDescriptorSets(NativeCommandBuffer, VkPipelineBindPoint.Graphics, _pipelineLayout, 0, 1, &descriptor_set, 0, null);
         }

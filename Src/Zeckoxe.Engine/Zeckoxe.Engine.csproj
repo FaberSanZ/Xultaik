@@ -1,7 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zeckoxe.Desktop\Zeckoxe.Desktop.csproj" />
+    <ProjectReference Include="..\Zeckoxe.Games\Zeckoxe.Games.csproj" />
+    <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Graphics.csproj" />
+  </ItemGroup>
 
 </Project>

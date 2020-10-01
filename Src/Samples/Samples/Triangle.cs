@@ -2,6 +2,7 @@
 using System.Numerics;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
+using Zeckoxe.Engine;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.ShaderCompiler;
@@ -9,7 +10,7 @@ using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Samples.Samples
 {
-    public class Triangle : IDisposable
+    public class Triangle : Game, IDisposable
     {
         public struct Vertex
         {
@@ -39,12 +40,6 @@ namespace Samples.Samples
         };
 
 
-        public Window Window { get; set; }
-        public PresentationParameters Parameters { get; set; }
-        public GraphicsAdapter Adapter { get; set; }
-        public GraphicsDevice Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public GraphicsContext Context { get; set; }
         public PipelineState PipelineState { get; set; }
         public Fence Fence { get; set; } // Synchronization Primitives
         public Buffer VertexBuffer { get; set; }

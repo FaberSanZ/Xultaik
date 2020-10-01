@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Zeckoxe.Core;
@@ -205,9 +206,9 @@ namespace Samples.Samples
             CreatePipelineState();
 
             // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
-            DescriptorPool[] pool = new DescriptorPool[]
+            List<DescriptorPool> pool = new()
             {
-                new  DescriptorPool(DescriptorType.UniformBuffer, 1),
+                new DescriptorPool(DescriptorType.UniformBuffer, 1),
 
                 // For additional types you need to add new entries in the type count list
                 // E.g. for two combined image samplers :

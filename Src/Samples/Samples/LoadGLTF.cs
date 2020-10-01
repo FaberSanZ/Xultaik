@@ -127,7 +127,7 @@ namespace Samples.Samples
 
 
             // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
-            DescriptorPool[] pool = new DescriptorPool[]
+            List<DescriptorPool> pool = new()
             {
                 new  DescriptorPool(DescriptorType.UniformBuffer, 1),
             };
