@@ -1,4 +1,5 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 /*=============================================================================
 	GraphicsDevice.cs
@@ -7,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vortice.Mathematics;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -490,13 +490,13 @@ namespace Zeckoxe.Graphics
                 return new VkSurfaceFormatKHR()
                 {
                     format = VkFormat.B8G8R8A8UNorm,
-                    colorSpace = VkColorSpaceKHR.SrgbNonLinearKHR
+                    colorSpace = VkColorSpaceKHR.SrgbNonLinear
                 };
             }
 
             foreach (VkSurfaceFormatKHR availableFormat in formats)
             {
-                if (availableFormat.format == VkFormat.B8G8R8A8UNorm && availableFormat.colorSpace == VkColorSpaceKHR.SrgbNonLinearKHR)
+                if (availableFormat.format == VkFormat.B8G8R8A8UNorm && availableFormat.colorSpace == VkColorSpaceKHR.SrgbNonLinear)
                 {
                     return availableFormat;
                 }
@@ -511,32 +511,32 @@ namespace Zeckoxe.Graphics
 
             foreach (VkPresentModeKHR availablePresentMode in presentModes)
             {
-                if (availablePresentMode == VkPresentModeKHR.MailboxKHR)
+                if (availablePresentMode == VkPresentModeKHR.Mailbox)
                 {
                     return availablePresentMode; // MailboxKHR
                 }
-                else if (availablePresentMode == VkPresentModeKHR.ImmediateKHR)
+                else if (availablePresentMode == VkPresentModeKHR.Immediate)
                 {
                     return availablePresentMode; // ImmediateKHR;
                 }
             }
 
-            return VkPresentModeKHR.ImmediateKHR;
+            return VkPresentModeKHR.Immediate;
         }
 
-        public Size ChooseSwapExtent(VkSurfaceCapabilitiesKHR capabilities, uint width, uint height)
-        {
-            if (capabilities.currentExtent.Width != int.MaxValue)
-            {
-                return capabilities.currentExtent;
-            }
+        //public Size ChooseSwapExtent(VkSurfaceCapabilitiesKHR capabilities, uint width, uint height)
+        //{
+        //    if (capabilities.currentExtent.Width != int.MaxValue)
+        //    {
+        //        return capabilities.currentExtent;
+        //    }
 
-            return new Size()
-            {
-                Width = (int)Math.Max(capabilities.minImageExtent.Width, Math.Min(capabilities.maxImageExtent.Width, width)),
-                Height = (int)Math.Max(capabilities.minImageExtent.Height, Math.Min(capabilities.maxImageExtent.Height, height)),
-            };
-        }
+        //    return new Size()
+        //    {
+        //        Width = (int)Math.Max(capabilities.minImageExtent.Width, Math.Min(capabilities.maxImageExtent.Width, width)),
+        //        Height = (int)Math.Max(capabilities.minImageExtent.Height, Math.Min(capabilities.maxImageExtent.Height, height)),
+        //    };
+        //}
 
 
         public string ExtractVersion(uint _value)

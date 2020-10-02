@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Vortice.Mathematics;
 using Vortice.Vulkan;
 using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
@@ -280,21 +279,21 @@ namespace Zeckoxe.Graphics
 
 
 
-            Size swapchainExtent = new Size();
+            VkExtent2D swapchainExtent = new VkExtent2D();
             // If width (and height) equals the special value 0xFFFFFFFF, the size of the Surface will be set by the swapchain
-            if (surfCaps.currentExtent.Width == unchecked(-1))
+            if (surfCaps.currentExtent.width == unchecked(-1))
             {
                 // If the Surface size is undefined, the size is set to
                 // the size of the Images requested.
-                swapchainExtent.Width = width;
-                swapchainExtent.Height = height;
+                swapchainExtent.width = (uint)width;
+                swapchainExtent.height = (uint)height;
             }
             else
             {
                 // If the Surface size is defined, the swap chain size must match
                 swapchainExtent = surfCaps.currentExtent;
-                width = (int)surfCaps.currentExtent.Width;
-                height = (int)surfCaps.currentExtent.Height;
+                width = (int)surfCaps.currentExtent.width;
+                height = (int)surfCaps.currentExtent.height;
             }
 
 
@@ -302,7 +301,7 @@ namespace Zeckoxe.Graphics
 
             // The VK_PRESENT_MODE_FIFO_KHR mode must always be present as per spec
             // This mode waits for the vertical blank ("v-sync")
-            VkPresentModeKHR swapchainPresentMode = VkPresentModeKHR.FifoKHR;
+            VkPresentModeKHR swapchainPresentMode = VkPresentModeKHR.Fifo;
 
             // If v-sync is not requested, try to find a mailbox mode
             // It's the lowest latency non-tearing present mode available
@@ -310,14 +309,14 @@ namespace Zeckoxe.Graphics
             {
                 for (uint i = 0; i < presentModeCount; i++)
                 {
-                    if (presentModes[i] == VkPresentModeKHR.MailboxKHR)
+                    if (presentModes[i] == VkPresentModeKHR.Mailbox)
                     {
-                        swapchainPresentMode = VkPresentModeKHR.MailboxKHR;
+                        swapchainPresentMode = VkPresentModeKHR.Mailbox;
                         break;
                     }
-                    if ((swapchainPresentMode != VkPresentModeKHR.MailboxKHR) && (presentModes[i] == VkPresentModeKHR.ImmediateKHR))
+                    if ((swapchainPresentMode != VkPresentModeKHR.Mailbox) && (presentModes[i] == VkPresentModeKHR.Immediate))
                     {
-                        swapchainPresentMode = VkPresentModeKHR.ImmediateKHR;
+                        swapchainPresentMode = VkPresentModeKHR.Immediate;
                     }
                 }
             }
@@ -332,10 +331,10 @@ namespace Zeckoxe.Graphics
 
             // Find the transformation of the Surface
             VkSurfaceTransformFlagsKHR preTransform;
-            if ((surfCaps.supportedTransforms & VkSurfaceTransformFlagsKHR.IdentityKHR) != 0)
+            if ((surfCaps.supportedTransforms & VkSurfaceTransformFlagsKHR.Identity) != 0)
             {
                 // We prefer a non-rotated transform
-                preTransform = VkSurfaceTransformFlagsKHR.IdentityKHR;
+                preTransform = VkSurfaceTransformFlagsKHR.Identity;
             }
             else
             {
@@ -350,10 +349,10 @@ namespace Zeckoxe.Graphics
                 minImageCount = desiredNumberOfSwapchainImages,
                 imageFormat = VkColorFormat,
                 imageColorSpace = ColorSpace,
-                imageExtent = new Vortice.Mathematics.Size()
+                imageExtent =  new VkExtent2D
                 {
-                    Width = swapchainExtent.Width,
-                    Height = swapchainExtent.Height
+                    width = swapchainExtent.width,
+                    height = swapchainExtent.height
                 },
                 imageUsage = VkImageUsageFlags.ColorAttachment,
                 preTransform = preTransform,
@@ -366,7 +365,7 @@ namespace Zeckoxe.Graphics
 
                 // Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
                 clipped = true,
-                compositeAlpha = VkCompositeAlphaFlagsKHR.OpaqueKHR,
+                compositeAlpha = VkCompositeAlphaFlagsKHR.Opaque,
             };
 
 

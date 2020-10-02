@@ -98,7 +98,6 @@ namespace Samples.Samples
 
             commandBuffer.Begin(SwapChain);
             commandBuffer.BeginFramebuffer(Framebuffer);
-            //commandBuffer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
 
             commandBuffer.Close();
             commandBuffer.Submit();

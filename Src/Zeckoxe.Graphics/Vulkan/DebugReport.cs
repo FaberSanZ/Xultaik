@@ -1,7 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+
+/*=============================================================================
+	DebugReport.cs
+=============================================================================*/
+
+
+using System;
 using System.Runtime.InteropServices;
-using System.Text;
 using Vortice.Vulkan;
 
 namespace Zeckoxe.Graphics
@@ -28,23 +35,23 @@ namespace Zeckoxe.Graphics
                 case 0:
                     prefix = "?";
                     break;
-                case VkDebugReportFlagsEXT.InformationEXT:
+                case VkDebugReportFlagsEXT.Information:
                     Console.ForegroundColor = ConsoleColor.Gray;
                     prefix = "INFO";
                     break;
-                case VkDebugReportFlagsEXT.WarningEXT:
+                case VkDebugReportFlagsEXT.Warning:
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                     prefix = "WARN";
                     break;
-                case VkDebugReportFlagsEXT.PerformanceWarningEXT:
+                case VkDebugReportFlagsEXT.PerformanceWarning:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     prefix = "PERF";
                     break;
-                case VkDebugReportFlagsEXT.ErrorEXT:
+                case VkDebugReportFlagsEXT.Error:
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     prefix = "EROR";
                     break;
-                case VkDebugReportFlagsEXT.DebugEXT:
+                case VkDebugReportFlagsEXT.Debug:
                     Console.ForegroundColor = ConsoleColor.Red;
                     prefix = "DBUG";
                     break;

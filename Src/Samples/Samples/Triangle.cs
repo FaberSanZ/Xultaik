@@ -16,7 +16,7 @@ namespace Samples.Samples
         public Triangle() : base()
         {
             Parameters.Settings.Validation = false;
-            Window.Title += "Zeckoxe Engine - (Triangle) ";
+            Window.Title += " - (Triangle) ";
         }
 
 

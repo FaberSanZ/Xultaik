@@ -1,11 +1,12 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
 
 /*=============================================================================
 	CommandList.cs
 =============================================================================*/
 
 
-using Vortice.Mathematics;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
@@ -89,12 +90,18 @@ namespace Zeckoxe.Graphics
             VkRenderPassBeginInfo renderPassBeginInfo = new VkRenderPassBeginInfo()
             {
                 sType = VkStructureType.RenderPassBeginInfo,
-                renderArea = new Rectangle()
+                renderArea =  new VkRect2D()
                 {
-                    Height = NativeDevice.NativeParameters.BackBufferHeight,
-                    Width = NativeDevice.NativeParameters.BackBufferWidth,
-                    X = 0,
-                    Y = 0,
+                    extent = new VkExtent2D()
+                    {
+                        height = (uint)NativeDevice.NativeParameters.BackBufferHeight,
+                        width = (uint)NativeDevice.NativeParameters.BackBufferWidth,
+                    },
+                    offset = new VkOffset2D()
+                    {
+                        x = 0,
+                        y = 0,
+                    }
                 },
                 renderPass = framebuffer.renderPass,
                 clearValueCount = 2,
@@ -138,10 +145,6 @@ namespace Zeckoxe.Graphics
             //vkCmdClearColorImage(NativeCommandBuffer, NativeDevice.SwapChain.Images[(int)imageIndex], VkImageLayout.ColorAttachmentOptimal, &clearValue, 1, &clearRange);
         }
 
-
-        //public ulong srcOffset;
-        //public ulong dstOffset;
-        //public ulong size;
 
         public struct BufferCopy
         {
@@ -197,13 +200,18 @@ namespace Zeckoxe.Graphics
         public void SetScissor(int width, int height, int x, int y)
         {
             // Update dynamic scissor state
-            Rectangle scissor = new Rectangle()
+            VkRect2D scissor = new VkRect2D()
             {
-                Width = width,
-                Height = height,
-
-                X = x,
-                Y = y,
+                extent = new VkExtent2D()
+                {
+                    height = (uint)width,
+                    width = (uint)height,
+                },
+                offset = new VkOffset2D()
+                {
+                    x = x,
+                    y = y,
+                }
             };
 
             vkCmdSetScissor(NativeCommandBuffer, 0, 1, &scissor);
@@ -211,16 +219,16 @@ namespace Zeckoxe.Graphics
 
         public void SetViewport(float Width, float Height, float X, float Y, float MinDepth = 0.0f, float MaxDepth = 1.0f)
         {
-            Viewport Viewport = new Viewport()
+            VkViewport Viewport = new VkViewport()
             {
-                Width = Width,
-                Height = Height,
+                width = Width,
+                height = Height,
 
-                X = X,
-                Y = Y,
+                x = X,
+                y = Y,
 
-                MinDepth = MinDepth,
-                MaxDepth = MaxDepth
+                minDepth = MinDepth,
+                maxDepth = MaxDepth
             };
 
             vkCmdSetViewport(NativeCommandBuffer, 0, 1, &Viewport);

@@ -1,4 +1,5 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 /*=============================================================================
 	Image.cs
@@ -130,11 +131,11 @@ namespace Zeckoxe.Graphics.Vulkan
                 pNext = null,
                 imageType = VkImageType.Image2D,
                 format = format,
-                extent = new Vortice.Mathematics.Size3
+                extent = new VkExtent3D
                 {
-                    Width = width,
-                    Height = height,
-                    Depth = 1
+                    width = (uint)width,
+                    height = (uint)height,
+                    depth = 1
                 },
                 mipLevels = 1,
                 arrayLayers = 1,

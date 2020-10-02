@@ -1,4 +1,13 @@
-﻿using System;
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+/*=============================================================================
+	Game.cs
+=============================================================================*/
+
+
+using System;
+using System.Numerics;
 using Zeckoxe.Desktop;
 using Zeckoxe.Games;
 using Zeckoxe.Graphics;
@@ -43,6 +52,7 @@ namespace Zeckoxe.Engine
         public GraphicsContext Context { get; set; }
 
 
+        public Matrix4x4 Model { get; set; }
 
         public Window? Window { get; set; }
 

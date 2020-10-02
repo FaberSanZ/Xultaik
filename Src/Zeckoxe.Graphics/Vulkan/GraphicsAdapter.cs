@@ -1,4 +1,5 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 /*=============================================================================
 	GraphicsAdapter.cs
@@ -179,6 +180,32 @@ namespace Zeckoxe.Graphics
 
             //Features2 = GetPhysicalDeviceFeatures2();
             //DeviceRayTracingFeatures = GetPhysicalDeviceFeaturesRayTracing();
+
+            VkPhysicalDeviceFeatures2 features = new VkPhysicalDeviceFeatures2
+            {
+                sType = VkStructureType.PhysicalDeviceFeatures2,
+            };
+
+            storage_8bit_features = new VkPhysicalDevice8BitStorageFeatures
+            {
+                sType = VkStructureType.PhysicalDevice8bitStorageFeatures,
+            };
+
+            bool has_pdf2 = SupportsPhysicalDeviceProperties2 || (supports_vulkan_11_instance && supports_vulkan_11_device);
+
+
+            void** ppNext = &features.pNext;
+
+            if (has_pdf2)
+            {
+                if (/*VK_KHR_8BIT_STORAGE_EXTENSION_NAME*/true)
+                {
+                    VkPhysicalDevice8BitStorageFeatures feature = storage_8bit_features;
+                    //enabled_extensions.push_back(VK_KHR_8BIT_STORAGE_EXTENSION_NAME);
+                    *ppNext = &feature;
+                    ppNext = &feature.pNext;
+                }
+            }
         }
 
 
@@ -282,8 +309,8 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 flags = VkDebugUtilsMessengerCreateFlagsEXT.None,
                 pUserData = null,
-                messageSeverity = VkDebugUtilsMessageSeverityFlagsEXT.ErrorEXT | VkDebugUtilsMessageSeverityFlagsEXT.WarningEXT | VkDebugUtilsMessageSeverityFlagsEXT.InfoEXT,
-                messageType = VkDebugUtilsMessageTypeFlagsEXT.ValidationEXT | VkDebugUtilsMessageTypeFlagsEXT.PerformanceEXT,
+                messageSeverity = VkDebugUtilsMessageSeverityFlagsEXT.Error | VkDebugUtilsMessageSeverityFlagsEXT.Warning | VkDebugUtilsMessageSeverityFlagsEXT.Info,
+                messageType = VkDebugUtilsMessageTypeFlagsEXT.Validation | VkDebugUtilsMessageTypeFlagsEXT.Performance,
                 pfnUserCallback = Interop.GetFunctionPointerForDelegate(_debugMessengerCallbackFunc = DebugMessengerCallback),
             };
 
@@ -396,14 +423,14 @@ namespace Zeckoxe.Graphics
         {
             string message = Interop.String.FromPointer(pCallbackData->pMessage);
 
-            if (messageTypes == VkDebugUtilsMessageTypeFlagsEXT.ValidationEXT)
+            if (messageTypes == VkDebugUtilsMessageTypeFlagsEXT.Validation)
             {
-                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.ErrorEXT)
+                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
                 {
                     Log.Error("Vulkan", $"Validation: {messageSeverity} - {message}");
 
                 }
-                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.WarningEXT)
+                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
                     Log.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
                 }
@@ -411,11 +438,11 @@ namespace Zeckoxe.Graphics
             }
             else
             {
-                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.ErrorEXT)
+                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
                 {
                     Log.Error("Vulkan", $"[Vulkan]: {messageSeverity} - {message}");
                 }
-                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.WarningEXT)
+                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
                     Log.Warn($"[Vulkan]: {messageSeverity} - {message}");
                 }

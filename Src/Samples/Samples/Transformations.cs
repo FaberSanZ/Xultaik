@@ -127,7 +127,6 @@ namespace Samples.Samples
 
         // TransformUniform 
         public TransformUniform uniform;
-        public Matrix4x4 Model;
         public float yaw;
         public float pitch;
         public float roll;
