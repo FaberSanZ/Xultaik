@@ -531,6 +531,16 @@ namespace Zeckoxe.Graphics
             }
         }
 
+
+
+
+        public TDelegate GetInstanceProcAddr<TDelegate>(string name) where TDelegate : class
+        {
+            IntPtr funcPtr = vkGetInstanceProcAddr(instance, Interop.String.ToPointer(name));
+
+            return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
+        }
+
         public void Dispose()
         {
             //vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);

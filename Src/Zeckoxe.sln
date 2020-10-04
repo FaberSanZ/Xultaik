@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Physics", "Zeckoxe.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Games", "Zeckoxe.Games\Zeckoxe.Games.csproj", "{5D4703D8-C085-4479-A788-24C131C63C9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{15E38A64-357C-4350-ABAF-C73A3C8CD123}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples", "Samples\Samples.csproj", "{15E38A64-357C-4350-ABAF-C73A3C8CD123}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeckoxe.EntityComponentSystem", "Zeckoxe.EntityComponentSystem\Zeckoxe.EntityComponentSystem.csproj", "{1386ABE7-CF5B-48FF-AFB3-99FD47DB1AF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{15E38A64-357C-4350-ABAF-C73A3C8CD123}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15E38A64-357C-4350-ABAF-C73A3C8CD123}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15E38A64-357C-4350-ABAF-C73A3C8CD123}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1386ABE7-CF5B-48FF-AFB3-99FD47DB1AF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1386ABE7-CF5B-48FF-AFB3-99FD47DB1AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1386ABE7-CF5B-48FF-AFB3-99FD47DB1AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1386ABE7-CF5B-48FF-AFB3-99FD47DB1AF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

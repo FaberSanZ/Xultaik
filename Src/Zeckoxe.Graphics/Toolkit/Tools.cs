@@ -21,23 +21,6 @@ namespace Zeckoxe.Graphics
     public static unsafe class Tools
     {
 
-
-
-        public static TDelegate GetInstanceProcAddr<TDelegate>(this GraphicsAdapter instance, string name) where TDelegate : class
-        {
-            IntPtr funcPtr = vkGetInstanceProcAddr(instance.instance, Interop.String.ToPointer(name));
-
-            return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
-        }
-
-
-        public static TDelegate GetDeviceProcAddr<TDelegate>(this GraphicsDevice device, string name) where TDelegate : class
-        {
-            IntPtr funcPtr = vkGetDeviceProcAddr(device.handle, Interop.String.ToPointer(name));
-
-            return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
-        }
-
         internal static VkSampleCountFlags ExtractMaxSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties)
         {
             VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts & physicalDeviceProperties.limits.framebufferDepthSampleCounts;

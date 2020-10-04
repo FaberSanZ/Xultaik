@@ -557,6 +557,12 @@ namespace Zeckoxe.Graphics
 
 
 
+        public TDelegate GetDeviceProcAddr<TDelegate>(string name) where TDelegate : class
+        {
+            IntPtr funcPtr = vkGetDeviceProcAddr(handle, Interop.String.ToPointer(name));
+
+            return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
+        }
         public void Dispose()
         {
 
