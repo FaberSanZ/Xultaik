@@ -1,4 +1,13 @@
-﻿using System;
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// Copyright (c) Paillat Laszlo. https://github.com/Doraku/DefaultEcs
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+/*=============================================================================
+	World.cs
+=============================================================================*/
+
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,8 +27,6 @@ namespace Zeckoxe.EntityComponentSystem
     [DebuggerTypeProxy(typeof(WorldDebugView))]
     public sealed class World : IEnumerable<Entity>, IPublisher, IDisposable
     {
-
-
         private class Optimizer : IParallelRunnable
         {
             private readonly List<ISortable> _items;
@@ -122,7 +129,6 @@ namespace Zeckoxe.EntityComponentSystem
 
 
 
-        #region Fields
 
         private static readonly object _lockObject;
         private static readonly IntDispenser _worldIdDispenser;
@@ -141,20 +147,10 @@ namespace Zeckoxe.EntityComponentSystem
 
         internal EntityInfo[] EntityInfos;
 
-        #endregion
-
-        #region Properties
-
         internal int LastEntityId => _entityIdDispenser.LastInt;
 
-        /// <summary>
-        /// Gets the maximum number of <see cref="Entity"/> this <see cref="World"/> can handle.
-        /// </summary>
-        public int MaxCapacity { get; }
 
-        #endregion
 
-        #region Initialisation
 
         static World()
         {
@@ -167,11 +163,7 @@ namespace Zeckoxe.EntityComponentSystem
             IsEnabledFlag = ComponentFlag.GetNextFlag();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="World"/> class.
-        /// </summary>
-        /// <param name="maxCapacity">The maximum number of <see cref="Entity"/> that can exist in this <see cref="World"/>.</param>
-        /// <exception cref="ArgumentException"><paramref name="maxCapacity"/> cannot be negative.</exception>
+
         public World(int maxCapacity)
         {
             if (maxCapacity < 0)
@@ -198,16 +190,16 @@ namespace Zeckoxe.EntityComponentSystem
             _isDisposed = false;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="World"/> class.
-        /// </summary>
-        public World()
-            : this(int.MaxValue)
-        { }
 
-        #endregion
+        public World() : this(int.MaxValue)
+        {
 
-        #region Callbacks
+        }
+
+        public int MaxCapacity { get; }
+
+
+
 
         private void On(in EntityDisposedMessage message)
         {
@@ -234,19 +226,13 @@ namespace Zeckoxe.EntityComponentSystem
             }
         }
 
-        #endregion
 
-        #region Methods
 
         internal void Add(ISortable optimizable) => _optimizer.Add(optimizable);
 
         internal void Remove(ISortable optimizable) => _optimizer.Remove(optimizable);
 
-        /// <summary>
-        /// Creates a new instance of the <see cref="Entity"/> struct.
-        /// </summary>
-        /// <returns>The created <see cref="Entity"/>.</returns>
-        /// <exception cref="InvalidOperationException">Max number of <see cref="Entity"/> reached.</exception>
+
         public Entity CreateEntity()
         {
             int entityId = _entityIdDispenser.GetFreeInt();
@@ -265,14 +251,7 @@ namespace Zeckoxe.EntityComponentSystem
             return new Entity(WorldId, entityId);
         }
 
-        /// <summary>
-        /// Sets up the current <see cref="World"/> to handle component of type <typeparamref name="T"/> with a different maximum count than <see cref="MaxCapacity"/>.
-        /// If the type of component is already handled by the current <see cref="World"/>, does nothing.
-        /// </summary>
-        /// <typeparam name="T">The type of component.</typeparam>
-        /// <param name="maxCapacity">The maximum number of component of type <typeparamref name="T"/> that can exist in this <see cref="World"/>.</param>
-        /// <returns>Whether the maximum count has been setted or not.</returns>
-        /// <exception cref="ArgumentException"><paramref name="maxCapacity"/> cannot be negative.</exception>
+
         public bool SetMaxCapacity<T>(int maxCapacity)
         {
             if (maxCapacity < 0)
@@ -283,54 +262,27 @@ namespace Zeckoxe.EntityComponentSystem
             return ComponentManager<T>.GetOrCreate(WorldId, maxCapacity).MaxCapacity == maxCapacity;
         }
 
-        /// <summary>
-        /// Gets the maximum number of <typeparamref name="T"/> components this <see cref="World"/> can create.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns>The maximum number of <typeparamref name="T"/> components this <see cref="World"/> can create, or -1 if it is currently not handled.</returns>
+
         public int GetMaxCapacity<T>() => ComponentManager<T>.Get(WorldId)?.MaxCapacity ?? -1;
 
-        /// <summary>
-        /// Gets all the component of a given type <typeparamref name="T"/>.
-        /// </summary>
-        /// <typeparam name="T">The type of component.</typeparam>
-        /// <returns>A <see cref="Span{T}"/> pointing directly to the component values to edit them.</returns>
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<T> Get<T>() => ComponentManager<T>.GetOrCreate(WorldId).AsSpan();
 
-        /// <summary>
-        /// Gets an <see cref="Components{T}"/> to get a fast access to the component of type <typeparamref name="T"/> of this <see cref="World"/> instance <see cref="Entity"/>.
-        /// </summary>
-        /// <typeparam name="T">The type of component.</typeparam>
-        /// <returns>A <see cref="Components{T}"/>.</returns>
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Components<T> GetComponents<T>() => ComponentManager<T>.GetOrCreate(WorldId).AsComponents();
 
-        /// <summary>
-        /// Gets an <see cref="EntityRuleBuilder"/> to create a subset of <see cref="Entity"/> of the current <see cref="World"/>.
-        /// </summary>
-        /// <returns>An <see cref="EntityRuleBuilder"/>.</returns>
+
         public EntityRuleBuilder GetEntities() => new EntityRuleBuilder(this, true);
 
-        /// <summary>
-        /// Gets an <see cref="EntityRuleBuilder"/> to create a subset of disabled <see cref="Entity"/> of the current <see cref="World"/>.
-        /// </summary>
-        /// <returns>An <see cref="EntityRuleBuilder"/>.</returns>
+
         public EntityRuleBuilder GetDisabledEntities() => new EntityRuleBuilder(this, false);
 
-        /// <summary>
-        /// Calls on <paramref name="reader"/> with all the maximum number of component of the current <see cref="World"/>.
-        /// This method is primiraly used for serialization purpose and should not be called in game logic.
-        /// </summary>
-        /// <param name="reader">The <see cref="IComponentTypeReader"/> instance to be used as callback with the current <see cref="World"/> maximum number of component.</param>
+
         public void ReadAllComponentTypes(IComponentTypeReader reader) => Publish(new ComponentTypeReadMessage(reader ?? throw new ArgumentNullException(nameof(reader))));
 
-        /// <summary>
-        /// Sorts current instance inner storage so accessing <see cref="Entity"/> and their components from <see cref="EntitySet"/> and <see cref="EntitiesMap{TKey}"/> always move forward in memory.
-        /// This method will return once <paramref name="mainAction"/> is executed even if the optimization process has not finished.
-        /// </summary>
-        /// <param name="runner">The <see cref="IParallelRunner"/> to process this operation in parallel.</param>
-        /// <param name="mainAction">An <see cref="Action"/> to execute on the main thread while the optimization is in process.</param>
+
         public void Optimize(IParallelRunner runner, Action mainAction)
         {
             if (runner is null)
@@ -347,10 +299,7 @@ namespace Zeckoxe.EntityComponentSystem
             runner.Run(_optimizer);
         }
 
-        /// <summary>
-        /// Sorts current instance inner storage so accessing <see cref="Entity"/> and their components from <see cref="EntitySet"/> and <see cref="EntitiesMap{TKey}"/> always move forward in memory.
-        /// </summary>
-        /// <param name="runner">The <see cref="IParallelRunner"/> to process this operation in parallel.</param>
+
         public void Optimize(IParallelRunner runner)
         {
             if (runner is null)
@@ -362,17 +311,10 @@ namespace Zeckoxe.EntityComponentSystem
             runner.Run(_optimizer);
         }
 
-        /// <summary>
-        /// Sorts current instance inner storage so accessing <see cref="Entity"/> and their components from <see cref="EntitySet"/> and <see cref="EntitiesMap{TKey}"/> always move forward in memory.
-        /// </summary>
+
         public void Optimize() => Optimize(DefaultParallelRunner.Default);
 
-        /// <summary>
-        /// Subscribes an <see cref="EntityCreatedHandler"/> on the current <see cref="World"/> to be called when an <see cref="Entity"/> is created.
-        /// </summary>
-        /// <param name="action">The <see cref="EntityCreatedHandler"/> to be called.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="action"/> is null.</exception>
+
         public IDisposable SubscribeEntityCreated(EntityCreatedHandler action)
         {
             if (action is null)
@@ -383,12 +325,7 @@ namespace Zeckoxe.EntityComponentSystem
             return Subscribe((in EntityCreatedMessage message) => action(new Entity(WorldId, message.EntityId)));
         }
 
-        /// <summary>
-        /// Subscribes an <see cref="EntityEnabledHandler"/> on the current <see cref="World"/> to be called when an <see cref="Entity"/> is enabled.
-        /// </summary>
-        /// <param name="action">The <see cref="EntityEnabledHandler"/> to be called.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="action"/> is null.</exception>
+
         public IDisposable SubscribeEntityEnabled(EntityEnabledHandler action)
         {
             if (action is null)
@@ -399,12 +336,7 @@ namespace Zeckoxe.EntityComponentSystem
             return Subscribe((in EntityEnabledMessage message) => action(new Entity(WorldId, message.EntityId)));
         }
 
-        /// <summary>
-        /// Subscribes an <see cref="EntityDisabledHandler"/> on the current <see cref="World"/> to be called when an <see cref="Entity"/> is disabled.
-        /// </summary>
-        /// <param name="action">The <see cref="EntityDisabledHandler"/> to be called.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="action"/> is null.</exception>
+
         public IDisposable SubscribeEntityDisabled(EntityDisabledHandler action)
         {
             if (action is null)
@@ -415,12 +347,7 @@ namespace Zeckoxe.EntityComponentSystem
             return Subscribe((in EntityDisabledMessage message) => action(new Entity(WorldId, message.EntityId)));
         }
 
-        /// <summary>
-        /// Subscribes an <see cref="EntityDisposedHandler"/> on the current <see cref="World"/> to be called when an <see cref="Entity"/> is disposed.
-        /// </summary>
-        /// <param name="action">The <see cref="EntityDisposedHandler"/> to be called.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="action"/> is null.</exception>
+
         public IDisposable SubscribeEntityDisposed(EntityDisposedHandler action)
         {
             IEnumerable<IDisposable> GetSubscriptions(EntityDisposedHandler a)
@@ -443,13 +370,7 @@ namespace Zeckoxe.EntityComponentSystem
             return GetSubscriptions(action).Merge();
         }
 
-        /// <summary>
-        /// Subscribes a <see cref="ComponentAddedHandler{T}"/> on the current <see cref="World"/> to be called when a component of type <typeparamref name="T"/> is added.
-        /// </summary>
-        /// <typeparam name="T">The type of the component.</typeparam>
-        /// <param name="action">The <see cref="ComponentAddedHandler{T}"/> to be called.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="action"/> is null.</exception>
+
         public IDisposable SubscribeComponentAdded<T>(ComponentAddedHandler<T> action)
         {
             if (action is null)
@@ -462,13 +383,7 @@ namespace Zeckoxe.EntityComponentSystem
                 ComponentManager<T>.Get(WorldId).Get(message.EntityId)));
         }
 
-        /// <summary>
-        /// Subscribes a <see cref="ComponentChangedHandler{T}"/> on the current <see cref="World"/> to be called when a component of type <typeparamref name="T"/> is changed.
-        /// </summary>
-        /// <typeparam name="T">The type of the component.</typeparam>
-        /// <param name="action">The <see cref="ComponentChangedHandler{T}"/> to be called.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="action"/> is null.</exception>
+
         public IDisposable SubscribeComponentChanged<T>(ComponentChangedHandler<T> action)
         {
             ComponentManager<T>.GetOrCreatePrevious(WorldId);
@@ -484,13 +399,7 @@ namespace Zeckoxe.EntityComponentSystem
                 ComponentManager<T>.Get(WorldId).Get(message.EntityId)));
         }
 
-        /// <summary>
-        /// Subscribes an <see cref="ComponentRemovedHandler{T}"/> on the current <see cref="World"/> to be called when a component of type <typeparamref name="T"/> is removed.
-        /// </summary>
-        /// <typeparam name="T">The type of the component.</typeparam>
-        /// <param name="action">The <see cref="ComponentRemovedHandler{T}"/> to be called.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="action"/> is null.</exception>
+
         public IDisposable SubscribeComponentRemoved<T>(ComponentRemovedHandler<T> action)
         {
             IEnumerable<IDisposable> GetSubscriptions(ComponentRemovedHandler<T> a)
@@ -529,13 +438,7 @@ namespace Zeckoxe.EntityComponentSystem
             return GetSubscriptions(action).Merge();
         }
 
-        /// <summary>
-        /// Subscribes a <see cref="ComponentEnabledHandler{T}"/> on the current <see cref="World"/> to be called when a component of type <typeparamref name="T"/> is enabled.
-        /// </summary>
-        /// <typeparam name="T">The type of the component.</typeparam>
-        /// <param name="action">The <see cref="ComponentEnabledHandler{T}"/> to be called.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="action"/> is null.</exception>
+
         public IDisposable SubscribeComponentEnabled<T>(ComponentEnabledHandler<T> action)
         {
             if (action is null)
@@ -548,13 +451,7 @@ namespace Zeckoxe.EntityComponentSystem
                 ComponentManager<T>.Get(WorldId).Get(message.EntityId)));
         }
 
-        /// <summary>
-        /// Subscribes a <see cref="ComponentDisabledHandler{T}"/> on the current <see cref="World"/> to be called when a component of type <typeparamref name="T"/> is disabled.
-        /// </summary>
-        /// <typeparam name="T">The type of the component.</typeparam>
-        /// <param name="action">The <see cref="ComponentDisabledHandler{T}"/> to be called.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="action"/> is null.</exception>
+
         public IDisposable SubscribeComponentDisabled<T>(ComponentDisabledHandler<T> action)
         {
             if (action is null)
@@ -567,43 +464,25 @@ namespace Zeckoxe.EntityComponentSystem
                 ComponentManager<T>.Get(WorldId).Get(message.EntityId)));
         }
 
-        #endregion
 
-        #region IEnumerable
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="Entity"/> of the current <see cref="World"/> instance.
-        /// </summary>
-        /// <returns>An enumerator that can be used to iterate through the <see cref="Entity"/>.</returns>
+
         public Enumerator GetEnumerator() => new Enumerator(this);
 
         IEnumerator<Entity> IEnumerable<Entity>.GetEnumerator() => GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        #endregion
 
-        #region IPublisher
 
-        /// <summary>
-        /// Subscribes an <see cref="MessageHandler{T}"/> to be called back when a <typeparamref name="T"/> object is published.
-        /// </summary>
-        /// <typeparam name="T">The type of the object to be called back with.</typeparam>
-        /// <param name="action">The delegate to be called back.</param>
-        /// <returns>An <see cref="IDisposable"/> object used to unsubscribe.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IDisposable Subscribe<T>(MessageHandler<T> action) => Publisher<T>.Subscribe(WorldId, action);
 
-        /// <summary>
-        /// Publishes a <typeparamref name="T"/> object.
-        /// </summary>
-        /// <typeparam name="T">The type of the object to publish.</typeparam>
-        /// <param name="message">The object to publish.</param>
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [SuppressMessage("Performance", "RCS1242:Do not pass non-read-only struct by read-only reference.")]
         public void Publish<T>(in T message) => Publisher<T>.Publish(WorldId, message);
 
-        #endregion
 
 
         public void Dispose()
