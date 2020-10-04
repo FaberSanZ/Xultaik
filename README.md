@@ -28,11 +28,10 @@ The rendering backend is completely focused on Vulkan, however the API greatly s
 <br>
 
 
-## TODO:
-
-PR are always welcome!
+## Features:
 
 - [ ] KHR Ray Tracing
+- [x] Entity Component System
 - [ ] Memory manager (VMA)
 - [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
