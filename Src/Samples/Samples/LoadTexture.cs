@@ -12,6 +12,12 @@ namespace Samples.Samples
             Parameters.Settings.Validation = false;
             Window.Title += " - (LoadTexture) ";
         }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+        }
+
         public override void BeginDraw()
         {
             base.BeginDraw();

@@ -27,9 +27,15 @@ namespace Zeckoxe.Graphics
 
         public uint Patch => (value >> 22) & 0xfff;
 
-        public static implicit operator uint(Version version)
+        //public static implicit operator uint(Version version)
+        //{
+        //    return version.value;
+        //}
+
+
+        public override string ToString()
         {
-            return version.value;
+            return string.Format($"Engine Version: {Tools.ExtractVersion(value)}");
         }
 
     }

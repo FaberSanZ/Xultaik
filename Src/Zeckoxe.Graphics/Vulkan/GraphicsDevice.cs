@@ -539,15 +539,6 @@ namespace Zeckoxe.Graphics
         //}
 
 
-        public string ExtractVersion(uint _value)
-        {
-
-            uint major = _value >> 22;
-            uint minor = (_value >> 12) & 0x03FF;
-            uint patch = _value & 0x0FFF;
-
-            return $"{major}.{minor}.{patch}";
-        }
 
 
         public void WaitIdle()

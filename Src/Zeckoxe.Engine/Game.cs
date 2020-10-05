@@ -57,6 +57,9 @@ namespace Zeckoxe.Engine
         public Window? Window { get; set; }
 
 
+        public string EngineVersion => Adapter.EngineVersion.ToString();
+
+
         public override void Initialize()
         {
             base.Initialize();

@@ -20,6 +20,15 @@ namespace Zeckoxe.Graphics
 {
     public static unsafe class Tools
     {
+        public static string ExtractVersion(uint _value)
+        {
+
+            uint major = _value >> 22;
+            uint minor = (_value >> 12) & 0x03FF;
+            uint patch = _value & 0x0FFF;
+
+            return $"{major}.{minor}.{patch}";
+        }
 
         internal static VkSampleCountFlags ExtractMaxSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties)
         {

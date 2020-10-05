@@ -68,7 +68,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-
+        public Version EngineVersion { get; internal set; } = new Version(1, 2, 155);
 
         public PresentationParameters Parameters { get; set; }
 
@@ -302,7 +302,6 @@ namespace Zeckoxe.Graphics
                 enabledExtensionCount = (uint)extensions.Length,
             };
 
-
             VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = new VkDebugUtilsMessengerCreateInfoEXT
             {
                 sType = VkStructureType.DebugUtilsMessengerCreateInfoEXT,
@@ -327,6 +326,7 @@ namespace Zeckoxe.Graphics
 
             //vkCreateDebugUtilsMessengerEXT(instance, &debugUtilsCreateInfo, null, out _debugMessenger).CheckResult();
         }
+
 
 
 
