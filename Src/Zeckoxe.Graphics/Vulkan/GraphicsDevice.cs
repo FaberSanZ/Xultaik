@@ -18,7 +18,7 @@ namespace Zeckoxe.Graphics
     {
         internal VkDevice handle;
         internal VkPhysicalDeviceMemoryProperties _memoryProperties;
-        internal List<VkQueueFamilyProperties> queueFamilyProperties;
+        internal VkQueueFamilyProperties[] queueFamilyProperties;
         internal VkQueue nativeCommandQueue;
         internal VkPhysicalDeviceProperties _properties;
         internal VkPhysicalDeviceFeatures _features;
@@ -50,7 +50,7 @@ namespace Zeckoxe.Graphics
 
         public void Recreate()
         {
-            queueFamilyProperties = new List<VkQueueFamilyProperties>();
+            queueFamilyProperties = Array.Empty<VkQueueFamilyProperties>();
 
 
             InitializePlatformDevice();
@@ -116,18 +116,14 @@ namespace Zeckoxe.Graphics
 
         internal void CreateFeatures()
         {
-            vkGetPhysicalDeviceFeatures(NativeAdapter.handle, out VkPhysicalDeviceFeatures features);
-
-            _features = features;
+            vkGetPhysicalDeviceFeatures(NativeAdapter.handle, out _features);
         }
 
 
 
         internal void CreateMemoryProperties()
         {
-            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.handle, out VkPhysicalDeviceMemoryProperties memoryProperties);
-
-            _memoryProperties = memoryProperties;
+            vkGetPhysicalDeviceMemoryProperties(NativeAdapter.handle, out _memoryProperties);
         }
 
 
@@ -135,16 +131,18 @@ namespace Zeckoxe.Graphics
         {
             VkPhysicalDevice physicalDevice = NativeAdapter.handle;
 
-            uint Count = 0;
+            uint count = 0;
 
-            vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &Count, null);
-            VkQueueFamilyProperties* queueFamilyPropertiesptr = stackalloc VkQueueFamilyProperties[(int)Count];
+            vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, null);
+            VkQueueFamilyProperties* queueFamilyPropertiesptr = stackalloc VkQueueFamilyProperties[(int)count];
 
-            vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &Count, queueFamilyPropertiesptr);
+            vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, queueFamilyPropertiesptr);
 
-            for (int i = 0; i < Count; i++)
+            queueFamilyProperties = new VkQueueFamilyProperties[count];
+
+            for (int i = 0; i < count; i++)
             {
-                queueFamilyProperties.Add(queueFamilyPropertiesptr[i]);
+                queueFamilyProperties[i] = queueFamilyPropertiesptr[i];
             }
         }
 
@@ -336,7 +334,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        internal uint GetQueueFamilyIndex(VkQueueFlags queueFlags, List<VkQueueFamilyProperties> queueFamilyProperties)
+        internal uint GetQueueFamilyIndex(VkQueueFlags queueFlags, VkQueueFamilyProperties[] queueFamilyProperties)
         {
             // Dedicated queue for compute
             // Try to find a queue family index that supports compute but not graphics
@@ -524,19 +522,19 @@ namespace Zeckoxe.Graphics
             return VkPresentModeKHR.Immediate;
         }
 
-        //public Size ChooseSwapExtent(VkSurfaceCapabilitiesKHR capabilities, uint width, uint height)
-        //{
-        //    if (capabilities.currentExtent.Width != int.MaxValue)
-        //    {
-        //        return capabilities.currentExtent;
-        //    }
+        public VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR capabilities, uint width, uint height)
+        {
+            if (capabilities.currentExtent.width != int.MaxValue)
+            {
+                return capabilities.currentExtent;
+            }
 
-        //    return new Size()
-        //    {
-        //        Width = (int)Math.Max(capabilities.minImageExtent.Width, Math.Min(capabilities.maxImageExtent.Width, width)),
-        //        Height = (int)Math.Max(capabilities.minImageExtent.Height, Math.Min(capabilities.maxImageExtent.Height, height)),
-        //    };
-        //}
+            return new VkExtent2D
+            {
+                width = Math.Max(capabilities.minImageExtent.width, Math.Min(capabilities.maxImageExtent.width, width)),
+                height = Math.Max(capabilities.minImageExtent.height, Math.Min(capabilities.maxImageExtent.height, height)),
+            };
+        }
 
 
 

@@ -15,7 +15,25 @@ using Zeckoxe.Core;
 
 namespace Zeckoxe.Graphics
 {
-    public class TextureData
+    public interface ITextureData
+    {
+        public byte[] Data { get; internal set; }
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public int Depth { get; set; }
+
+        public int MipMaps { get; set; }
+
+        public int Size { get; set; }
+
+        public bool IsCubeMap { get; set; }
+
+        public PixelFormat Format { get; set; }
+    }
+
+    public class TextureData //: ITextureData
     {
         public byte[] Data { get; internal set; } = Array.Empty<Byte>();
 
@@ -32,8 +50,7 @@ namespace Zeckoxe.Graphics
         public bool IsCubeMap { get; set; }
 
         public PixelFormat   Format { get; set; }
-
-
+        //byte[] ITextureData.Data { get => Data; set => Data = value; }
 
         public TextureData(byte[] data, int width, int height, int depth, int mipMaps, int size, bool isCubeMap, PixelFormat format)
         {
@@ -45,6 +62,9 @@ namespace Zeckoxe.Graphics
             Size = size;
             IsCubeMap = isCubeMap;
             Format = format;
+
+            //ITextureData d = new TextureData();
+            //d.Data
         }
 
 

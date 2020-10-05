@@ -16,7 +16,7 @@ namespace Zeckoxe.Graphics.Vulkan
 {
     public unsafe class Image : GraphicsResource
     {
-        internal struct ImageInitialData
+        internal ref struct ImageInitialData
         {
             internal void* data;
             internal VkPointerSize row_length;
@@ -73,7 +73,7 @@ namespace Zeckoxe.Graphics.Vulkan
 
         public Image(GraphicsDevice device) : base(device)
         {
-            device = NativeDevice;
+
         }
 
 
@@ -184,7 +184,7 @@ namespace Zeckoxe.Graphics.Vulkan
         }
 
 
-        public void Imple(TextureData tex2D)
+        public void Imple(ITextureData tex2D)
         {
             IntPtr pixelsPtr = IntPtr.Zero;
 

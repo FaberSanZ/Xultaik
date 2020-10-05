@@ -73,6 +73,9 @@ namespace Zeckoxe.Graphics
         public PresentationParameters Parameters { get; set; }
 
         public List<string> InstanceExtensionsNames { get; private set; }
+        public List<string> DeviceExtensionsNames { get; private set; }
+
+        
 
         public List<string> ValidationLayer { get; private set; }
 
@@ -94,55 +97,55 @@ namespace Zeckoxe.Graphics
 
         public bool SupportsSurface { get; private set; }
 
-        public bool supports_external { get; private set; }
+        public bool SupportsExternal { get; private set; }
 
-        public bool supports_dedicated { get; private set; }
+        public bool SupportsDedicated { get; private set; }
 
-        public bool supports_image_format_list { get; private set; }
+        public bool SupportsImageFormatList { get; private set; }
 
-        public bool supports_debug_marker { get; private set; }
+        public bool SupportsDebugMarker { get; private set; }
 
-        public bool supports_debug_utils { get; private set; }
+        public bool SupportsDebugUtils { get; private set; }
 
-        public bool supports_mirror_clamp_to_edge { get; private set; }
+        public bool SupportsMirrorClampToEdge { get; private set; }
 
-        public bool supports_google_display_timing { get; private set; }
+        public bool SupportsGoogleDisplay_timing { get; private set; }
 
-        public bool supports_nv_device_diagnostic_checkpoints { get; private set; }
+        public bool SupportsNV_DeviceDiagnosticCheckPoints { get; private set; }
 
-        public bool supports_vulkan_11_instance { get; private set; }
+        public bool SupportsVulkan11Instance { get; private set; }
 
-        public bool supports_vulkan_11_device { get; private set; }
+        public bool SupportsVulkan11Device { get; private set; }
 
-        public bool supports_external_memory_host { get; private set; }
+        public bool SupportsExternalMemoryHost { get; private set; }
 
-        public bool supports_surface_capabilities2 { get; private set; }
+        public bool SupportsSurfaceCapabilities2 { get; private set; }
 
-        public bool supports_full_screen_exclusive { get; private set; }
+        public bool SupportsFullScreenExclusive { get; private set; }
 
-        public bool supports_update_template { get; private set; }
+        public bool SupportsUpdateTemplate { get; private set; }
 
-        public bool supports_maintenance_1 { get; private set; }
+        public bool SupportsMaintenance_1 { get; private set; }
 
-        public bool supports_maintenance_2 { get; private set; }
+        public bool SupportsMaintenance_2 { get; private set; }
 
-        public bool supports_maintenance_3 { get; private set; }
+        public bool SupportsMaintenance_3 { get; private set; }
 
-        public bool supports_descriptor_indexing { get; private set; }
+        public bool SupportsDescriptorIndexing { get; private set; }
 
-        public bool supports_conservative_rasterization { get; private set; }
+        public bool SupportsConservativeRasterization { get; private set; }
 
-        public bool supports_bind_memory2 { get; private set; }
+        public bool SupportsBindMemory2 { get; private set; }
 
-        public bool supports_get_memory_requirements2 { get; private set; }
+        public bool SupportsGetMemoryRequirements2 { get; private set; }
 
-        public bool supports_draw_indirect_count { get; private set; }
+        public bool SupportsDrawIndirectCount { get; private set; }
 
-        public bool supports_draw_parameters { get; private set; }
+        public bool SupportsDrawParameters { get; private set; }
 
-        public bool supports_driver_properties { get; private set; }
+        public bool SupportsDriverProperties { get; private set; }
 
-        public bool supports_calibrated_timestamps { get; private set; }
+        public bool SupportsCalibratedTimestamps { get; private set; }
 
 
         public string DeviceName
@@ -164,6 +167,17 @@ namespace Zeckoxe.Graphics
         }
 
 
+        public void DeviceExtension()
+        {
+            DeviceExtensionsNames = new List<string>();
+
+            foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
+            {
+                DeviceExtensionsNames.Add(Interop.String.FromPointer(item.extensionName));
+            }
+        }
+
+
 
         public void Recreate()
         {
@@ -176,6 +190,8 @@ namespace Zeckoxe.Graphics
             CreatePhysicalDevice();
 
             CreatePhysicalDeviceProperties();
+
+            DeviceExtension();
 
 
             //Features2 = GetPhysicalDeviceFeatures2();
@@ -191,14 +207,14 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.PhysicalDevice8bitStorageFeatures,
             };
 
-            bool has_pdf2 = SupportsPhysicalDeviceProperties2 || (supports_vulkan_11_instance && supports_vulkan_11_device);
+            bool has_pdf2 = SupportsPhysicalDeviceProperties2 || (SupportsVulkan11Instance && SupportsVulkan11Device is bool has_pdf_2);
 
 
             void** ppNext = &features.pNext;
 
             if (has_pdf2)
             {
-                if (/*VK_KHR_8BIT_STORAGE_EXTENSION_NAME*/true)
+                if (DeviceExtensionsNames.Contains("VK_KHR_8bit_storage"))
                 {
                     VkPhysicalDevice8BitStorageFeatures feature = storage_8bit_features;
                     //enabled_extensions.push_back(VK_KHR_8BIT_STORAGE_EXTENSION_NAME);
