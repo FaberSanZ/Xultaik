@@ -23,16 +23,14 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 ## Low-level rendering backend
 
-The rendering backend is completely focused on Vulkan, however the API greatly simplifies the most painful points of writing Vulkan. It is likely to be a happy medium ground between Vulkan and C#
-
+The rendering backend is completely focused on Vulkan, however the API greatly simplifies the most painful points of writing Vulkan. 
 <br>
 
 
-## TODO:
-
-PR are always welcome!
+## Features:
 
 - [ ] KHR Ray Tracing
+- [x] Entity Component System
 - [ ] Memory manager (VMA)
 - [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
