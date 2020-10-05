@@ -1,4 +1,14 @@
-﻿using System;
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// Copyright (c) Paillat Laszlo. https://github.com/Doraku/DefaultEcs
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+/*=============================================================================
+	EntityRecord.cs
+=============================================================================*/
+
+
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Zeckoxe.EntityComponentSystem.Technical.Command;
 
@@ -9,14 +19,11 @@ namespace Zeckoxe.EntityComponentSystem.Command
     /// </summary>
     public readonly ref struct EntityRecord
     {
-        #region Fields
 
         private readonly EntityCommandRecorder _recorder;
         private readonly int _offset;
 
-        #endregion
 
-        #region Initialisation
 
         internal EntityRecord(EntityCommandRecorder recorder, int offset)
         {
@@ -24,9 +31,7 @@ namespace Zeckoxe.EntityComponentSystem.Command
             _offset = offset;
         }
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
         /// Enables the corresponding <see cref="Entity"/> so it can appear in <see cref="EntitySet"/>.
@@ -135,6 +140,5 @@ namespace Zeckoxe.EntityComponentSystem.Command
         /// <exception cref="InvalidOperationException">Command buffer is full.</exception>
         public void Dispose() => _recorder.WriteCommand(new EntityOffsetCommand(CommandType.Dispose, _offset));
 
-        #endregion
     }
 }

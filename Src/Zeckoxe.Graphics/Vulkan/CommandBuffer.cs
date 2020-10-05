@@ -12,38 +12,74 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
+    public enum CommandBufferType
+    {
+        Generic,
+
+        AsyncGraphics,
+
+        AsyncCompute,
+
+        AsyncTransfer,
+
+        Count
+    }
+
+    //TODO: CommandBufferType
     public unsafe class CommandBuffer : GraphicsResource
     {
 
         internal uint imageIndex;
-        internal VkCommandBuffer NativeCommandBuffer;
-
-        public VkFence waitFences;
-
+        internal VkCommandBuffer handle;
+        internal VkFence waitFences; // TODO: VkFence -> Fence(0)
 
 
 
-        public CommandBuffer(GraphicsDevice graphicsDevice) : base(graphicsDevice)
+        public CommandBuffer(GraphicsDevice graphicsDevice, CommandBufferType type) : base(graphicsDevice)
         {
+            Type = type;
+
             Recreate();
         }
 
+        public CommandBufferType Type { get; set; }
 
 
         public void Recreate()
         {
-            NativeCommandBuffer = NativeDevice.CreateCommandBufferPrimary();
+            handle = NativeDevice.CreateCommandBufferPrimary();
+
             // Fences (Used to check draw command buffer completion)
             VkFenceCreateInfo fenceCreateInfo = new VkFenceCreateInfo()
             {
                 sType = VkStructureType.FenceCreateInfo
             };
+
             // Create in signaled state so we don't wait on first render of each command buffer
             fenceCreateInfo.flags = VkFenceCreateFlags.Signaled;
             vkCreateFence(NativeDevice.handle, &fenceCreateInfo, null, out waitFences);
 
         }
 
+        public CommandBufferType GetPhysicalQueueType(CommandBufferType type)
+        {
+            if (type != CommandBufferType.AsyncGraphics)
+            {
+                return type;
+            }
+
+            else
+            {
+                if (NativeDevice.GraphicsFamily == NativeDevice.ComputeFamily && NativeDevice.queueFamilyProperties /*graphics_queue*/ != NativeDevice.queueFamilyProperties /*compute_queue*/)
+                {
+                    return CommandBufferType.AsyncCompute;
+                }
+                else
+                {
+                    return CommandBufferType.Generic;
+                }
+            }
+        }
 
         public void Begin(SwapChain swapChain)
         {
@@ -68,7 +104,7 @@ namespace Zeckoxe.Graphics
                 flags = VkCommandBufferUsageFlags.RenderPassContinue,
             };
 
-            vkBeginCommandBuffer(NativeCommandBuffer, &beginInfo);
+            vkBeginCommandBuffer(handle, &beginInfo);
 
 
 
@@ -90,7 +126,7 @@ namespace Zeckoxe.Graphics
             VkRenderPassBeginInfo renderPassBeginInfo = new VkRenderPassBeginInfo()
             {
                 sType = VkStructureType.RenderPassBeginInfo,
-                renderArea =  new VkRect2D()
+                renderArea = new VkRect2D()
                 {
                     extent = new VkExtent2D()
                     {
@@ -109,23 +145,7 @@ namespace Zeckoxe.Graphics
                 framebuffer = framebuffer.framebuffers[imageIndex], // Set target frame buffer
             };
 
-
-
-
-            //VkRenderPassBeginInfo renderPassInfo = new VkRenderPassBeginInfo()
-            //{
-            //    sType = VkStructureType.RenderPassBeginInfo,
-            //    renderPass = framebuffer.renderPass,
-            //    framebuffer = framebuffer.framebuffers[imageIndex],
-            //    renderArea = new Vortice.Mathematics.Rectangle()
-            //    {
-            //        Height = NativeDevice.NativeParameters.BackBufferHeight,
-            //        Width = NativeDevice.NativeParameters.BackBufferWidth,
-            //        //extent = new VkExtent2D((uint)NativeDevice.NativeParameters.BackBufferWidth, (uint)NativeDevice.NativeParameters.BackBufferHeight)
-            //    },
-            //};
-
-            vkCmdBeginRenderPass(NativeCommandBuffer, &renderPassBeginInfo, VkSubpassContents.Inline);
+            vkCmdBeginRenderPass(handle, &renderPassBeginInfo, VkSubpassContents.Inline);
         }
 
 
@@ -175,14 +195,35 @@ namespace Zeckoxe.Graphics
                 pNext = null,
             };
             //vkCmdPipelineBarrier()
-            vkCmdCopyBuffer(NativeCommandBuffer, sourceBuffer, destinationBuffer, 1, &bufferCopy);
+            vkCmdCopyBuffer(handle, sourceBuffer, destinationBuffer, 1, &bufferCopy);
 
+        }
+
+
+        public void SetCullMode(CullMode mode)
+        {
+            vkCmdSetCullModeEXT(handle, mode.ToCullMode());
+        }
+
+        public void SetLineWidth(float lineWidth)
+        {
+            vkCmdSetLineWidth(handle, lineWidth);
+        }
+
+        public void SetFrontFace(FrontFace frontFace)
+        {
+            vkCmdSetFrontFaceEXT(handle, frontFace.ToFrontFace());
+        }
+
+        public void SetPrimitiveTopology(PrimitiveType type)
+        {
+            vkCmdSetPrimitiveTopologyEXT(handle, type.ToPrimitiveType());
         }
 
 
         public void SetGraphicPipeline(PipelineState pipelineState)
         {
-            vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
+            vkCmdBindPipeline(handle, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
         }
 
 
@@ -214,7 +255,7 @@ namespace Zeckoxe.Graphics
                 }
             };
 
-            vkCmdSetScissor(NativeCommandBuffer, 0, 1, &scissor);
+            vkCmdSetScissor(handle, 0, 1, &scissor);
         }
 
         public void SetViewport(float Width, float Height, float X, float Y, float MinDepth = 0.0f, float MaxDepth = 1.0f)
@@ -231,14 +272,14 @@ namespace Zeckoxe.Graphics
                 maxDepth = MaxDepth
             };
 
-            vkCmdSetViewport(NativeCommandBuffer, 0, 1, &Viewport);
+            vkCmdSetViewport(handle, 0, 1, &Viewport);
         }
 
         public void SetVertexBuffer(Buffer buffer, ulong offsets = 0)
         {
             fixed (VkBuffer* bufferptr = &buffer.Handle)
             {
-                vkCmdBindVertexBuffers(NativeCommandBuffer, 0, 1, bufferptr, &offsets);
+                vkCmdBindVertexBuffers(handle, 0, 1, bufferptr, &offsets);
             }
         }
 
@@ -256,27 +297,27 @@ namespace Zeckoxe.Graphics
 
             //}
 
-            vkCmdBindVertexBuffers(NativeCommandBuffer, 0, 1, buffer, &offsets);
+            vkCmdBindVertexBuffers(handle, 0, 1, buffer, &offsets);
         }
 
         public void SetIndexBuffer(Buffer buffer, ulong offsets = 0, IndexType indexType = IndexType.Uint32)
         {
             if (buffer.Handle != VkBuffer.Null)
             {
-                vkCmdBindIndexBuffer(NativeCommandBuffer, buffer.Handle, offsets, (VkIndexType)indexType);
+                vkCmdBindIndexBuffer(handle, buffer.Handle, offsets, (VkIndexType)indexType);
             }
         }
 
         public void Draw(int vertexCount, int instanceCount, int firstVertex, int firstInstance)
         {
-            vkCmdDraw(NativeCommandBuffer, (uint)vertexCount, (uint)instanceCount, (uint)firstVertex, (uint)firstInstance);
+            vkCmdDraw(handle, (uint)vertexCount, (uint)instanceCount, (uint)firstVertex, (uint)firstInstance);
         }
 
 
 
         public void DrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance)
         {
-            vkCmdDrawIndexed(NativeCommandBuffer, (uint)indexCount, (uint)instanceCount, (uint)firstIndex, vertexOffset, (uint)firstInstance);
+            vkCmdDrawIndexed(handle, (uint)indexCount, (uint)instanceCount, (uint)firstIndex, vertexOffset, (uint)firstInstance);
         }
 
 
@@ -284,13 +325,13 @@ namespace Zeckoxe.Graphics
         public void Close()
         {
             CleanupRenderPass();
-            vkEndCommandBuffer(NativeCommandBuffer);
+            vkEndCommandBuffer(handle);
         }
 
 
         internal unsafe void CleanupRenderPass()
         {
-            vkCmdEndRenderPass(NativeCommandBuffer);
+            vkCmdEndRenderPass(handle);
         }
 
 
@@ -300,7 +341,7 @@ namespace Zeckoxe.Graphics
             VkDescriptorSet descriptor_set = descriptor._descriptorSet;
             VkPipelineLayout _pipelineLayout = descriptor.PipelineState._pipelineLayout;
 
-            vkCmdBindDescriptorSets(NativeCommandBuffer, VkPipelineBindPoint.Graphics, _pipelineLayout, 0, 1, &descriptor_set, 0, null);
+            vkCmdBindDescriptorSets(handle, VkPipelineBindPoint.Graphics, _pipelineLayout, 0, 1, &descriptor_set, 0, null);
         }
 
 
@@ -310,7 +351,7 @@ namespace Zeckoxe.Graphics
             VkSemaphore signalSemaphore = NativeDevice.renderFinishedSemaphore;
             VkSemaphore waitSemaphore = NativeDevice.imageAvailableSemaphore;
             VkPipelineStageFlags waitStages = VkPipelineStageFlags.ColorAttachmentOutput;
-            VkCommandBuffer commandBuffer = NativeCommandBuffer;
+            VkCommandBuffer commandBuffer = handle;
 
 
             VkSubmitInfo submitInfo = new VkSubmitInfo()

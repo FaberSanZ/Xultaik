@@ -52,7 +52,7 @@ namespace Samples.Samples
         public LoadGLTF() : base()
         {
             Parameters.Settings.Validation = false;
-            Window.Title += "Zeckoxe Engine - (LoadGLTF) ";
+            Window.Title += " - (LoadGLTF) ";
         }
 
 

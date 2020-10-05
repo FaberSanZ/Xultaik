@@ -1,4 +1,14 @@
-﻿using System;
+﻿// Copyright (c) 2019-20// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// Copyright (c) Paillat Laszlo. https://github.com/Doraku/DefaultEcs
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+/*=============================================================================
+	AResourceManager.cs
+=============================================================================*/
+
+
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Zeckoxe.EntityComponentSystem.Technical;
@@ -16,8 +26,6 @@ namespace Zeckoxe.EntityComponentSystem.Resource
     /// <typeparam name="TResource">The type of the resource.</typeparam>
     public abstract class AResourceManager<TInfo, TResource> : IDisposable
     {
-        #region Types
-
         private sealed class Resource
         {
             public readonly TResource Value;
@@ -47,7 +55,6 @@ namespace Zeckoxe.EntityComponentSystem.Resource
                 _manager = manager;
             }
 
-            #region IEnumerable
 
             /// <summary>
             /// Returns an enumerator that iterates through the collection.
@@ -59,7 +66,6 @@ namespace Zeckoxe.EntityComponentSystem.Resource
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-            #endregion
         }
 
         /// <summary>
@@ -88,7 +94,6 @@ namespace Zeckoxe.EntityComponentSystem.Resource
                 Current = default;
             }
 
-            #region IEnumerator
 
             /// <summary>
             /// Gets the resource at the current position of the enumerator.
@@ -114,9 +119,7 @@ namespace Zeckoxe.EntityComponentSystem.Resource
 
             void IEnumerator.Reset() => _index = -1;
 
-            #endregion
 
-            #region IDisposable
 
             /// <summary>
             /// Releases all resources used by the <see cref="ResourceEnumerator" />.
@@ -124,28 +127,16 @@ namespace Zeckoxe.EntityComponentSystem.Resource
             public void Dispose()
             { }
 
-            #endregion
         }
 
-        #endregion
 
-        #region Fields
 
         private readonly object _lockObject;
         private readonly Dictionary<TInfo, Resource> _resources;
 
-        #endregion
 
-        #region Properties
 
-        /// <summary>
-        /// Gets all the <typeparamref name="TResource"/> loaded by the current instance and their corresponding <typeparamref name="TInfo"/>.
-        /// </summary>
-        public ResourceEnumerable Resources => new ResourceEnumerable(this);
 
-        #endregion
-
-        #region Initialisation
 
         /// <summary>
         /// Creates an instance of type <see cref="AResourceManager{TInfo, TResource}"/>.
@@ -156,9 +147,12 @@ namespace Zeckoxe.EntityComponentSystem.Resource
             _resources = new Dictionary<TInfo, Resource>();
         }
 
-        #endregion
+        /// <summary>
+        /// Gets all the <typeparamref name="TResource"/> loaded by the current instance and their corresponding <typeparamref name="TInfo"/>.
+        /// </summary>
+        public ResourceEnumerable Resources => new ResourceEnumerable(this);
 
-        #region Callbacks
+
 
         private void OnAdded(in Entity entity, in ManagedResource<TInfo, TResource> value) => Add(entity, value.Info);
 
@@ -198,9 +192,7 @@ namespace Zeckoxe.EntityComponentSystem.Resource
             }
         }
 
-        #endregion
 
-        #region Methods
 
         private void Add(in Entity entity, TInfo info)
         {
@@ -300,9 +292,7 @@ namespace Zeckoxe.EntityComponentSystem.Resource
             return GetSubscriptions(world).Merge();
         }
 
-        #endregion
 
-        #region IDisposable
 
         /// <summary>
         /// Unloads all loaded resources.
@@ -317,6 +307,5 @@ namespace Zeckoxe.EntityComponentSystem.Resource
             _resources.Clear();
         }
 
-        #endregion
     }
 }

@@ -134,7 +134,7 @@ namespace Samples.Samples
         public Transformations() : base()
         {
             Parameters.Settings.Validation = false;
-            Window.Title += "Zeckoxe Engine - (Transformations) ";
+            Window.Title += " - (Transformations) ";
         }
 
 

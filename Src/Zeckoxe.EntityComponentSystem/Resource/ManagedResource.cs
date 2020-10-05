@@ -1,4 +1,10 @@
-﻿using System;
+﻿// Copyright (c) 2019-20// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// Copyright (c) Paillat Laszlo. https://github.com/Doraku/DefaultEcs
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+/*=============================================================================
+	AResourceManager.cs
+=============================================================================*/
 
 namespace Zeckoxe.EntityComponentSystem.Resource
 {
@@ -6,7 +12,7 @@ namespace Zeckoxe.EntityComponentSystem.Resource
     /// Provides static methods for creating <see cref="ManagedResource{TInfo, TResource}"/> object.
     /// </summary>
     /// <typeparam name="TResource">The type of the resource.</typeparam>
-    public static class ManagedResource<TResource>
+    public static class ManagedResource<TResource>  
     {
         /// <summary>
         /// Create a <see cref="ManagedResource{TInfo, TResource}"/> object

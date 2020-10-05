@@ -62,7 +62,7 @@ namespace Zeckoxe.Graphics
             nativeCommandBufferPrimary = CreateCommandBufferPrimary();
 
 
-            NativeCommand = new CommandBuffer(this);
+            NativeCommand = new CommandBuffer(this, CommandBufferType.AsyncGraphics | CommandBufferType.AsyncTransfer | CommandBufferType.AsyncCompute); //TODO: CommandBufferType
 
 
             nativeCommandBufferSecondary = CreateCommandBufferSecondary();
