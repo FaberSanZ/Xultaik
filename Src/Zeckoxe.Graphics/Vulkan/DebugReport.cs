@@ -21,7 +21,7 @@ namespace Zeckoxe.Graphics
         //internal PFN_vkDebugReportCallbackEXT debugCallbackDelegate = new PFN_vkDebugReportCallbackEXT(debugCallback);
 
 
-        public DebugReport(GraphicsDevice device) : base(device)
+        public DebugReport(Device device) : base(device)
         {
             _instance = device.NativeAdapter.instance;
         }

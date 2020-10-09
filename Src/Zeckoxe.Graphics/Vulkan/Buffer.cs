@@ -28,7 +28,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public Buffer(GraphicsDevice graphicsDevice, BufferDescription description) : base(graphicsDevice)
+        public Buffer(Device graphicsDevice, BufferDescription description) : base(graphicsDevice)
         {
             BufferDescription = description;
 

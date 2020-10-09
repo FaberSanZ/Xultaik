@@ -29,7 +29,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public SwapChain(GraphicsDevice device) : base(device)
+        public SwapChain(Device device) : base(device)
         {
             Parameters = NativeDevice.NativeParameters;
 

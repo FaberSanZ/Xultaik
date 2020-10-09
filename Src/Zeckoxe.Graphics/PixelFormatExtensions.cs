@@ -296,7 +296,20 @@ namespace Zeckoxe.Graphics
 		}
 
 
-		internal static VkFormat ToVkFormat(this PixelFormat format)
+        internal static IEnumerable<VkFormat> depth_formats
+        {
+            get
+            {
+                yield return VkFormat.D32SFloatS8UInt;
+                yield return VkFormat.D32SFloat;
+                yield return VkFormat.D24UNormS8UInt;
+                yield return VkFormat.D16UNormS8UInt;
+                yield return VkFormat.D16UNorm;
+            }
+        }
+
+
+        internal static VkFormat ToVkFormat(this PixelFormat format)
 		{
             switch (format)
             {

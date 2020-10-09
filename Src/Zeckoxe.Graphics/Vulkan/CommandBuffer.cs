@@ -35,7 +35,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public CommandBuffer(GraphicsDevice graphicsDevice, CommandBufferType type) : base(graphicsDevice)
+        public CommandBuffer(Device graphicsDevice, CommandBufferType type) : base(graphicsDevice)
         {
             Type = type;
 
@@ -235,18 +235,18 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void SetGraphicPipeline(PipelineState pipelineState)
+        public void SetGraphicPipeline(GraphicsPipelineState pipelineState)
         {
             vkCmdBindPipeline(handle, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
         }
 
 
-        public void SetComputePipeline(PipelineState pipelineState)
+        public void SetComputePipeline(GraphicsPipelineState pipelineState)
         {
             //vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Compute, pipelineState.computesPipeline);
         }
 
-        public void SetRayTracinPipeline(PipelineState pipelineState)
+        public void SetRayTracinPipeline(GraphicsPipelineState pipelineState)
         {
             //vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.RayTracingNV, pipelineState.rayTracinPipeline);
         }

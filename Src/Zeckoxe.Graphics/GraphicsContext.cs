@@ -16,7 +16,7 @@ namespace Zeckoxe.Graphics
         public CommandBuffer CommandBuffer { get; set; }
 
 
-        public GraphicsContext(GraphicsDevice graphicsDevice, CommandBuffer? commandBuffer = null)
+        public GraphicsContext(Device graphicsDevice, CommandBuffer? commandBuffer = null)
         {
             CommandBuffer = commandBuffer is null ? graphicsDevice.NativeCommand : new CommandBuffer(graphicsDevice, CommandBufferType.AsyncGraphics);
         }

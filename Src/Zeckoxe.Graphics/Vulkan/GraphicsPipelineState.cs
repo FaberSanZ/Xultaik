@@ -17,7 +17,7 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class PipelineState : GraphicsResource
+    public unsafe class GraphicsPipelineState : GraphicsResource
     {
 
         internal VkPipeline graphicsPipeline;
@@ -25,7 +25,7 @@ namespace Zeckoxe.Graphics
         internal VkPipelineCache _pipelineCache;
         internal VkPipelineLayout _pipelineLayout;
 
-        public PipelineState(PipelineStateDescription description) : base(description.Framebuffer.NativeDevice)
+        public GraphicsPipelineState(PipelineStateDescription description) : base(description.Framebuffer.NativeDevice)
         {
             PipelineStateDescription = description;
             Recreate();

@@ -31,7 +31,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public Texture(GraphicsDevice device) : base(device)
+        public Texture(Device device) : base(device)
         {
             Recreate();
         }
@@ -59,7 +59,7 @@ namespace Zeckoxe.Graphics
 
         public void CreateDepthStencil(int width, int height)
         {
-            VkFormat format = (VkFormat)NativeDevice.NativeAdapter.GetSupportedDepthFormat(PixelFormatExtensions.DepthFormats); // TODO: ToVkFormat
+            VkFormat format = NativeDevice.NativeAdapter.get_supported_depth_format(PixelFormatExtensions.depth_formats);
 
 
 

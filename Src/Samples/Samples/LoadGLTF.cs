@@ -67,7 +67,7 @@ namespace Samples.Samples
 
         public Dictionary<string, DescriptorSet> DescriptorSets = new Dictionary<string, DescriptorSet>();
         public Dictionary<string, Buffer> Buffers = new Dictionary<string, Buffer>();
-        public Dictionary<string, PipelineState> PipelineStates = new Dictionary<string, PipelineState>();
+        public Dictionary<string, GraphicsPipelineState> PipelineStates = new Dictionary<string, GraphicsPipelineState>();
         public Dictionary<string, ShaderBytecode> Shaders = new Dictionary<string, ShaderBytecode>();
 
         // TransformUniform 
@@ -201,7 +201,7 @@ namespace Samples.Samples
             };
 
 
-            PipelineStates["Wireframe"] = new PipelineState(new PipelineStateDescription() 
+            PipelineStates["Wireframe"] = new GraphicsPipelineState(new PipelineStateDescription() 
             {
                 Framebuffer = Framebuffer,
 
@@ -239,7 +239,7 @@ namespace Samples.Samples
             });
 
 
-            PipelineStates["Solid"] = new PipelineState(new PipelineStateDescription() 
+            PipelineStates["Solid"] = new GraphicsPipelineState(new PipelineStateDescription() 
             {
                 Framebuffer = Framebuffer,
 
@@ -288,7 +288,7 @@ namespace Samples.Samples
             Buffers["ConstBuffer1"].SetData(ref uniform);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(1.0f, 0.0f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(-yaw, pitch, roll) * Matrix4x4.CreateTranslation(1.0f, 0.0f, 0.0f);
             uniform.Update(Camera, Model);
             Buffers["ConstBuffer2"].SetData(ref uniform);
 

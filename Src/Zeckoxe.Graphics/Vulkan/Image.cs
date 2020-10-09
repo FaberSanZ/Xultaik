@@ -54,7 +54,7 @@ namespace Zeckoxe.Graphics.Vulkan
         internal VkPointerSize row_pitch;
         internal VkPointerSize row_offset;
 
-        internal GraphicsDevice device;
+        internal Device device;
         internal VkImage image;
         internal Layout layout_type = Layout.Optimal;
         internal VkPipelineStageFlags stage_flags = 0;
@@ -63,7 +63,7 @@ namespace Zeckoxe.Graphics.Vulkan
         internal bool owns_image = true;
         internal bool owns_memory_allocation = true;
 
-        internal VkDeviceMemory Mem;
+        internal VkDeviceMemory memory;
         internal VkImageView View;
         internal VkFormat vkformat;
         internal VkBuffer buffer;
@@ -71,7 +71,7 @@ namespace Zeckoxe.Graphics.Vulkan
 
 
 
-        public Image(GraphicsDevice device) : base(device)
+        public Image(Device device) : base(device)
         {
 
         }
@@ -92,38 +92,39 @@ namespace Zeckoxe.Graphics.Vulkan
 
         private unsafe void CreateBuffer(ulong size)
         {
-            VkBufferCreateInfo createInfo = new VkBufferCreateInfo
+
+            VkBufferCreateInfo bufferCreateInfo = new VkBufferCreateInfo
             {
                 sType = VkStructureType.BufferCreateInfo,
-                flags = VkBufferCreateFlags.None
+                pNext = null,
+                size = size,
+                usage = VkBufferUsageFlags.TransferSrc
+            };
+            vkCreateBuffer(NativeDevice.handle, &bufferCreateInfo, null, out buffer);
+
+            vkGetPhysicalDeviceMemoryProperties(NativeDevice.NativeAdapter.handle, out VkPhysicalDeviceMemoryProperties memoryProperties);
+            vkGetBufferMemoryRequirements(NativeDevice.handle, buffer, out VkMemoryRequirements stagingMemReq);
+            uint heapIndex = NativeDevice.GetMemoryTypeIndex(stagingMemReq.memoryTypeBits, VkMemoryPropertyFlags.HostVisible);
+
+            VkMemoryAllocateInfo memAllocInfo = new VkMemoryAllocateInfo()
+            {
+                sType = VkStructureType.MemoryAllocateInfo,
+                pNext = null,
+                allocationSize = stagingMemReq.size,
+                memoryTypeIndex = heapIndex
             };
 
-            createInfo.size = size;
+            VkDeviceMemory* stagingMemory;
+            vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, *&stagingMemory + size).CheckResult();
+            memory = *stagingMemory;
 
-            createInfo.usage = VkBufferUsageFlags.TransferSrc | VkBufferUsageFlags.TransferDst;
+            vkBindBufferMemory(NativeDevice.handle, buffer, memory, 0).CheckResult();
 
-            // Create buffer
-            vkCreateBuffer(device.handle, &createInfo, null, out buffer);
-
-            // Allocate and bind memory
-            vkGetBufferMemoryRequirements(device.handle, buffer, out VkMemoryRequirements memoryRequirements);
-
-            //VkDeviceMemory stagingMemory;
-            //VkResult result = vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, &stagingMemory);
-            //result.CheckResult();
-
-
-            if (Mem != VkDeviceMemory.Null)
-            {
-                vkBindBufferMemory(device.handle, buffer, Mem, 0);
-            }
         }
 
         public void CreateDepthStencil(int width, int height)
         {
-            VkFormat format = (VkFormat)NativeDevice.NativeAdapter.GetSupportedDepthFormat(PixelFormatExtensions.DepthFormats); // TODO: ToVkFormat
-
-
+            VkFormat format = NativeDevice.NativeAdapter.get_supported_depth_format(PixelFormatExtensions.depth_formats); // TODO: ToVkFormat
 
             VkImageCreateInfo imageCreateInfo = new VkImageCreateInfo
             {
@@ -160,10 +161,10 @@ namespace Zeckoxe.Graphics.Vulkan
                 memoryTypeIndex = heapIndex
             };
 
-            VkDeviceMemory memory;
-            vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, &memory);
+            VkDeviceMemory _memory;
+            vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, &_memory);
 
-            vkBindImageMemory(NativeDevice.handle, image, memory, 0);
+            vkBindImageMemory(NativeDevice.handle, image, _memory, 0);
 
             VkImageViewCreateInfo imageViewCreateInfo = new VkImageViewCreateInfo
             {
@@ -178,7 +179,7 @@ namespace Zeckoxe.Graphics.Vulkan
             vkCreateImageView(NativeDevice.handle, &imageViewCreateInfo, null, out VkImageView view).CheckResult();
 
 
-            Mem = memory;
+            memory = _memory;
             View = view;
             vkformat = format;
         }

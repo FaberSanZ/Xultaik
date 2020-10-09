@@ -20,7 +20,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public DescriptorSet(PipelineState pipelineState, List<DescriptorPool> descriptors , int maxSets = 1) : base(pipelineState.NativeDevice)
+        public DescriptorSet(GraphicsPipelineState pipelineState, List<DescriptorPool> descriptors , int maxSets = 1) : base(pipelineState.NativeDevice)
         {
             PipelineState = pipelineState;
             Descriptors = descriptors;
@@ -29,7 +29,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public PipelineState PipelineState { get; set; }
+        public GraphicsPipelineState PipelineState { get; set; }
         public List<DescriptorPool> Descriptors { get; set; }
         public int MaxSets { get; set; }
 

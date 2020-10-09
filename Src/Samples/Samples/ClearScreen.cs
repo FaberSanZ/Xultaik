@@ -33,8 +33,8 @@ namespace Samples.Samples
 
         public Window Window { get; set; }
         public PresentationParameters Parameters { get; set; }
-        public GraphicsAdapter Adapter { get; set; }
-        public GraphicsDevice Device { get; set; }
+        public Adapter Adapter { get; set; }
+        public Device Device { get; set; }
         public Framebuffer Framebuffer { get; set; }
         public SwapChain SwapChain { get; set; }
 
@@ -45,9 +45,9 @@ namespace Samples.Samples
         public void Initialize()
         {
 
-            Adapter = new GraphicsAdapter(Parameters);
+            Adapter = new Adapter(Parameters);
 
-            Device = new GraphicsDevice(Adapter);
+            Device = new Device(Adapter);
 
             SwapChain = new SwapChain(Device);
 

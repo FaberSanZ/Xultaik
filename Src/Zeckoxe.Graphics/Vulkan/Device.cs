@@ -14,7 +14,7 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class GraphicsDevice : IDisposable
+    public unsafe class Device : IDisposable
     {
         internal VkDevice handle;
         internal VkPhysicalDeviceMemoryProperties _memoryProperties;
@@ -29,7 +29,7 @@ namespace Zeckoxe.Graphics
         internal VkSemaphore renderFinishedSemaphore;
 
 
-        public GraphicsDevice(GraphicsAdapter adapter)
+        public Device(Adapter adapter)
         {
             NativeAdapter = adapter;
 
@@ -40,7 +40,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public GraphicsAdapter NativeAdapter { get; set; }
+        public Adapter NativeAdapter { get; set; }
         public PresentationParameters NativeParameters { get; set; }
         public CommandBuffer NativeCommand { get; set; }
         public uint GraphicsFamily { get; private set; }

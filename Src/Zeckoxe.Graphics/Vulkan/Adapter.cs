@@ -18,7 +18,7 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class GraphicsAdapter : IDisposable
+    public unsafe class Adapter : IDisposable
     {
         internal VkInstance instance;
 
@@ -58,7 +58,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public GraphicsAdapter(PresentationParameters parameters)
+        public Adapter(PresentationParameters parameters)
         {
             Parameters = parameters;
 
@@ -422,6 +422,30 @@ namespace Zeckoxe.Graphics
         }
 
 
+        internal VkFormat get_supported_depth_format(IEnumerable<VkFormat> depthFormats)
+        {
+            // Since all depth formats may be optional, we need to find a suitable depth format to use
+            // Start with the highest precision packed format
+
+            VkFormat depthFormat = VkFormat.Undefined;
+
+            foreach (VkFormat format in depthFormats)
+            {
+                vkGetPhysicalDeviceFormatProperties(handle, format, out VkFormatProperties formatProps);
+
+                // Format must support depth stencil attachment for optimal tiling
+                if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) is not 0)
+                {
+                    depthFormat = format;
+                }
+            }
+
+
+
+            return depthFormat;
+        }
+
+
         public PixelFormat GetSupportedDepthFormat(IEnumerable<PixelFormat> depthFormats)
         {
             // Since all depth formats may be optional, we need to find a suitable depth format to use
@@ -434,7 +458,7 @@ namespace Zeckoxe.Graphics
                 vkGetPhysicalDeviceFormatProperties(handle, (VkFormat)format, out VkFormatProperties formatProps);
 
                 // Format must support depth stencil attachment for optimal tiling
-                if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) != 0)
+                if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) is not 0)
                 {
                     depthFormat = format;
                 }

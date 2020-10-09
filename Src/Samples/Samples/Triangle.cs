@@ -20,7 +20,7 @@ namespace Samples.Samples
         }
 
 
-        public PipelineState PipelineState { get; set; }
+        public GraphicsPipelineState PipelineState { get; set; }
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
 
@@ -126,7 +126,7 @@ namespace Samples.Samples
                 },
             };
 
-            PipelineState = new PipelineState(Pipelinedescription);
+            PipelineState = new GraphicsPipelineState(Pipelinedescription);
         }
 
 

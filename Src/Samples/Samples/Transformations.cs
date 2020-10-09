@@ -115,7 +115,7 @@ namespace Samples.Samples
 
 
         
-        public PipelineState PipelineState { get; set; }
+        public GraphicsPipelineState PipelineState { get; set; }
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
         public Buffer ConstBuffer { get; set; }
@@ -133,7 +133,7 @@ namespace Samples.Samples
 
         public Transformations() : base()
         {
-            Parameters.Settings.Validation = ValidationType.Console | ValidationType.Debug;
+            Parameters.Settings.Validation = ValidationType.None;
             Window.Title += " - (Transformations) ";
         }
 
@@ -153,6 +153,8 @@ namespace Samples.Samples
 
             // Reset Model
             Model = Matrix4x4.Identity;
+            Models.Add(Model);
+
 
             uniform = new TransformUniform(Camera.Projection, Model, Camera.View);
 
@@ -289,7 +291,7 @@ namespace Samples.Samples
                 },
             };
 
-            PipelineState = new PipelineState(Pipelinedescription);
+            PipelineState = new GraphicsPipelineState(Pipelinedescription);
         }
 
 

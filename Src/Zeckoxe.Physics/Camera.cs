@@ -314,7 +314,7 @@ namespace Zeckoxe.Physics
 
             UpdateTranslations(gameTime);
 
-            if (mode == CameraType.Ortho)
+            if (mode is CameraType.Ortho)
             {
                 View = Matrix4x4.CreateLookAt(
                     Position,
@@ -341,7 +341,7 @@ namespace Zeckoxe.Physics
 
         public void PreviousIsometricAxis()
         {
-            if (mode == CameraType.FreeIsometric)
+            if (mode is CameraType.FreeIsometric)
             {
                 int current = (int)isometricAxis;
                 int previous;

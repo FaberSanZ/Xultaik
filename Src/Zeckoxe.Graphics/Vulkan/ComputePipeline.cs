@@ -2,7 +2,7 @@
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 /*=============================================================================
-	GraphicsResource.cs
+	ComputePipeline.cs
 =============================================================================*/
 
 
@@ -12,18 +12,7 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
-    public class GraphicsResource
+    public class ComputePipeline
     {
-        public Device NativeDevice { get; private set; }
-
-        public GraphicsResource(Device device)
-        {
-            AttachToGraphicsDevice(device);
-        }
-
-        public void AttachToGraphicsDevice(Device device)
-        {
-            NativeDevice = device;
-        }
     }
 }

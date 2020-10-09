@@ -7,6 +7,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Zeckoxe.Desktop;
 using Zeckoxe.Games;
@@ -40,9 +41,9 @@ namespace Zeckoxe.Engine
         }
         public PresentationParameters Parameters { get; set; }
 
-        public GraphicsAdapter Adapter { get; set; }
+        public Adapter Adapter { get; set; }
 
-        public GraphicsDevice? Device { get; set; }
+        public Device? Device { get; set; }
 
         public Framebuffer Framebuffer { get; set; }
 
@@ -53,6 +54,7 @@ namespace Zeckoxe.Engine
 
 
         public Matrix4x4 Model { get; set; }
+        public List<Matrix4x4> Models { get; set; } = new();
 
         public Window? Window { get; set; }
 
@@ -64,9 +66,9 @@ namespace Zeckoxe.Engine
         {
             base.Initialize();
 
-            Adapter = new GraphicsAdapter(Parameters);
+            Adapter = new Adapter(Parameters);
 
-            Device = new GraphicsDevice(Adapter);
+            Device = new Device(Adapter);
 
             SwapChain = new SwapChain(Device);
 

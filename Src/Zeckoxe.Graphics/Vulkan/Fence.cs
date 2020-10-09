@@ -17,7 +17,7 @@ namespace Zeckoxe.Graphics
     {
         internal VkFence handle;
 
-        public Fence(GraphicsDevice device, bool signaled = true) : base(device)
+        public Fence(Device device, bool signaled = true) : base(device)
         {
             VkFenceCreateInfo fenceCreateInfo = new VkFenceCreateInfo()
             {

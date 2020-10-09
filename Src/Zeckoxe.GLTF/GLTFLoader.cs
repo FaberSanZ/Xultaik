@@ -28,7 +28,7 @@ namespace Zeckoxe.GLTF
 
         public int[] Indices;
 
-        public PipelineState GLTFPipeline { get; set; }
+        public GraphicsPipelineState GLTFPipeline { get; set; }
 
 
 

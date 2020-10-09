@@ -16,7 +16,7 @@ namespace Zeckoxe.Graphics
     {
         internal VkQueryPool handle;
 
-        public QueryPool(GraphicsDevice device) : base(device)
+        public QueryPool(Device device) : base(device)
         {
             QueryCount = 1; 
             VkQueryPoolCreateInfo createInfo = new VkQueryPoolCreateInfo
