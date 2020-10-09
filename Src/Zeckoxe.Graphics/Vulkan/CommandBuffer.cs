@@ -179,6 +179,8 @@ namespace Zeckoxe.Graphics
         }
 
 
+
+
         internal void CopyBuffer(VkBuffer sourceBuffer, VkBuffer destinationBuffer, VkBufferCopy bufferCopy)
         {
 
@@ -197,6 +199,18 @@ namespace Zeckoxe.Graphics
             //vkCmdPipelineBarrier()
             vkCmdCopyBuffer(handle, sourceBuffer, destinationBuffer, 1, &bufferCopy);
 
+        }
+
+        // TODO: ALL_GPUS  
+        internal void set_current_gpu(int gpu_index)
+        {
+            //if (NativeDevice.device_count > 1)
+            //{
+            //    if (gpu_index == ALL_GPUS)
+            //        vkCmdSetDeviceMaskKHR(handle, (1 << NativeDevice.device_count) - 1);
+            //    else
+            //        qvkCmdSetDeviceMaskKHR(handle, 1 << gpu_index);
+            //}
         }
 
 

@@ -51,7 +51,7 @@ namespace Samples.Samples
 
         public LoadGLTF() : base()
         {
-            Parameters.Settings.Validation = false;
+            Parameters.Settings.Validation = ValidationType.Console | ValidationType.Debug;
             Window.Title += " - (LoadGLTF) ";
         }
 

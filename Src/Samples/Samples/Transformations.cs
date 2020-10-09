@@ -133,7 +133,7 @@ namespace Samples.Samples
 
         public Transformations() : base()
         {
-            Parameters.Settings.Validation = false;
+            Parameters.Settings.Validation = ValidationType.Console | ValidationType.Debug;
             Window.Title += " - (Transformations) ";
         }
 

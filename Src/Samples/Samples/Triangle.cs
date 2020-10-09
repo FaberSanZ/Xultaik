@@ -15,7 +15,7 @@ namespace Samples.Samples
 
         public Triangle() : base()
         {
-            Parameters.Settings.Validation = false;
+            Parameters.Settings.Validation = ValidationType.Console | ValidationType.Debug;
             Window.Title += " - (Triangle) ";
         }
 

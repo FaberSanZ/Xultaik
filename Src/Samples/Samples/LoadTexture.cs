@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Zeckoxe.Engine;
+using Zeckoxe.Graphics;
 
 namespace Samples.Samples
 {
@@ -13,7 +14,7 @@ namespace Samples.Samples
 
         public LoadTexture() : base()
         {
-            Parameters.Settings.Validation = false;
+            Parameters.Settings.Validation = ValidationType.Console | ValidationType.Debug;
             Window.Title += " - (LoadTexture) ";
         }
 

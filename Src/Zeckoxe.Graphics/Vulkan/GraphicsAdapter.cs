@@ -61,8 +61,6 @@ namespace Zeckoxe.Graphics
         public GraphicsAdapter(PresentationParameters parameters)
         {
             Parameters = parameters;
-            Log = new ConsoleLog();
-            InstanceExtensionsNames = new List<string>();
 
             Recreate();
         }
@@ -72,12 +70,11 @@ namespace Zeckoxe.Graphics
 
         public PresentationParameters Parameters { get; set; }
 
-        public List<string> InstanceExtensionsNames { get; private set; }
-        public List<string> DeviceExtensionsNames { get; private set; }
+        public List<string> InstanceExtensionsNames { get; private set; } = new();
 
-        
+        public List<string> DeviceExtensionsNames { get; private set; } = new();
 
-        public List<string> ValidationLayer { get; private set; }
+        public List<string> ValidationLayer { get; private set; } = new();
 
         public ILog Log { get; set; }
 
@@ -167,15 +164,6 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void DeviceExtension()
-        {
-            DeviceExtensionsNames = new List<string>();
-
-            foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
-            {
-                DeviceExtensionsNames.Add(Interop.String.FromPointer(item.extensionName));
-            }
-        }
 
 
 
@@ -183,7 +171,7 @@ namespace Zeckoxe.Graphics
         {
             vkInitialize().CheckResult();
 
-            SupportsExtensions();
+            supports_extensions();
 
             CreateInstance(InstanceExtensionsNames.ToArray());
 
@@ -191,7 +179,7 @@ namespace Zeckoxe.Graphics
 
             CreatePhysicalDeviceProperties();
 
-            DeviceExtension();
+            device_extension();
 
 
             //Features2 = GetPhysicalDeviceFeatures2();
@@ -222,17 +210,41 @@ namespace Zeckoxe.Graphics
                     ppNext = &feature.pNext;
                 }
             }
+
+
+
+            if ((Parameters.Settings.Validation & ValidationType.Default) != 0)
+                Log = new ConsoleLog();
+
+            if ((Parameters.Settings.Validation & ValidationType.Console) != 0)
+                Log = new ConsoleLog();
+
+            if ((Parameters.Settings.Validation & ValidationType.Debug) != 0)
+                Log = new ConsoleLog(); // TODO: DebugLog
+
+            if ((Parameters.Settings.Validation & ValidationType.ImGui) != 0)
+                Log = new ConsoleLog(); // TODO:ImGuiLog
+
         }
 
 
-        internal void SupportsExtensions()
+
+        internal void device_extension()
+        {
+            foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
+            {
+                DeviceExtensionsNames.Add(Interop.String.FromPointer(item.extensionName));
+            }
+        }
+
+        internal void supports_extensions()
         {
             IEnumerable<string> instance_extensions_names = Instance_Extensions()
                                                     .ToArray()
                                                     .Select(m => Interop.String.FromPointer(m.extensionName));
 
 
-            if (Parameters.Settings.Validation && instance_extensions_names.Contains("VK_EXT_debug_report"))
+            if (!((Parameters.Settings.Validation & ValidationType.None) != 0) && instance_extensions_names.Contains("VK_EXT_debug_report"))
             {
                 InstanceExtensionsNames.Add("VK_EXT_debug_report");
             }
@@ -298,8 +310,8 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 apiVersion = new VkVersion(1, 0, 0),
                 applicationVersion = new VkVersion(0, 0, 1),
-                engineVersion = new VkVersion(0, 0, 2),
-                pApplicationName = Interop.String.ToPointer("Zeckoxe Engine"),
+                engineVersion = new VkVersion(EngineVersion.Major, EngineVersion.Minor, EngineVersion.Patch),
+                pApplicationName = Interop.String.ToPointer("Engine"),
                 pEngineName = Interop.String.ToPointer("Zeckoxe"),
             };
 
@@ -329,7 +341,7 @@ namespace Zeckoxe.Graphics
                 pfnUserCallback = Interop.GetFunctionPointerForDelegate(_debugMessengerCallbackFunc = DebugMessengerCallback),
             };
 
-            if (Parameters.Settings.Validation)
+            if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
             {
                 inst_info.pNext = &debugUtilsCreateInfo;
                 inst_info.ppEnabledLayerNames = Interop.String.AllocToPointers(layers);
@@ -443,12 +455,16 @@ namespace Zeckoxe.Graphics
             {
                 if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
                 {
-                    Log.Error("Vulkan", $"Validation: {messageSeverity} - {message}");
+                    
+                    if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
+                        Log.Error("Vulkan", $"Validation: {messageSeverity} - {message}");
+
 
                 }
                 else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
-                    Log.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
+                    if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
+                        Log.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
                 }
 
             }
@@ -456,11 +472,13 @@ namespace Zeckoxe.Graphics
             {
                 if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
                 {
-                    Log.Error("Vulkan", $"[Vulkan]: {messageSeverity} - {message}");
+                    if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
+                        Log.Error("Vulkan", $"[Vulkan]: {messageSeverity} - {message}");
                 }
                 else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
-                    Log.Warn($"[Vulkan]: {messageSeverity} - {message}");
+                    if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
+                        Log.Warn($"[Vulkan]: {messageSeverity} - {message}");
                 }
 
                 //Log.WriteLine($"[Vulkan]: {messageSeverity} - {message}");

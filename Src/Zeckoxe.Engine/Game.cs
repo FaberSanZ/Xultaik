@@ -31,7 +31,7 @@ namespace Zeckoxe.Engine
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = true,
+                    Validation =  ValidationType.None,
                     Fullscreen = false,
                     VSync = false,
                 },

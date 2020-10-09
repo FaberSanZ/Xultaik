@@ -14,7 +14,7 @@ namespace Zeckoxe.Graphics
 {
     public class Settings
     {
-        public bool Validation { get; set; }
+        public ValidationType Validation { get; set; }
 
         public bool Fullscreen { get; set; }
 
