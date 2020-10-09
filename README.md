@@ -31,16 +31,14 @@ The rendering backend is completely focused on Vulkan, however the API greatly s
 
 - [ ] KHR Ray Tracing
 - [x] Entity Component System
-- [ ] Memory manager (VMA)
+- [ ] Memory allocator (VMA)
 - [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
 - [ ] Tessellation (Phong, PN Triangles, and Displacement Mapping)
-- [ ] Automatic loadOp/storeOp usage
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [ ] Multithreaded rendering
 - [x] GLTF 2.0
-- [ ] Push descriptors (VK_KHR_push_descriptor)
 
 
 <hr>
