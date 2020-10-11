@@ -41,9 +41,9 @@ namespace Zeckoxe.Graphics
 
 
             CreateBackBuffers();
-            DepthStencil = new Image(device, new ImageDescription
+            DepthStencil = new Texture(device, new TextureDescription
             {
-                Flags = ImageFlags.DepthStencil,
+                Flags = TextureFlags.DepthStencil,
                 Usage = GraphicsResourceUsage.Default,
                 Width = Parameters.BackBufferWidth,
                 Height = Parameters.BackBufferHeight,
@@ -52,7 +52,7 @@ namespace Zeckoxe.Graphics
 
         public PresentationParameters Parameters { get; set; }
         public PixelFormat ColorFormat { get; private set; }
-        public Image DepthStencil { get; private set; }
+        public Texture DepthStencil { get; private set; }
 
 
 

@@ -5,6 +5,8 @@
 	TextureDescription.cs
 =============================================================================*/
 
+using System;
+using Vortice.Vulkan;
 using Zeckoxe.Graphics;
 
 namespace Zeckoxe.Graphics
@@ -12,6 +14,14 @@ namespace Zeckoxe.Graphics
     public class TextureDescription
     {
         public ImageDimension Dimension { get; set; }
+
+        public byte[] Data { get; set; } = Array.Empty<byte>();
+
+        public int MipMaps { get; set; }
+
+        public int Size { get; set; }
+
+        public bool IsCubeMap { get; set; }
 
         public int Width { get; set; }
 
@@ -27,6 +37,9 @@ namespace Zeckoxe.Graphics
 
         public GraphicsResourceUsage Usage { get; set; }
 
-        public ImageFlags Flags { get; set; }
+        public TextureFlags Flags { get; set; }
+
+
+        internal VkFormat format { get; set; }
     }
 }

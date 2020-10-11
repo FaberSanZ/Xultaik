@@ -15,7 +15,11 @@ namespace Zeckoxe.Graphics
     public class Texture2D : Texture
     {
 
-        public Texture2D(Device device) : base(device)
+        public Texture2D(Device device) : base(device, new TextureDescription() 
+        { 
+            Flags = TextureFlags.ShaderResource,
+            
+        })
         {
             Recreate();
         }
