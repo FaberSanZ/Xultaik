@@ -11,9 +11,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
-using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
+
 
 namespace Zeckoxe.Graphics
 {
@@ -39,20 +39,20 @@ namespace Zeckoxe.Graphics
 
             CreateSwapChain();
 
-            DepthStencil = new Texture(device);
 
             CreateBackBuffers();
-
-            int width = Parameters.BackBufferWidth;
-
-            int height = Parameters.BackBufferHeight;
-
-            DepthStencil.CreateDepthStencil(width, height);
+            DepthStencil = new Image(device, new ImageDescription
+            {
+                Flags = ImageFlags.DepthStencil,
+                Usage = GraphicsResourceUsage.Default,
+                Width = Parameters.BackBufferWidth,
+                Height = Parameters.BackBufferHeight,
+            }); 
         }
 
         public PresentationParameters Parameters { get; set; }
         public PixelFormat ColorFormat { get; private set; }
-        public Texture DepthStencil { get; private set; }
+        public Image DepthStencil { get; private set; }
 
 
 
@@ -266,8 +266,7 @@ namespace Zeckoxe.Graphics
 
 
             // Get physical Device Surface properties and formats
-            VkSurfaceCapabilitiesKHR surfCaps;
-            vkGetPhysicalDeviceSurfaceCapabilitiesKHR(PhysicalDevice, Surface, out surfCaps);
+            vkGetPhysicalDeviceSurfaceCapabilitiesKHR(PhysicalDevice, Surface, out VkSurfaceCapabilitiesKHR surfCaps);
 
 
 
@@ -349,7 +348,7 @@ namespace Zeckoxe.Graphics
                 minImageCount = desiredNumberOfSwapchainImages,
                 imageFormat = VkColorFormat,
                 imageColorSpace = ColorSpace,
-                imageExtent =  new VkExtent2D
+                imageExtent = new VkExtent2D
                 {
                     width = swapchainExtent.width,
                     height = swapchainExtent.height
@@ -370,16 +369,15 @@ namespace Zeckoxe.Graphics
 
 
             // Set additional usage flag for blitting from the swapchain Images if supported
-            VkFormatProperties formatProps;
-            vkGetPhysicalDeviceFormatProperties(PhysicalDevice, VkColorFormat, out formatProps);
+            vkGetPhysicalDeviceFormatProperties(PhysicalDevice, VkColorFormat, out VkFormatProperties formatProps);
             if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.BlitDst) != 0)
             {
                 swapchainCI.imageUsage |= VkImageUsageFlags.TransferSrc;
             }
 
 
-                vkCreateSwapchainKHR(NativeDevice.handle, &swapchainCI, null, out handle).CheckResult();
-            
+            vkCreateSwapchainKHR(NativeDevice.handle, &swapchainCI, null, out handle).CheckResult();
+
 
 
             //vkDestroySwapchainKHR(NativeDevice.Device, SwapChain, null);

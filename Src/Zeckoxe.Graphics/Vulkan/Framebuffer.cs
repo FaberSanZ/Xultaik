@@ -47,7 +47,7 @@ namespace Zeckoxe.Graphics
 
                 VkImageView* attachments = stackalloc VkImageView[2];
                 attachments[0] = SwapChainImageViews[i];                                 // Color attachment is the view of the swapchain image			
-                attachments[1] = SwapChain.DepthStencil._depthStencil.View;
+                attachments[1] = SwapChain.DepthStencil.depth_stencil_view;
 
                 VkFramebufferCreateInfo frameBufferInfo = new VkFramebufferCreateInfo()
                 {

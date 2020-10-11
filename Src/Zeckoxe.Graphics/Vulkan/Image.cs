@@ -8,13 +8,110 @@
 
 using System;
 using Vortice.Vulkan;
-using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
 
 
-namespace Zeckoxe.Graphics.Vulkan
+namespace Zeckoxe.Graphics
 {
-    public unsafe class Image : GraphicsResource
+    [Flags]
+    public enum ImageFlags
+    {
+
+        None = 0,
+
+        ShaderResource = 1,
+
+
+        RenderTarget = 2,
+
+
+        UnorderedAccess = 4,
+
+
+        DepthStencil = 8,
+    }
+
+
+    internal enum ImageMiscFlag
+    {
+        GenerateMips = 1 << 0,
+
+        ForceArray = 1 << 1,
+
+        MutableSrgb = 1 << 2,
+
+        ConcurrentQueueGraphics = 1 << 3,
+
+        ConcurrentQueueAsyncCompute = 1 << 4,
+
+        ConcurrentQueueAsyncGraphics = 1 << 5,
+
+        ConcurrentQueueAsyncTransfer = 1 << 6,
+
+        VeryfyFormatFeatureSampledLinearFilter = 1 << 7,
+
+        LinearImageIgnoreDeviceLocal = 1 << 8,
+
+        ForceNoDedicated = 1 << 9
+    };
+
+
+    public enum Layout
+    {
+        Optimal,
+        General
+    };
+
+
+    public enum ViewType
+    {
+        Full = 0,
+
+
+        Single = 1,
+
+
+        ArrayBand = 2,
+
+
+        MipBand = 3,
+    }
+
+
+    public class ImageDescription
+    {
+        public ImageDimension Dimension { get; set; }
+
+        public byte[] Data { get; set; } = Array.Empty<byte>();
+
+        public int MipMaps { get; set; }
+
+        public int Size { get; set; }
+
+        public bool IsCubeMap { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public int Depth { get; set; }
+
+        public int ArraySize { get; set; }
+
+        public int MipLevels { get; set; }
+
+        public PixelFormat Format { get; set; }
+
+        public GraphicsResourceUsage Usage { get; set; }
+
+        public ImageFlags Flags { get; set; }
+
+
+        internal VkFormat format { get; set; }
+    }
+
+
+    public unsafe class Image : GraphicsResource, IDisposable
     {
         internal ref struct ImageInitialData
         {
@@ -24,38 +121,18 @@ namespace Zeckoxe.Graphics.Vulkan
         };
 
 
-        internal enum ImageMiscFlagBits
-        {
-            GenerateMipsBit = 1 << 0,
-
-            FORCE_ARRAY_BIT = 1 << 1,
-            MUTABLE_SRGB_BIT = 1 << 2,
-            CONCURRENT_QUEUE_GRAPHICS_BIT = 1 << 3,
-            CONCURRENT_QUEUE_ASYNC_COMPUTE_BIT = 1 << 4,
-            CONCURRENT_QUEUE_ASYNC_GRAPHICS_BIT = 1 << 5,
-            CONCURRENT_QUEUE_ASYNC_TRANSFER_BIT = 1 << 6,
-            VERIFY_FORMAT_FEATURE_SAMPLED_LINEAR_FILTER_BIT = 1 << 7,
-            LINEAR_IMAGE_IGNORE_DEVICE_LOCAL_BIT = 1 << 8,
-            FORCE_NO_DEDICATED_BIT = 1 << 9
-        };
-
         internal enum ImageViewMiscFlagBits
         {
             IMAGE_VIEW_MISC_FORCE_ARRAY_BIT = 1 << 0
         };
 
-        internal enum Layout
-        {
-            Optimal,
-            General
-        };
+
 
 
         internal VkPointerSize row_pitch;
         internal VkPointerSize row_offset;
 
-        internal Device device;
-        internal VkImage image;
+        internal VkImage handle;
         internal Layout layout_type = Layout.Optimal;
         internal VkPipelineStageFlags stage_flags = 0;
         internal VkAccessFlags access_flags = 0;
@@ -68,18 +145,20 @@ namespace Zeckoxe.Graphics.Vulkan
         internal VkFormat vkformat;
         internal VkBuffer buffer;
 
+        internal VkImageView depth_stencil_view => GetDepthStencilView();
 
 
-
-        public Image(Device device) : base(device)
+        public Image(Device device, ImageDescription description) : base(device)
         {
+            Description = description;
 
+            Initialize();
         }
 
 
 
-        public TextureDescription Description { get; set; }
-        public TextureDimension Dimension => Description.Dimension;
+        public ImageDescription Description { get; set; }
+        public ImageDimension Dimension => Description.Dimension;
         public PixelFormat ViewFormat => Description.Format;
         public int MipLevels => Description.MipLevels;
         public int ArraySize => Description.ArraySize;
@@ -87,10 +166,245 @@ namespace Zeckoxe.Graphics.Vulkan
         public int Height => Description.Height;
         public int Depth => Description.Depth;
         public PixelFormat Formatt => Description.Format;
+        public ImageFlags ViewFlags => Description.Flags;
+
+        public bool IsRenderTarget => (ViewFlags & ImageFlags.RenderTarget) != 0;
+
+        public bool IsDepthStencil => (ViewFlags & ImageFlags.DepthStencil) != 0;
+
+        public bool IsShaderResource => (ViewFlags & ImageFlags.ShaderResource) != 0;
+
+        public bool IsUnorderedAccess => (ViewFlags & ImageFlags.UnorderedAccess) != 0;
+
+        public bool IsMultisample => MultisampleCount > MultisampleCount.None;
 
 
 
-        private unsafe void CreateBuffer(ulong size)
+        public MultisampleCount MultisampleCount { get; private set; }
+
+        internal void Initialize()
+        {
+            //create_buffer_image(0);
+
+
+            // For depth-stencil formats, automatically fall back to a supported one
+            if (IsDepthStencil)
+            {
+                vkformat = NativeDevice.NativeAdapter.get_supported_depth_format(PixelFormatExtensions.depth_formats);
+                Description.format = vkformat;
+                Description.MipLevels = 1;
+                Description.ArraySize = 1;
+            }
+
+            create_image();
+        }
+
+
+        internal void create_image()
+        {
+            // Create a new image
+            VkImageCreateInfo image_create_info = new VkImageCreateInfo
+            {
+                sType = VkStructureType.ImageCreateInfo,
+                arrayLayers = (uint)ArraySize,
+                extent = new VkExtent3D(Width, Height, Depth),
+                mipLevels = (uint)MipLevels,
+                samples = VkSampleCountFlags.Count1,
+                format = vkformat,
+                flags = VkImageCreateFlags.None,
+                tiling = VkImageTiling.Optimal,
+                initialLayout = VkImageLayout.Undefined
+            };
+
+
+
+            switch (Dimension)
+            {
+                case ImageDimension.Texture1D:
+                    image_create_info.imageType = VkImageType.Image1D;
+                    break;
+                case ImageDimension.Texture2D:
+                    image_create_info.imageType = VkImageType.Image2D;
+                    break;
+                case ImageDimension.Texture3D:
+                    image_create_info.imageType = VkImageType.Image3D;
+                    break;
+                case ImageDimension.TextureCube:
+                    image_create_info.imageType = VkImageType.Image2D;
+                    image_create_info.flags |= VkImageCreateFlags.CubeCompatible;
+                    break;
+            }
+
+
+
+            // TODO VULKAN: Can we restrict more based on GraphicsResourceUsage? 
+            image_create_info.usage |= VkImageUsageFlags.TransferSrc | VkImageUsageFlags.TransferDst;
+
+            if (IsRenderTarget)
+            {
+                image_create_info.usage |= VkImageUsageFlags.ColorAttachment;
+            }
+
+            if (IsDepthStencil)
+            {
+                image_create_info.usage |= VkImageUsageFlags.DepthStencilAttachment;
+            }
+
+            if (IsShaderResource)
+            {
+                image_create_info.usage |= VkImageUsageFlags.Sampled; // TODO VULKAN: Input attachments
+            }
+
+            if (IsUnorderedAccess)
+            {
+                image_create_info.usage |= VkImageUsageFlags.Storage;
+            }
+
+
+
+            VkMemoryPropertyFlags memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
+
+
+            vkCreateImage(NativeDevice.handle, &image_create_info, null, out handle);
+
+
+            vkGetImageMemoryRequirements(NativeDevice.handle, handle, out VkMemoryRequirements imageMemReq);
+
+
+            uint imageHeapIndex = NativeDevice.GetMemoryTypeIndex(imageMemReq.memoryTypeBits, memoryProperties);
+
+            VkMemoryAllocateInfo allocInfo = new VkMemoryAllocateInfo
+            {
+                sType = VkStructureType.MemoryAllocateInfo,
+                pNext = null,
+                allocationSize = imageMemReq.size,
+                memoryTypeIndex = imageHeapIndex,
+            };
+
+            VkDeviceMemory _memory = default;
+            vkAllocateMemory(NativeDevice.handle, &allocInfo, null, &_memory).CheckResult();
+            memory = _memory;
+
+
+            if (_memory != VkDeviceMemory.Null)
+            {
+                vkBindImageMemory(NativeDevice.handle, handle, memory, 0).CheckResult();
+            }
+
+        }
+
+
+        private VkImageView GetDepthStencilView()
+        {
+            if (!IsDepthStencil)
+            {
+                return VkImageView.Null;
+            }
+
+            // Create a Depth stencil view on this texture2D
+            VkImageViewCreateInfo createInfo = new VkImageViewCreateInfo
+            {
+                sType = VkStructureType.ImageViewCreateInfo,
+                viewType = VkImageViewType.Image2D,
+                format = vkformat,
+                image = handle,
+                components = VkComponentMapping.Identity,
+                subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Depth | VkImageAspectFlags.Stencil, 0, 1, 0, 1)
+            };
+
+
+            vkCreateImageView(NativeDevice.handle, &createInfo, null, out VkImageView imageView).CheckResult();
+            return imageView;
+        }
+
+        private VkImageView GetImageView(ViewType viewType, int arrayOrDepthSlice, int mipIndex)
+        {
+            if (!IsShaderResource)
+            {
+                return VkImageView.Null;
+            }
+
+            if (viewType == ViewType.MipBand)
+            {
+                throw new NotSupportedException("ViewSlice.MipBand is not supported for render targets");
+            }
+
+
+            VkImageViewCreateInfo createInfo = new VkImageViewCreateInfo
+            {
+                sType = VkStructureType.ImageViewCreateInfo,
+                format = vkformat, //VulkanConvertExtensions.ConvertPixelFormat(ViewFormat),
+                image = handle,
+                components = VkComponentMapping.Identity,
+                subresourceRange = new VkImageSubresourceRange(IsDepthStencil ? VkImageAspectFlags.Depth : VkImageAspectFlags.Color, (uint)mipIndex, 0, (uint)arrayOrDepthSlice, 1) // TODO VULKAN: Select between depth and stencil?
+            };
+
+            if (IsMultisample)
+            {
+                throw new NotImplementedException();
+            }
+
+            if (this.ArraySize > 1)
+            {
+                if (IsMultisample && Dimension != ImageDimension.Texture2D)
+                {
+                    throw new NotSupportedException("Multisample is only supported for 2D Textures");
+                }
+
+                if (Dimension == ImageDimension.Texture3D)
+                {
+                    throw new NotSupportedException("Texture Array is not supported for Texture3D");
+                }
+
+                switch (Dimension)
+                {
+                    case ImageDimension.Texture1D:
+                        createInfo.viewType = VkImageViewType.Image1DArray;
+                        break;
+                    case ImageDimension.Texture2D:
+                        createInfo.viewType = VkImageViewType.Image2DArray;
+                        break;
+                    case ImageDimension.TextureCube:
+                        if (ArraySize % 6 != 0)
+                        {
+                            throw new NotSupportedException("Texture cubes require an ArraySize which is a multiple of 6");
+                        }
+
+                        createInfo.viewType = ArraySize > 6 ? VkImageViewType.ImageCubeArray : VkImageViewType.ImageCube;
+                        break;
+                }
+            }
+            else
+            {
+                if (IsMultisample && Dimension != ImageDimension.Texture2D)
+                {
+                    throw new NotSupportedException("Multisample is only supported for 2D RenderTarget Textures");
+                }
+
+                if (Dimension == ImageDimension.TextureCube)
+                {
+                    throw new NotSupportedException("TextureCube dimension is expecting an arraysize > 1");
+                }
+
+                switch (Dimension)
+                {
+                    case ImageDimension.Texture1D:
+                        createInfo.viewType = VkImageViewType.Image1D;
+                        break;
+                    case ImageDimension.Texture2D:
+                        createInfo.viewType = VkImageViewType.Image2D;
+                        break;
+                    case ImageDimension.Texture3D:
+                        createInfo.viewType = VkImageViewType.Image3D;
+                        break;
+                }
+            }
+
+            vkCreateImageView(NativeDevice.handle, &createInfo, null, out VkImageView imageView);
+            return imageView;
+        }
+
+        private unsafe void create_buffer_image(ulong size)
         {
 
             VkBufferCreateInfo bufferCreateInfo = new VkBufferCreateInfo
@@ -98,7 +412,7 @@ namespace Zeckoxe.Graphics.Vulkan
                 sType = VkStructureType.BufferCreateInfo,
                 pNext = null,
                 size = size,
-                usage = VkBufferUsageFlags.TransferSrc
+                usage = VkBufferUsageFlags.TransferSrc | VkBufferUsageFlags.TransferDst
             };
             vkCreateBuffer(NativeDevice.handle, &bufferCreateInfo, null, out buffer);
 
@@ -114,74 +428,12 @@ namespace Zeckoxe.Graphics.Vulkan
                 memoryTypeIndex = heapIndex
             };
 
-            VkDeviceMemory* stagingMemory;
-            vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, *&stagingMemory + size).CheckResult();
-            memory = *stagingMemory;
+            VkDeviceMemory stagingMemory = default;
+            vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, &stagingMemory).CheckResult();
+            memory = stagingMemory;
 
             vkBindBufferMemory(NativeDevice.handle, buffer, memory, 0).CheckResult();
 
-        }
-
-        public void CreateDepthStencil(int width, int height)
-        {
-            VkFormat format = NativeDevice.NativeAdapter.get_supported_depth_format(PixelFormatExtensions.depth_formats); // TODO: ToVkFormat
-
-            VkImageCreateInfo imageCreateInfo = new VkImageCreateInfo
-            {
-                sType = VkStructureType.ImageCreateInfo,
-                pNext = null,
-                imageType = VkImageType.Image2D,
-                format = format,
-                extent = new VkExtent3D
-                {
-                    width = (uint)width,
-                    height = (uint)height,
-                    depth = 1
-                },
-                mipLevels = 1,
-                arrayLayers = 1,
-                samples = VkSampleCountFlags.Count1,
-                tiling = VkImageTiling.Optimal,
-                usage = VkImageUsageFlags.DepthStencilAttachment | VkImageUsageFlags.TransferSrc
-            };
-
-            VkResult result = vkCreateImage(NativeDevice.handle, &imageCreateInfo, null, out image);
-            result.CheckResult();
-
-            vkGetImageMemoryRequirements(NativeDevice.handle, image, out VkMemoryRequirements memReq);
-
-
-            uint heapIndex = NativeDevice.GetMemoryTypeIndex(memReq.memoryTypeBits, VkMemoryPropertyFlags.DeviceLocal);
-
-            VkMemoryAllocateInfo memAllocInfo = new VkMemoryAllocateInfo()
-            {
-                sType = VkStructureType.MemoryAllocateInfo,
-                pNext = null,
-                allocationSize = memReq.size,
-                memoryTypeIndex = heapIndex
-            };
-
-            VkDeviceMemory _memory;
-            vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, &_memory);
-
-            vkBindImageMemory(NativeDevice.handle, image, _memory, 0);
-
-            VkImageViewCreateInfo imageViewCreateInfo = new VkImageViewCreateInfo
-            {
-                sType = VkStructureType.ImageViewCreateInfo,
-                pNext = null,
-                format = format,
-                subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Depth | VkImageAspectFlags.Stencil, 0, 1, 0, 1),
-                image = image,
-                viewType = VkImageViewType.Image2D
-            };
-
-            vkCreateImageView(NativeDevice.handle, &imageViewCreateInfo, null, out VkImageView view).CheckResult();
-
-
-            memory = _memory;
-            View = view;
-            vkformat = format;
         }
 
 
@@ -396,5 +648,21 @@ namespace Zeckoxe.Graphics.Vulkan
 
         }
 
+        public void Dispose()
+        {
+            if (IsDepthStencil)
+                vkDestroyImageView(NativeDevice.handle, depth_stencil_view, null);
+            else
+                vkDestroyImageView(NativeDevice.handle, View, null);
+
+
+            if (handle != VkImage.Null)
+                vkDestroyImage(NativeDevice.handle, handle, null);
+
+
+            if (memory != VkDeviceMemory.Null)
+                vkFreeMemory(NativeDevice.handle, memory, null);
+
+        }
     }
 }

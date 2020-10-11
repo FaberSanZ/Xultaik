@@ -29,6 +29,32 @@ namespace Zeckoxe.Graphics
         internal VkSemaphore renderFinishedSemaphore;
 
 
+        internal VkPhysicalDeviceProperties device_properties;
+        internal VkPhysicalDeviceRayTracingFeaturesKHR DeviceRayTracingFeatures;
+        internal VkPhysicalDeviceSubgroupProperties subgroup_properties;
+        internal VkPhysicalDevice8BitStorageFeatures storage_8bit_features;
+        internal VkPhysicalDevice16BitStorageFeatures storage_16bit_features;
+        internal VkPhysicalDeviceShaderFloat16Int8Features float16_int8_features;
+        internal VkPhysicalDeviceFeatures enabled_features;
+        internal VkPhysicalDeviceExternalMemoryHostPropertiesEXT host_memory_properties;
+        internal VkPhysicalDeviceMultiviewFeatures multiview_features;
+        internal VkPhysicalDeviceImagelessFramebufferFeatures imageless_features;
+        internal VkPhysicalDeviceSubgroupSizeControlFeaturesEXT subgroup_size_control_features;
+        internal VkPhysicalDeviceSubgroupSizeControlPropertiesEXT subgroup_size_control_properties;
+        internal VkPhysicalDeviceComputeShaderDerivativesFeaturesNV compute_shader_derivative_features;
+        internal VkPhysicalDeviceHostQueryResetFeatures host_query_reset_features;
+        internal VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT demote_to_helper_invocation_features;
+        internal VkPhysicalDeviceScalarBlockLayoutFeatures scalar_block_features;
+        internal VkPhysicalDeviceUniformBufferStandardLayoutFeatures ubo_std430_features;
+        internal VkPhysicalDeviceTimelineSemaphoreFeatures timeline_semaphore_features;
+        internal VkPhysicalDeviceDescriptorIndexingFeatures descriptor_indexing_features;
+        internal VkPhysicalDeviceDescriptorIndexingProperties descriptor_indexing_properties;
+        internal VkPhysicalDeviceConservativeRasterizationPropertiesEXT conservative_rasterization_properties;
+        internal VkPhysicalDevicePerformanceQueryFeaturesKHR performance_query_features;
+        internal VkPhysicalDeviceSamplerYcbcrConversionFeatures sampler_ycbcr_conversion_features;
+        internal VkPhysicalDeviceDriverProperties driver_properties;
+
+
         public Device(Adapter adapter)
         {
             NativeAdapter = adapter;

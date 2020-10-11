@@ -11,9 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Zeckoxe.Core;
 using Zeckoxe.Graphics;
-using Buffer = Zeckoxe.Graphics.Buffer;
 
 
 namespace Zeckoxe.GLTF
@@ -48,7 +46,7 @@ namespace Zeckoxe.GLTF
 
             //Console.WriteLine("Logical Images Count {0}", model.LogicalImages.Count);
 
-            foreach (Image image in model.LogicalImages)
+            foreach (SharpGLTF.Schema2.Image image in model.LogicalImages)
             {
                 //var i = image.OpenImageFile();
                 //i.
@@ -129,7 +127,7 @@ namespace Zeckoxe.GLTF
                 {
                     Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
                     Normal = _Normal[i] != null ? _Normal[i] : Vector3.One,
-                    Color = _Color[i] != null ? _Color[i] :  Vector3.One,
+                    Color = _Color[i] != null ? _Color[i] : Vector3.One,
                 };
             }
         }

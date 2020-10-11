@@ -25,7 +25,7 @@ namespace Zeckoxe.Graphics.Toolkit
 
         public IMGLoader(string filename)
         {
-            _image = Image.Load<Rgba32>(filename);
+            _image = SixLabors.ImageSharp.Image.Load<Rgba32>(filename);
             Span<Rgba32> pixels = _image.GetPixelSpan();
 
             //for (int i = 0; i < pixels.Length; i++)

@@ -12,7 +12,18 @@ using System.Text;
 
 namespace Zeckoxe.Graphics
 {
-    class Texture2D
+    public class Texture2D : Texture
     {
+
+        public Texture2D(Device device) : base(device)
+        {
+            Recreate();
+        }
+
+
+        public void Recreate()
+        {
+
+        }
     }
 }

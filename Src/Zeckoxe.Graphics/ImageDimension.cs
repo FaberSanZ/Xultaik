@@ -7,7 +7,14 @@
 
 namespace Zeckoxe.Graphics
 {
-    public class TextureDimension
+    public enum ImageDimension
     {
+        Texture1D,
+
+        Texture2D,
+
+        Texture3D,
+
+        TextureCube
     }
 }

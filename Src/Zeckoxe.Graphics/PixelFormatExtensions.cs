@@ -889,7 +889,26 @@ namespace Zeckoxe.Graphics
 		}
 
 
-		public static bool HasDepthAspect(this PixelFormat format)
+        internal static bool is_srgb(this VkFormat format)
+        {
+            switch (format)
+            {
+                case VkFormat.A8B8G8R8SRgbPack32:
+                case VkFormat.R8G8B8A8SRgb:
+                case VkFormat.B8G8R8A8SRgb:
+                case VkFormat.R8SRgb:
+                case VkFormat.R8G8SRgb:
+                case VkFormat.R8G8B8SRgb:
+                case VkFormat.B8G8R8SRgb:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+
+        public static bool HasDepthAspect(this PixelFormat format)
 		{
 			switch (format)
 			{

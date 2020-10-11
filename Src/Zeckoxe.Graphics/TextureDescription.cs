@@ -5,11 +5,13 @@
 	TextureDescription.cs
 =============================================================================*/
 
+using Zeckoxe.Graphics;
+
 namespace Zeckoxe.Graphics
 {
     public class TextureDescription
     {
-        public TextureDimension Dimension { get; set; }
+        public ImageDimension Dimension { get; set; }
 
         public int Width { get; set; }
 
@@ -24,5 +26,7 @@ namespace Zeckoxe.Graphics
         public PixelFormat Format { get; set; }
 
         public GraphicsResourceUsage Usage { get; set; }
+
+        public ImageFlags Flags { get; set; }
     }
 }
