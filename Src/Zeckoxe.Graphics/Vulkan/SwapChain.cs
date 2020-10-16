@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
-using Interop = Zeckoxe.Core.Interop;
 
 
 namespace Zeckoxe.Graphics
@@ -52,7 +51,7 @@ namespace Zeckoxe.Graphics
                 Usage = GraphicsResourceUsage.Default,
                 Width = Parameters.BackBufferWidth,
                 Height = Parameters.BackBufferHeight,
-            }); 
+            });
         }
 
         public PresentationParameters Parameters { get; set; }
@@ -111,6 +110,8 @@ namespace Zeckoxe.Graphics
 
             vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.NativeAdapter.GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
 
+
+            // TODO: Update to SDL
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 vkCreateWin32SurfaceKHR(instance, &Win32SurfaceCreateInfo, null, &defSurface);
@@ -164,7 +165,7 @@ namespace Zeckoxe.Graphics
             {
                 if ((queueProps[i].queueFlags & VkQueueFlags.Graphics) != 0)
                 {
-                    if (graphicsQueueNodeIndex == uint.MaxValue)
+                    if (graphicsQueueNodeIndex is uint.MaxValue)
                     {
                         graphicsQueueNodeIndex = i;
                     }
@@ -269,7 +270,6 @@ namespace Zeckoxe.Graphics
             vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, presentModes);
 
 
-
             VkExtent2D swapchainExtent = new VkExtent2D();
             // If width (and height) equals the special value 0xFFFFFFFF, the size of the Surface will be set by the swapchain
             if (surfCaps.currentExtent.width == unchecked(-1))
@@ -332,6 +332,30 @@ namespace Zeckoxe.Graphics
                 preTransform = surfCaps.currentTransform;
             }
 
+
+
+            // Find a supported composite alpha format (not all devices support alpha opaque)
+            VkCompositeAlphaFlagsKHR compositeAlpha = VkCompositeAlphaFlagsKHR.Opaque; //VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+
+            // Simply select the first composite alpha format available
+            VkCompositeAlphaFlagsKHR[] compositeAlphaFlags = new[]
+            {
+                VkCompositeAlphaFlagsKHR.Opaque,
+                VkCompositeAlphaFlagsKHR.PreMultiplied,
+                VkCompositeAlphaFlagsKHR.PostMultiplied,
+                VkCompositeAlphaFlagsKHR.Inherit,
+            };
+
+            foreach (VkCompositeAlphaFlagsKHR compositeAlphaFlag in compositeAlphaFlags)
+            {
+                if ((surfCaps.supportedCompositeAlpha & compositeAlphaFlag) is not 0)
+                {
+                    compositeAlpha = compositeAlphaFlag;
+                    break;
+                };
+            }
+
+
             VkSwapchainCreateInfoKHR swapchain_info = new VkSwapchainCreateInfoKHR()
             {
                 sType = VkStructureType.SwapchainCreateInfoKHR,
@@ -356,7 +380,7 @@ namespace Zeckoxe.Graphics
 
                 // Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
                 clipped = true,
-                compositeAlpha = VkCompositeAlphaFlagsKHR.Opaque,
+                compositeAlpha = compositeAlpha,
             };
 
 
@@ -373,7 +397,7 @@ namespace Zeckoxe.Graphics
 
 
 
-            //vkDestroySwapchainKHR(NativeDevice.Device, SwapChain, null);
+            //vkDestroySwapchainKHR(NativeDevice.handle, handle, null);
 
 
 
@@ -381,7 +405,7 @@ namespace Zeckoxe.Graphics
             vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, null);
             images = new VkImage[imageCount];
 
-            fixed(VkImage* images_ptr = images)
+            fixed (VkImage* images_ptr = images)
             {
                 vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, images_ptr);
             }
@@ -395,7 +419,7 @@ namespace Zeckoxe.Graphics
             VkSemaphore Semaphore = NativeDevice.renderFinishedSemaphore;
             VkSwapchainKHR swapchain = handle;
             CommandBuffer commandBuffer = NativeDevice.NativeCommand;
-            var imageIndex = commandBuffer.imageIndex;
+            uint imageIndex = commandBuffer.imageIndex;
 
             VkPresentInfoKHR present_info = new VkPresentInfoKHR()
             {

@@ -163,17 +163,20 @@ namespace Zeckoxe.Graphics
 
 
 
-
-            Description.format = vkformat;
-
-            if (IsCubeMap)
+            if (!IsDepthStencil)
             {
-                set_data_cubemap();
+                Description.format = vkformat;
+
+                if (IsCubeMap)
+                {
+                    set_data_cubemap();
+                }
+                else
+                {
+                    set_data();
+                }
             }
-            else
-            {
-                set_data();
-            }
+
 
 
 

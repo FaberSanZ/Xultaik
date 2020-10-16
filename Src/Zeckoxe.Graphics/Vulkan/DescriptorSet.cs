@@ -20,7 +20,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public DescriptorSet(GraphicsPipelineState pipelineState, List<DescriptorPool> descriptors , int maxSets = 1) : base(pipelineState.NativeDevice)
+        public DescriptorSet(GraphicsPipelineState pipelineState, List<DescriptorPool> descriptors, int maxSets = 1) : base(pipelineState.NativeDevice)
         {
             PipelineState = pipelineState;
             Descriptors = descriptors;
@@ -57,7 +57,7 @@ namespace Zeckoxe.Graphics
             // descriptor set matching that binding point
             VkDescriptorBufferInfo descriptor = new VkDescriptorBufferInfo
             {
-                buffer = buffer.Handle,
+                buffer = buffer.handle,
                 offset = offset,
                 range = (ulong)buffer.SizeInBytes
             };
@@ -80,11 +80,11 @@ namespace Zeckoxe.Graphics
 
         internal void SetupDescriptorPool()
         {
-            var DescriptorsCount = Descriptors.Count;
+            int descriptors_count = Descriptors.Count;
 
-            VkDescriptorPoolSize* descriptor_pool_size = stackalloc VkDescriptorPoolSize[DescriptorsCount];
+            VkDescriptorPoolSize* descriptor_pool_size = stackalloc VkDescriptorPoolSize[descriptors_count];
 
-            for (int i = 0; i < DescriptorsCount; i++)
+            for (int i = 0; i < descriptors_count; i++)
             {
                 descriptor_pool_size[i] = new VkDescriptorPoolSize
                 {
@@ -98,7 +98,9 @@ namespace Zeckoxe.Graphics
             VkDescriptorPoolCreateInfo descriptorPoolInfo = new VkDescriptorPoolCreateInfo
             {
                 sType = VkStructureType.DescriptorPoolCreateInfo,
-                poolSizeCount = (uint)DescriptorsCount,
+                pNext = null,
+                flags = VkDescriptorPoolCreateFlags.None, // TODO: VkDescriptorPoolCreateFlags
+                poolSizeCount = (uint)descriptors_count,
                 pPoolSizes = descriptor_pool_size,
                 maxSets = (uint)MaxSets   // Set the max. number of descriptor sets that can be requested from this pool (requesting beyond this limit will result in an error)
             };

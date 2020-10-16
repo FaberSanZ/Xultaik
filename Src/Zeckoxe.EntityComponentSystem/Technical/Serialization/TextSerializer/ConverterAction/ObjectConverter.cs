@@ -126,7 +126,7 @@ namespace Zeckoxe.EntityComponentSystem.Technical.Serialization.TextSerializer.C
                 }
                 else
                 {
-                    // todo cleanup object/array?
+                    // TODO: Cleanup object/array?
                 }
             }
 

@@ -18,7 +18,7 @@ namespace Zeckoxe.Graphics
     public unsafe class Buffer : GraphicsResource
     {
 
-        internal VkBuffer Handle;
+        internal VkBuffer handle;
         internal VkBufferView NativeBufferView;
         internal VkAccessFlags NativeAccessMask;
         internal VkDeviceMemory memory;
@@ -72,52 +72,44 @@ namespace Zeckoxe.Graphics
                     NativeAccessMask |= VkAccessFlags.VertexAttributeRead;
                 }
 
-                if ((Flags & BufferFlags.IndexBuffer) != 0)
+                if ((Flags & BufferFlags.IndexBuffer) is not 0)
                 {
                     buffer_info.usage |= VkBufferUsageFlags.IndexBuffer;
                     NativeAccessMask |= VkAccessFlags.IndexRead;
                 }
 
-                if ((Flags & BufferFlags.ConstantBuffer) != 0)
+                if ((Flags & BufferFlags.ConstantBuffer) is not 0)
                 {
                     buffer_info.usage |= VkBufferUsageFlags.UniformBuffer;
                     NativeAccessMask |= VkAccessFlags.UniformRead;
                 }
 
-                if ((Flags & BufferFlags.ShaderResource) != 0)
+                if ((Flags & BufferFlags.ShaderResource) is not 0)
                 {
                     buffer_info.usage |= VkBufferUsageFlags.UniformTexelBuffer;
                     NativeAccessMask |= VkAccessFlags.ShaderRead;
                 }
 
-                if ((Flags & BufferFlags.UnorderedAccess) != 0)
+                if ((Flags & BufferFlags.UnorderedAccess) is not 0)
                 {
                     buffer_info.usage |= VkBufferUsageFlags.StorageTexelBuffer;
                     NativeAccessMask |= VkAccessFlags.ShaderWrite;
                 }
             }
 
-
-            uint vertexBufferSize = (uint)SizeInBytes;
-            VkDeviceMemory _memory;
-
-
-
-            // Copy vertex data to a buffer visible to the host
-            vkCreateBuffer(NativeDevice.handle, &buffer_info, null, out VkBuffer _buffer);
-            Handle = _buffer;
+            vkCreateBuffer(NativeDevice.handle, &buffer_info, null, out handle);
 
 
 
 
             // Allocate memory
             var memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
-            if (BufferDescription.Usage == GraphicsResourceUsage.Staging || Usage == GraphicsResourceUsage.Dynamic)
+            if (BufferDescription.Usage is GraphicsResourceUsage.Staging || Usage is GraphicsResourceUsage.Dynamic)
             {
                 //memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
             }
 
-            vkGetBufferMemoryRequirements(NativeDevice.handle, Handle, out VkMemoryRequirements memReqs);
+            vkGetBufferMemoryRequirements(NativeDevice.handle, handle, out VkMemoryRequirements memReqs);
 
             VkMemoryAllocateInfo MemoryAlloc_info = new VkMemoryAllocateInfo()
             {
@@ -128,12 +120,12 @@ namespace Zeckoxe.Graphics
             };
 
 
-
+            VkDeviceMemory _memory;
             vkAllocateMemory(NativeDevice.handle, &MemoryAlloc_info, null, &_memory);
             memory = _memory;
 
             size = memReqs.size;
-            vkBindBufferMemory(NativeDevice.handle, Handle, memory, 0);
+            vkBindBufferMemory(NativeDevice.handle, handle, memory, 0);
 
         }
 
@@ -142,7 +134,7 @@ namespace Zeckoxe.Graphics
         {
             // Map uniform buffer and update it
             void* ppData;
-            vkMapMemory(NativeDevice.handle, memory, 0, size, 0, &ppData);
+            vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, &ppData);
 
             // Copy
             Interop.MemoryHelper.Write(ppData, ref Data);
@@ -199,7 +191,7 @@ namespace Zeckoxe.Graphics
             //vkAllocateMemory(device, &MemoryAlloc_info, null, &_memory);
             //memory = _memory;
             void* ppData;
-            vkMapMemory(NativeDevice.handle, memory, 0, size, 0, &ppData);
+            vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, &ppData);
 
             //Copy Data
             {
@@ -221,7 +213,7 @@ namespace Zeckoxe.Graphics
             //vkAllocateMemory(device, &MemoryAlloc_info, null, &_memory);
             //memory = _memory;
             void* ppData;
-            vkMapMemory(NativeDevice.handle, memory, 0, size, 0, &ppData);
+            vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, &ppData);
 
             //Copy Data
             {
@@ -241,7 +233,7 @@ namespace Zeckoxe.Graphics
 
         public void* Map(void* pData)
         {
-            vkMapMemory(NativeDevice.handle, memory, 0, size, 0, pData);
+            vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, pData);
             return pData;
         }
 

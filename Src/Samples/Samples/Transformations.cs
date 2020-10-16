@@ -125,7 +125,7 @@ namespace Samples.Samples
         public DescriptorSet Descriptor1 { get; set; }
         public DescriptorSet Descriptor2 { get; set; }
 
-        // TransformUniform 
+        // Transform Uniform 
         public TransformUniform uniform;
         public float yaw;
         public float pitch;

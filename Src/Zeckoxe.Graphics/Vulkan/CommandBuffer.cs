@@ -175,7 +175,7 @@ namespace Zeckoxe.Graphics
 
         public void CopyBuffer(Buffer sourceBuffer, Buffer destinationBuffer, BufferCopy bufferCopy)
         {
-            CopyBuffer(sourceBuffer.Handle, destinationBuffer.Handle, *(VkBufferCopy*)&bufferCopy);
+            CopyBuffer(sourceBuffer.handle, destinationBuffer.handle, *(VkBufferCopy*)&bufferCopy);
         }
 
 
@@ -291,7 +291,7 @@ namespace Zeckoxe.Graphics
 
         public void SetVertexBuffer(Buffer buffer, ulong offsets = 0)
         {
-            fixed (VkBuffer* bufferptr = &buffer.Handle)
+            fixed (VkBuffer* bufferptr = &buffer.handle)
             {
                 vkCmdBindVertexBuffers(handle, 0, 1, bufferptr, &offsets);
             }
@@ -303,7 +303,7 @@ namespace Zeckoxe.Graphics
 
             for (int i = 0; i < buffers.Length; i++)
             {
-                buffer[i] = buffers[i].Handle;
+                buffer[i] = buffers[i].handle;
             }
 
             //fixed(VkBuffer* bufferptr = &buffers[0].Handle)
@@ -316,9 +316,9 @@ namespace Zeckoxe.Graphics
 
         public void SetIndexBuffer(Buffer buffer, ulong offsets = 0, IndexType indexType = IndexType.Uint32)
         {
-            if (buffer.Handle != VkBuffer.Null)
+            if (buffer.handle != VkBuffer.Null)
             {
-                vkCmdBindIndexBuffer(handle, buffer.Handle, offsets, (VkIndexType)indexType);
+                vkCmdBindIndexBuffer(handle, buffer.handle, offsets, (VkIndexType)indexType);
             }
         }
 
