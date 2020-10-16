@@ -167,8 +167,8 @@ namespace Samples.Samples
 
         public void CreatePipelineState()
         {
-            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.frag", ShaderStage.Fragment);
-            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.vert", ShaderStage.Vertex);
+            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment);
+            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex);
 
 
             List<VertexInputAttribute> VertexAttributeDescriptions = new()

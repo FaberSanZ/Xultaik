@@ -168,10 +168,6 @@ namespace Samples.Samples
             List<DescriptorPool> pool = new()
             {
                 new DescriptorPool(DescriptorType.UniformBuffer, 1),
-
-                // For additional types you need to add new entries in the type count list
-                // E.g. for two combined image samplers :
-                //new  DescriptorPool(DescriptorType.CombinedImageSampler, 2),
             };
 
             // Binding 0: Uniform buffer (Vertex shader)
@@ -286,8 +282,8 @@ namespace Samples.Samples
                 },
                 Shaders =
                 {
-                    ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.frag", ShaderStage.Fragment),
-                    ShaderBytecode.LoadFromFile("Shaders/Transformations/shader.vert", ShaderStage.Vertex),
+                    ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment),
+                    ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex),
                 },
             };
 
