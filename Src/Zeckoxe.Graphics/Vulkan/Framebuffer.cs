@@ -39,19 +39,24 @@ namespace Zeckoxe.Graphics
 
         internal void CreateFrameBuffers()
         {
-            VkImageView[] SwapChainImageViews = SwapChain.SwapChainImageViews;
+            VkImageView[] SwapChainImageViews = SwapChain.swapChain_image_views;
             framebuffers = new VkFramebuffer[SwapChainImageViews.Length];
 
             for (uint i = 0; i < SwapChainImageViews.Length; i++)
             {
 
-                VkImageView* attachments = stackalloc VkImageView[2];
-                attachments[0] = SwapChainImageViews[i];                                 // Color attachment is the view of the swapchain image			
-                attachments[1] = SwapChain.DepthStencil.depth_stencil_view;
+                VkImageView* attachments = stackalloc VkImageView[2]
+                {
+                    SwapChainImageViews[i],                                 // Color attachment is the view of the swapchain image			
+                    SwapChain.DepthStencil.depth_stencil_view,
+                };
+
 
                 VkFramebufferCreateInfo frameBufferInfo = new VkFramebufferCreateInfo()
                 {
                     sType = VkStructureType.FramebufferCreateInfo,
+                    pNext = null,
+                    flags = VkFramebufferCreateFlags.None, // TODO: VkFramebufferCreateFlags
                     renderPass = renderPass,
                     attachmentCount = 2,
                     pAttachments = attachments,
@@ -68,66 +73,84 @@ namespace Zeckoxe.Graphics
 
         internal void CreateRenderPass()
         {
-            VkFormat ColorFormat = SwapChain.VkColorFormat;
-            VkFormat DepthFormat = SwapChain.DepthStencil.vkformat;
+            VkFormat color_format = SwapChain.color_format;
+            VkFormat depth_format = SwapChain.DepthStencil.vkformat;
 
 
             // Descriptors for the attachments used by this renderpass
-            VkAttachmentDescription* attachments = stackalloc VkAttachmentDescription[2];
+            VkAttachmentDescription* attachments = stackalloc VkAttachmentDescription[2]
+            {
+                // Color attachment
+                new VkAttachmentDescription
+                {
+                    format = color_format,                                           // Use the color format selected by the swapchain
+                    samples = VkSampleCountFlags.Count1,                             // We don't use multi sampling in this example
+                    loadOp = VkAttachmentLoadOp.Clear,                               // Clear this attachment at the start of the render pass
+                    storeOp = VkAttachmentStoreOp.Store,                             // Keep it's contents after the render pass is finished (for displaying it)
+                    stencilLoadOp = VkAttachmentLoadOp.DontCare,                     // We don't use stencil, so don't care for load
+                    stencilStoreOp = VkAttachmentStoreOp.DontCare,                   // Same for store
+                    initialLayout = VkImageLayout.Undefined,                         // Layout at render pass start. Initial doesn't matter, so we use undefined
+                    finalLayout = VkImageLayout.PresentSrcKHR                        // Layout to which the attachment is transitioned when the render pass is finished
+                },
 
-            // Color attachment
-            attachments[0] = new VkAttachmentDescription
-            {
-                format = ColorFormat,                                  // Use the color format selected by the swapchain
-                samples = VkSampleCountFlags.Count1,                             // We don't use multi sampling in this example
-                loadOp = VkAttachmentLoadOp.Clear,                               // Clear this attachment at the start of the render pass
-                storeOp = VkAttachmentStoreOp.Store,                             // Keep it's contents after the render pass is finished (for displaying it)
-                stencilLoadOp = VkAttachmentLoadOp.DontCare,                     // We don't use stencil, so don't care for load
-                stencilStoreOp = VkAttachmentStoreOp.DontCare,                   // Same for store
-                initialLayout = VkImageLayout.Undefined,                         // Layout at render pass start. Initial doesn't matter, so we use undefined
-                finalLayout = VkImageLayout.PresentSrcKHR                        // Layout to which the attachment is transitioned when the render pass is finished
-            };                                                                   // Use the color format selected by the swapchain
-                                                                                 // As we want to present the color buffer to the swapchain, we transition to PRESENT_KHR	
-                                                                                 // Depth attachment
-            attachments[1] = new VkAttachmentDescription
-            {
-                format = DepthFormat,                                            // A proper depth format is selected in the example base
-                samples = VkSampleCountFlags.Count1,
-                loadOp = VkAttachmentLoadOp.Clear,                               // Clear depth at start of first subpass
-                storeOp = VkAttachmentStoreOp.DontCare,                          // We don't need depth after render pass has finished (DONT_CARE may result in better performance)
-                stencilLoadOp = VkAttachmentLoadOp.DontCare,                     // No stencil
-                stencilStoreOp = VkAttachmentStoreOp.DontCare,                   // No Stencil
-                initialLayout = VkImageLayout.Undefined,                         // Layout at render pass start. Initial doesn't matter, so we use undefined
-                finalLayout = VkImageLayout.ColorAttachmentOptimal               // Transition to depth/stencil attachment
-            };                                                                   // A proper depth format is selected in the example base
+
+
+                // Use the color format selected by the swapchain
+                // As we want to present the color buffer to the swapchain, we transition to PRESENT_KHR	
+                // Depth attachment
+                // A proper depth format is selected in the example base
+
+                new VkAttachmentDescription
+                {
+                    format = depth_format,                                           // A proper depth format is selected in the example base
+                    samples = VkSampleCountFlags.Count1,
+                    loadOp = VkAttachmentLoadOp.Clear,                               // Clear depth at start of first subpass
+                    storeOp = VkAttachmentStoreOp.DontCare,                          // We don't need depth after render pass has finished (DONT_CARE may result in better performance)
+                    stencilLoadOp = VkAttachmentLoadOp.DontCare,                     // No stencil
+                    stencilStoreOp = VkAttachmentStoreOp.DontCare,                   // No Stencil
+                    initialLayout = VkImageLayout.Undefined,                         // Layout at render pass start. Initial doesn't matter, so we use undefined
+                    finalLayout = VkImageLayout.ColorAttachmentOptimal               // Transition to depth/stencil attachment
+                },
+
+            };
+
 
             // Setup attachment references
-            VkAttachmentReference colorReference = new VkAttachmentReference
+            VkAttachmentReference* colorReferences = stackalloc VkAttachmentReference[1]
             {
-                attachment = 0,                                                             // Attachment 0 is color
-                layout = VkImageLayout.ColorAttachmentOptimal                               // Attachment layout used as color during the subpass
+                new VkAttachmentReference                                               // Attachment layout used as color during the subpass
+                {
+                    attachment = 0,                                                     // Attachment 0 is color
+                    layout = VkImageLayout.ColorAttachmentOptimal
+                }
             };
+
 
             VkAttachmentReference depthReference = new VkAttachmentReference
             {
-
                 attachment = 1,                                                             // Attachment 1 is color
                 layout = VkImageLayout.DepthStencilAttachmentOptimal                        // Attachment used as depth/stemcil used during the subpass
             };
 
+
             // Setup a single subpass reference
-            VkSubpassDescription subpassDescription = new VkSubpassDescription
+            VkSubpassDescription* subpass_description = stackalloc VkSubpassDescription[1]
             {
-                pipelineBindPoint = VkPipelineBindPoint.Graphics,
-                colorAttachmentCount = 1,                                                   // Subpass uses one color attachment
-                pColorAttachments = &colorReference,                                        // Reference to the color attachment in slot 0
-                pDepthStencilAttachment = &depthReference,                                  // Reference to the depth attachment in slot 1
-                inputAttachmentCount = 0,                                    // Input attachments can be used to sample from contents of a previous subpass
-                pInputAttachments = null,                                 // (Input attachments not used by this example)
-                preserveAttachmentCount = 0,                                 // Preserved attachments can be used to loop (and preserve) attachments through subpasses
-                pPreserveAttachments = null,                              // (Preserve attachments not used by this example)
-                pResolveAttachments = null                               // Resolve attachments are resolved at the end of a sub pass and can be used for e.g. multi sampling
+                new VkSubpassDescription
+                {
+                    pipelineBindPoint = VkPipelineBindPoint.Graphics,
+                    colorAttachmentCount = 1,                                                   // Subpass uses one color attachment
+                    pColorAttachments = colorReferences,                                        // Reference to the color attachment in slot 0
+                    pDepthStencilAttachment = &depthReference,                                  // Reference to the depth attachment in slot 1
+                    inputAttachmentCount = 0,                                                   // Input attachments can be used to sample from contents of a previous subpass
+                    pInputAttachments = null,                                                   // (Input attachments not used by this example)
+                    preserveAttachmentCount = 0,                                                // Preserved attachments can be used to loop (and preserve) attachments through subpasses
+                    pPreserveAttachments = null,                                                // (Preserve attachments not used by this example)
+                    pResolveAttachments = null                                                  // Resolve attachments are resolved at the end of a sub pass and can be used for e.g. multi sampling
+                },
             };
+
+
 
             // Setup subpass dependencies
             // These will add the implicit ttachment layout transitionss specified by the attachment descriptions
@@ -135,46 +158,50 @@ namespace Zeckoxe.Graphics
             // Each subpass dependency will introduce a memory and execution dependency between the source and dest subpass described by
             // srcStageMask, dstStageMask, srcAccessMask, dstAccessMask (and dependencyFlags is set)
             // Note: VK_SUBPASS_EXTERNAL is a special constant that refers to all commands executed outside of the actual renderpass)
-            VkSubpassDependency* dependencies = stackalloc VkSubpassDependency[2];
+            VkSubpassDependency* dependencies = stackalloc VkSubpassDependency[2]
+            {
+                // First dependency at the start of the renderpass
+                // Does the transition from final to initial layout 
+                new VkSubpassDependency
+                {
+                    srcSubpass = SubpassExternal,                                   // Producer of the dependency 
+                    dstSubpass = 0,                                                 // Consumer is our single subpass that will wait for the execution depdendency
+                    srcStageMask = VkPipelineStageFlags.BottomOfPipe,
+                    dstStageMask = VkPipelineStageFlags.ColorAttachmentOutput,
+                    srcAccessMask = VkAccessFlags.MemoryRead,
+                    dstAccessMask = VkAccessFlags.ColorAttachmentRead | VkAccessFlags.ColorAttachmentWrite,
+                    dependencyFlags = VkDependencyFlags.ByRegion
+                },
 
-            // First dependency at the start of the renderpass
-            // Does the transition from final to initial layout 
-            dependencies[0].srcSubpass = SubpassExternal;                               // Producer of the dependency 
-            dependencies[0].dstSubpass = 0;                                                 // Consumer is our single subpass that will wait for the execution depdendency
-            dependencies[0].srcStageMask = VkPipelineStageFlags.BottomOfPipe;
-            dependencies[0].dstStageMask = VkPipelineStageFlags.ColorAttachmentOutput;
-            dependencies[0].srcAccessMask = VkAccessFlags.MemoryRead;
-            dependencies[0].dstAccessMask = (VkAccessFlags.ColorAttachmentRead | VkAccessFlags.ColorAttachmentWrite);
-            dependencies[0].dependencyFlags = (VkDependencyFlags.ByRegion);
+                // Second dependency at the end the renderpass
+                // Does the transition from the initial to the final layout
+                new VkSubpassDependency
+                {
+                    srcSubpass = 0,                                                 // Producer of the dependency is our single subpass
+                    dstSubpass = SubpassExternal,                                   // Consumer are all commands outside of the renderpass
+                    srcStageMask = VkPipelineStageFlags.ColorAttachmentOutput,
+                    dstStageMask = VkPipelineStageFlags.BottomOfPipe,
+                    srcAccessMask = VkAccessFlags.ColorAttachmentRead | VkAccessFlags.ColorAttachmentWrite,
+                    dstAccessMask = VkAccessFlags.MemoryRead,
+                    dependencyFlags = VkDependencyFlags.ByRegion
+                }
+            };
 
-            // Second dependency at the end the renderpass
-            // Does the transition from the initial to the final layout
-            dependencies[1].srcSubpass = 0;                                                 // Producer of the dependency is our single subpass
-            dependencies[1].dstSubpass = SubpassExternal;                               // Consumer are all commands outside of the renderpass
-            dependencies[1].srcStageMask = VkPipelineStageFlags.ColorAttachmentOutput;
-            dependencies[1].dstStageMask = VkPipelineStageFlags.BottomOfPipe;
-            dependencies[1].srcAccessMask = (VkAccessFlags.ColorAttachmentRead | VkAccessFlags.ColorAttachmentWrite);
-            dependencies[1].dstAccessMask = VkAccessFlags.MemoryRead;
-            dependencies[1].dependencyFlags = VkDependencyFlags.ByRegion;
+
 
             // Create the actual renderpass
-            VkRenderPassCreateInfo renderPassInfo = new VkRenderPassCreateInfo()
+            VkRenderPassCreateInfo render_pass_info = new VkRenderPassCreateInfo()
             {
                 sType = VkStructureType.RenderPassCreateInfo,
+                attachmentCount = 2,                                             // Number of attachments used by this render pass
+                pAttachments = attachments,                                      // Descriptions of the attachments used by the render pass
+                subpassCount = 1,                                                // We only use one subpass in this example
+                pSubpasses = *&subpass_description,                              // Description of that subpass
+                dependencyCount = 2,                                             // Number of subpass dependencies
+                pDependencies = dependencies,
             };
-            renderPassInfo.attachmentCount = 2;                                             // Number of attachments used by this render pass
-            renderPassInfo.pAttachments = attachments;                                      // Descriptions of the attachments used by the render pass
-            renderPassInfo.subpassCount = 1;                                                // We only use one subpass in this example
-            renderPassInfo.pSubpasses = &subpassDescription;                                // Description of that subpass
-            renderPassInfo.dependencyCount = 2;                                             // Number of subpass dependencies
-            renderPassInfo.pDependencies = dependencies;
 
-
-
-
-            vkCreateRenderPass(NativeDevice.handle, &renderPassInfo, null, out VkRenderPass RenderPass);
-            renderPass = RenderPass;
-
+            vkCreateRenderPass(NativeDevice.handle, &render_pass_info, null, out renderPass).CheckResult();
         }
     }
 }
