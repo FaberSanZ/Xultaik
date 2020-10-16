@@ -54,7 +54,9 @@ namespace Samples.Samples
 
         public DescriptorSet Descriptor { get; set; }
 
-        public TransformUniform uniform;
+        public TransformUniform Uniform;
+
+
 
         public override void Initialize()
         {
@@ -75,7 +77,7 @@ namespace Samples.Samples
             Models.Add(Model);
 
 
-            uniform = new TransformUniform(Camera.Projection, Model, Camera.View);
+            Uniform = new TransformUniform(Camera.Projection, Model, Camera.View);
 
             CreateBuffers();
 
@@ -222,9 +224,9 @@ namespace Samples.Samples
 
 
 
-            uniform.Update(Camera, Model);
+            Uniform.Update(Camera, Model);
 
-            ConstBuffer.SetData(ref uniform);
+            ConstBuffer.SetData(ref Uniform);
         }
 
 
@@ -244,7 +246,6 @@ namespace Samples.Samples
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
             commandBuffer.SetIndexBuffer(IndexBuffer);
             commandBuffer.BindDescriptorSets(Descriptor);
-
             commandBuffer.DrawIndexed(3, 1, 0, 0, 0);
         }
 
