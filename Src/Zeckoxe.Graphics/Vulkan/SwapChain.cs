@@ -17,7 +17,7 @@ using static Vortice.Vulkan.Vulkan;
 namespace Zeckoxe.Graphics
 {
 
-    public unsafe class SwapChain : GraphicsResource
+    public unsafe class SwapChain : GraphicsResource, IDisposable
     {
         private delegate VkResult vkCreateWin32SurfaceKHRDelegate(VkInstance instance, VkWin32SurfaceCreateInfoKHR* createInfo, VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 
@@ -230,6 +230,8 @@ namespace Zeckoxe.Graphics
                 // check for the presence of VK_FORMAT_B8G8R8A8_UNORM
                 bool found_B8G8R8A8_UNORM = false;
 
+
+                // TODO: VkSurfaceFormatKHR -> stackalloc
                 List<VkSurfaceFormatKHR> Formats = new List<VkSurfaceFormatKHR>();
 
                 for (int i = 0; i < formatCount; i++)
@@ -356,6 +358,8 @@ namespace Zeckoxe.Graphics
             }
 
 
+            VkSwapchainKHR oldSwapchain = handle;
+
             VkSwapchainCreateInfoKHR swapchain_info = new VkSwapchainCreateInfoKHR()
             {
                 sType = VkStructureType.SwapchainCreateInfoKHR,
@@ -376,7 +380,7 @@ namespace Zeckoxe.Graphics
                 queueFamilyIndexCount = 0,
                 pQueueFamilyIndices = null,
                 presentMode = swapchainPresentMode,
-                oldSwapchain = handle,
+                oldSwapchain = oldSwapchain,
 
                 // Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
                 clipped = true,
@@ -384,20 +388,31 @@ namespace Zeckoxe.Graphics
             };
 
 
-            // Set additional usage flag for blitting from the swapchain Images if supported
-            vkGetPhysicalDeviceFormatProperties(PhysicalDevice, color_format, out VkFormatProperties formatProps);
-
-            if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.BlitDst) is not 0)
+            // Enable transfer source on swap chain images if supported
+            if ((surfCaps.supportedUsageFlags & VkImageUsageFlags.TransferSrc) is not 0)
             {
                 swapchain_info.imageUsage |= VkImageUsageFlags.TransferSrc;
             }
+
+            // Enable transfer destination on swap chain images if supported
+            if ((surfCaps.supportedUsageFlags & VkImageUsageFlags.TransferDst) is not 0)
+            {
+                swapchain_info.imageUsage |= VkImageUsageFlags.TransferDst;
+            }
+
 
 
             vkCreateSwapchainKHR(NativeDevice.handle, &swapchain_info, null, out handle).CheckResult();
 
 
 
-            //vkDestroySwapchainKHR(NativeDevice.handle, handle, null);
+            // If an existing swap chain is re-created, destroy the old swap chain
+            // This also cleans up all the presentable images
+            if (oldSwapchain != VkSwapchainKHR.Null)
+            {
+                vkDestroySwapchainKHR(NativeDevice.handle, oldSwapchain, null);
+            }
+
 
 
 
@@ -437,6 +452,11 @@ namespace Zeckoxe.Graphics
             vkQueuePresentKHR(NativeDevice.nativeCommandQueue, &present_info);
         }
 
+        public void Dispose()
+        {
+            vkDestroySwapchainKHR(NativeDevice.handle, handle, null);
+            vkDestroySurfaceKHR(NativeDevice.NativeAdapter.instance, surface, null);
+        }
     }
 
 }
