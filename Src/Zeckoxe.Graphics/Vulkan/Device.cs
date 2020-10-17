@@ -482,7 +482,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        internal VkMemoryType GetMemoryType(VkPhysicalDeviceMemoryProperties memoryProperties, uint index)
+        internal VkMemoryType GetMemoryTypeExt(VkPhysicalDeviceMemoryProperties memoryProperties, uint index)
         {
             return (&memoryProperties.memoryTypes_0)[index];
         }
@@ -495,7 +495,7 @@ namespace Zeckoxe.Graphics
             {
                 if ((typeBits & 1) == 1)
                 {
-                    if ((GetMemoryType(_memoryProperties, i).propertyFlags & properties) == properties)
+                    if ((GetMemoryTypeExt(_memoryProperties, i).propertyFlags & properties) == properties)
                     {
                         return i;
                     }

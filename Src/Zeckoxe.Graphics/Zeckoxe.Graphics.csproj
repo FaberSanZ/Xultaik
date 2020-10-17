@@ -18,8 +18,4 @@
     <ProjectReference Include="..\Zeckoxe.ShaderCompiler\Zeckoxe.ShaderCompiler.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="RayTracing\" />
-  </ItemGroup>
-
 </Project>
