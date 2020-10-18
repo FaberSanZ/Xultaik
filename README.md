@@ -23,7 +23,7 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 ## Low-level rendering backend
 
-The rendering backend is completely focused on Vulkan, however the API greatly simplifies the most painful points of writing Vulkan. 
+The rendering backend is completely focused on Vulkan, however the Engine greatly simplifies the most painful points of writing Vulkan. 
 <br>
 
 
