@@ -1,7 +1,6 @@
 
 <h1 align="center">
    Zeckoxe Engine
-  <br>
   
   ##               Zeckoxe Engine is a 2D/3D renderer implemented in [Vulkan®](https://www.khronos.org/vulkan/)
   
@@ -44,14 +43,6 @@ The rendering backend is completely focused on Vulkan, however the Engine greatl
 <hr>
 <br>
 
-## Research or code used:
-- Granite (<https://github.com/Themaister/Granite>)
-- Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
-- Vortice.Vulkan (<https://github.com/amerkoleci/Vortice.Vulkan>)
-- SharpGLTF (<https://github.com/vpenades/SharpGLTF>)
-
-<hr>
-<br>
 
 ## Examples
 
@@ -63,7 +54,15 @@ The rendering backend is completely focused on Vulkan, however the Engine greatl
 | [LoadGLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs) |  <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/04.PNG" width=300> | Load GLTF 3D Model.  |
 
 
+<hr>
+<br>
 
+
+## Research or code used:
+- Granite (<https://github.com/Themaister/Granite>)
+- Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
+- Vortice.Vulkan (<https://github.com/amerkoleci/Vortice.Vulkan>)
+- SharpGLTF (<https://github.com/vpenades/SharpGLTF>)
 
 
 
