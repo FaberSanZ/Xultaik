@@ -1,7 +1,6 @@
 
 <h1 align="center">
    Zeckoxe Engine
-  <br>
   
   ##               Zeckoxe Engine is a 2D/3D renderer implemented in [Vulkan®](https://www.khronos.org/vulkan/)
   
@@ -23,7 +22,7 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 ## Low-level rendering backend
 
-The rendering backend is completely focused on Vulkan, however the API greatly simplifies the most painful points of writing Vulkan. 
+The rendering backend is completely focused on Vulkan, however the Engine greatly simplifies the most painful points of writing Vulkan. 
 <br>
 
 
@@ -44,14 +43,6 @@ The rendering backend is completely focused on Vulkan, however the API greatly s
 <hr>
 <br>
 
-## Research or code used:
-- Granite (<https://github.com/Themaister/Granite>)
-- Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
-- Vortice.Vulkan (<https://github.com/amerkoleci/Vortice.Vulkan>)
-- SharpGLTF (<https://github.com/vpenades/SharpGLTF>)
-
-<hr>
-<br>
 
 ## Examples
 
@@ -63,7 +54,16 @@ The rendering backend is completely focused on Vulkan, however the API greatly s
 | [LoadGLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs) |  <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/04.PNG" width=300> | Load GLTF 3D Model.  |
 
 
+<hr>
+<br>
 
+
+## Research or code used:
+- Granite (<https://github.com/Themaister/Granite>)
+- Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
+- Vortice.Vulkan (<https://github.com/amerkoleci/Vortice.Vulkan>)
+- SharpGLTF (<https://github.com/vpenades/SharpGLTF>)
+- DefaultEcs (<https://github.com/Doraku/DefaultEcs>)
 
 
 
