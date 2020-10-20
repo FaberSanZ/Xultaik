@@ -570,7 +570,8 @@ namespace Zeckoxe.Graphics
 
         public void WaitIdle()
         {
-            vkQueueWaitIdle(nativeCommandQueue);
+            //vkQueueWaitIdle(nativeCommandQueue);
+            vkDeviceWaitIdle(handle);
         }
 
 
