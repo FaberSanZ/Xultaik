@@ -368,6 +368,7 @@ namespace Zeckoxe.Graphics
                 }
             }
 
+
             if (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device)
                 vkGetPhysicalDeviceProperties2(NativeAdapter.handle, out props);
 
@@ -376,7 +377,6 @@ namespace Zeckoxe.Graphics
                 deviceCreateInfo.enabledExtensionCount = (uint)DeviceExtensionsNames.Count;
                 deviceCreateInfo.ppEnabledExtensionNames = Interop.String.AllocToPointers(DeviceExtensionsNames.ToArray());
             }
-
 
 
 

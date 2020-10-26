@@ -184,6 +184,14 @@ namespace Zeckoxe.Graphics
             device_extension();
 
 
+            SupportsVulkan11Instance = vkEnumerateInstanceVersion() >= VkVersion.Version_1_1;
+
+
+            if (device_properties.apiVersion >= VkVersion.Version_1_1)
+            {
+                SupportsVulkan11Device = SupportsVulkan11Instance;
+            }
+
 
             if ((Parameters.Settings.Validation & ValidationType.Default) != 0)
                 Log = new ConsoleLog();
@@ -282,8 +290,6 @@ namespace Zeckoxe.Graphics
                 SupportsExternal = true;
             }
 
-
-            SupportsVulkan11Instance = vkEnumerateInstanceVersion() >= VkVersion.Version_1_1;
 
         }
 
