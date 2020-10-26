@@ -272,6 +272,19 @@ namespace Zeckoxe.Graphics
                 SupportsPhysicalDeviceProperties2 = true;
             }
 
+
+            if (SupportsPhysicalDeviceProperties2 && 
+                instance_extensions_names.Contains("VK_KHR_external_memory_capabilities") && 
+                instance_extensions_names.Contains("VK_KHR_external_semaphore_capabilities"))
+            {
+                InstanceExtensionsNames.Add("VK_KHR_external_memory_capabilities");
+                InstanceExtensionsNames.Add("VK_KHR_external_semaphore_capabilities");
+                SupportsExternal = true;
+            }
+
+
+            SupportsVulkan11Instance = vkEnumerateInstanceVersion() >= VkVersion.Version_1_1;
+
         }
 
         internal void CreateInstance(string[] extensions)
@@ -485,47 +498,8 @@ namespace Zeckoxe.Graphics
         }
 
 
-        internal VkPhysicalDeviceRayTracingFeaturesKHR GetPhysicalDeviceFeaturesRayTracing()
-        {
-            VkPhysicalDeviceRayTracingFeaturesKHR rayTracingFeatures = new VkPhysicalDeviceRayTracingFeaturesKHR()
-            {
-                sType = VkStructureType.PhysicalDeviceRayTracingFeaturesKHR,
-                pNext = null,
-            };
-
-            VkPhysicalDeviceFeatures2 deviceFeatures2 = new VkPhysicalDeviceFeatures2()
-            {
-                sType = VkStructureType.PhysicalDeviceFeatures2,
-                pNext = &rayTracingFeatures,
-            };
 
 
-            vkGetPhysicalDeviceFeatures2(handle, out deviceFeatures2);
-
-            return rayTracingFeatures;
-        }
-
-
-
-        internal VkPhysicalDeviceFeatures2 GetPhysicalDeviceFeatures2()
-        {
-            VkPhysicalDeviceRayTracingFeaturesKHR rayTracingFeatures = new VkPhysicalDeviceRayTracingFeaturesKHR()
-            {
-                sType = VkStructureType.PhysicalDeviceRayTracingFeaturesKHR,
-                pNext = null,
-            };
-
-            VkPhysicalDeviceFeatures2 deviceFeatures2 = new VkPhysicalDeviceFeatures2()
-            {
-                sType = VkStructureType.PhysicalDeviceFeatures2,
-                pNext = &rayTracingFeatures,
-            };
-
-
-            vkGetPhysicalDeviceFeatures2(handle, out deviceFeatures2);
-
-            return deviceFeatures2;
-        }
 
         internal void CreatePhysicalDeviceProperties()
         {

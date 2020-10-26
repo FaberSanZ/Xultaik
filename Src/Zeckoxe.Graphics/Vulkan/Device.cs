@@ -30,9 +30,9 @@ namespace Zeckoxe.Graphics
 
 
         internal VkPhysicalDeviceProperties device_properties;
-        internal VkPhysicalDeviceRayTracingFeaturesKHR DeviceRayTracingFeatures;
         internal VkPhysicalDeviceSubgroupProperties subgroup_properties;
         internal VkPhysicalDevice8BitStorageFeatures storage_8bit_features;
+        internal VkPhysicalDeviceRayTracingFeaturesKHR ray_tracing_features;
         internal VkPhysicalDevice16BitStorageFeatures storage_16bit_features;
         internal VkPhysicalDeviceShaderFloat16Int8Features float16_int8_features;
         internal VkPhysicalDeviceFeatures enabled_features;
@@ -53,7 +53,6 @@ namespace Zeckoxe.Graphics
         internal VkPhysicalDevicePerformanceQueryFeaturesKHR performance_query_features;
         internal VkPhysicalDeviceSamplerYcbcrConversionFeatures sampler_ycbcr_conversion_features;
         internal VkPhysicalDeviceDriverProperties driver_properties;
-
 
         public Device(Adapter adapter)
         {
@@ -276,6 +275,11 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.PhysicalDevice8bitStorageFeatures,
             };
 
+            ray_tracing_features = new VkPhysicalDeviceRayTracingFeaturesKHR
+            {
+                sType = VkStructureType.PhysicalDeviceRayTracingFeaturesKHR
+            };
+
             bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
 
 
@@ -294,8 +298,17 @@ namespace Zeckoxe.Graphics
                         ppNext = &feature->pNext;
                     }
                 }
+                
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing") && NativeAdapter.SupportsMaintenance_3)
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_ray_tracing");
+                    fixed (VkPhysicalDeviceRayTracingFeaturesKHR* feature = &ray_tracing_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                }
             }
-
 
             if (NativeAdapter.device_extensions_names.Contains("VK_KHR_swapchain"))
             {
@@ -322,13 +335,41 @@ namespace Zeckoxe.Graphics
                 vkGetPhysicalDeviceFeatures(NativeAdapter.handle, out features.features);
 
 
-
             if (NativeAdapter.SupportsPhysicalDeviceProperties2)
                 deviceCreateInfo.pNext = &features;
 
             else
                 deviceCreateInfo.pEnabledFeatures = &features.features;
 
+
+
+
+            // Only need GetPhysicalDeviceProperties2 for Vulkan 1.1-only code, so don't bother getting KHR variant.
+
+            VkPhysicalDeviceProperties2 props = new VkPhysicalDeviceProperties2
+            {
+                sType = VkStructureType.PhysicalDeviceProperties2,
+            };
+
+            conservative_rasterization_properties = new VkPhysicalDeviceConservativeRasterizationPropertiesEXT
+            {
+                sType = VkStructureType.PhysicalDeviceConservativeRasterizationPropertiesEXT,
+            };
+
+            ppNext = &props.pNext;
+
+            if (NativeAdapter.device_extensions_names.Contains("VK_EXT_conservative_rasterization"))
+            {
+                DeviceExtensionsNames.Add("VK_EXT_conservative_rasterization");
+                fixed (VkPhysicalDeviceConservativeRasterizationPropertiesEXT* feature = &conservative_rasterization_properties)
+                {
+                    *ppNext = feature;
+                    ppNext = &feature->pNext;
+                }
+            }
+
+            if (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device)
+                vkGetPhysicalDeviceProperties2(NativeAdapter.handle, out props);
 
             if (DeviceExtensionsNames.Any())
             {
@@ -340,6 +381,7 @@ namespace Zeckoxe.Graphics
 
 
             vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out handle).CheckResult();
+
         }
 
 
