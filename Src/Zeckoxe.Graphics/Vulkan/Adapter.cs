@@ -28,6 +28,10 @@ namespace Zeckoxe.Graphics
         internal uint instance_extensions_count;
         internal uint device_count; // number of GPUs we're rendering to --- if DG is disabled, this is 1
 
+
+        internal List<string> device_extensions_names { get; private set; } = new();
+
+
         internal VkPhysicalDevice handle;
         internal VkPhysicalDevice[] handles;
         internal VkPhysicalDeviceProperties device_properties;
@@ -71,8 +75,6 @@ namespace Zeckoxe.Graphics
         public PresentationParameters Parameters { get; set; }
 
         public List<string> InstanceExtensionsNames { get; private set; } = new();
-
-        public List<string> DeviceExtensionsNames { get; private set; } = new();
 
         public List<string> ValidationLayer { get; private set; } = new();
 
@@ -182,36 +184,6 @@ namespace Zeckoxe.Graphics
             device_extension();
 
 
-            //Features2 = GetPhysicalDeviceFeatures2();
-            //DeviceRayTracingFeatures = GetPhysicalDeviceFeaturesRayTracing();
-
-            VkPhysicalDeviceFeatures2 features = new VkPhysicalDeviceFeatures2
-            {
-                sType = VkStructureType.PhysicalDeviceFeatures2,
-            };
-
-            storage_8bit_features = new VkPhysicalDevice8BitStorageFeatures
-            {
-                sType = VkStructureType.PhysicalDevice8bitStorageFeatures,
-            };
-
-            bool has_pdf2 = SupportsPhysicalDeviceProperties2 || (SupportsVulkan11Instance && SupportsVulkan11Device is bool has_pdf_2);
-
-
-            void** ppNext = &features.pNext;
-
-            if (has_pdf2)
-            {
-                if (DeviceExtensionsNames.Contains("VK_KHR_8bit_storage"))
-                {
-                    VkPhysicalDevice8BitStorageFeatures feature = storage_8bit_features;
-                    //enabled_extensions.push_back(VK_KHR_8BIT_STORAGE_EXTENSION_NAME);
-                    *ppNext = &feature;
-                    ppNext = &feature.pNext;
-                }
-            }
-
-
 
             if ((Parameters.Settings.Validation & ValidationType.Default) != 0)
                 Log = new ConsoleLog();
@@ -233,7 +205,7 @@ namespace Zeckoxe.Graphics
         {
             foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
             {
-                DeviceExtensionsNames.Add(Interop.String.FromPointer(item.extensionName));
+                device_extensions_names.Add(Interop.String.FromPointer(item.extensionName));
             }
         }
 
@@ -299,6 +271,7 @@ namespace Zeckoxe.Graphics
                 InstanceExtensionsNames.Add("VK_KHR_get_physical_device_properties2");
                 SupportsPhysicalDeviceProperties2 = true;
             }
+
         }
 
         internal void CreateInstance(string[] extensions)

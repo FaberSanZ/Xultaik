@@ -72,6 +72,7 @@ namespace Zeckoxe.Graphics
         public uint GraphicsFamily { get; private set; }
         public uint ComputeFamily { get; private set; }
         public uint TransferFamily { get; private set; }
+        public List<string> DeviceExtensionsNames { get; private set; } = new();
 
 
         public void Recreate()
@@ -83,7 +84,7 @@ namespace Zeckoxe.Graphics
 
 
             nativeCommandPool = CreateCommandPool();
-            
+
 
             nativeCommandBufferPrimary = CreateCommandBufferPrimary();
 
@@ -177,7 +178,7 @@ namespace Zeckoxe.Graphics
         {
             uint extCount = 0;
 
-            vkEnumerateDeviceExtensionProperties(NativeAdapter.handle, (byte*)null, &extCount, null);
+            vkEnumerateDeviceExtensionProperties(NativeAdapter.handle, null, &extCount, null);
         }
 
 
@@ -265,39 +266,80 @@ namespace Zeckoxe.Graphics
             }
 
 
-            // Create the logical device representation
-            List<string> deviceExtensions = new List<string>
+            VkPhysicalDeviceFeatures2 features = new VkPhysicalDeviceFeatures2
             {
-
-                // If the device will be used for presenting to a display via a swapchain we need to request the swapchain extension
-                "VK_KHR_swapchain"
+                sType = VkStructureType.PhysicalDeviceFeatures2,
             };
+
+            storage_8bit_features = new VkPhysicalDevice8BitStorageFeatures
+            {
+                sType = VkStructureType.PhysicalDevice8bitStorageFeatures,
+            };
+
+            bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
+
+
+            void** ppNext = &features.pNext;
+
+
+            if (has_pdf2)
+            {
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_8bit_storage"))
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_8bit_storage");
+
+                    fixed (VkPhysicalDevice8BitStorageFeatures* feature = &storage_8bit_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                }
+            }
+
+
+            if (NativeAdapter.device_extensions_names.Contains("VK_KHR_swapchain"))
+            {
+                DeviceExtensionsNames.Add("VK_KHR_swapchain");
+            }
+
 
             VkDeviceCreateInfo deviceCreateInfo = new VkDeviceCreateInfo
             {
                 sType = VkStructureType.DeviceCreateInfo,
-                pNext = null,
                 flags = VkDeviceCreateFlags.None,
                 queueCreateInfoCount = 3,
                 pQueueCreateInfos = queueCreateInfos,
             };
 
 
-            fixed (VkPhysicalDeviceFeatures* featuresptr = &_features)
+            if (NativeAdapter.SupportsVulkan11Device && NativeAdapter.SupportsVulkan11Instance)
+                vkGetPhysicalDeviceFeatures2(NativeAdapter.handle, out features);
+
+            else if (NativeAdapter.SupportsPhysicalDeviceProperties2)
+                vkGetPhysicalDeviceFeatures2KHR(NativeAdapter.handle, out features);
+
+            else
+                vkGetPhysicalDeviceFeatures(NativeAdapter.handle, out features.features);
+
+
+
+            if (NativeAdapter.SupportsPhysicalDeviceProperties2)
+                deviceCreateInfo.pNext = &features;
+
+            else
+                deviceCreateInfo.pEnabledFeatures = &features.features;
+
+
+            if (DeviceExtensionsNames.Any())
             {
-                deviceCreateInfo.pEnabledFeatures = featuresptr;
+                deviceCreateInfo.enabledExtensionCount = (uint)DeviceExtensionsNames.Count;
+                deviceCreateInfo.ppEnabledExtensionNames = Interop.String.AllocToPointers(DeviceExtensionsNames.ToArray());
             }
 
 
-            if (deviceExtensions.Count > 0)
-            {
-                deviceCreateInfo.enabledExtensionCount = (uint)deviceExtensions.Count;
-                deviceCreateInfo.ppEnabledExtensionNames = Interop.String.AllocToPointers(deviceExtensions.ToArray());
-            }
 
-            vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out VkDevice device);
 
-            handle = device;
+            vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out handle).CheckResult();
         }
 
 

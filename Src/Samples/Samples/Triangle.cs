@@ -42,7 +42,7 @@ namespace Samples.Samples
 
         public Triangle() : base()
         {
-            Parameters.Settings.Validation = ValidationType.Console | ValidationType.Debug;
+            Parameters.Settings.Validation = ValidationType.None;
             Window.Title += " - (Triangle) ";
         }
 
@@ -98,7 +98,6 @@ namespace Samples.Samples
 
             Descriptor = new DescriptorSet(PipelineState, pool);
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
-
 
         }
 
