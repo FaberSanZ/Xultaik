@@ -18,6 +18,9 @@
 
 
   <ItemGroup>
+    <None Update="Models\chinesedragon.gltf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Models\model.glb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

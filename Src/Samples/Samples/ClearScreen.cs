@@ -12,7 +12,6 @@ namespace Samples.Samples
         {
             Window = new Window(" - (Clear Screen)", 1200, 800)
             {
-                //StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
             };
 
 
@@ -23,7 +22,7 @@ namespace Samples.Samples
                 Win32Handle = Window.Win32Handle,
                 Settings = new Settings()
                 {
-                    Validation = ValidationType.Console,
+                    Validation = ValidationType.None,
                     Fullscreen = false,
                     VSync = false,
                 },

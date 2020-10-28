@@ -96,6 +96,7 @@ namespace Zeckoxe.GLTF
 
             for (int i = 0; i < _Positions.Count; i++)
             {
+
                 vertices[i] = new VertexPositionNormal()
                 {
                     Position = _Positions[i] != null ? _Positions[i] : Vector3.One,

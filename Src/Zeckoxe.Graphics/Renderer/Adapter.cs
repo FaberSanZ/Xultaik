@@ -35,29 +35,7 @@ namespace Zeckoxe.Graphics
         internal VkPhysicalDevice handle;
         internal VkPhysicalDevice[] handles;
         internal VkPhysicalDeviceProperties device_properties;
-        internal VkPhysicalDeviceRayTracingFeaturesKHR DeviceRayTracingFeatures;
-        internal VkPhysicalDeviceSubgroupProperties subgroup_properties;
-        internal VkPhysicalDevice8BitStorageFeatures storage_8bit_features;
-        internal VkPhysicalDevice16BitStorageFeatures storage_16bit_features;
-        internal VkPhysicalDeviceShaderFloat16Int8Features float16_int8_features;
-        internal VkPhysicalDeviceFeatures enabled_features;
-        internal VkPhysicalDeviceExternalMemoryHostPropertiesEXT host_memory_properties;
-        internal VkPhysicalDeviceMultiviewFeatures multiview_features;
-        internal VkPhysicalDeviceImagelessFramebufferFeatures imageless_features;
-        internal VkPhysicalDeviceSubgroupSizeControlFeaturesEXT subgroup_size_control_features;
-        internal VkPhysicalDeviceSubgroupSizeControlPropertiesEXT subgroup_size_control_properties;
-        internal VkPhysicalDeviceComputeShaderDerivativesFeaturesNV compute_shader_derivative_features;
-        internal VkPhysicalDeviceHostQueryResetFeatures host_query_reset_features;
-        internal VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT demote_to_helper_invocation_features;
-        internal VkPhysicalDeviceScalarBlockLayoutFeatures scalar_block_features;
-        internal VkPhysicalDeviceUniformBufferStandardLayoutFeatures ubo_std430_features;
-        internal VkPhysicalDeviceTimelineSemaphoreFeatures timeline_semaphore_features;
-        internal VkPhysicalDeviceDescriptorIndexingFeatures descriptor_indexing_features;
-        internal VkPhysicalDeviceDescriptorIndexingProperties descriptor_indexing_properties;
-        internal VkPhysicalDeviceConservativeRasterizationPropertiesEXT conservative_rasterization_properties;
-        internal VkPhysicalDevicePerformanceQueryFeaturesKHR performance_query_features;
-        internal VkPhysicalDeviceSamplerYcbcrConversionFeatures sampler_ycbcr_conversion_features;
-        internal VkPhysicalDeviceDriverProperties driver_properties;
+
 
 
 
@@ -84,7 +62,7 @@ namespace Zeckoxe.Graphics
 
         public uint VendorId => device_properties.vendorID;
 
-        public bool RayTracingSupport => DeviceRayTracingFeatures.rayTracing;
+        public bool RayTracingSupport => false;
 
         public float TimestampPeriod => device_properties.limits.timestampPeriod;
 
@@ -187,10 +165,8 @@ namespace Zeckoxe.Graphics
             SupportsVulkan11Instance = vkEnumerateInstanceVersion() >= VkVersion.Version_1_1;
 
 
-            if (device_properties.apiVersion >= VkVersion.Version_1_1)
-            {
+            if (device_properties.apiVersion >= VkVersion.Version_1_1) 
                 SupportsVulkan11Device = SupportsVulkan11Instance;
-            }
 
 
             if ((Parameters.Settings.Validation & ValidationType.Default) != 0)
@@ -221,10 +197,10 @@ namespace Zeckoxe.Graphics
         {
             IEnumerable<string> instance_extensions_names = Instance_Extensions()
                                                     .ToArray()
-                                                    .Select(m => Interop.String.FromPointer(m.extensionName));
+                                                    .Select(_ => Interop.String.FromPointer(_.extensionName));
 
 
-            if (!((Parameters.Settings.Validation & ValidationType.None) != 0) && instance_extensions_names.Contains("VK_EXT_debug_report"))
+            if (!((Parameters.Settings.Validation & ValidationType.None) is not 0) && instance_extensions_names.Contains("VK_EXT_debug_report"))
             {
                 InstanceExtensionsNames.Add("VK_EXT_debug_report");
             }
@@ -307,6 +283,8 @@ namespace Zeckoxe.Graphics
                 pEngineName = Interop.String.ToPointer("Zeckoxe"),
             };
 
+
+            // TODO: layers
             string[] layers = new string[]
             {
                 "VK_LAYER_KHRONOS_validation",
@@ -333,7 +311,7 @@ namespace Zeckoxe.Graphics
                 pfnUserCallback = Interop.GetFunctionPointerForDelegate(_debugMessengerCallbackFunc = DebugMessengerCallback),
             };
 
-            if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
+            if ((Parameters.Settings.Validation & ValidationType.None) is 0)
             {
                 inst_info.pNext = &debugUtilsCreateInfo;
                 inst_info.ppEnabledLayerNames = Interop.String.AllocToPointers(layers);
@@ -364,7 +342,7 @@ namespace Zeckoxe.Graphics
 
             if (device_count is 0)
             {
-                // TODO: physicalDevices is 0
+                // TODO: device_count is 0
                 return;
             }
             else if (device_count is 1)

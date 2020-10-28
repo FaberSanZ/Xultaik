@@ -27,7 +27,7 @@ namespace Samples.Samples
         {
             base.BeginDraw();
 
-            Context.CommandBuffer.BeginFramebuffer(Framebuffer, 0.5f, 0.5f, 0.5f);
+            Context.CommandBuffer.BeginFramebuffer(Framebuffer, 0.6f, 0.8f, 0.4f, 1.0f);
         }
 
 

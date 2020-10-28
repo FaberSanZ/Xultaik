@@ -13,6 +13,9 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
+
+
+
     internal class RayTracingScratchBuffer
     {
         internal uint deviceAddress = 0;

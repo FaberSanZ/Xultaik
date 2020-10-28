@@ -177,7 +177,7 @@ namespace Zeckoxe.Graphics
         {
             uint extCount = 0;
 
-            vkEnumerateDeviceExtensionProperties(NativeAdapter.handle, null, &extCount, null);
+            //vkEnumerateDeviceExtensionProperties(NativeAdapter.handle, null, &extCount, null);
         }
 
 
@@ -340,7 +340,6 @@ namespace Zeckoxe.Graphics
 
             else
                 deviceCreateInfo.pEnabledFeatures = &features.features;
-
 
 
 
