@@ -56,7 +56,7 @@ namespace Zeckoxe.Graphics
 
         public List<string> ValidationLayer { get; private set; } = new();
 
-        public ILog Log { get; set; }
+        public List<ILog> Log { get; set; }
 
         public DeviceType DeviceType => (DeviceType)device_properties.deviceType;
 
@@ -169,17 +169,19 @@ namespace Zeckoxe.Graphics
                 SupportsVulkan11Device = SupportsVulkan11Instance;
 
 
+            Log = new();
+
             if ((Parameters.Settings.Validation & ValidationType.Default) != 0)
-                Log = new ConsoleLog();
+                Log.Add(new ConsoleLog());
 
             if ((Parameters.Settings.Validation & ValidationType.Console) != 0)
-                Log = new ConsoleLog();
+                Log.Add(new ConsoleLog());
 
             if ((Parameters.Settings.Validation & ValidationType.Debug) != 0)
-                Log = new ConsoleLog(); // TODO: DebugLog
+                Log.Add(new ConsoleLog()); // TODO: DebugLog
 
             if ((Parameters.Settings.Validation & ValidationType.ImGui) != 0)
-                Log = new ConsoleLog(); // TODO:ImGuiLog
+                Log.Add(new ConsoleLog()); // TODO:ImGuiLog
 
         }
 
@@ -451,14 +453,15 @@ namespace Zeckoxe.Graphics
                 {
                     
                     if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
-                        Log.Error("Vulkan", $"Validation: {messageSeverity} - {message}");
-
+                        foreach (var l in Log)
+                            l.Error("Vulkan", $"Validation: {messageSeverity} - {message}");
 
                 }
                 else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
                     if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
-                        Log.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
+                        foreach (var l in Log)
+                            l.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
                 }
 
             }
@@ -467,15 +470,18 @@ namespace Zeckoxe.Graphics
                 if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
                 {
                     if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
-                        Log.Error("Vulkan", $"[Vulkan]: {messageSeverity} - {message}");
+                        foreach (var l in Log)
+                            l.Error("Vulkan", $"[Vulkan]: {messageSeverity} - {message}");
                 }
                 else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
                     if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
-                        Log.Warn($"[Vulkan]: {messageSeverity} - {message}");
+                        foreach (var l in Log)
+                            l.Warn($"[Vulkan]: {messageSeverity} - {message}");
                 }
 
-                //Log.WriteLine($"[Vulkan]: {messageSeverity} - {message}");
+                //foreach (var l in Log)
+                //    l.WriteLine($"[Vulkan]: {messageSeverity} - {message}");
             }
 
             return VkBool32.False;
@@ -523,12 +529,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        public TDelegate GetInstanceProcAddr<TDelegate>(string name) where TDelegate : class
-        {
-            IntPtr funcPtr = vkGetInstanceProcAddr(instance, Interop.String.ToPointer(name));
 
-            return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
-        }
 
         public void Dispose()
         {

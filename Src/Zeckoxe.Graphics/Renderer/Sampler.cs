@@ -57,27 +57,6 @@ namespace Zeckoxe.Graphics
             
             sampler.borderColor = VkBorderColor.FloatOpaqueWhite;
             vkCreateSampler(NativeDevice.handle, &sampler, null, out handle);
-
-            // Create image view
-            // Textures are not directly accessed by the shaders and
-            // are abstracted by image views containing additional
-            // information and sub resource ranges
-            VkImageViewCreateInfo view = default;
-            view.viewType = VkImageViewType.Image2D;
-            view.format = default;
-            view.components = new VkComponentMapping { r = VkComponentSwizzle.R, g = VkComponentSwizzle.G, b = VkComponentSwizzle.B, a = VkComponentSwizzle.A };
-            // The subresource range describes the set of mip levels (and array layers) that can be accessed through this image view
-            // It's possible to create multiple image views for a single image referring to different (and/or overlapping) ranges of the image
-            view.subresourceRange.aspectMask = VkImageAspectFlags.Color;
-            view.subresourceRange.baseMipLevel = 0;
-            view.subresourceRange.baseArrayLayer = 0;
-            view.subresourceRange.layerCount = 1;
-            // Linear tiling usually won't support mip maps
-            // Only set mip map count if optimal tiling is used
-            //view.subresourceRange.levelCount = (useStaging == 1) ? texture.mipLevels : 1;
-            //// The view will be based on the texture's image
-            //view.image = texture.image;
-            //Util.CheckResult(vkCreateImageView(device, &view, null, out texture.view));
         }
     }
 }
