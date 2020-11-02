@@ -20,13 +20,23 @@ namespace Zeckoxe.Graphics
         internal VkPhysicalDeviceMemoryProperties _memoryProperties;
         internal VkQueueFamilyProperties[] queueFamilyProperties;
         internal VkQueue nativeCommandQueue;
-        internal VkPhysicalDeviceProperties _properties;
         internal VkPhysicalDeviceFeatures _features;
-        internal VkCommandPool nativeCommandPool;
+        internal VkCommandPool graphics_cmd_pool;
+
         internal VkCommandBuffer nativeCommandBufferPrimary;
         internal VkCommandBuffer nativeCommandBufferSecondary;
+
         internal VkSemaphore imageAvailableSemaphore;
         internal VkSemaphore renderFinishedSemaphore;
+
+
+        internal VkSemaphore graphics_timeline_semaphore;
+        internal VkSemaphore compute_timeline_semaphore;
+        internal VkSemaphore transfer_timeline_semaphore;
+
+        internal uint timeline_fence_graphics = 0;
+        internal uint timeline_fence_compute = 0;
+        internal uint timeline_fence_transfer = 0;
 
 
         internal VkPhysicalDeviceProperties device_properties;
@@ -82,13 +92,13 @@ namespace Zeckoxe.Graphics
             InitializePlatformDevice();
 
 
-            nativeCommandPool = CreateCommandPool();
+            graphics_cmd_pool = CreateCommandPool();
 
 
             nativeCommandBufferPrimary = CreateCommandBufferPrimary();
 
 
-            NativeCommand = new CommandBuffer(this, CommandBufferType.AsyncGraphics | CommandBufferType.AsyncTransfer | CommandBufferType.AsyncCompute); //TODO: CommandBufferType
+            NativeCommand = new(this, CommandBufferType.AsyncGraphics | CommandBufferType.AsyncTransfer | CommandBufferType.AsyncCompute); //TODO: CommandBufferType
 
 
             nativeCommandBufferSecondary = CreateCommandBufferSecondary();
@@ -192,7 +202,7 @@ namespace Zeckoxe.Graphics
 
 
             // Graphics queue
-            if ((requestedQueueTypes & VkQueueFlags.Graphics) != 0)
+            if ((requestedQueueTypes & VkQueueFlags.Graphics) is not 0)
             {
                 GraphicsFamily = GetQueueFamilyIndex(VkQueueFlags.Graphics, queueFamilyProperties);
 
@@ -204,7 +214,7 @@ namespace Zeckoxe.Graphics
                     pQueuePriorities = &defaultQueuePriority
                 };
 
-                queueCreateInfos[0] = (queueInfo);
+                queueCreateInfos[0] = queueInfo;
             }
             else
             {
@@ -214,7 +224,7 @@ namespace Zeckoxe.Graphics
 
 
             // Dedicated compute queue
-            if ((requestedQueueTypes & VkQueueFlags.Compute) != 0)
+            if ((requestedQueueTypes & VkQueueFlags.Compute) is not 0)
             {
                 ComputeFamily = GetQueueFamilyIndex(VkQueueFlags.Compute, queueFamilyProperties);
 
@@ -240,7 +250,7 @@ namespace Zeckoxe.Graphics
 
 
             // Dedicated transfer queue
-            if ((requestedQueueTypes & VkQueueFlags.Transfer) != 0)
+            if ((requestedQueueTypes & VkQueueFlags.Transfer) is not 0)
             {
                 TransferFamily = GetQueueFamilyIndex(VkQueueFlags.Transfer, queueFamilyProperties);
 
@@ -255,7 +265,7 @@ namespace Zeckoxe.Graphics
                         pQueuePriorities = &defaultQueuePriority
                     };
 
-                    queueCreateInfos[2] = (queueInfo);
+                    queueCreateInfos[2] = queueInfo;
                 }
             }
             else
@@ -311,12 +321,11 @@ namespace Zeckoxe.Graphics
             }
 
             if (NativeAdapter.device_extensions_names.Contains("VK_KHR_swapchain"))
-            {
                 DeviceExtensionsNames.Add("VK_KHR_swapchain");
-            }
+            
 
 
-            VkDeviceCreateInfo deviceCreateInfo = new VkDeviceCreateInfo
+            VkDeviceCreateInfo deviceCreateInfo = new()
             {
                 sType = VkStructureType.DeviceCreateInfo,
                 flags = VkDeviceCreateFlags.None,
@@ -397,11 +406,6 @@ namespace Zeckoxe.Graphics
         {
             nativeCommandQueue = GetQueue(GraphicsFamily);
         }
-
-
-
-
-
 
 
 
@@ -533,7 +537,7 @@ namespace Zeckoxe.Graphics
             VkCommandBufferAllocateInfo allocInfo = new()
             {
                 sType = VkStructureType.CommandBufferAllocateInfo,
-                commandPool = nativeCommandPool,
+                commandPool = graphics_cmd_pool,
 
                 level = VkCommandBufferLevel.Primary,
                 commandBufferCount = 1,
@@ -551,7 +555,7 @@ namespace Zeckoxe.Graphics
             VkCommandBufferAllocateInfo allocInfo = new()
             {
                 sType = VkStructureType.CommandBufferAllocateInfo,
-                commandPool = nativeCommandPool,
+                commandPool = graphics_cmd_pool,
 
                 level = VkCommandBufferLevel.Secondary,
                 commandBufferCount = 1,
@@ -576,7 +580,7 @@ namespace Zeckoxe.Graphics
 
             for (uint i = 0; i < _memoryProperties.memoryTypeCount; i++)
             {
-                if ((typeBits & 1) == 1)
+                if ((typeBits & 1) is 1)
                 {
                     if ((GetMemoryTypeExt(_memoryProperties, i).propertyFlags & properties) == properties)
                     {
@@ -595,9 +599,9 @@ namespace Zeckoxe.Graphics
 
         internal VkSurfaceFormatKHR ChooseSwapSurfaceFormat(VkSurfaceFormatKHR[] formats)
         {
-            if (formats.Length == 1 && formats[0].format == VkFormat.Undefined)
+            if (formats.Length is 1 && formats.First().format is VkFormat.Undefined)
             {
-                return new VkSurfaceFormatKHR()
+                return new()
                 {
                     format = VkFormat.B8G8R8A8UNorm,
                     colorSpace = VkColorSpaceKHR.SrgbNonLinear
@@ -606,13 +610,13 @@ namespace Zeckoxe.Graphics
 
             foreach (VkSurfaceFormatKHR availableFormat in formats)
             {
-                if (availableFormat.format == VkFormat.B8G8R8A8UNorm && availableFormat.colorSpace == VkColorSpaceKHR.SrgbNonLinear)
+                if (availableFormat.format is VkFormat.B8G8R8A8UNorm && availableFormat.colorSpace is VkColorSpaceKHR.SrgbNonLinear)
                 {
                     return availableFormat;
                 }
             }
 
-            return formats[0];
+            return formats.First();
         }
 
         internal VkPresentModeKHR ChooseSwapPresentMode(VkPresentModeKHR[] presentModes)
@@ -621,14 +625,12 @@ namespace Zeckoxe.Graphics
 
             foreach (VkPresentModeKHR availablePresentMode in presentModes)
             {
-                if (availablePresentMode == VkPresentModeKHR.Mailbox)
-                {
+                if (availablePresentMode is VkPresentModeKHR.Mailbox)
                     return availablePresentMode; // MailboxKHR
-                }
-                else if (availablePresentMode == VkPresentModeKHR.Immediate)
-                {
+
+                else if (availablePresentMode is VkPresentModeKHR.Immediate)
                     return availablePresentMode; // ImmediateKHR;
-                }
+                
             }
 
             return VkPresentModeKHR.Immediate;
@@ -636,12 +638,12 @@ namespace Zeckoxe.Graphics
 
         public VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR capabilities, uint width, uint height)
         {
-            if (capabilities.currentExtent.width != int.MaxValue)
+            if (capabilities.currentExtent.width is not int.MaxValue)
             {
                 return capabilities.currentExtent;
             }
 
-            return new VkExtent2D
+            return new()
             {
                 width = Math.Max(capabilities.minImageExtent.width, Math.Min(capabilities.maxImageExtent.width, width)),
                 height = Math.Max(capabilities.minImageExtent.height, Math.Min(capabilities.maxImageExtent.height, height)),
