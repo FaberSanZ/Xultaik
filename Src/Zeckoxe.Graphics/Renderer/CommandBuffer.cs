@@ -116,29 +116,23 @@ namespace Zeckoxe.Graphics
             // Set clear values for all framebuffer attachments with loadOp set to clear
             // We use two attachments (color and depth) that are cleared at the start of the subpass and as such we need to set clear values for both
             VkClearValue* clearValues = stackalloc VkClearValue[2];
-            clearValues[0].color = new VkClearColorValue(r, g, b, a);
-            clearValues[1].depthStencil = new VkClearDepthStencilValue()
+            clearValues[0].color = new(r, g, b, a);
+            clearValues[1].depthStencil = new(1, 0)
             {
-                depth = 1.0f,
-                stencil = 0
+                //depth = 1.0f,
+                //stencil = 0
             };
+
+            int h = NativeDevice.NativeParameters.BackBufferHeight;
+            int w = NativeDevice.NativeParameters.BackBufferWidth;
+            int x = 0;
+            int y = 0;
 
             VkRenderPassBeginInfo renderPassBeginInfo = new VkRenderPassBeginInfo()
             {
                 sType = VkStructureType.RenderPassBeginInfo,
-                renderArea = new VkRect2D()
-                {
-                    extent = new VkExtent2D()
-                    {
-                        height = (uint)NativeDevice.NativeParameters.BackBufferHeight,
-                        width = (uint)NativeDevice.NativeParameters.BackBufferWidth,
-                    },
-                    offset = new VkOffset2D()
-                    {
-                        x = 0,
-                        y = 0,
-                    }
-                },
+                renderArea = new(x,y,w,h),
+
                 renderPass = framebuffer.renderPass,
                 clearValueCount = 2,
                 pClearValues = clearValues,
@@ -185,13 +179,13 @@ namespace Zeckoxe.Graphics
         {
 
             VkBufferMemoryBarrier* bufferBarriers = stackalloc VkBufferMemoryBarrier[2];
-            bufferBarriers[0x0] = new VkBufferMemoryBarrier()
+            bufferBarriers[0x0] = new()
             {
                 sType = VkStructureType.BufferMemoryBarrier,
                 pNext = null,
             };
 
-            bufferBarriers[0x1] = new VkBufferMemoryBarrier()
+            bufferBarriers[0x1] = new()
             {
                 sType = VkStructureType.BufferMemoryBarrier,
                 pNext = null,
@@ -255,36 +249,14 @@ namespace Zeckoxe.Graphics
         public void SetScissor(int width, int height, int x, int y)
         {
             // Update dynamic scissor state
-            VkRect2D scissor = new VkRect2D()
-            {
-                extent = new VkExtent2D()
-                {
-                    height = (uint)width,
-                    width = (uint)height,
-                },
-                offset = new VkOffset2D()
-                {
-                    x = x,
-                    y = y,
-                }
-            };
+            VkRect2D scissor = new(x,y,width,height);
 
             vkCmdSetScissor(handle, 0, 1, &scissor);
         }
 
         public void SetViewport(float Width, float Height, float X, float Y, float MinDepth = 0.0f, float MaxDepth = 1.0f)
         {
-            VkViewport Viewport = new VkViewport()
-            {
-                width = Width,
-                height = Height,
-
-                x = X,
-                y = Y,
-
-                minDepth = MinDepth,
-                maxDepth = MaxDepth
-            };
+            VkViewport Viewport = new(X, Y, Width, Height, MinDepth, MaxDepth);
 
             vkCmdSetViewport(handle, 0, 1, &Viewport);
         }
@@ -353,9 +325,9 @@ namespace Zeckoxe.Graphics
         {
             // Bind descriptor sets describing shader binding points
             VkDescriptorSet descriptor_set = descriptor._descriptorSet;
-            VkPipelineLayout _pipelineLayout = descriptor.PipelineState._pipelineLayout;
+            VkPipelineLayout pipeline_layout = descriptor.PipelineState._pipelineLayout;
 
-            vkCmdBindDescriptorSets(handle, VkPipelineBindPoint.Graphics, _pipelineLayout, 0, 1, &descriptor_set, 0, null);
+            vkCmdBindDescriptorSets(handle, VkPipelineBindPoint.Graphics, pipeline_layout, 0, 1, &descriptor_set, 0, null);
         }
 
 
@@ -368,7 +340,7 @@ namespace Zeckoxe.Graphics
             VkCommandBuffer commandBuffer = handle;
 
 
-            VkSubmitInfo submitInfo = new VkSubmitInfo()
+            VkSubmitInfo submitInfo = new()
             {
                 sType = VkStructureType.SubmitInfo,
                 waitSemaphoreCount = 1,

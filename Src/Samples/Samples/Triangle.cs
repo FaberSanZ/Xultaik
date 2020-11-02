@@ -63,7 +63,7 @@ namespace Samples.Samples
             base.Initialize();
 
 
-            Camera = new Camera()
+            Camera = new()
             {
                 Mode = CameraType.Free,
                 Position = new Vector3(0, 0, -2.5f),
@@ -77,7 +77,7 @@ namespace Samples.Samples
             Models.Add(Model);
 
 
-            Uniform = new TransformUniform(Camera.Projection, Model, Camera.View);
+            Uniform = new(Camera.Projection, Model, Camera.View);
 
             CreateBuffers();
 

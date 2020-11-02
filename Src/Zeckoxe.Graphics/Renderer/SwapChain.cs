@@ -272,14 +272,14 @@ namespace Zeckoxe.Graphics
             vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, presentModes);
 
 
-            VkExtent2D swapchainExtent = new();
+            VkExtent2D swapchainExtent = default;
             // If width (and height) equals the special value 0xFFFFFFFF, the size of the Surface will be set by the swapchain
             if (surfCaps.currentExtent.width == unchecked(-1))
             {
                 // If the Surface size is undefined, the size is set to
                 // the size of the Images requested.
-                swapchainExtent.width = (uint)width;
-                swapchainExtent.height = (uint)height;
+
+                swapchainExtent = new((uint)width, (uint)height);
             }
             else
             {
@@ -368,11 +368,8 @@ namespace Zeckoxe.Graphics
                 minImageCount = desiredNumberOfSwapchainImages,
                 imageFormat = color_format,
                 imageColorSpace = color_space,
-                imageExtent = new VkExtent2D
-                {
-                    width = swapchainExtent.width,
-                    height = swapchainExtent.height
-                },
+                imageExtent = new(swapchainExtent.width, swapchainExtent.height),
+
                 imageUsage = VkImageUsageFlags.ColorAttachment,
                 preTransform = preTransform,
                 imageArrayLayers = 1,

@@ -643,11 +643,10 @@ namespace Zeckoxe.Graphics
                 return capabilities.currentExtent;
             }
 
-            return new()
-            {
-                width = Math.Max(capabilities.minImageExtent.width, Math.Min(capabilities.maxImageExtent.width, width)),
-                height = Math.Max(capabilities.minImageExtent.height, Math.Min(capabilities.maxImageExtent.height, height)),
-            };
+            return new(
+                Math.Max(capabilities.minImageExtent.width, Math.Min(capabilities.maxImageExtent.width, width)),
+                Math.Max(capabilities.minImageExtent.height, Math.Min(capabilities.maxImageExtent.height, height))
+            );
         }
 
 
