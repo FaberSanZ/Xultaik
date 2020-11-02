@@ -196,7 +196,7 @@ namespace Zeckoxe.Graphics
             {
                 GraphicsFamily = GetQueueFamilyIndex(VkQueueFlags.Graphics, queueFamilyProperties);
 
-                VkDeviceQueueCreateInfo queueInfo = new VkDeviceQueueCreateInfo
+                VkDeviceQueueCreateInfo queueInfo = new()
                 {
                     sType = VkStructureType.DeviceQueueCreateInfo,
                     queueFamilyIndex = GraphicsFamily,
@@ -221,7 +221,7 @@ namespace Zeckoxe.Graphics
                 if (ComputeFamily != GraphicsFamily)
                 {
                     // If compute family index differs, we need an additional queue create info for the compute queue
-                    VkDeviceQueueCreateInfo queueInfo = new VkDeviceQueueCreateInfo
+                    VkDeviceQueueCreateInfo queueInfo = new()
                     {
                         sType = VkStructureType.DeviceQueueCreateInfo,
                         queueFamilyIndex = ComputeFamily,
@@ -229,7 +229,7 @@ namespace Zeckoxe.Graphics
                         pQueuePriorities = &defaultQueuePriority
                     };
 
-                    queueCreateInfos[1] = (queueInfo);
+                    queueCreateInfos[1] = queueInfo;
                 }
             }
             else
@@ -247,7 +247,7 @@ namespace Zeckoxe.Graphics
                 if (TransferFamily != GraphicsFamily && TransferFamily != ComputeFamily)
                 {
                     // If compute family index differs, we need an additional queue create info for the transfer queue
-                    VkDeviceQueueCreateInfo queueInfo = new VkDeviceQueueCreateInfo
+                    VkDeviceQueueCreateInfo queueInfo = new()
                     {
                         sType = VkStructureType.DeviceQueueCreateInfo,
                         queueFamilyIndex = TransferFamily,
@@ -265,17 +265,17 @@ namespace Zeckoxe.Graphics
             }
 
 
-            VkPhysicalDeviceFeatures2 features = new VkPhysicalDeviceFeatures2
+            VkPhysicalDeviceFeatures2 features = new()
             {
                 sType = VkStructureType.PhysicalDeviceFeatures2,
             };
 
-            storage_8bit_features = new VkPhysicalDevice8BitStorageFeatures
+            storage_8bit_features = new()
             {
                 sType = VkStructureType.PhysicalDevice8bitStorageFeatures,
             };
 
-            ray_tracing_features = new VkPhysicalDeviceRayTracingFeaturesKHR
+            ray_tracing_features = new()
             {
                 sType = VkStructureType.PhysicalDeviceRayTracingFeaturesKHR
             };
@@ -345,12 +345,12 @@ namespace Zeckoxe.Graphics
 
             // Only need GetPhysicalDeviceProperties2 for Vulkan 1.1-only code, so don't bother getting KHR variant.
 
-            VkPhysicalDeviceProperties2 props = new VkPhysicalDeviceProperties2
+            VkPhysicalDeviceProperties2 props = new()
             {
                 sType = VkStructureType.PhysicalDeviceProperties2,
             };
 
-            conservative_rasterization_properties = new VkPhysicalDeviceConservativeRasterizationPropertiesEXT
+            conservative_rasterization_properties = new()
             {
                 sType = VkStructureType.PhysicalDeviceConservativeRasterizationPropertiesEXT,
             };
@@ -411,7 +411,7 @@ namespace Zeckoxe.Graphics
             fixed (byte* scPtr = bytes)
             {
                 // Create a new shader module that will be used for Pipeline creation
-                VkShaderModuleCreateInfo moduleCreateInfo = new VkShaderModuleCreateInfo()
+                VkShaderModuleCreateInfo moduleCreateInfo = new()
                 {
                     sType = VkStructureType.ShaderModuleCreateInfo,
                     pNext = null,
@@ -498,7 +498,7 @@ namespace Zeckoxe.Graphics
 
         internal VkSemaphore CreateSemaphore()
         {
-            VkSemaphoreCreateInfo vkSemaphoreCreate = new VkSemaphoreCreateInfo()
+            VkSemaphoreCreateInfo vkSemaphoreCreate = new()
             {
                 sType = VkStructureType.SemaphoreCreateInfo,
                 pNext = null,
@@ -513,7 +513,7 @@ namespace Zeckoxe.Graphics
 
         internal VkCommandPool CreateCommandPool()
         {
-            VkCommandPoolCreateInfo poolInfo = new VkCommandPoolCreateInfo()
+            VkCommandPoolCreateInfo poolInfo = new()
             {
                 sType = VkStructureType.CommandPoolCreateInfo,
                 queueFamilyIndex = GraphicsFamily,
@@ -530,7 +530,7 @@ namespace Zeckoxe.Graphics
 
         internal VkCommandBuffer CreateCommandBufferPrimary()
         {
-            VkCommandBufferAllocateInfo allocInfo = new VkCommandBufferAllocateInfo()
+            VkCommandBufferAllocateInfo allocInfo = new()
             {
                 sType = VkStructureType.CommandBufferAllocateInfo,
                 commandPool = nativeCommandPool,
@@ -548,7 +548,7 @@ namespace Zeckoxe.Graphics
 
         internal VkCommandBuffer CreateCommandBufferSecondary()
         {
-            VkCommandBufferAllocateInfo allocInfo = new VkCommandBufferAllocateInfo()
+            VkCommandBufferAllocateInfo allocInfo = new()
             {
                 sType = VkStructureType.CommandBufferAllocateInfo,
                 commandPool = nativeCommandPool,

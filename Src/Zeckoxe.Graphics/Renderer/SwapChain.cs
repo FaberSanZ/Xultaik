@@ -99,7 +99,7 @@ namespace Zeckoxe.Graphics
             VkInstance instance = NativeDevice.NativeAdapter.instance;
             VkSurfaceKHR defSurface = default;
 
-            VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfo = new VkWin32SurfaceCreateInfoKHR()
+            VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfo = new()
             {
                 sType = VkStructureType.Win32SurfaceCreateInfoKHR,
                 pNext = null,
@@ -108,7 +108,7 @@ namespace Zeckoxe.Graphics
                 hwnd = Parameters.Win32Handle,
             };
 
-            vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.NativeAdapter.GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
+            vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
 
 
             // TODO: Update to SDL
@@ -272,7 +272,7 @@ namespace Zeckoxe.Graphics
             vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, presentModes);
 
 
-            VkExtent2D swapchainExtent = new VkExtent2D();
+            VkExtent2D swapchainExtent = new();
             // If width (and height) equals the special value 0xFFFFFFFF, the size of the Surface will be set by the swapchain
             if (surfCaps.currentExtent.width == unchecked(-1))
             {
@@ -360,7 +360,7 @@ namespace Zeckoxe.Graphics
 
             VkSwapchainKHR oldSwapchain = handle;
 
-            VkSwapchainCreateInfoKHR swapchain_info = new VkSwapchainCreateInfoKHR()
+            VkSwapchainCreateInfoKHR swapchain_info = new()
             {
                 sType = VkStructureType.SwapchainCreateInfoKHR,
                 pNext = null,
@@ -436,7 +436,7 @@ namespace Zeckoxe.Graphics
             CommandBuffer commandBuffer = NativeDevice.NativeCommand;
             uint imageIndex = commandBuffer.imageIndex;
 
-            VkPresentInfoKHR present_info = new VkPresentInfoKHR()
+            VkPresentInfoKHR present_info = new()
             {
                 sType = VkStructureType.PresentInfoKHR,
                 pNext = null,

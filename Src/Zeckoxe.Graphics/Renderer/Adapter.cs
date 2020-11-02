@@ -274,7 +274,7 @@ namespace Zeckoxe.Graphics
         internal void CreateInstance(string[] extensions)
         {
 
-            VkApplicationInfo app_info = new VkApplicationInfo
+            VkApplicationInfo app_info = new()
             {
                 sType = VkStructureType.ApplicationInfo,
                 pNext = null,
@@ -287,12 +287,12 @@ namespace Zeckoxe.Graphics
 
 
             // TODO: layers
-            string[] layers = new string[]
+            string[] layers = new[]
             {
                 "VK_LAYER_KHRONOS_validation",
             };
 
-            VkInstanceCreateInfo inst_info = new VkInstanceCreateInfo
+            VkInstanceCreateInfo inst_info = new()
             {
                 sType = VkStructureType.InstanceCreateInfo,
                 pNext = null,
@@ -302,7 +302,7 @@ namespace Zeckoxe.Graphics
                 enabledExtensionCount = (uint)extensions.Length,
             };
 
-            VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = new VkDebugUtilsMessengerCreateInfoEXT
+            VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = new()
             {
                 sType = VkStructureType.DebugUtilsMessengerCreateInfoEXT,
                 pNext = null,
