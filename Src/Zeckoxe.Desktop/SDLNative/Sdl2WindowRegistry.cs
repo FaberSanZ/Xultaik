@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Zeckoxe.Desktop;
 using static Zeckoxe.Sdl2.Sdl2Native;
 
 namespace Zeckoxe.Sdl2
 {
+    // TODO: Sdl2WindowRegistry
     internal static class Sdl2WindowRegistry
     {
         public static readonly object Lock = new object();

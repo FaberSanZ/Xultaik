@@ -18,7 +18,7 @@ namespace Zeckoxe.Graphics
 
         public int BackBufferHeight { get; set; }
 
-        public IntPtr Win32Handle { get; set; }
+        public SwapchainSource SwapchainSource { get; set; }
 
         public Settings Settings { get; set; }
     }

@@ -8,10 +8,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
-using Zeckoxe.Desktop;
 using Zeckoxe.Games;
 using Zeckoxe.Graphics;
+using Zeckoxe.Desktop;
 
 namespace Zeckoxe.Engine
 {
@@ -19,7 +20,7 @@ namespace Zeckoxe.Engine
     {
         public Game() : base()
         {
-            Window = new Window("Zeckoxe Engine", 1200, 800)
+            Window = new Window("Zeckoxe Engine", 100,100,1200, 800, WindowState.Normal)
             {
                 //StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
             };
@@ -29,7 +30,7 @@ namespace Zeckoxe.Engine
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                Win32Handle = Window.Win32Handle,
+                SwapchainSource = Window.GetSwapchainSource(),
                 Settings = new Settings()
                 {
                     Validation =  ValidationType.None,
@@ -81,7 +82,7 @@ namespace Zeckoxe.Engine
         {
             base.BeginRun();
 
-            Window?.Show();
+            // Window?.Show(); //TODO: Show Window 
 
 
             Window.RenderLoop(OnTickRequested);

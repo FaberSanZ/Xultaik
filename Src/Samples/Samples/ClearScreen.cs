@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
@@ -10,7 +11,7 @@ namespace Samples.Samples
     {
         public ClearScreen()
         {
-            Window = new(" - (Clear Screen)", 1200, 800)
+            Window = new(" - (Clear Screen)", 100, 100, 1200, 800, WindowState.Normal)
             {
             };
 
@@ -19,7 +20,7 @@ namespace Samples.Samples
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                Win32Handle = Window.Win32Handle,
+                SwapchainSource = Window.GetSwapchainSource(),
                 Settings = new()
                 {
                     Validation = ValidationType.Console | ValidationType.Debug,
@@ -62,7 +63,7 @@ namespace Samples.Samples
 
             BeginRun();
 
-            Window?.Show();
+            //Window?.Show(); //TODO: Show Window 
 
             Tick();
         }
