@@ -142,10 +142,10 @@ namespace Samples.Samples
         {
             base.Initialize();
 
-            Camera = new Camera()
+            Camera = new()
             {
                 Mode = CameraType.Free,
-                Position = new Vector3(0, 0, -3.5f),
+                Position = new(0, 0, -3.5f),
             };
 
             Camera.SetLens(Window.Width, Window.Height);
@@ -156,7 +156,7 @@ namespace Samples.Samples
             Models.Add(Model);
 
 
-            uniform = new TransformUniform(Camera.Projection, Model, Camera.View);
+            uniform = new(Camera.Projection, Model, Camera.View);
 
 
 
@@ -167,15 +167,15 @@ namespace Samples.Samples
             // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
             List<DescriptorPool> pool = new()
             {
-                new DescriptorPool(DescriptorType.UniformBuffer, 1),
+                new(DescriptorType.UniformBuffer, 1),
             };
 
             // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor1 = new DescriptorSet(PipelineState, pool);
+            Descriptor1 = new(PipelineState, pool);
             Descriptor1.SetUniformBuffer(0, ConstBuffer);
 
             // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor2 = new DescriptorSet(PipelineState, pool);
+            Descriptor2 = new(PipelineState, pool);
             Descriptor2.SetUniformBuffer(0, ConstBuffer2);
 
 
@@ -189,7 +189,7 @@ namespace Samples.Samples
 
         public void CreateBuffers()
         {
-            VertexBuffer = new Buffer(Device, new BufferDescription()
+            VertexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -198,7 +198,7 @@ namespace Samples.Samples
             VertexBuffer.SetData(vertices);
 
 
-            IndexBuffer = new Buffer(Device, new BufferDescription()
+            IndexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -207,33 +207,32 @@ namespace Samples.Samples
             IndexBuffer.SetData(indices);
 
 
-            ConstBuffer = new Buffer(Device, new BufferDescription()
+            ConstBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 
-            ConstBuffer2 = new Buffer(Device, new BufferDescription()
+            ConstBuffer2 = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
-
         }
 
 
         public void CreatePipelineState()
         {
-            PipelineStateDescription Pipelinedescription = new PipelineStateDescription()
+            PipelineStateDescription Pipelinedescription = new()
             {
                 Framebuffer = Framebuffer,
 
                 Layouts =
                 {
                     // Binding 0: Uniform buffer (Vertex shader)
-                    new DescriptorSetLayout()
+                    new()
                     {
                         Stage = ShaderStage.Vertex,
                         Type = DescriptorType.UniformBuffer,
@@ -241,28 +240,26 @@ namespace Samples.Samples
                     }
                 },
 
-                InputAssemblyState = new InputAssemblyState()
-                {
-                    PrimitiveType = PrimitiveType.TriangleList,
-                },
-                RasterizationState = new RasterizationState()
+                InputAssemblyState = new(PrimitiveType.TriangleList),
+
+                RasterizationState = new()
                 {
                     FillMode = FillMode.Solid,
                     CullMode = CullMode.None,
                     FrontFace = FrontFace.Clockwise,
                 },
-                PipelineVertexInput = new PipelineVertexInput
+                PipelineVertexInput = new()
                 {
                     VertexAttributeDescriptions =
                     {
-                        new VertexInputAttribute
+                        new()
                         {
                             Binding = 0,
                             Location = 0,
                             Format = PixelFormat.R32G32B32SFloat,
                             Offset = 0,
                         },
-                        new VertexInputAttribute
+                        new()
                         {
                             Binding = 0,
                             Location = 1,
@@ -272,7 +269,7 @@ namespace Samples.Samples
                     },
                     VertexBindingDescriptions =
                     {
-                        new VertexInputBinding
+                        new()
                         {
                             Binding = 0,
                             InputRate = VertexInputRate.Vertex,
@@ -287,7 +284,7 @@ namespace Samples.Samples
                 },
             };
 
-            PipelineState = new GraphicsPipelineState(Pipelinedescription);
+            PipelineState = new(Pipelinedescription);
         }
 
 

@@ -10,19 +10,19 @@ namespace Samples.Samples
     {
         public ClearScreen()
         {
-            Window = new Window(" - (Clear Screen)", 1200, 800)
+            Window = new(" - (Clear Screen)", 1200, 800)
             {
             };
 
 
-            Parameters = new PresentationParameters()
+            Parameters = new()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
                 Win32Handle = Window.Win32Handle,
-                Settings = new Settings()
+                Settings = new()
                 {
-                    Validation = ValidationType.None,
+                    Validation = ValidationType.Console | ValidationType.Debug,
                     Fullscreen = false,
                     VSync = false,
                 },
@@ -44,15 +44,15 @@ namespace Samples.Samples
         public void Initialize()
         {
 
-            Adapter = new Adapter(Parameters);
+            Adapter = new(Parameters);
 
-            Device = new Device(Adapter);
+            Device = new(Adapter);
 
-            SwapChain = new SwapChain(Device);
+            SwapChain = new(Device);
 
-            Framebuffer = new Framebuffer(SwapChain);
+            Framebuffer = new(SwapChain);
 
-            Context = new GraphicsContext(Device);
+            Context = new(Device);
         }
 
 

@@ -66,7 +66,7 @@ namespace Samples.Samples
             Camera = new()
             {
                 Mode = CameraType.Free,
-                Position = new Vector3(0, 0, -2.5f),
+                Position = new(0, 0, -2.5f),
             };
 
             Camera.SetLens(Window.Width, Window.Height);
@@ -96,7 +96,7 @@ namespace Samples.Samples
             };
 
 
-            Descriptor = new DescriptorSet(PipelineState, pool);
+            Descriptor = new(PipelineState, pool);
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
 
         }
@@ -121,7 +121,7 @@ namespace Samples.Samples
             };
 
 
-            VertexBuffer = new Buffer(Device, new BufferDescription()
+            VertexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -130,7 +130,7 @@ namespace Samples.Samples
             VertexBuffer.SetData(vertices);
 
 
-            IndexBuffer = new Buffer(Device, new BufferDescription()
+            IndexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -139,7 +139,7 @@ namespace Samples.Samples
             IndexBuffer.SetData(indices);
 
 
-            ConstBuffer = new Buffer(Device, new BufferDescription()
+            ConstBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -152,14 +152,14 @@ namespace Samples.Samples
 
         public void CreatePipelineState()
         {
-            PipelineStateDescription Pipelinedescription = new PipelineStateDescription()
+            PipelineStateDescription Pipelinedescription = new()
             {
                 Framebuffer = Framebuffer,
 
                 Layouts =
                 {
                     // Binding 0: Uniform buffer (Vertex shader)
-                    new DescriptorSetLayout()
+                    new()
                     {
                         Stage = ShaderStage.Vertex,
                         Type = DescriptorType.UniformBuffer,
@@ -167,28 +167,28 @@ namespace Samples.Samples
                     }
                 },
 
-                InputAssemblyState = new InputAssemblyState()
+                InputAssemblyState = new()
                 {
                     PrimitiveType = PrimitiveType.TriangleList,
                 },
-                RasterizationState = new RasterizationState()
+                RasterizationState = new()
                 {
                     FillMode = FillMode.Solid,
                     CullMode = CullMode.Front,
                     FrontFace = FrontFace.Clockwise
                 },
-                PipelineVertexInput = new PipelineVertexInput
+                PipelineVertexInput = new()
                 {
                     VertexAttributeDescriptions =
                     {
-                        new VertexInputAttribute
+                        new()
                         {
                             Binding = 0,
                             Location = 0,
                             Format = PixelFormat.R32G32B32SFloat,
                             Offset = 0,
                         },
-                        new VertexInputAttribute
+                        new()
                         {
                             Binding = 0,
                             Location = 1,
@@ -198,7 +198,7 @@ namespace Samples.Samples
                     },
                     VertexBindingDescriptions =
                     {
-                        new VertexInputBinding
+                        new()
                         {
                             Binding = 0,
                             InputRate = VertexInputRate.Vertex,
@@ -213,7 +213,7 @@ namespace Samples.Samples
                 },
             };
 
-            PipelineState = new GraphicsPipelineState(Pipelinedescription);
+            PipelineState = new(Pipelinedescription);
         }
 
 

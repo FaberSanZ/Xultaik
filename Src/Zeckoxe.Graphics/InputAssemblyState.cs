@@ -17,7 +17,7 @@ namespace Zeckoxe.Graphics
         public PrimitiveType PrimitiveType { get; set; }
         public bool PrimitiveRestartEnable { get; set; }
 
-        public InputAssemblyState(PrimitiveType Type, bool RestartEnable)
+        public InputAssemblyState(PrimitiveType Type, bool RestartEnable = false)
         {
             PrimitiveType = Type;
             PrimitiveRestartEnable = RestartEnable;

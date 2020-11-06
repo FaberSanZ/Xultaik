@@ -396,9 +396,8 @@ namespace Zeckoxe.Graphics
 
         internal VkQueue GetQueue(uint queueFamilyIndex = int.MaxValue, uint queueIndex = 0)
         {
-            //VkQueue Queue;
-            vkGetDeviceQueue(handle, queueFamilyIndex, queueIndex, out VkQueue Queue);
-            return Queue;
+            vkGetDeviceQueue(handle, queueFamilyIndex, queueIndex, out VkQueue queue);
+            return queue;
         }
 
 

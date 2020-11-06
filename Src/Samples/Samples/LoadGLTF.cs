@@ -65,10 +65,10 @@ namespace Samples.Samples
         public VertexPositionNormal[] Vertices { get; set; }
 
 
-        public Dictionary<string, DescriptorSet> DescriptorSets = new Dictionary<string, DescriptorSet>();
-        public Dictionary<string, Buffer> Buffers = new Dictionary<string, Buffer>();
-        public Dictionary<string, GraphicsPipelineState> PipelineStates = new Dictionary<string, GraphicsPipelineState>();
-        public Dictionary<string, ShaderBytecode> Shaders = new Dictionary<string, ShaderBytecode>();
+        public Dictionary<string, DescriptorSet> DescriptorSets = new();
+        public Dictionary<string, Buffer> Buffers = new();
+        public Dictionary<string, GraphicsPipelineState> PipelineStates = new();
+        public Dictionary<string, ShaderBytecode> Shaders = new();
 
         // TransformUniform 
         public TransformUniform uniform;
@@ -81,10 +81,10 @@ namespace Samples.Samples
         {
             base.Initialize();
 
-            Camera = new Camera()
+            Camera = new()
             {
                 Mode = CameraType.Free,
-                Position = new Vector3(1, -.3f, -3.5f),
+                Position = new(1, -.3f, -3.5f),
             };
 
             Camera.SetLens(Window.Width, Window.Height);
@@ -93,10 +93,10 @@ namespace Samples.Samples
             // Reset Model
             Model = Matrix4x4.Identity;
 
-            uniform = new TransformUniform(Camera.Projection, Model, Camera.View);
+            uniform = new(Camera.Projection, Model, Camera.View);
 
 
-            GLTFModel = new GLTFLoader("Models/model.glb");
+            GLTFModel = new("Models/model.glb");
 
             Indices = GLTFModel.Indices;
             Vertices = GLTFModel.GetPositionNormalAsArray();
@@ -112,11 +112,11 @@ namespace Samples.Samples
                 new  DescriptorPool(DescriptorType.UniformBuffer, 1),
             };
 
-            DescriptorSets["Descriptor1"] = new DescriptorSet(PipelineStates["Wireframe"], pool);
+            DescriptorSets["Descriptor1"] = new(PipelineStates["Wireframe"], pool);
             DescriptorSets["Descriptor1"].SetUniformBuffer(0, Buffers["ConstBuffer1"]); // Binding 0: Uniform buffer (Vertex shader)
 
 
-            DescriptorSets["Descriptor2"] = new DescriptorSet(PipelineStates["Solid"], pool);
+            DescriptorSets["Descriptor2"] = new(PipelineStates["Solid"], pool);
             DescriptorSets["Descriptor2"].SetUniformBuffer(0, Buffers["ConstBuffer2"]); // Binding 0: Uniform buffer (Vertex shader)
 
             yaw = 3.15f;
@@ -127,7 +127,7 @@ namespace Samples.Samples
 
         public void CreateBuffers()
         {
-            Buffers["VertexBuffer"] = new Buffer(Device, new BufferDescription()
+            Buffers["VertexBuffer"] = new(Device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -136,7 +136,7 @@ namespace Samples.Samples
             Buffers["VertexBuffer"].SetData(Vertices);
 
 
-            Buffers["IndexBuffer"] = new Buffer(Device, new BufferDescription()
+            Buffers["IndexBuffer"] = new(Device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -145,22 +145,19 @@ namespace Samples.Samples
             Buffers["IndexBuffer"].SetData(Indices);
 
 
-            Buffers["ConstBuffer1"] = new Buffer(Device, new BufferDescription()
+            Buffers["ConstBuffer1"] = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 
-            Buffers["ConstBuffer2"] = new Buffer(Device, new BufferDescription()
+            Buffers["ConstBuffer2"] = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
-
-
-
 
         }
 
@@ -174,14 +171,14 @@ namespace Samples.Samples
             List<VertexInputAttribute> VertexAttributeDescriptions = new()
             {
 
-                new VertexInputAttribute
+                new()
                 {
                     Binding = 0,
                     Location = 0,
                     Format = PixelFormat.R32G32B32SFloat,
                     Offset = 0,
                 },
-                new VertexInputAttribute
+                new()
                 {
                     Binding = 0,
                     Location = 1,
@@ -192,7 +189,7 @@ namespace Samples.Samples
 
             List<VertexInputBinding> VertexBindingDescriptions = new()
             {
-                new VertexInputBinding
+                new()
                 {
                     Binding = 0,
                     InputRate = VertexInputRate.Vertex,
@@ -201,14 +198,14 @@ namespace Samples.Samples
             };
 
 
-            PipelineStates["Wireframe"] = new GraphicsPipelineState(new PipelineStateDescription() 
+            PipelineStates["Wireframe"] = new(new() 
             {
                 Framebuffer = Framebuffer,
 
                 Layouts =
                 {
                     // Binding 0: Uniform buffer (Vertex shader)
-                    new DescriptorSetLayout()
+                    new()
                     {
                         Stage = ShaderStage.Vertex,
                         Type = DescriptorType.UniformBuffer,
@@ -218,13 +215,13 @@ namespace Samples.Samples
 
                 InputAssemblyState = InputAssemblyState.Default(),
 
-                RasterizationState = new RasterizationState()
+                RasterizationState = new()
                 {
                     FillMode = FillMode.Wireframe,
                     CullMode = CullMode.None,
                     FrontFace = FrontFace.Clockwise,
                 },
-                PipelineVertexInput = new PipelineVertexInput
+                PipelineVertexInput = new()
                 {
                     VertexAttributeDescriptions = VertexAttributeDescriptions,
                     VertexBindingDescriptions = VertexBindingDescriptions,
@@ -239,14 +236,14 @@ namespace Samples.Samples
             });
 
 
-            PipelineStates["Solid"] = new GraphicsPipelineState(new PipelineStateDescription() 
+            PipelineStates["Solid"] = new(new() 
             {
                 Framebuffer = Framebuffer,
 
                 Layouts =
                 {
                     // Binding 0: Uniform buffer (Vertex shader)
-                    new DescriptorSetLayout()
+                    new()
                     {
                         Stage = ShaderStage.Vertex,
                         Type = DescriptorType.UniformBuffer,
@@ -256,13 +253,13 @@ namespace Samples.Samples
 
                 InputAssemblyState = InputAssemblyState.Default(),
 
-                RasterizationState = new RasterizationState()
+                RasterizationState = new()
                 {
                     FillMode = FillMode.Solid,
                     CullMode = CullMode.None,
                     FrontFace = FrontFace.Clockwise,
                 },
-                PipelineVertexInput = new PipelineVertexInput
+                PipelineVertexInput = new()
                 {
                     VertexAttributeDescriptions = VertexAttributeDescriptions,
                     VertexBindingDescriptions = VertexBindingDescriptions,

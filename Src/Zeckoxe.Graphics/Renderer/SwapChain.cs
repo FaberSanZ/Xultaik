@@ -354,8 +354,16 @@ namespace Zeckoxe.Graphics
                 {
                     compositeAlpha = compositeAlphaFlag;
                     break;
-                };
+                }
             }
+
+
+            uint* extent = stackalloc uint[2];
+            extent[0] = swapchainExtent.width + 1;
+            extent[1] = swapchainExtent.height + 1;
+
+            VkExtent2D imageExtent = *(VkExtent2D*)&extent;
+
 
 
             VkSwapchainKHR oldSwapchain = handle;
@@ -364,11 +372,12 @@ namespace Zeckoxe.Graphics
             {
                 sType = VkStructureType.SwapchainCreateInfoKHR,
                 pNext = null,
+                
                 surface = surface,
                 minImageCount = desiredNumberOfSwapchainImages,
                 imageFormat = color_format,
                 imageColorSpace = color_space,
-                imageExtent = new(swapchainExtent.width, swapchainExtent.height),
+                imageExtent = new(swapchainExtent.width, swapchainExtent.height)  /*imageExtent*/,
 
                 imageUsage = VkImageUsageFlags.ColorAttachment,
                 preTransform = preTransform,
