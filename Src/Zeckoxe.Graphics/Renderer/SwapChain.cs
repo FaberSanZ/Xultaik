@@ -57,11 +57,12 @@ namespace Zeckoxe.Graphics
 
 
 
-        public SwapChain(Device device) : base(device)
+
+        public SwapChain(Device device, SwapchainSource source) : base(device)
         {
             Parameters = NativeDevice.NativeParameters;
 
-
+            SwapchainSource = source;
 
             surface = CreateSurface();
 
@@ -83,7 +84,7 @@ namespace Zeckoxe.Graphics
         public PresentationParameters Parameters { get; set; }
         public PixelFormat ColorFormat { get; private set; }
         public Texture DepthStencil { get; private set; }
-
+        public SwapchainSource SwapchainSource { get; set; }
 
 
 
@@ -123,14 +124,20 @@ namespace Zeckoxe.Graphics
         internal VkSurfaceKHR CreateSurface()
         {
             VkInstance instance = NativeDevice.NativeAdapter.instance;
-            VkSurfaceKHR surface = default;
+            VkSurfaceKHR surface = 0;
 
             PFN_vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
             PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateXlibSurfaceKHR>("vkCreateXlibSurfaceKHR");
             PFN_vkCreateWaylandSurfaceKHR vkCreateWaylandSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWaylandSurfaceKHR>("vkCreateWaylandSurfaceKHR");
 
 
-            if (Parameters.SwapchainSource is Win32SwapchainSource sourcewin32 && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            //if (SwapchainSource is WindowSwapchainSource sourcewin)
+            //{
+            //    surface = new VkSurfaceKHR(sourcewin.Surface);
+            //}
+
+
+            if (SwapchainSource is Win32SwapchainSource sourcewin32 && NativeDevice.NativeAdapter.SupportsWin32Surface)
             {
                 VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfo = new()
                 {
@@ -146,7 +153,7 @@ namespace Zeckoxe.Graphics
 
 
 
-            if (Parameters.SwapchainSource is XlibSwapchainSource xlibsource && RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (SwapchainSource is XlibSwapchainSource xlibsource) // TODO: xlibsource
             {
 
                 VkXlibSurfaceCreateInfoKHR XlibSurfaceCreateInfo = new()
@@ -161,7 +168,7 @@ namespace Zeckoxe.Graphics
                 vkCreateXlibSurfaceKHR(instance, &XlibSurfaceCreateInfo, null, &surface);
             }
 
-            if (Parameters.SwapchainSource is WaylandSwapchainSource Waylandsource && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (SwapchainSource is WaylandSwapchainSource Waylandsource) // TODO: CreateWayland
             {
 
                 VkWaylandSurfaceCreateInfoKHR XlibSurfaceCreateInfo = new()
@@ -169,8 +176,8 @@ namespace Zeckoxe.Graphics
                     sType = VkStructureType.WaylandSurfaceCreateInfoKHR,
                     pNext = null,
                     flags = 0,
-                    display = (wl_display*)Waylandsource.Display,
-                    surface = (wl_surface*)Waylandsource.Surface
+                    display = (wl_display*)Waylandsource.Display, // TODO: wl_display ?
+                    surface = (wl_surface*)Waylandsource.Surface  // TODO: wl_surface ?
                 };
 
                 vkCreateWaylandSurfaceKHR(instance, &XlibSurfaceCreateInfo, null, &surface);

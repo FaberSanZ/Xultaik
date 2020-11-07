@@ -20,7 +20,7 @@ namespace Samples.Samples
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                SwapchainSource = Window.GetSwapchainSource(),
+                //SwapchainSource = Window.GetSwapchainSource(),
                 Settings = new()
                 {
                     Validation = ValidationType.Console | ValidationType.Debug,
@@ -49,7 +49,7 @@ namespace Samples.Samples
 
             Device = new(Adapter);
 
-            SwapChain = new(Device);
+            SwapChain = new(Device, Window.GetSwapchainSource(Adapter));
 
             Framebuffer = new(SwapChain);
 

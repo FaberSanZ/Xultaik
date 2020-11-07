@@ -10,6 +10,7 @@ namespace Zeckoxe.Graphics
 
 
         public static SwapchainSource CreateWin32(IntPtr hwnd, IntPtr hinstance) => new Win32SwapchainSource(hwnd, hinstance);
+        public static SwapchainSource CreateWindow(ulong surface) => new WindowSwapchainSource(surface);
 
 
         public static SwapchainSource CreateXlib(IntPtr display, IntPtr window) => new XlibSwapchainSource(display, window);
@@ -41,6 +42,18 @@ namespace Zeckoxe.Graphics
         {
             Hwnd = hwnd;
             Hinstance = hinstance;
+        }
+    }
+
+
+
+    public class WindowSwapchainSource : SwapchainSource
+    {
+        public ulong Surface { get; }
+
+        public WindowSwapchainSource(ulong surface)
+        {
+            Surface = surface;
         }
     }
 

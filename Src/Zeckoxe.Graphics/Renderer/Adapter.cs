@@ -74,6 +74,9 @@ namespace Zeckoxe.Graphics
 
         public bool SupportsSurface { get; private set; }
 
+        public bool SupportsWin32Surface { get; private set; }
+
+
         public bool SupportsExternal { get; private set; }
 
         public bool SupportsDedicated { get; private set; }
@@ -145,6 +148,11 @@ namespace Zeckoxe.Graphics
 
 
 
+        public VkInstance GetInstance()
+        {
+            return instance;
+        }
+
 
 
         public void Recreate()
@@ -186,7 +194,6 @@ namespace Zeckoxe.Graphics
         }
 
 
-
         internal void device_extension()
         {
             foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
@@ -212,6 +219,7 @@ namespace Zeckoxe.Graphics
                 if (instance_extensions_names.Contains("VK_KHR_win32_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_win32_surface");
+                    SupportsWin32Surface = true;
                 }
             }
 

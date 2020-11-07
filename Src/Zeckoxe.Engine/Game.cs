@@ -60,7 +60,7 @@ namespace Zeckoxe.Engine
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                SwapchainSource = Window.GetSwapchainSource(),
+                //SwapchainSource = Window.GetSwapchainSource(Adapter),
                 Settings = new Settings()
                 {
                     Validation = ValidationType.None,
@@ -79,7 +79,7 @@ namespace Zeckoxe.Engine
 
             Device = new Device(Adapter);
 
-            SwapChain = new SwapChain(Device);
+            SwapChain = new SwapChain(Device, Window.GetSwapchainSource(Adapter));
 
             Framebuffer = new Framebuffer(SwapChain);
 

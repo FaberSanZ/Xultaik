@@ -20,27 +20,6 @@ namespace Zeckoxe.Desktop
         private string _title;
 
 
-        public string Title
-        {
-            get => _title;
-
-            set
-            {
-                if (value != _title)
-                {
-                    _title = value;
-                    GLFW.GlfwSetWindowTitle(pWindow, Interop.String.ToPointer(value));
-                }
-            }
-        }
-
-
-
-
-
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public IntPtr Win32Handle => GLFW.GlfwGetWin32Window(pWindow);
 
 
 
@@ -59,9 +38,36 @@ namespace Zeckoxe.Desktop
             pWindow = GLFW.GlfwCreateWindow(width, height, _title, IntPtr.Zero, IntPtr.Zero);
         }
 
-        public SwapchainSource GetSwapchainSource()
+
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public IntPtr Win32Handle => GLFW.GlfwGetWin32Window(pWindow);
+
+        public string Title
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            get => _title;
+
+            set
+            {
+                if (value != _title)
+                {
+                    _title = value;
+                    GLFW.GlfwSetWindowTitle(pWindow, Interop.String.ToPointer(value));
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+        public SwapchainSource GetSwapchainSource(Adapter adapter)
+        {
+            if (adapter.SupportsWin32Surface)
             {
                 IntPtr hwnd = GLFW.GlfwGetWin32Window(pWindow);
                 IntPtr hinstance = Process.GetCurrentProcess().Handle;
@@ -71,29 +77,41 @@ namespace Zeckoxe.Desktop
                     return SwapchainSource.CreateWin32(hwnd, hinstance);
                 }
             }
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                IntPtr x11Window = GLFW.GlfwGetX11Window(pWindow);
-                IntPtr x11Display = GLFW.GlfwGetX11Display();
 
-                if (x11Display != IntPtr.Zero && x11Window != IntPtr.Zero)
-                {
-                    return SwapchainSource.CreateXlib(x11Display, x11Window);
-                }
 
-            }
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                IntPtr waylandWindow = GLFW.GlfwGetWaylandWindow(pWindow);
-                IntPtr waylandDisplay = GLFW.GlfwGetWaylandDisplay();
 
-                if (waylandWindow != IntPtr.Zero && waylandDisplay != IntPtr.Zero)
-                {
-                    return SwapchainSource.CreateWayland(waylandDisplay, waylandWindow);
-                }
-            }
+            //if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            //{
+            //    IntPtr x11Window = GLFW.GlfwGetX11Window(pWindow);
+            //    IntPtr x11Display = GLFW.GlfwGetX11Display();
+
+            //    if (x11Display != IntPtr.Zero && x11Window != IntPtr.Zero)
+            //    {
+            //        return SwapchainSource.CreateXlib(x11Display, x11Window);
+            //    }
+
+            //}
+            //if (RuntimeInformation.IsOSPlatform(OSPlatform.Create(""))) // TODO: CreateWayland
+            //{
+            //    IntPtr waylandWindow = GLFW.GlfwGetWaylandWindow(pWindow);
+            //    IntPtr waylandDisplay = GLFW.GlfwGetWaylandDisplay();
+
+            //    if (waylandWindow != IntPtr.Zero && waylandDisplay != IntPtr.Zero)
+            //    {
+            //        return SwapchainSource.CreateWayland(waylandDisplay, waylandWindow);
+            //    }
+            //}
 
             throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
+
+
+            //ulong surface = default;
+
+
+            //IntPtr hwnd = GLFW.GlfwCreateWindowSurface(adapter.GetInstance().Handle ,pWindow , null, &surface);
+            //Console.WriteLine(hwnd.ToInt64());
+
+            //return SwapchainSource.CreateWindow(surface);
         }
 
         public void RenderLoop(Action render)

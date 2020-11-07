@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
+using Vortice.Vulkan;
 
 namespace Zeckoxe.Desktop.GLFWNative
 {
@@ -363,6 +364,13 @@ namespace Zeckoxe.Desktop.GLFWNative
 		internal static IntPtr GlfwGetWaylandDisplay() => glfwGetWaylandDisplay_();
 
 
+
+
+
+
+		internal delegate IntPtr glfwCreateWindowSurface(IntPtr instance, IntPtr window, IntPtr* pAllocator, ulong* surface);
+		private static readonly glfwCreateWindowSurface glfwCreateWindowSurface_ = GLFWLoader.GetStaticProc<glfwCreateWindowSurface>("glfwCreateWindowSurface");
+		internal static IntPtr GlfwCreateWindowSurface(IntPtr instance, IntPtr window, IntPtr* pAllocator, ulong* surface) => glfwCreateWindowSurface_(instance, window, pAllocator, surface);
 
 
 
