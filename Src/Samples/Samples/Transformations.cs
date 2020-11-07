@@ -133,10 +133,14 @@ namespace Samples.Samples
 
         public Transformations() : base()
         {
+
+        }
+        public override void InitializeSettings()
+        {
+            base.InitializeSettings();
             Parameters.Settings.Validation = ValidationType.None;
             Window.Title += " - (Transformations) ";
         }
-
 
         public override void Initialize()
         {

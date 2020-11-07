@@ -38,6 +38,8 @@ namespace Zeckoxe.Games
 
             IsRunning = true;
 
+            InitializeSettings();
+            InitializeVulkan();
             Initialize();
             LoadContentAsync();
 
@@ -87,6 +89,16 @@ namespace Zeckoxe.Games
                 }
             }
         }
+
+
+        public virtual void InitializeSettings()
+        {
+        }
+
+        public virtual void InitializeVulkan()
+        {
+        }
+
 
         public virtual void Initialize()
         {

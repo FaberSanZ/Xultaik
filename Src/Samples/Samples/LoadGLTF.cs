@@ -51,8 +51,7 @@ namespace Samples.Samples
 
         public LoadGLTF() : base()
         {
-            Parameters.Settings.Validation = ValidationType.None;
-            Window.Title += " - (LoadGLTF) ";
+
         }
 
 
@@ -76,6 +75,13 @@ namespace Samples.Samples
         public float pitch;
         public float roll;
 
+
+        public override void InitializeSettings()
+        {
+            base.InitializeSettings();
+            Parameters.Settings.Validation = ValidationType.None;
+            Window.Title += " - (LoadGLTF) ";
+        }
 
         public override void Initialize()
         {

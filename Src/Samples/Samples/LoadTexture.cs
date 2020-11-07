@@ -14,6 +14,13 @@ namespace Samples.Samples
 
         public LoadTexture() : base()
         {
+
+        }
+
+
+        public override void InitializeSettings()
+        {
+            base.InitializeSettings();
             Parameters.Settings.Validation = ValidationType.Console | ValidationType.Debug;
             Window.Title += " - (LoadTexture) ";
         }

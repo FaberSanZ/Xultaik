@@ -11,7 +11,7 @@ namespace Samples.Samples
     {
         public ClearScreen()
         {
-            Window = new(" - (Clear Screen)", 100, 100, 1200, 800, WindowState.Normal)
+            Window = new("Zeckoxe Engine", 1200, 800)
             {
             };
 
@@ -63,7 +63,7 @@ namespace Samples.Samples
 
             BeginRun();
 
-            //Window?.Show(); //TODO: Show Window 
+            Window?.Show();
 
             Tick();
         }

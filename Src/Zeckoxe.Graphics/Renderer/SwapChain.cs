@@ -12,14 +12,40 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
+using static Vortice.Vulkan.VkUtils;
+
 
 
 namespace Zeckoxe.Graphics
 {
+    // Provided by VK_KHR_xlib_surface
+    internal unsafe struct VkXlibSurfaceCreateInfoKHR
+    {
+        internal VkStructureType sType;
+        internal void* pNext;
+        internal uint flags;
+        internal IntPtr* display;
+        internal IntPtr window;
+    }
+
+
+    internal struct wl_display { }
+    internal struct wl_surface { }
+
+    internal unsafe struct VkWaylandSurfaceCreateInfoKHR
+    {
+        internal VkStructureType sType;
+        internal void* pNext;
+        internal uint flags;
+        internal wl_display* display;
+        internal wl_surface* surface;
+    }
 
     public unsafe class SwapChain : GraphicsResource, IDisposable
     {
-        private delegate VkResult vkCreateWin32SurfaceKHRDelegate(VkInstance instance, VkWin32SurfaceCreateInfoKHR* createInfo, VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
+        private delegate VkResult PFN_vkCreateWin32SurfaceKHRDelegate(VkInstance instance, VkWin32SurfaceCreateInfoKHR* createInfo, VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
+        private delegate VkResult PFN_vkCreateXlibSurfaceKHR(VkInstance instance, VkXlibSurfaceCreateInfoKHR* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+        private delegate VkResult PFN_vkCreateWaylandSurfaceKHR(VkInstance instance, VkWaylandSurfaceCreateInfoKHR* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 
         internal VkSurfaceKHR surface;
         internal VkFormat color_format;
@@ -97,28 +123,61 @@ namespace Zeckoxe.Graphics
         internal VkSurfaceKHR CreateSurface()
         {
             VkInstance instance = NativeDevice.NativeAdapter.instance;
-            VkSurfaceKHR defSurface = default;
+            VkSurfaceKHR surface = default;
 
-            vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.GetInstanceProcAddr<vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
+            PFN_vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
+            PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateXlibSurfaceKHR>("vkCreateXlibSurfaceKHR");
+            PFN_vkCreateWaylandSurfaceKHR vkCreateWaylandSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWaylandSurfaceKHR>("vkCreateWaylandSurfaceKHR");
 
 
-            if (Parameters.SwapchainSource is Win32SwapchainSource source && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (Parameters.SwapchainSource is Win32SwapchainSource sourcewin32 && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfo = new()
                 {
                     sType = VkStructureType.Win32SurfaceCreateInfoKHR,
                     pNext = null,
                     flags = VkWin32SurfaceCreateFlagsKHR.None,
-                    hinstance = source.Hinstance,
-                    hwnd = source.Hwnd,
+                    hinstance = sourcewin32.Hinstance,
+                    hwnd = sourcewin32.Hwnd,
                 };
 
-                vkCreateWin32SurfaceKHR(instance, &Win32SurfaceCreateInfo, null, &defSurface);
-
+                vkCreateWin32SurfaceKHR(instance, &Win32SurfaceCreateInfo, null, &surface);
             }
 
 
-            return defSurface;
+
+            if (Parameters.SwapchainSource is XlibSwapchainSource xlibsource && RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+
+                VkXlibSurfaceCreateInfoKHR XlibSurfaceCreateInfo = new()
+                {
+                    sType = VkStructureType.XlibSurfaceCreateInfoKHR,
+                    pNext = null,
+                    flags = 0,
+                    display = (IntPtr*)xlibsource.Display,
+                    window = xlibsource.Window
+                };
+
+                vkCreateXlibSurfaceKHR(instance, &XlibSurfaceCreateInfo, null, &surface);
+            }
+
+            if (Parameters.SwapchainSource is WaylandSwapchainSource Waylandsource && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+
+                VkWaylandSurfaceCreateInfoKHR XlibSurfaceCreateInfo = new()
+                {
+                    sType = VkStructureType.WaylandSurfaceCreateInfoKHR,
+                    pNext = null,
+                    flags = 0,
+                    display = (wl_display*)Waylandsource.Display,
+                    surface = (wl_surface*)Waylandsource.Surface
+                };
+
+                vkCreateWaylandSurfaceKHR(instance, &XlibSurfaceCreateInfo, null, &surface);
+            }
+
+
+            return surface;
 
 
         }

@@ -42,8 +42,7 @@ namespace Samples.Samples
 
         public Triangle() : base()
         {
-            Parameters.Settings.Validation = ValidationType.None;
-            Window.Title += " - (Triangle) ";
+
         }
 
         public Camera Camera { get; set; }
@@ -57,6 +56,13 @@ namespace Samples.Samples
         public TransformUniform Uniform;
 
 
+
+        public override void InitializeSettings()
+        {
+            base.InitializeSettings();
+            Parameters.Settings.Validation = ValidationType.None;
+            Window.Title += " - (Triangle) ";
+        }
 
         public override void Initialize()
         {

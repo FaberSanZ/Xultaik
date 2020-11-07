@@ -205,7 +205,9 @@ namespace Zeckoxe.Sdl2
         /// <summary>
         /// Sdl2Window should be treated as a popup menu.
         /// </summary>
-        PopupMenu = 0x00080000
+        PopupMenu = 0x00080000,
+
+        SDL_WINDOW_VULKAN = 0x10000000,	/* Requires >= 2.0.6 */
     }
 
     public enum SDL_FullscreenMode : uint

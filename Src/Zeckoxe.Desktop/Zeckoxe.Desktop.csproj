@@ -8,17 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\deps\SDL\win-x64\SDL2.dll">
+    <Content Include="..\..\deps\GLFW\win-x64\glfw3.dll">
       <PackagePath>runtimes/win-x64/native</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\deps\SDL\win-x86\SDL2.dll">
+    <Content Include="..\..\deps\GLFW\win-x86\glfw3.dll">
       <PackagePath>runtimes/win-x86/native</PackagePath>
       <Pack>true</Pack>
     </Content>
-
-
   </ItemGroup>
 
   <ItemGroup>

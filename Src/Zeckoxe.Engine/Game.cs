@@ -20,24 +20,7 @@ namespace Zeckoxe.Engine
     {
         public Game() : base()
         {
-            Window = new Window("Zeckoxe Engine", 100,100,1200, 800, WindowState.Normal)
-            {
-                //StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
-            };
 
-
-            Parameters = new PresentationParameters()
-            {
-                BackBufferWidth = Window.Width,
-                BackBufferHeight = Window.Height,
-                SwapchainSource = Window.GetSwapchainSource(),
-                Settings = new Settings()
-                {
-                    Validation =  ValidationType.None,
-                    Fullscreen = false,
-                    VSync = false,
-                },
-            };
 
         }
         public PresentationParameters Parameters { get; set; }
@@ -63,9 +46,34 @@ namespace Zeckoxe.Engine
         public string EngineVersion => Adapter.EngineVersion.ToString();
 
 
-        public override void Initialize()
+        public override void InitializeSettings()
         {
-            base.Initialize();
+            base.InitializeSettings();
+
+            Window = new Window("Zeckoxe Engine", 1200, 800)
+            {
+                //StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
+            };
+
+
+            Parameters = new PresentationParameters()
+            {
+                BackBufferWidth = Window.Width,
+                BackBufferHeight = Window.Height,
+                SwapchainSource = Window.GetSwapchainSource(),
+                Settings = new Settings()
+                {
+                    Validation = ValidationType.None,
+                    Fullscreen = false,
+                    VSync = false,
+                },
+            };
+        }
+
+        public override void InitializeVulkan()
+        {
+            base.InitializeVulkan();
+
 
             Adapter = new Adapter(Parameters);
 
@@ -78,11 +86,18 @@ namespace Zeckoxe.Engine
             Context = new GraphicsContext(Device);
         }
 
+
+        public override void Initialize()
+        {
+            base.Initialize();
+
+        }
+
         public override void BeginRun()
         {
             base.BeginRun();
 
-            // Window?.Show(); //TODO: Show Window 
+            Window?.Show();
 
 
             Window.RenderLoop(OnTickRequested);
