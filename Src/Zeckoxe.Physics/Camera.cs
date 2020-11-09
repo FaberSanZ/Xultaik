@@ -720,7 +720,7 @@ namespace Zeckoxe.Physics
                     Interest += movingVector;
                 }
 
-                // TODO:  epsilon
+                // TODO:  Epsilon
                 if (MathUtil.WithinEpsilon(Interest.X, translationInterest.X, 0.1f) &&
                     MathUtil.WithinEpsilon(Interest.Y, translationInterest.Y, 0.1f) &&
                     MathUtil.WithinEpsilon(Interest.Z, translationInterest.Z, 0.1f))

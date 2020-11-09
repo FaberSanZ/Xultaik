@@ -24,36 +24,39 @@ namespace Zeckoxe.Graphics
 			[0x8F96] = PixelFormat.R8G8B8SNorm,             //  3-component, 8-bit signed normalized ,       GL_RGB8_SNORM, 
 
 
-			// ->  16 bits per component
+            [32855] = PixelFormat.R5G5B5A1UNormPack16,
+            [32856] = PixelFormat.R8G8B8A8UNorm,
+
+            // ->  16 bits per component
 
 
-			// -> 32 bits per component
+            // -> 32 bits per component
 
 
-			// -> Packed
+            // -> Packed
 
 
-			// -> S3TC/DXT/BC
+            // -> S3TC/DXT/BC
 
 
-			// -> ETC
+            // -> ETC
 
 
-			// -> PVRTC
+            // -> PVRTC
 
 
-			//-> ASTC
+            //-> ASTC
 
 
-			// -> ATC
+            // -> ATC
 
 
-			// -> Palletized
+            // -> Palletized
 
 
-			// -> Depth/stencil
+            // -> Depth/stencil
 
-		};
+        };
 
 
 		//const uint GL_R8 = 0x8229;

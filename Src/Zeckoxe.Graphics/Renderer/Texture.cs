@@ -9,7 +9,7 @@
 using System;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
-
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
@@ -143,6 +143,9 @@ namespace Zeckoxe.Graphics
 
 
         public MultisampleCount MultisampleCount { get; private set; }
+
+
+
 
         internal void Initialize()
         {

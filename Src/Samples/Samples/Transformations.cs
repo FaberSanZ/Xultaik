@@ -176,12 +176,25 @@ namespace Samples.Samples
 
             // Binding 0: Uniform buffer (Vertex shader)
             Descriptor1 = new(PipelineState, pool);
-            Descriptor1.SetUniformBuffer(0, ConstBuffer);
+            Descriptor1.SetValues(new() { new Resource() 
+            { 
+                ResourceType = ConstBuffer,
+                Binding = 0,
+                Offset = 0
+            }});
+            //Descriptor1.Build();
 
             // Binding 0: Uniform buffer (Vertex shader)
             Descriptor2 = new(PipelineState, pool);
-            Descriptor2.SetUniformBuffer(0, ConstBuffer2);
 
+            Descriptor2.SetValues(new() { new Resource()
+            {
+                ResourceType = ConstBuffer2,
+                Binding = 0,
+                Offset = 0
+            }});
+            //Descriptor2.SetUniformBuffer(0, ConstBuffer2);
+            //Descriptor2.Build();
 
             yaw = 0;
             pitch = 0;

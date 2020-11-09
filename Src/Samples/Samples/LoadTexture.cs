@@ -1,8 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using Zeckoxe.Core;
+using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
+using Zeckoxe.Games;
+using Zeckoxe.GLTF;
 using Zeckoxe.Graphics;
+using Zeckoxe.Graphics.Toolkit;
+using Zeckoxe.Physics;
+using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Samples.Samples
 {
@@ -11,6 +19,86 @@ namespace Samples.Samples
         internal int TextureWidth = 256; //Texture Data
         internal int TextureHeight = 256; //Texture Data
         internal int TexturePixelSize = 4;  // The number of bytes used to represent a pixel in the texture. RGBA
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct TransformUniform
+        {
+            public TransformUniform(Matrix4x4 p, Matrix4x4 m, Matrix4x4 v)
+            {
+                P = p;
+                M = m;
+                V = v;
+            }
+
+            public Matrix4x4 P;
+
+            public Matrix4x4 M;
+
+            public Matrix4x4 V;
+
+            public void Update(Camera camera, Matrix4x4 m)
+            {
+                P = camera.Projection;
+                M = m;
+                V = camera.View;
+            }
+        }
+
+
+        public struct Vertex
+        {
+            public Vertex(Vector3 position, Vector3 color, Vector2 texCoord)
+            {
+                Position = position;
+                Color = color;
+                TexCoord = texCoord;
+            }
+
+            public Vector3 Position;
+
+            public Vector3 Color;
+            public Vector2 TexCoord;
+
+
+
+
+
+            public static readonly int Size = Interop.SizeOf<Vertex>();
+        }
+
+
+
+
+        public Camera Camera { get; set; }
+        public GameTime GameTime { get; set; }
+
+        public int[] Indices = new[] 
+        {            
+            0, 1, 2,
+            2, 3, 0
+        };
+
+        public Vertex[] Vertices = new[]
+        {
+            new Vertex(new Vector3(-0.5f, -0.5f, -0.5f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f)) ,
+            new Vertex(new Vector3( 0.5f, -0.5f, -0.5f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 0.0f)) ,
+            new Vertex(new Vector3(0.5f, 0.5f, -0.5f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(0.0f, 1.0f)) ,
+            new Vertex(new Vector3(-0.5f,  0.5f, -0.5f), new Vector3(1.0f, 1.0f, 1.0f), new Vector2(1.0f, 1.0f)) ,
+        };
+
+
+        public Dictionary<string, DescriptorSet> DescriptorSets = new();
+        public Dictionary<string, Buffer> Buffers = new();
+        public Dictionary<string, GraphicsPipelineState> PipelineStates = new();
+        public Dictionary<string, ShaderBytecode> Shaders = new();
+
+        // TransformUniform 
+        public TransformUniform uniform;
+        public float yaw;
+        public float pitch;
+        public float roll;
+
 
         public LoadTexture() : base()
         {
@@ -21,22 +109,273 @@ namespace Samples.Samples
         public override void InitializeSettings()
         {
             base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.Console | ValidationType.Debug;
+            Parameters.Settings.Validation = ValidationType.None;
             Window.Title += " - (LoadTexture) ";
         }
 
         public override void Initialize()
         {
             base.Initialize();
+
+            Camera = new()
+            {
+                Mode = CameraType.Free,
+                Position = new(0, 0f, -2.5f),
+            };
+
+            Camera.SetLens(Window.Width, Window.Height);
+
+
+            // Reset Model
+            Model = Matrix4x4.Identity;
+
+            uniform = new(Camera.Projection, Model, Camera.View);
+
+
+
+
+            
+
+            CreateBuffers();
+            CreatePipelineState();
+
+
+            List<DescriptorPool> pool = new()
+            {
+                new DescriptorPool(DescriptorType.UniformBuffer, 1),
+                new DescriptorPool(DescriptorType.Sampler, 1),
+                new DescriptorPool(DescriptorType.StorageImage, 1),
+
+                //new DescriptorPool(DescriptorType.CombinedImageSampler, 1),
+            };
+
+            
+            //var img1 = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
+            var img1 = new TextureData(GenerateTextureData(), TextureWidth, TextureWidth, 1, 1, TextureWidth * TextureWidth * 4, false, PixelFormat.R8G8B8A8UNorm);
+            var img2 = KTXLoader.LoadFromFile("IndustryForgedDark512.ktx");
+
+            var text1 = Texture2D.LoadTexture2D(Device, img1);
+            var text2 = Texture2D.LoadTexture2D(Device, img2);
+
+            List<Resource> resources1 = new()
+            {
+                new Resource(Buffers["ConstBuffer1"], 0),
+                new Resource(new Sampler(Device), 1),
+                new Resource(text1, 1),
+
+                //new Resource(new ImageSampler(new Sampler(Device), text), 1)
+            };
+
+            DescriptorSets["Descriptor1"] = new(PipelineStates["Texture"], pool);
+            DescriptorSets["Descriptor1"].SetValues(resources1);
+
+
+
+            List<Resource> resources2 = new()
+            {
+                new Resource(Buffers["ConstBuffer2"], 0),
+                new Resource(new Sampler(Device), 1),
+                new Resource(text2, 1),
+
+                //new Resource(new ImageSampler(new Sampler(Device), text), 1)
+            };
+
+            DescriptorSets["Descriptor2"] = new(PipelineStates["Texture"], pool);
+            DescriptorSets["Descriptor2"].SetValues(resources2);
+
+
+
+            yaw = 0;
+            pitch = 2.5f;
+            roll = 4.7f;
         }
+
+
+        public void CreateBuffers()
+        {
+            Buffers["VertexBuffer"] = new(Device, new()
+            {
+                BufferFlags = BufferFlags.VertexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf(Vertices),
+            });
+            Buffers["VertexBuffer"].SetData(Vertices);
+
+
+            Buffers["IndexBuffer"] = new(Device, new()
+            {
+                BufferFlags = BufferFlags.IndexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf(Indices),
+            });
+            Buffers["IndexBuffer"].SetData(Indices);
+
+
+            Buffers["ConstBuffer1"] = new(Device, new()
+            {
+                BufferFlags = BufferFlags.ConstantBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf<TransformUniform>(),
+            });
+
+            Buffers["ConstBuffer2"] = new(Device, new()
+            {
+                BufferFlags = BufferFlags.ConstantBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf<TransformUniform>(),
+            });
+
+        }
+
+
+        public void CreatePipelineState()
+        {
+            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Texture/shader.frag", ShaderStage.Fragment);
+            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Texture/shader.vert", ShaderStage.Vertex);
+
+
+            List<VertexInputAttribute> VertexAttributeDescriptions = new()
+            {
+
+                new()
+                {
+                    Binding = 0,
+                    Location = 0,
+                    Format = PixelFormat.R32G32B32SFloat,
+                    Offset = 0,
+                },
+                new()
+                {
+                    Binding = 0,
+                    Location = 1,
+                    Format = PixelFormat.R32G32B32SFloat,
+                    Offset = 12,
+                },
+
+                new()
+                {
+                    Binding = 0,
+                    Location = 2,
+                    Format = PixelFormat.R32G32SFloat,
+                    Offset = Interop.SizeOf<Vector2>() + Interop.SizeOf<Vector3>(),
+                }
+            };
+
+            List<VertexInputBinding> VertexBindingDescriptions = new()
+            {
+                new()
+                {
+                    Binding = 0,
+                    InputRate = VertexInputRate.Vertex,
+                    Stride = Vertex.Size,
+                }
+            };
+
+
+            PipelineStates["Texture"] = new(new()
+            {
+                Framebuffer = Framebuffer,
+
+                Layouts =
+                {
+                    // Binding 0: Uniform buffer (Vertex shader)
+                    new()
+                    {
+                        Stage = ShaderStage.Vertex,
+                        Type = DescriptorType.UniformBuffer,
+                        Binding = 0,
+                    },
+                    new()
+                    {
+                        Stage = ShaderStage.Fragment,
+                        Type = DescriptorType.CombinedImageSampler,
+                        Binding = 1,
+                    }
+                },
+
+                InputAssemblyState = InputAssemblyState.Default(),
+
+                RasterizationState = new()
+                {
+                    FillMode = FillMode.Solid,
+                    CullMode = CullMode.None,
+                    FrontFace = FrontFace.CounterClockwise,
+                },
+                PipelineVertexInput = new()
+                {
+                    VertexAttributeDescriptions = VertexAttributeDescriptions,
+                    VertexBindingDescriptions = VertexBindingDescriptions,
+                },
+                Shaders =
+                {
+                    Shaders["Fragment"],
+                    Shaders["Vertex"],
+                },
+
+
+            });
+
+        }
+
+
+
+        public override void Update(GameTime game)
+        {
+            Camera.Update(game);
+
+
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-0.8f, 0.0f, 0.0f);
+            uniform.Update(Camera, Model);
+            Buffers["ConstBuffer1"].SetData(ref uniform);
+
+
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, -roll) * Matrix4x4.CreateTranslation(0.8f, 0.0f, 0.0f);
+            uniform.Update(Camera, Model);
+            Buffers["ConstBuffer2"].SetData(ref uniform);
+
+
+
+            //roll += 0.0006f * MathF.PI;
+
+        }
+
+
+
 
         public override void BeginDraw()
         {
             base.BeginDraw();
 
-            Context.CommandBuffer.BeginFramebuffer(Framebuffer, 0.6f, 0.8f, 0.4f, 1.0f);
+            CommandBuffer commandBuffer = Context.CommandBuffer;
+              
+            commandBuffer.BeginFramebuffer(Framebuffer, 0.6f, 0.8f, 0.4f, 1.0f);
+            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
+
+
+
+
+
+            commandBuffer.SetVertexBuffers(new Buffer[] { Buffers["VertexBuffer"] });
+            commandBuffer.SetIndexBuffer(Buffers["IndexBuffer"]);
+
+
+            commandBuffer.SetGraphicPipeline(PipelineStates["Texture"]);
+            commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor1"]);
+            commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
+
+
+            commandBuffer.SetGraphicPipeline(PipelineStates["Texture"]);
+            commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor2"]);
+            commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
         }
 
+
+
+        public void Dispose()
+        {
+            Adapter.Dispose();
+        }
 
         internal byte[] GenerateTextureData()
         {
@@ -74,10 +413,10 @@ namespace Samples.Samples
 
                 if (i % 2 == j % 2)
                 {
-                    data[n + 0] = Cr; // R
-                    data[n + 1] = Cg; // G
-                    data[n + 2] = Cb; // B
-                    data[n + 3] = Ca; // A
+                    data[n + 0] = 1; // R
+                    data[n + 1] = 1; // G
+                    data[n + 2] = 1; // B
+                    data[n + 3] = 1; // A
                 }
                 else
                 {
@@ -91,9 +430,5 @@ namespace Samples.Samples
             return data;
         }
 
-
-        public void Dispose()
-        {
-        }
     }
 }

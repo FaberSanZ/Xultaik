@@ -16,6 +16,11 @@ namespace Zeckoxe.Graphics
     {
         public Device NativeDevice { get; private set; }
 
+        public GraphicsResource()
+        {
+        }
+
+
         public GraphicsResource(Device device)
         {
             AttachToGraphicsDevice(device);

@@ -12,9 +12,9 @@ using Zeckoxe.Core;
 
 namespace Zeckoxe.Graphics
 {
+
     public struct VertexPositionNormalColor : IEquatable<VertexPositionNormalColor>
     {
-
         public VertexPositionNormalColor(Vector3 position, Vector3 normal, Vector3 color) : this()
         {
             Position = position;

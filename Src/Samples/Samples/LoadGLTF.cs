@@ -16,6 +16,7 @@ using Zeckoxe.Engine;
 using Zeckoxe.Games;
 using Zeckoxe.GLTF;
 using Zeckoxe.Graphics;
+using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Graphics.Buffer;
 
@@ -102,7 +103,7 @@ namespace Samples.Samples
             uniform = new(Camera.Projection, Model, Camera.View);
 
 
-            GLTFModel = new("Models/model.glb");
+            GLTFModel = new("Models/DamagedHelmet.gltf");
 
             Indices = GLTFModel.Indices;
             Vertices = GLTFModel.GetPositionNormalAsArray();
@@ -112,22 +113,39 @@ namespace Samples.Samples
             CreatePipelineState();
 
 
-            // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
+
             List<DescriptorPool> pool = new()
             {
-                new  DescriptorPool(DescriptorType.UniformBuffer, 1),
+                new DescriptorPool(DescriptorType.UniformBuffer, 1),
+                new DescriptorPool(DescriptorType.Sampler, 1),
+                new DescriptorPool(DescriptorType.StorageImage, 1),
+
+                //new DescriptorPool(DescriptorType.CombinedImageSampler, 1),
             };
 
-            DescriptorSets["Descriptor1"] = new(PipelineStates["Wireframe"], pool);
-            DescriptorSets["Descriptor1"].SetUniformBuffer(0, Buffers["ConstBuffer1"]); // Binding 0: Uniform buffer (Vertex shader)
+
+            var img1 = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
+
+            var text1 = Texture2D.LoadTexture2D(Device, img1);
 
 
-            DescriptorSets["Descriptor2"] = new(PipelineStates["Solid"], pool);
-            DescriptorSets["Descriptor2"].SetUniformBuffer(0, Buffers["ConstBuffer2"]); // Binding 0: Uniform buffer (Vertex shader)
 
-            yaw = 3.15f;
-            pitch = 0;
-            roll = 3.15f;
+            List<Resource> resources = new()
+            {
+                new Resource(Buffers["ConstBuffer1"], 0),
+                new Resource(new Sampler(Device), 1),
+                new Resource(text1, 1),
+
+                //new Resource(new ImageSampler(new Sampler(Device), text), 1)
+            };
+
+
+            DescriptorSets["Descriptor1"] = new(PipelineStates["Solid"], pool);
+            DescriptorSets["Descriptor1"].SetValues(new() { new(Buffers["ConstBuffer1"], 0) }); // Binding 0: Uniform buffer (Vertex shader)
+
+            yaw = 0f;
+            pitch = 4.5f;
+            roll = 0.15f;
         }
 
 
@@ -158,12 +176,6 @@ namespace Samples.Samples
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 
-            Buffers["ConstBuffer2"] = new(Device, new()
-            {
-                BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<TransformUniform>(),
-            });
 
         }
 
@@ -202,44 +214,6 @@ namespace Samples.Samples
                     Stride = VertexPositionNormal.Size,
                 }
             };
-
-
-            PipelineStates["Wireframe"] = new(new() 
-            {
-                Framebuffer = Framebuffer,
-
-                Layouts =
-                {
-                    // Binding 0: Uniform buffer (Vertex shader)
-                    new()
-                    {
-                        Stage = ShaderStage.Vertex,
-                        Type = DescriptorType.UniformBuffer,
-                        Binding = 0,
-                    }
-                },
-
-                InputAssemblyState = InputAssemblyState.Default(),
-
-                RasterizationState = new()
-                {
-                    FillMode = FillMode.Wireframe,
-                    CullMode = CullMode.None,
-                    FrontFace = FrontFace.Clockwise,
-                },
-                PipelineVertexInput = new()
-                {
-                    VertexAttributeDescriptions = VertexAttributeDescriptions,
-                    VertexBindingDescriptions = VertexBindingDescriptions,
-                },
-                Shaders =
-                {
-                    Shaders["Fragment"],
-                    Shaders["Vertex"],
-                },
-
-
-            });
 
 
             PipelineStates["Solid"] = new(new() 
@@ -286,17 +260,15 @@ namespace Samples.Samples
             Camera.Update(game);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-1.0f, 0.0f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, 0.0f, 0.0f);
             uniform.Update(Camera, Model);
             Buffers["ConstBuffer1"].SetData(ref uniform);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(-yaw, pitch, roll) * Matrix4x4.CreateTranslation(1.0f, 0.0f, 0.0f);
-            uniform.Update(Camera, Model);
-            Buffers["ConstBuffer2"].SetData(ref uniform);
-
 
             yaw += 0.0006f * MathF.PI;
+
+            Console.WriteLine(pitch);
         }
 
 
@@ -317,14 +289,11 @@ namespace Samples.Samples
 
 
 
-            commandBuffer.SetGraphicPipeline(PipelineStates["Wireframe"]);
+            commandBuffer.SetGraphicPipeline(PipelineStates["Solid"]);
             commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor1"]);
             commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
 
 
-            commandBuffer.SetGraphicPipeline(PipelineStates["Solid"]);
-            commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor2"]);
-            commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
         }
 
 

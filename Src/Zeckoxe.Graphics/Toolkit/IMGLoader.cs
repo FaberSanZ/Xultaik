@@ -50,10 +50,10 @@ namespace Zeckoxe.Graphics.Toolkit
                 Width = _image.Width,
                 Height = _image.Height,
                 Format = PixelFormat.R8G8B8A8UNorm,
-                Size = 4,
+                Size = _image.Width * _image.Height * 4,
                 Depth = 1,
                 IsCubeMap = false,
-                MipMaps = 1, // TODO: MipMaps 
+                MipMaps = (int)Math.Floor(Math.Log(Math.Max(_image.Width, _image.Height))) + 1, // TODO: MipMaps 
                 Data = MemoryMarshal.AsBytes(pixels).ToArray(),
             };
 
@@ -69,9 +69,9 @@ namespace Zeckoxe.Graphics.Toolkit
 
         public int Height => _image.Height;
 
-        public int MipMaps => 1; // TODO: MipMaps 
+        public int MipMaps => (int)Math.Floor(Math.Log(Math.Max(_image.Width, _image.Height))) + 1; // TODO: MipMaps 
 
-        public int Size => 4;
+        public int Size => _image.Width * _image.Height * 4;
 
         public byte[] Data => GetAllTextureData();
 

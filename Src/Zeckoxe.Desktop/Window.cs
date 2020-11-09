@@ -79,8 +79,8 @@ namespace Zeckoxe.Desktop
             }
 
 
-
-            //if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            // TODO: CreateXlib
+            //if ()
             //{
             //    IntPtr x11Window = GLFW.GlfwGetX11Window(pWindow);
             //    IntPtr x11Display = GLFW.GlfwGetX11Display();
@@ -91,7 +91,9 @@ namespace Zeckoxe.Desktop
             //    }
 
             //}
-            //if (RuntimeInformation.IsOSPlatform(OSPlatform.Create(""))) // TODO: CreateWayland
+
+            // TODO: CreateWayland
+            //if () 
             //{
             //    IntPtr waylandWindow = GLFW.GlfwGetWaylandWindow(pWindow);
             //    IntPtr waylandDisplay = GLFW.GlfwGetWaylandDisplay();

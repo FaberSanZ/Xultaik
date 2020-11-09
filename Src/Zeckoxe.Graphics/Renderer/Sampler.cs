@@ -17,9 +17,10 @@ namespace Zeckoxe.Graphics
 
         public Sampler(Device graphicsDevice) : base(graphicsDevice)
         {
-
+            Init();
         }
 
+        internal VkSampler NativeSampler { get;  set; }
 
         public void Init()
         {
@@ -31,6 +32,7 @@ namespace Zeckoxe.Graphics
             // for the same texture with different settings
             // Similar to the samplers available with OpenGL 3.3
             VkSamplerCreateInfo sampler = default;
+            sampler.sType = VkStructureType.SamplerCreateInfo;
             sampler.magFilter = VkFilter.Linear;
             sampler.minFilter = VkFilter.Linear;
             sampler.mipmapMode = VkSamplerMipmapMode.Linear;
@@ -57,6 +59,8 @@ namespace Zeckoxe.Graphics
             
             sampler.borderColor = VkBorderColor.FloatOpaqueWhite;
             vkCreateSampler(NativeDevice.handle, &sampler, null, out handle);
+
+            NativeSampler = handle;
         }
     }
 }

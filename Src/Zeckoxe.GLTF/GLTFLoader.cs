@@ -28,7 +28,7 @@ namespace Zeckoxe.GLTF
 
         public GraphicsPipelineState GLTFPipeline { get; set; }
 
-
+        public TextureData TextureData { get; set; }
 
         public GLTFLoader(string FileName)
         {
@@ -48,8 +48,7 @@ namespace Zeckoxe.GLTF
 
             foreach (SharpGLTF.Schema2.Image image in model.LogicalImages)
             {
-                //var i = image.OpenImageFile();
-                //i.
+                //TextureData = new TextureData(image.Content.Content.ToArray(), image.)
             }
 
 
@@ -74,6 +73,27 @@ namespace Zeckoxe.GLTF
         }
 
 
+        
+
+
+        public Span<VertexPositionColorTexture> GetVertexPositionColorTextureAsSpan()
+        {
+            VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[_Positions.Count];
+
+            for (int i = 0; i < _Positions.Count; i++)
+            {
+                vertices[i] = new VertexPositionColorTexture()
+                {
+                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
+                    Color = _Color[i] != null ? _Color[i] : Vector3.One,
+                    TextureCoordinate = _Texture[i] != null ? _Texture[i] : Vector2.One,
+                };
+            }
+
+            return vertices.AsSpan(); // TODO: GetPositionNormal AsSpan
+        }
+
+
         public Span<VertexPositionNormal> GetPositionNormalAsSpan()
         {
             VertexPositionNormal[] vertices = new VertexPositionNormal[_Positions.Count];
@@ -88,6 +108,56 @@ namespace Zeckoxe.GLTF
             }
 
             return vertices.AsSpan(); // TODO: GetPositionNormal AsSpan
+        }
+
+
+
+
+
+        public VertexPositionColorTexture[] GetVertexPositionColorTextureAsArray()
+        {
+            VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[_Positions.Count];
+
+            for (int i = 0; i < _Positions.Count; i++)
+            {
+                vertices[i] = new VertexPositionColorTexture()
+                {
+                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
+                    Color = Vector3.One,
+                    TextureCoordinate = new Vector2(_Texture[i].X, _Texture[i].Y) //!= null ? _Texture[i] : Vector2.One,
+                };
+
+                //vertices[i].Position.Y *= -1.0f;
+                //vertices[i].normal.y *= -1.0f;
+
+
+                vertices[i].FlipWinding();
+            }
+
+            return vertices;
+        }
+
+
+        public VertexPositionTexture[] GetVertexPositionTextureAsArray()
+        {
+            VertexPositionTexture[] vertices = new VertexPositionTexture[_Positions.Count];
+
+            for (int i = 0; i < _Positions.Count; i++)
+            {
+                vertices[i] = new VertexPositionTexture()
+                {
+                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
+                    TextureCoordinate = new Vector2( 2* _Texture[i].X, 2*_Texture[i].Y+1) //!= null ? _Texture[i] : Vector2.One,
+                };
+
+                //vertices[i].Position.Y *= -1.0f;
+                //vertices[i].normal.y *= -1.0f;
+
+
+                //vertices[i].FlipWinding();
+            }
+
+            return vertices;
         }
 
         public VertexPositionNormal[] GetPositionNormalAsArray()
