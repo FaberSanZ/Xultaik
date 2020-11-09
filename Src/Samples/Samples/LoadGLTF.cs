@@ -117,26 +117,6 @@ namespace Samples.Samples
             List<DescriptorPool> pool = new()
             {
                 new DescriptorPool(DescriptorType.UniformBuffer, 1),
-                new DescriptorPool(DescriptorType.Sampler, 1),
-                new DescriptorPool(DescriptorType.StorageImage, 1),
-
-                //new DescriptorPool(DescriptorType.CombinedImageSampler, 1),
-            };
-
-
-            var img1 = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
-
-            var text1 = Texture2D.LoadTexture2D(Device, img1);
-
-
-
-            List<Resource> resources = new()
-            {
-                new Resource(Buffers["ConstBuffer1"], 0),
-                new Resource(new Sampler(Device), 1),
-                new Resource(text1, 1),
-
-                //new Resource(new ImageSampler(new Sampler(Device), text), 1)
             };
 
 
