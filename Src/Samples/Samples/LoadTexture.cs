@@ -151,6 +151,7 @@ namespace Samples.Samples
 
             
             //var img1 = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
+
             var img1 = new TextureData(GenerateTextureData(), TextureWidth, TextureWidth, 1, 1, TextureWidth * TextureWidth * 4, false, PixelFormat.R8G8B8A8UNorm);
             var img2 = KTXLoader.LoadFromFile("IndustryForgedDark512.ktx");
 
@@ -371,12 +372,6 @@ namespace Samples.Samples
         }
 
 
-
-        public void Dispose()
-        {
-            Adapter.Dispose();
-        }
-
         internal byte[] GenerateTextureData()
         {
             byte r = 255;
@@ -429,6 +424,12 @@ namespace Samples.Samples
 
             return data;
         }
+
+        public void Dispose()
+        {
+            Adapter.Dispose();
+        }
+
 
     }
 }
