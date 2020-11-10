@@ -121,7 +121,8 @@ namespace Samples.Samples
 
 
             DescriptorSets["Descriptor1"] = new(PipelineStates["Solid"], pool);
-            DescriptorSets["Descriptor1"].SetValues(new() { new(Buffers["ConstBuffer1"], 0) }); // Binding 0: Uniform buffer (Vertex shader)
+            DescriptorSets["Descriptor1"].SetUniformBuffer(0, Buffers["ConstBuffer1"]); // Binding 0: Uniform buffer (Vertex shader)
+            DescriptorSets["Descriptor1"].Build();
 
             yaw = 0f;
             pitch = 4.5f;
@@ -248,7 +249,6 @@ namespace Samples.Samples
 
             yaw += 0.0006f * MathF.PI;
 
-            Console.WriteLine(pitch);
         }
 
 

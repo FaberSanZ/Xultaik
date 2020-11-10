@@ -39,6 +39,8 @@ namespace Zeckoxe.Graphics
             };
             vkCreateBuffer(ctx.handle, &bufferCreateInfo, null, out stagingBuffer);
 
+            tex2D.MipMaps = 1; // TODO: MipMaps
+
             vkGetBufferMemoryRequirements(ctx.handle, stagingBuffer, out VkMemoryRequirements stagingMemReq);
             uint heapIndex = ctx.GetMemoryTypeIndex(stagingMemReq.memoryTypeBits, VkMemoryPropertyFlags.HostVisible);
 
@@ -73,7 +75,7 @@ namespace Zeckoxe.Graphics
                 int offset = 0;
                 for (int i = 0; i < bufferCopyRegions.Length; i++)
                 {
-                    // TODO: from VulkanCore, doesn't look correct (reassigns bufferCopyRegions in each loop)
+
                     bufferCopyRegions = new[]
                     {
                     new VkBufferImageCopy

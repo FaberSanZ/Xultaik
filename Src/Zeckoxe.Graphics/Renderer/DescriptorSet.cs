@@ -31,28 +31,13 @@ namespace Zeckoxe.Graphics
     }
 
 
-
-    public class ImageSampler : GraphicsResource
-    {
-        public ImageSampler(Sampler sampler, Texture text) : base()
-        {
-            Texture = text;
-            Sampler = sampler;
-        }
-
-
-
-        public Texture Texture { get; set; }
-        public Sampler Sampler { get; set; }
-
-
-    }
     public unsafe class DescriptorSet : GraphicsResource
     {
 
         internal VkDescriptorPool _descriptorPool;
         internal VkDescriptorSet _descriptorSet;
-        private uint count = 0;
+        internal uint count = 0;
+
 
         public DescriptorSet(GraphicsPipelineState pipelineState, List<DescriptorPool> descriptors, int maxSets = 1) : base(pipelineState.NativeDevice)
         {
@@ -60,7 +45,10 @@ namespace Zeckoxe.Graphics
             Descriptors = descriptors;
             MaxSets = maxSets;
             SetupDescriptorPool();
+
         }
+
+
 
 
         public GraphicsPipelineState PipelineState { get; set; }
@@ -69,24 +57,122 @@ namespace Zeckoxe.Graphics
 
 
 
-        public void SetValues(List<Resource> resources)
+        internal List<BufferInfo> buffers = new();
+        internal List<ImageSamplerInfo> images = new();
+        internal List<ResourceInfo> resourceInfos = new();
+
+
+
+        internal class ImageSamplerInfo
         {
 
-            var count = 0;
+            public Texture _texture { get; set; }
+            public Sampler _sampler { get; set; }
 
-            VkWriteDescriptorSet* ptr = stackalloc VkWriteDescriptorSet[resources.Count];
 
-            foreach (var r in resources)
+            internal int _offset { get; set; }
+            internal int _binding { get; set; }
+
+
+            public ImageSamplerInfo(Texture texture, Sampler sampler, int offset, int binding)
             {
+                _texture = texture;
+                _sampler = sampler;
+                _offset = offset;
+                _binding = binding;
+            }
+        }
 
-                if (r.ResourceType is Buffer buffer)
+
+
+        internal struct ResourceInfo
+        {
+
+            internal Buffer _buffer { get; set; }
+            internal Texture _texture { get; set; }
+            internal Sampler _sampler { get; set; }
+
+
+            internal bool is_buffer { get; set; }
+            internal bool is_texture { get; set; }
+            internal bool is_sampler { get; set; }
+
+
+            internal int _offset { get; set; }
+            internal int _binding { get; set; }
+
+        }
+
+
+        internal class BufferInfo
+        {
+            internal Buffer _buffer { get; set; }
+            internal int _offset { get; set; }
+            internal int _binding { get; set; }
+
+
+            public BufferInfo(Buffer buffer, int offset, int binding)
+            {
+                _buffer = buffer;
+                _offset = offset;
+                _binding = binding;
+            }
+        }
+
+
+
+        public void SetImageSampler(int offset, Texture texture, Sampler sampler)
+        {
+
+            resourceInfos.Add(new ResourceInfo
+            {
+                _offset = offset,
+                _binding = offset,
+                is_sampler = true,
+                is_texture = true,
+                _sampler = sampler,
+                _texture = texture
+            }); ;
+
+            //images.Add(new ImageSamplerInfo(texture, sampler, offset, 0));
+
+        }
+
+
+        public void SetUniformBuffer(int offset, Buffer buffer, int binding = 0)
+        {
+            //buffers.Add(new BufferInfo(buffer, offset, binding));
+
+
+            resourceInfos.Add(new ResourceInfo
+            {
+                _offset = offset,
+                _binding = binding,
+                is_buffer = true,
+                _buffer = buffer
+            });
+
+        }
+
+        public void Build()
+        {
+            int count = 0;
+            int resources_count = resourceInfos.Count;
+
+            VkWriteDescriptorSet* ptr = stackalloc VkWriteDescriptorSet[resources_count];
+
+            List<VkWriteDescriptorSet> descriptorSets = new();
+
+
+            foreach (ResourceInfo r in resourceInfos)
+            {
+                if (r.is_buffer)
                 {
-
                     VkDescriptorBufferInfo descriptor = new VkDescriptorBufferInfo
                     {
-                        buffer = buffer.handle,
-                        offset = r.Offset,
-                        range = (ulong)buffer.SizeInBytes
+                        buffer = r._buffer.handle,
+                        offset = (ulong)r._offset,
+                        range = (ulong)r._buffer.SizeInBytes
                     };
 
                     VkWriteDescriptorSet writeDescriptorSet = new VkWriteDescriptorSet()
@@ -97,102 +183,45 @@ namespace Zeckoxe.Graphics
                         descriptorCount = 1,
                         descriptorType = VkDescriptorType.UniformBuffer,
                         pBufferInfo = &descriptor,
-                        dstBinding = (uint)r.Binding,
+                        dstBinding = (uint)r._binding,
                     };
+
+                    descriptorSets.Add(writeDescriptorSet);
 
                     ptr[count++] = writeDescriptorSet;
                 }
 
-
-                if (r.ResourceType is ImageSampler image_sampler)
+                if (r.is_sampler && r.is_texture)
                 {
-
                     VkDescriptorImageInfo imageInfo;
                     imageInfo.imageLayout = VkImageLayout.ShaderReadOnlyOptimal;
-                    imageInfo.imageView = image_sampler.Texture.View;
-                    imageInfo.sampler = image_sampler.Sampler.handle;
+                    imageInfo.imageView = r._texture.View;
+                    imageInfo.sampler = r._sampler.handle;
 
-                    var image_sampler_Writes = new VkWriteDescriptorSet
+                    VkWriteDescriptorSet image_sampler_Writes = new VkWriteDescriptorSet
                     {
                         sType = VkStructureType.WriteDescriptorSet,
                         dstSet = _descriptorSet,
-                        dstBinding = 1,
+                        dstBinding = (uint)r._binding,
                         dstArrayElement = 0,
                         descriptorType = VkDescriptorType.CombinedImageSampler,
                         descriptorCount = 1,
                         pImageInfo = &imageInfo,
                     };
 
+                    descriptorSets.Add(image_sampler_Writes);
 
                     ptr[count++] = image_sampler_Writes;
+
                 }
-
-
-
-                if (r.ResourceType is Sampler sampler)
-                {
-
-                    VkDescriptorImageInfo imageInfo = new VkDescriptorImageInfo
-                    {
-                        sampler = sampler.NativeSampler
-                    };
-
-                    VkWriteDescriptorSet sampler_Writes = new VkWriteDescriptorSet
-                    {
-                        sType = VkStructureType.WriteDescriptorSet,
-                        descriptorCount = 1,
-
-                        dstSet = _descriptorSet,
-                        dstBinding = (uint)r.Offset,
-                        dstArrayElement = 0,
-                        descriptorType = VkDescriptorType.Sampler,
-                        pImageInfo = &imageInfo,
-                    };
-
-
-                    ptr[count++] = sampler_Writes;
-                }
-
-
-
-                if (r.ResourceType is Texture texture)
-                {
-
-                    VkDescriptorImageInfo imageInfo;
-                    imageInfo.imageLayout = VkImageLayout.ShaderReadOnlyOptimal;
-                    imageInfo.imageView = texture.View;
-
-                    var texture_Writes = new VkWriteDescriptorSet
-                    {
-                        sType = VkStructureType.WriteDescriptorSet,
-                        dstSet = _descriptorSet,
-                        dstBinding = (uint)r.Offset,
-                        dstArrayElement = 0,
-                        descriptorType = VkDescriptorType.SampledImage,
-                        descriptorCount = 1,
-                        pImageInfo = &imageInfo,
-                    };
-
-
-
-                    ptr[count++] = texture_Writes;
-                }
-
-
             }
 
+
+
+            //var arrayptr = descriptorSets.ToArray();
+            //    fixed(VkWriteDescriptorSet* ptr = arrayptr)
+
             vkUpdateDescriptorSets(NativeDevice.handle, (uint)count, ptr, 0, null);
-
-
-
-        }
-
-
-
-
-        public void Build()
-        {
-
         }
 
 

@@ -51,12 +51,6 @@
     <None Update="Models\model.glb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Shaders\Lig\shader.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\Lig\shader.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Shaders\PositionColor\shader.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

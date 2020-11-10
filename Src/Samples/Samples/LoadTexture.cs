@@ -6,7 +6,6 @@ using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.Games;
-using Zeckoxe.GLTF;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.Physics;
@@ -46,6 +45,7 @@ namespace Samples.Samples
         }
 
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct Vertex
         {
             public Vertex(Vector3 position, Vector3 color, Vector2 texCoord)
@@ -73,8 +73,8 @@ namespace Samples.Samples
         public Camera Camera { get; set; }
         public GameTime GameTime { get; set; }
 
-        public int[] Indices = new[] 
-        {            
+        public int[] Indices = new[]
+        {
             0, 1, 2,
             2, 3, 0
         };
@@ -120,11 +120,11 @@ namespace Samples.Samples
             Camera = new()
             {
                 Mode = CameraType.Free,
-                Position = new(0, 0f, -2.5f),
+                Position = new(0, -0.0f, -2.1f),
             };
 
+            Camera.InvertY = true;
             Camera.SetLens(Window.Width, Window.Height);
-
 
             // Reset Model
             Model = Matrix4x4.Identity;
@@ -134,7 +134,7 @@ namespace Samples.Samples
 
 
 
-            
+
 
             CreateBuffers();
             CreatePipelineState();
@@ -143,46 +143,27 @@ namespace Samples.Samples
             List<DescriptorPool> pool = new()
             {
                 new DescriptorPool(DescriptorType.UniformBuffer, 1),
-                new DescriptorPool(DescriptorType.Sampler, 1),
-                new DescriptorPool(DescriptorType.StorageImage, 1),
-
-                //new DescriptorPool(DescriptorType.CombinedImageSampler, 1),
+                new DescriptorPool(DescriptorType.CombinedImageSampler, 1),
             };
 
-            
-            //var img1 = IMGLoader.LoadFromFile("UVCheckerMap08-512.png");
 
-            var img1 = new TextureData(GenerateTextureData(), TextureWidth, TextureWidth, 1, 1, TextureWidth * TextureWidth * 4, false, PixelFormat.R8G8B8A8UNorm);
-            var img2 = KTXLoader.LoadFromFile("IndustryForgedDark512.ktx");
 
-            var text1 = Texture2D.LoadTexture2D(Device, img1);
-            var text2 = Texture2D.LoadTexture2D(Device, img2);
+            //var img = new TextureData(GenerateTextureData(), TextureWidth, TextureWidth, 1, 1, TextureWidth * TextureWidth * 4, false, PixelFormat.R8G8B8A8UNorm);
 
-            List<Resource> resources1 = new()
-            {
-                new Resource(Buffers["ConstBuffer1"], 0),
-                new Resource(new Sampler(Device), 1),
-                new Resource(text1, 1),
-
-                //new Resource(new ImageSampler(new Sampler(Device), text), 1)
-            };
+            Texture text1 = Texture2D.LoadTexture2D(Device, IMGLoader.LoadFromFile("UVCheckerMap08-512.png"));
+            Texture text2 = Texture2D.LoadTexture2D(Device, KTXLoader.LoadFromFile("IndustryForgedDark512.ktx"));
+            Sampler sampler = new Sampler(Device);
 
             DescriptorSets["Descriptor1"] = new(PipelineStates["Texture"], pool);
-            DescriptorSets["Descriptor1"].SetValues(resources1);
+            DescriptorSets["Descriptor1"].SetUniformBuffer(0, Buffers["ConstBuffer1"]);
+            DescriptorSets["Descriptor1"].SetImageSampler(1, text1, sampler);
+            DescriptorSets["Descriptor1"].Build();
 
-
-
-            List<Resource> resources2 = new()
-            {
-                new Resource(Buffers["ConstBuffer2"], 0),
-                new Resource(new Sampler(Device), 1),
-                new Resource(text2, 1),
-
-                //new Resource(new ImageSampler(new Sampler(Device), text), 1)
-            };
 
             DescriptorSets["Descriptor2"] = new(PipelineStates["Texture"], pool);
-            DescriptorSets["Descriptor2"].SetValues(resources2);
+            DescriptorSets["Descriptor2"].SetUniformBuffer(0, Buffers["ConstBuffer2"]);
+            DescriptorSets["Descriptor2"].SetImageSampler(1, text2, sampler);
+            DescriptorSets["Descriptor2"].Build();
 
 
 
@@ -250,7 +231,7 @@ namespace Samples.Samples
                     Binding = 0,
                     Location = 1,
                     Format = PixelFormat.R32G32B32SFloat,
-                    Offset = 12,
+                    Offset = Interop.SizeOf<Vector3>(),
                 },
 
                 new()
@@ -300,7 +281,7 @@ namespace Samples.Samples
                 {
                     FillMode = FillMode.Solid,
                     CullMode = CullMode.None,
-                    FrontFace = FrontFace.CounterClockwise,
+                    FrontFace = FrontFace.Clockwise,
                 },
                 PipelineVertexInput = new()
                 {
@@ -325,18 +306,18 @@ namespace Samples.Samples
             Camera.Update(game);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-0.8f, 0.0f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-0.8f, -0.4f, 0.0f);
             uniform.Update(Camera, Model);
             Buffers["ConstBuffer1"].SetData(ref uniform);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, -roll) * Matrix4x4.CreateTranslation(0.8f, 0.0f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, -roll) * Matrix4x4.CreateTranslation(0.8f, -0.4f, 0.0f);
             uniform.Update(Camera, Model);
             Buffers["ConstBuffer2"].SetData(ref uniform);
 
 
 
-            //roll += 0.0006f * MathF.PI;
+            //roll += 0.0004f * MathF.PI;
 
         }
 
@@ -348,7 +329,7 @@ namespace Samples.Samples
             base.BeginDraw();
 
             CommandBuffer commandBuffer = Context.CommandBuffer;
-              
+
             commandBuffer.BeginFramebuffer(Framebuffer, 0.6f, 0.8f, 0.4f, 1.0f);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);

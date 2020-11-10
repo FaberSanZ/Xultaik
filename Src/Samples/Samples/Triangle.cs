@@ -102,9 +102,10 @@ namespace Samples.Samples
             };
 
 
-            Descriptor = new(PipelineState, pool);
-            Descriptor.SetValues(new() { new(ConstBuffer, 0) }); // Binding 0: Uniform buffer (Vertex shader)
-
+            Descriptor = new(PipelineState, pool, 1);
+            //Descriptor.SetValues(new() { new(ConstBuffer, 0) }); // Binding 0: Uniform buffer (Vertex shader)
+            Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)Descriptor
+            Descriptor.Build();
         }
 
 

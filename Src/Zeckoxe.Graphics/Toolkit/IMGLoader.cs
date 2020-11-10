@@ -28,22 +28,22 @@ namespace Zeckoxe.Graphics.Toolkit
             _image = SixLabors.ImageSharp.Image.Load<Rgba32>(filename);
             Span<Rgba32> pixels = _image.GetPixelSpan();
 
-            //for (int i = 0; i < pixels.Length; i++)
-            //{
-            //    ref Rgba32 pixel = ref pixels[i];
-            //    byte a = pixel.A;
-            //
-            //    if (a is 0)
-            //    {
-            //        pixel.PackedValue = 0;
-            //    }
-            //    else
-            //    {
-            //        pixel.R = (byte)((pixel.R * a) >> 8);
-            //        pixel.G = (byte)((pixel.G * a) >> 8);
-            //        pixel.B = (byte)((pixel.B * a) >> 8);
-            //    }
-            //}
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                ref Rgba32 pixel = ref pixels[i];
+                byte a = pixel.A;
+
+                if (a is 0)
+                {
+                    pixel.PackedValue = 0;
+                }
+                else
+                {
+                    pixel.R = (byte)((pixel.R * a) >> 8);
+                    pixel.G = (byte)((pixel.G * a) >> 8);
+                    pixel.B = (byte)((pixel.B * a) >> 8);
+                }
+            }
 
             TextureData data = new TextureData()
             {
