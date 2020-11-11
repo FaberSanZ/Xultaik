@@ -194,6 +194,13 @@ namespace Zeckoxe.Graphics
         }
 
 
+        // Multi GPU Helper Functions
+        int util_calculate_shared_device_mask(int gpuCount)
+        {
+            return (1 << gpuCount) - 1;
+        }
+
+
 
         internal void CreateDevice()
         {

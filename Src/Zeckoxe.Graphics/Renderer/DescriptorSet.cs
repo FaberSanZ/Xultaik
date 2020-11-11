@@ -14,7 +14,6 @@ namespace Zeckoxe.Graphics
 
     internal class ImageSamplerInfo
     {
-
         public Texture _texture { get; set; }
         public Sampler _sampler { get; set; }
 
