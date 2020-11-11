@@ -168,20 +168,14 @@ namespace Samples.Samples
 
             CreatePipelineState();
 
-            // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
-            List<DescriptorPool> pool = new()
-            {
-                new(DescriptorType.UniformBuffer, 1),
-            };
 
             // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor1 = new(PipelineState, pool);
+            Descriptor1 = new(PipelineState);
             Descriptor1.SetUniformBuffer(0, ConstBuffer);
             Descriptor1.Build();
 
             // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor2 = new(PipelineState, pool);
-
+            Descriptor2 = new(PipelineState);
             Descriptor2.SetUniformBuffer(0, ConstBuffer2);
             Descriptor2.Build();
 

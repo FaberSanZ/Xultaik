@@ -11,23 +11,61 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
-    public class Resource
+
+    internal class ImageSamplerInfo
     {
-        public Resource()
+
+        public Texture _texture { get; set; }
+        public Sampler _sampler { get; set; }
+
+
+        internal int _offset { get; set; }
+        internal int _binding { get; set; }
+
+
+        public ImageSamplerInfo(Texture texture, Sampler sampler, int offset, int binding)
         {
-
+            _texture = texture;
+            _sampler = sampler;
+            _offset = offset;
+            _binding = binding;
         }
-        public Resource(GraphicsResource type, ulong offset, int binding = 0)
+    }
+
+
+
+    internal struct ResourceInfo
+    {
+
+        internal Buffer _buffer { get; set; }
+        internal Texture _texture { get; set; }
+        internal Sampler _sampler { get; set; }
+
+
+        internal bool is_buffer { get; set; }
+        internal bool is_texture { get; set; }
+        internal bool is_sampler { get; set; }
+
+
+        internal int _offset { get; set; }
+        internal int _binding { get; set; }
+
+    }
+
+
+    internal class BufferInfo
+    {
+        internal Buffer _buffer { get; set; }
+        internal int _offset { get; set; }
+        internal int _binding { get; set; }
+
+
+        public BufferInfo(Buffer buffer, int offset, int binding)
         {
-            ResourceType = type;
-            Offset = offset;
-            Binding = binding;
+            _buffer = buffer;
+            _offset = offset;
+            _binding = binding;
         }
-
-        public GraphicsResource ResourceType { get; set; }
-        public ulong Offset { get; set; }
-        public int Binding { get; set; }
-
     }
 
 
@@ -36,14 +74,16 @@ namespace Zeckoxe.Graphics
 
         internal VkDescriptorPool _descriptorPool;
         internal VkDescriptorSet _descriptorSet;
+
         internal uint count = 0;
 
+        internal DescriptorAllocationToken _descriptorAllocationToken;
+        internal DescriptorResourceCounts _descriptorCounts;
 
-        public DescriptorSet(GraphicsPipelineState pipelineState, List<DescriptorPool> descriptors, int maxSets = 1) : base(pipelineState.NativeDevice)
+
+        public DescriptorSet(GraphicsPipelineState pipelineState) : base(pipelineState.NativeDevice)
         {
             PipelineState = pipelineState;
-            Descriptors = descriptors;
-            MaxSets = maxSets;
             SetupDescriptorPool();
 
         }
@@ -52,72 +92,12 @@ namespace Zeckoxe.Graphics
 
 
         public GraphicsPipelineState PipelineState { get; set; }
-        public List<DescriptorPool> Descriptors { get; set; }
-        public int MaxSets { get; set; }
-
+        public List<PoolAllocator> Descriptors { get; set; }
 
 
         internal List<BufferInfo> buffers = new();
         internal List<ImageSamplerInfo> images = new();
         internal List<ResourceInfo> resourceInfos = new();
-
-
-
-        internal class ImageSamplerInfo
-        {
-
-            public Texture _texture { get; set; }
-            public Sampler _sampler { get; set; }
-
-
-            internal int _offset { get; set; }
-            internal int _binding { get; set; }
-
-
-            public ImageSamplerInfo(Texture texture, Sampler sampler, int offset, int binding)
-            {
-                _texture = texture;
-                _sampler = sampler;
-                _offset = offset;
-                _binding = binding;
-            }
-        }
-
-
-
-        internal struct ResourceInfo
-        {
-
-            internal Buffer _buffer { get; set; }
-            internal Texture _texture { get; set; }
-            internal Sampler _sampler { get; set; }
-
-
-            internal bool is_buffer { get; set; }
-            internal bool is_texture { get; set; }
-            internal bool is_sampler { get; set; }
-
-
-            internal int _offset { get; set; }
-            internal int _binding { get; set; }
-
-        }
-
-
-        internal class BufferInfo
-        {
-            internal Buffer _buffer { get; set; }
-            internal int _offset { get; set; }
-            internal int _binding { get; set; }
-
-
-            public BufferInfo(Buffer buffer, int offset, int binding)
-            {
-                _buffer = buffer;
-                _offset = offset;
-                _binding = binding;
-            }
-        }
 
 
 
@@ -228,53 +208,12 @@ namespace Zeckoxe.Graphics
 
         internal void SetupDescriptorPool()
         {
-            int descriptors_count = Descriptors.Count;
 
-            VkDescriptorPoolSize* descriptor_pool_size = stackalloc VkDescriptorPoolSize[descriptors_count];
+            VkDescriptorSetLayout descriptor_set_layout = PipelineState._descriptorSetLayout;
+            _descriptorCounts = PipelineState.DescriptorResourceCounts;
+            _descriptorAllocationToken = NativeDevice._descriptorPoolManager.Allocate(_descriptorCounts, descriptor_set_layout);
 
-            for (int i = 0; i < descriptors_count; i++)
-            {
-                descriptor_pool_size[i] = new VkDescriptorPoolSize
-                {
-                    descriptorCount = (uint)Descriptors[i].Count,
-                    type = (VkDescriptorType)Descriptors[i].Type,
-                };
-            }
-
-            // Create the global descriptor pool
-            // All descriptors used in this example are allocated from this pool
-            VkDescriptorPoolCreateInfo descriptorPoolInfo = new VkDescriptorPoolCreateInfo
-            {
-                sType = VkStructureType.DescriptorPoolCreateInfo,
-                pNext = null,
-                flags = VkDescriptorPoolCreateFlags.None, // TODO: VkDescriptorPoolCreateFlags
-                poolSizeCount = (uint)descriptors_count,
-                pPoolSizes = descriptor_pool_size,
-                maxSets = (uint)MaxSets   // Set the max. number of descriptor sets that can be requested from this pool (requesting beyond this limit will result in an error)
-            };
-
-            vkCreateDescriptorPool(NativeDevice.handle, &descriptorPoolInfo, null, out _descriptorPool);
-
-
-
-
-
-            VkDescriptorSetLayout descriptorSetLayout = PipelineState._descriptorSetLayout;
-
-            // Allocate a new descriptor set from the global descriptor pool
-            VkDescriptorSetAllocateInfo allocInfo = new VkDescriptorSetAllocateInfo
-            {
-                sType = VkStructureType.DescriptorSetAllocateInfo,
-                descriptorPool = _descriptorPool,
-                descriptorSetCount = 1,
-                pSetLayouts = &descriptorSetLayout,
-            };
-
-
-            VkDescriptorSet descriptorSetptr;
-            vkAllocateDescriptorSets(NativeDevice.handle, &allocInfo, &descriptorSetptr);
-            _descriptorSet = descriptorSetptr;
-
+            _descriptorSet = _descriptorAllocationToken.Set;
         }
 
     }

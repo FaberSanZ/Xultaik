@@ -91,19 +91,7 @@ namespace Samples.Samples
 
 
 
-            // This example only uses one descriptor type (uniform buffer) and only requests one descriptor of this type
-            List<DescriptorPool> pool = new()
-            {
-                new DescriptorPool(DescriptorType.UniformBuffer, 1),
-
-                // For additional types you need to add new entries in the type count list
-                // E.g. for two combined image samplers :
-                //new  DescriptorPool(DescriptorType.CombinedImageSampler, 2),
-            };
-
-
-            Descriptor = new(PipelineState, pool, 1);
-            //Descriptor.SetValues(new() { new(ConstBuffer, 0) }); // Binding 0: Uniform buffer (Vertex shader)
+            Descriptor = new(PipelineState);
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)Descriptor
             Descriptor.Build();
         }

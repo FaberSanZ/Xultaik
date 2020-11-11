@@ -38,6 +38,9 @@ namespace Zeckoxe.Graphics
         internal uint timeline_fence_compute = 0;
         internal uint timeline_fence_transfer = 0;
 
+        internal PoolAllocator _descriptorPoolManager;
+
+
 
         internal VkPhysicalDeviceProperties device_properties;
         internal VkPhysicalDeviceSubgroupProperties subgroup_properties;
@@ -103,7 +106,7 @@ namespace Zeckoxe.Graphics
 
             nativeCommandBufferSecondary = CreateCommandBufferSecondary();
 
-
+            _descriptorPoolManager = new(this);
         }
 
 

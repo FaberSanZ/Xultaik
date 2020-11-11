@@ -114,13 +114,7 @@ namespace Samples.Samples
 
 
 
-            List<DescriptorPool> pool = new()
-            {
-                new DescriptorPool(DescriptorType.UniformBuffer, 1),
-            };
-
-
-            DescriptorSets["Descriptor1"] = new(PipelineStates["Solid"], pool);
+            DescriptorSets["Descriptor1"] = new(PipelineStates["Solid"]);
             DescriptorSets["Descriptor1"].SetUniformBuffer(0, Buffers["ConstBuffer1"]); // Binding 0: Uniform buffer (Vertex shader)
             DescriptorSets["Descriptor1"].Build();
 

@@ -32,7 +32,7 @@ namespace Zeckoxe.Graphics
         }
 
         public PipelineStateDescription PipelineStateDescription { get; set; }
-
+        internal DescriptorResourceCounts DescriptorResourceCounts { get; set;}
 
         private void Recreate()
         {
@@ -56,6 +56,13 @@ namespace Zeckoxe.Graphics
 
             VkDescriptorSetLayoutBinding* layoutBinding = stackalloc VkDescriptorSetLayoutBinding[Layouts.Count];
 
+            uint uniformBufferCount = 0;
+            uint sampledImageCount = 0;
+            uint samplerCount = 0;
+            uint storageBufferCount = 0;
+            uint storageImageCount = 0;
+
+
             for (int i = 0; i < Layouts.Count; i++)
             {
                 layoutBinding[i] = new VkDescriptorSetLayoutBinding
@@ -66,7 +73,39 @@ namespace Zeckoxe.Graphics
                     stageFlags = (VkShaderStageFlags)Layouts[i].Stage, // TODO: TOVkVkShaderStageFlags
                     pImmutableSamplers = null,
                 };
+
+
+
+
+                switch (layoutBinding[i].descriptorType)
+                {
+                    case VkDescriptorType.Sampler:
+                        samplerCount += 1;
+                        break;
+                    case VkDescriptorType.SampledImage:
+                        sampledImageCount += 1;
+                        break;
+                    case VkDescriptorType.StorageImage:
+                        storageImageCount += 1;
+                        break;
+                    case VkDescriptorType.UniformBuffer:
+                        uniformBufferCount += 1;
+                        break;
+                    case VkDescriptorType.StorageBuffer:
+                        storageBufferCount += 1;
+                        break;
+                }
+
             }
+
+
+            DescriptorResourceCounts = new DescriptorResourceCounts(
+                uniformBufferCount,
+                sampledImageCount,
+                samplerCount,
+                storageBufferCount,
+                storageImageCount);
+
 
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
             {
