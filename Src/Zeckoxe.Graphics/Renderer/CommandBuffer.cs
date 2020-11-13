@@ -185,12 +185,11 @@ namespace Zeckoxe.Graphics
             vkCmdCopyBuffer(handle, src.handle, dst.handle, 1, &region);
         }
 
-
         public void CopyBuffer(Buffer dst, Buffer src)
         {
             if (dst.size == src.size)
             {
-                // TOOD: CopyBuffer - Assert
+                // TODO: CopyBuffer - Assert
             }
             copy_buffer(dst, 0, src, 0, (uint)dst.size);
         }
@@ -221,6 +220,70 @@ namespace Zeckoxe.Graphics
             vkCmdCopyBuffer(handle, sourceBuffer, destinationBuffer, 1, &bufferCopy);
 
         }
+
+        void copy_image(Texture dst, Texture src, VkOffset3D dst_offset,
+                        VkOffset3D src_offset, VkExtent3D extent,
+                        VkImageSubresourceLayers dst_subresource,
+                        VkImageSubresourceLayers src_subresource)
+        {
+
+            VkImageCopy region = new() 
+            {
+                dstOffset = dst_offset,
+                srcOffset = src_offset,
+                extent = extent,
+                srcSubresource = src_subresource,
+                dstSubresource = dst_subresource,
+            };
+
+
+            vkCmdCopyImage(handle, src.handle, src.get_layout(VkImageLayout.TransferSrcOptimal), dst.handle, dst.get_layout(VkImageLayout.TransferDstOptimal), 1, &region);
+        }
+
+
+        internal void copy_image(Texture dst, Texture src)
+        {
+            VkImageCopy* regions = stackalloc VkImageCopy[32];
+
+            int levels = src.Levels;
+
+
+            for (uint i = 0; i < levels; i++)
+            {
+                regions[i] = new VkImageCopy
+                {
+                    extent = new(src.Width, src.Height, src.Depth),
+                    
+                    dstSubresource = new()
+                    {
+                        mipLevel = i,
+                        aspectMask = VulkanConvert.format_to_aspect_mask(dst.format),
+                        layerCount = dst.layers,
+                    },
+                    srcSubresource = new()
+                    {
+                        mipLevel = i,
+                        aspectMask = VulkanConvert.format_to_aspect_mask(src.format),
+                        layerCount = src.layers,
+                    }
+                };
+
+
+                if (regions[i].srcSubresource.aspectMask == regions[i].dstSubresource.aspectMask)
+                {
+                    // TODO: copy_image - Assert
+                }
+            }
+
+            vkCmdCopyImage(handle, src.handle, src.get_layout(VkImageLayout.TransferSrcOptimal), dst.handle, dst.get_layout(VkImageLayout.TransferDstOptimal), (uint)levels, regions);
+        }
+
+
+        public void CopyTexture(Texture dst, Texture src)
+        {
+            copy_image(dst, src);
+        }
+
 
         // TODO: ALL_GPUS  
         internal void set_current_gpu(int gpu_index)

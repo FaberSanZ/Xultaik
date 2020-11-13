@@ -102,8 +102,9 @@ namespace Zeckoxe.Graphics
 
         internal VkDeviceMemory memory;
         internal VkImageView View;
-        internal VkFormat vkformat;
         internal VkBuffer buffer;
+        internal uint layers;
+        internal VkFormat format;
 
         internal VkImageView depth_stencil_view => get_depth_stencilview();
 
@@ -143,9 +144,7 @@ namespace Zeckoxe.Graphics
 
 
         public MultisampleCount MultisampleCount { get; private set; }
-
-
-
+        public int Levels { get; internal set; }
 
         internal void Initialize()
         {
@@ -156,7 +155,7 @@ namespace Zeckoxe.Graphics
             // For depth-stencil formats, automatically fall back to a supported one
             if (IsDepthStencil)
             {
-                vkformat = NativeDevice.NativeAdapter.get_supported_depth_format(PixelFormatExtensions.depth_formats);
+                format = NativeDevice.NativeAdapter.get_supported_depth_format(PixelFormatExtensions.depth_formats);
                 Description.MipLevels = 1;
                 Description.ArraySize = 1;
             }
@@ -168,7 +167,7 @@ namespace Zeckoxe.Graphics
 
             if (!IsDepthStencil)
             {
-                Description.format = vkformat;
+                Description.format = format;
 
                 if (IsCubeMap)
                 {
@@ -228,7 +227,7 @@ namespace Zeckoxe.Graphics
                 extent = new VkExtent3D(Width, Height, Depth),
                 mipLevels = (uint)MipLevels,
                 samples = VkSampleCountFlags.Count1,
-                format = vkformat,
+                format = format,
                 flags = VkImageCreateFlags.None,
                 tiling = VkImageTiling.Optimal,
                 initialLayout = VkImageLayout.Undefined
@@ -311,8 +310,10 @@ namespace Zeckoxe.Graphics
 
         }
 
-
-
+        internal VkImageLayout get_layout(VkImageLayout transferSrcOptimal)
+        {
+            throw new NotImplementedException();
+        }
 
         internal VkImageView get_depth_stencilview()
         {
@@ -326,7 +327,7 @@ namespace Zeckoxe.Graphics
             {
                 sType = VkStructureType.ImageViewCreateInfo,
                 viewType = VkImageViewType.Image2D,
-                format = vkformat,
+                format = format,
                 image = handle,
                 components = VkComponentMapping.Identity,
                 subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Depth | VkImageAspectFlags.Stencil, 0, 1, 0, 1)

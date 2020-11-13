@@ -140,5 +140,10 @@ namespace Zeckoxe.Graphics
                     throw new ArgumentOutOfRangeException(nameof(cullMode));
             }
         }
+
+        internal static VkImageAspectFlags format_to_aspect_mask(VkFormat format)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -74,7 +74,7 @@ namespace Zeckoxe.Graphics
         internal void CreateRenderPass()
         {
             VkFormat color_format = SwapChain.color_format;
-            VkFormat depth_format = SwapChain.DepthStencil.vkformat;
+            VkFormat depth_format = SwapChain.DepthStencil.format;
 
 
             // Descriptors for the attachments used by this renderpass
