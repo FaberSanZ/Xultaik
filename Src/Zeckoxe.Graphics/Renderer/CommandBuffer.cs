@@ -172,6 +172,18 @@ namespace Zeckoxe.Graphics
             CopyBuffer(sourceBuffer.handle, destinationBuffer.handle, *(VkBufferCopy*)&bufferCopy);
         }
 
+        public void FillBuffer(Buffer dst, int value)
+        {
+
+            fill_buffer(dst.handle, (uint)(void*)value, 0, WholeSize);
+        }
+
+        internal void fill_buffer(VkBuffer dst, uint value, ulong offset, ulong size)
+        {
+            vkCmdFillBuffer(handle, dst, offset, size, value);
+        }
+
+
 
 
 

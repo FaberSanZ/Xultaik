@@ -35,14 +35,15 @@ namespace Zeckoxe.Graphics
 
     internal struct ResourceInfo
     {
-
-        internal Buffer _buffer { get; set; }
-        internal Texture _texture { get; set; }
-        internal Sampler _sampler { get; set; }
-
-
         internal bool is_buffer { get; set; }
+        internal Buffer _buffer { get; set; }
+
+
         internal bool is_texture { get; set; }
+        internal Texture _texture { get; set; }
+        
+        
+        internal Sampler _sampler { get; set; }
         internal bool is_sampler { get; set; }
 
 
@@ -129,7 +130,7 @@ namespace Zeckoxe.Graphics
 
         public void SetUniformBuffer(int offset, Buffer buffer, int binding = 0)
         {
-            //buffers.Add(new BufferInfo(buffer, offset, binding));
+            buffers.Add(new BufferInfo(buffer, offset, binding));
 
 
             resourceInfos.Add(new ResourceInfo
@@ -145,7 +146,7 @@ namespace Zeckoxe.Graphics
         public void Build()
         {
             int count = 0;
-            int resources_count = resourceInfos.Count;
+            int resources_count = resourceInfos.Count /*+ buffers.Count - 1*/;
 
             VkWriteDescriptorSet* ptr = stackalloc VkWriteDescriptorSet[resources_count];
 
@@ -181,12 +182,15 @@ namespace Zeckoxe.Graphics
 
                 if (r.is_sampler && r.is_texture)
                 {
-                    VkDescriptorImageInfo imageInfo;
-                    imageInfo.imageLayout = VkImageLayout.ShaderReadOnlyOptimal;
-                    imageInfo.imageView = r._texture.View;
-                    imageInfo.sampler = r._sampler.handle;
+                    VkDescriptorImageInfo imageInfo = new()
+                    {
+                        imageLayout = VkImageLayout.ShaderReadOnlyOptimal,
+                        imageView = r._texture.View,
+                        sampler = r._sampler.handle,
+                    };
 
-                    VkWriteDescriptorSet image_sampler_Writes = new VkWriteDescriptorSet
+
+                    VkWriteDescriptorSet image_sampler_Writes = new()
                     {
                         sType = VkStructureType.WriteDescriptorSet,
                         dstSet = _descriptorSet,
@@ -207,7 +211,7 @@ namespace Zeckoxe.Graphics
 
 
             //var arrayptr = descriptorSets.ToArray();
-            //    fixed(VkWriteDescriptorSet* ptr = arrayptr)
+            //fixed(VkWriteDescriptorSet* ptr = arrayptr)
 
             vkUpdateDescriptorSets(NativeDevice.handle, (uint)count, ptr, 0, null);
         }
