@@ -160,22 +160,11 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public struct BufferCopy
-        {
-            public ulong SourceOffset;
-            public ulong DestinationOffset;
-            public ulong Size;
-        }
-
-        public void CopyBuffer(Buffer sourceBuffer, Buffer destinationBuffer, BufferCopy bufferCopy)
-        {
-            CopyBuffer(sourceBuffer.handle, destinationBuffer.handle, *(VkBufferCopy*)&bufferCopy);
-        }
 
         public void FillBuffer(Buffer dst, int value)
         {
 
-            fill_buffer(dst.handle, (uint)(void*)value, 0, WholeSize);
+            fill_buffer(dst.handle, (uint)value, 0, WholeSize);
         }
 
         internal void fill_buffer(VkBuffer dst, uint value, ulong offset, ulong size)
@@ -184,10 +173,36 @@ namespace Zeckoxe.Graphics
         }
 
 
+        internal void copy_buffer(Buffer dst, ulong dst_offset, Buffer src, ulong src_offset, ulong size)
+        {
+            VkBufferCopy region = new()
+            {
+                size = size,
+                srcOffset = src_offset,
+                dstOffset = dst_offset,
+            };
+
+            vkCmdCopyBuffer(handle, src.handle, dst.handle, 1, &region);
+        }
 
 
+        public void CopyBuffer(Buffer dst, Buffer src)
+        {
+            if (dst.size == src.size)
+            {
+                // TOOD: CopyBuffer - Assert
+            }
+            copy_buffer(dst, 0, src, 0, (uint)dst.size);
+        }
 
-        internal void CopyBuffer(VkBuffer sourceBuffer, VkBuffer destinationBuffer, VkBufferCopy bufferCopy)
+
+        internal void copy_buffer(Buffer dst, Buffer src, VkBufferCopy* copies, uint count)
+        {
+            vkCmdCopyBuffer(handle, src.handle, dst.handle, count, copies);
+        }
+
+
+        internal void Copy_Buffer(VkBuffer sourceBuffer, VkBuffer destinationBuffer, VkBufferCopy bufferCopy)
         {
 
             VkBufferMemoryBarrier* bufferBarriers = stackalloc VkBufferMemoryBarrier[2];
