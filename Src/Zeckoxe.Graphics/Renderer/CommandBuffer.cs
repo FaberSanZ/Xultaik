@@ -285,6 +285,51 @@ namespace Zeckoxe.Graphics
         }
 
 
+        internal void copy_buffer_to_image(Texture image, Buffer buffer, uint num_blits, VkBufferImageCopy* blits)
+        {
+            vkCmdCopyBufferToImage(handle, buffer.handle ,image.handle, image.get_layout(VkImageLayout.TransferDstOptimal), num_blits, blits);
+        }
+
+        internal void copy_image_to_buffer(Buffer buffer, Texture image, uint num_blits, VkBufferImageCopy* blits)
+        {
+
+            vkCmdCopyImageToBuffer(handle, image.handle, image.get_layout(VkImageLayout.TransferSrcOptimal), buffer.handle, num_blits, blits);
+        }
+
+        internal void copy_buffer_to_image(Texture image, Buffer src, ulong buffer_offset,VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
+        {
+            VkBufferImageCopy region = new VkBufferImageCopy()
+            {
+                bufferOffset = buffer_offset,
+                bufferRowLength = row_length,
+                bufferImageHeight = slice_height,
+                imageSubresource = subresource,
+                imageOffset = offset,
+                imageExtent = extent,
+            };
+
+            vkCmdCopyBufferToImage(handle, src.handle, image.handle, image.get_layout(VkImageLayout.TransferDstOptimal),1, &region);
+        }
+
+
+
+
+        internal void copy_buffer_to_image(Buffer src, Texture image, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
+        {
+            VkBufferImageCopy region = new VkBufferImageCopy()
+            {
+                bufferOffset = buffer_offset,
+                bufferRowLength = row_length,
+                bufferImageHeight = slice_height,
+                imageSubresource = subresource,
+                imageOffset = offset,
+                imageExtent = extent,
+            };
+
+            vkCmdCopyBufferToImage(handle, src.handle, image.handle, image.get_layout(VkImageLayout.TransferSrcOptimal), 1, &region);
+        }
+
+
         // TODO: ALL_GPUS  
         internal void set_current_gpu(int gpu_index)
         {
