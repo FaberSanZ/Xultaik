@@ -12,12 +12,12 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
-    public unsafe class PoolAllocator : GraphicsResource
+    public unsafe class DescriptorPool : GraphicsResource
     {
         internal List<PoolInfo> _pools = new List<PoolInfo>();
         internal object _lock = new object();
 
-        public PoolAllocator(Device device) : base(device)
+        public DescriptorPool(Device device) : base(device)
         {
             _pools.Add(CreateNewPool());
         }
@@ -83,7 +83,7 @@ namespace Zeckoxe.Graphics
 
         public unsafe PoolInfo CreateNewPool()
         {
-            uint totalSets = 1000;
+            uint totalSets = 1024;
             uint descriptorCount = 100;
             uint poolSizeCount = 7;
             VkDescriptorPoolSize* sizes = stackalloc VkDescriptorPoolSize[(int)poolSizeCount];
@@ -127,6 +127,12 @@ namespace Zeckoxe.Graphics
             sizes[6] = new()
             {
                 type = VkDescriptorType.StorageBufferDynamic,
+                descriptorCount = descriptorCount
+            };
+
+            sizes[7] = new()
+            {
+                type = VkDescriptorType.AccelerationStructureKHR,
                 descriptorCount = descriptorCount
             };
 
