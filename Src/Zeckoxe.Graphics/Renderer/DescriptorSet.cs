@@ -110,6 +110,25 @@ namespace Zeckoxe.Graphics
             _descriptorSet = _descriptorAllocationToken.Set;
         }
 
+
+        public void SetTexture2DSampler(int offset, Texture texture, Sampler sampler)
+        {
+
+            resourceInfos.Add(new ResourceInfo
+            {
+                _offset = offset,
+                _binding = offset,
+                is_sampler = true,
+                is_texture = true,
+                _sampler = sampler,
+                _texture = texture
+            }); ;
+
+            //images.Add(new ImageSamplerInfo(texture, sampler, offset, 0));
+
+        }
+
+
         public void SetImageSampler(int offset, Texture texture, Sampler sampler)
         {
 

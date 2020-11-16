@@ -303,11 +303,6 @@ namespace Zeckoxe.Graphics
 
             Description.MipLevels = 1; // TODO: MipMaps
 
-
-
-
-
-
             VkImageSubresourceRange subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, (uint)MipLevels, 0, 1);
 
             // Copy the data from staging buffers to device local buffers.
