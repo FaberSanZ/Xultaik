@@ -131,7 +131,7 @@ namespace Zeckoxe.Graphics
             VkRenderPassBeginInfo renderPassBeginInfo = new VkRenderPassBeginInfo()
             {
                 sType = VkStructureType.RenderPassBeginInfo,
-                renderArea = new(x,y,w,h),
+                renderArea = new(x, y, w, h),
 
                 renderPass = framebuffer.renderPass,
                 clearValueCount = 2,
@@ -163,7 +163,6 @@ namespace Zeckoxe.Graphics
 
         public void FillBuffer(Buffer dst, int value)
         {
-
             fill_buffer(dst.handle, (uint)value, 0, WholeSize);
         }
 
@@ -285,6 +284,7 @@ namespace Zeckoxe.Graphics
         }
 
 
+
         internal void copy_buffer_to_image(Texture image, Buffer buffer, uint num_blits, VkBufferImageCopy* blits)
         {
             vkCmdCopyBufferToImage(handle, buffer.handle ,image.handle, image.get_layout(VkImageLayout.TransferDstOptimal), num_blits, blits);
@@ -295,6 +295,8 @@ namespace Zeckoxe.Graphics
 
             vkCmdCopyImageToBuffer(handle, image.handle, image.get_layout(VkImageLayout.TransferSrcOptimal), buffer.handle, num_blits, blits);
         }
+
+
 
         internal void copy_buffer_to_image(Texture image, Buffer src, ulong buffer_offset,VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
         {
@@ -310,9 +312,6 @@ namespace Zeckoxe.Graphics
 
             vkCmdCopyBufferToImage(handle, src.handle, image.handle, image.get_layout(VkImageLayout.TransferDstOptimal),1, &region);
         }
-
-
-
 
         internal void copy_buffer_to_image(Buffer src, Texture image, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
         {

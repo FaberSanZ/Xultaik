@@ -88,6 +88,7 @@ namespace Zeckoxe.Graphics
 
 
 
+        internal Buffer buffer;
 
         internal VkPointerSize row_pitch;
         internal VkPointerSize row_offset;
@@ -101,8 +102,9 @@ namespace Zeckoxe.Graphics
         internal bool owns_memory_allocation = true;
 
         internal VkDeviceMemory memory;
+        internal VkDeviceMemory buffer_memory;
         internal VkImageView View;
-        internal VkBuffer buffer;
+        //internal VkBuffer buffer;
         internal uint layers;
         internal VkFormat format;
 
@@ -122,6 +124,7 @@ namespace Zeckoxe.Graphics
         public ImageDimension Dimension => Description.Dimension;
         public PixelFormat Format => Description.Format;
         public byte[] Data => Description.Data;
+        public int Size => Description.Size;
         public int MipLevels => Description.MipLevels;
         public int ArraySize => Description.ArraySize;
         public int Width => Description.Width;
@@ -160,24 +163,34 @@ namespace Zeckoxe.Graphics
                 Description.ArraySize = 1;
             }
 
-            create_image();
-
-
-
 
             if (!IsDepthStencil)
             {
-                Description.format = format;
-
-                if (IsCubeMap)
-                {
-                    set_data_cubemap();
-                }
-                else
-                {
-                    set_data();
-                }
+                create_buffer_image();
             }
+
+
+
+            create_image();
+            
+
+
+
+
+
+            //if (!IsDepthStencil)
+            //{
+            //    Description.format = format;
+
+            //    if (IsCubeMap)
+            //    {
+            //        set_data_cubemap();
+            //    }
+            //    else
+            //    {
+            //        set_data();
+            //    }
+            //}
 
 
 
@@ -185,34 +198,18 @@ namespace Zeckoxe.Graphics
         }
 
 
-        internal void create_buffer_image(ulong size)
+        internal void create_buffer_image()
         {
-
-            VkBufferCreateInfo bufferCreateInfo = new VkBufferCreateInfo
+            buffer = new Buffer(NativeDevice, new()
             {
-                sType = VkStructureType.BufferCreateInfo,
-                pNext = null,
-                size = size,
-                usage = VkBufferUsageFlags.TransferSrc | VkBufferUsageFlags.TransferDst
-            };
-            vkCreateBuffer(NativeDevice.handle, &bufferCreateInfo, null, out buffer);
+                BufferFlags = BufferFlags.ShaderResource,
+                SizeInBytes = Size,
+                ByteStride = Size,
+                Usage = GraphicsResourceUsage.Dynamic
+            });
 
-            vkGetBufferMemoryRequirements(NativeDevice.handle, buffer, out VkMemoryRequirements stagingMemReq);
-            uint heapIndex = NativeDevice.GetMemoryTypeIndex(stagingMemReq.memoryTypeBits, VkMemoryPropertyFlags.HostVisible);
 
-            VkMemoryAllocateInfo memAllocInfo = new VkMemoryAllocateInfo()
-            {
-                sType = VkStructureType.MemoryAllocateInfo,
-                pNext = null,
-                allocationSize = stagingMemReq.size,
-                memoryTypeIndex = heapIndex
-            };
-
-            VkDeviceMemory stagingMemory = default;
-            vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, &stagingMemory).CheckResult();
-            memory = stagingMemory;
-
-            vkBindBufferMemory(NativeDevice.handle, buffer, memory, 0).CheckResult();
+            buffer.SetData(Data);
 
         }
 
@@ -223,11 +220,11 @@ namespace Zeckoxe.Graphics
             VkImageCreateInfo image_create_info = new VkImageCreateInfo
             {
                 sType = VkStructureType.ImageCreateInfo,
-                arrayLayers = (uint)ArraySize,
-                extent = new VkExtent3D(Width, Height, Depth),
-                mipLevels = (uint)MipLevels,
+                arrayLayers = (uint)1, // TODO: arrayLayers
+                extent = new VkExtent3D(Width, Height, 1),
+                mipLevels = 1,
                 samples = VkSampleCountFlags.Count1,
-                format = format,
+                format = (VkFormat)Format,
                 flags = VkImageCreateFlags.None,
                 tiling = VkImageTiling.Optimal,
                 initialLayout = VkImageLayout.Undefined
@@ -279,7 +276,6 @@ namespace Zeckoxe.Graphics
 
 
 
-            VkMemoryPropertyFlags memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
 
 
             vkCreateImage(NativeDevice.handle, &image_create_info, null, out handle);
@@ -287,6 +283,7 @@ namespace Zeckoxe.Graphics
 
             vkGetImageMemoryRequirements(NativeDevice.handle, handle, out VkMemoryRequirements imageMemReq);
 
+            VkMemoryPropertyFlags memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
 
             uint imageHeapIndex = NativeDevice.GetMemoryTypeIndex(imageMemReq.memoryTypeBits, memoryProperties);
 
@@ -303,14 +300,13 @@ namespace Zeckoxe.Graphics
             memory = _memory;
 
 
-            if (_memory != VkDeviceMemory.Null)
-            {
-                vkBindImageMemory(NativeDevice.handle, handle, memory, 0).CheckResult();
-            }
+
+            vkBindImageMemory(NativeDevice.handle, handle, memory, 0).CheckResult();
+            
 
         }
 
-        internal VkImageLayout get_layout(VkImageLayout transferSrcOptimal)
+        internal VkImageLayout get_layout(VkImageLayout imageLayout)
         {
             throw new NotImplementedException();
         }
@@ -339,127 +335,47 @@ namespace Zeckoxe.Graphics
         }
 
 
-        private void set_data()
-        {
-        }
-
-        private void set_data_cubemap()
-        {
-        }
-
-
-
-
-        public void Imple(ITextureData tex2D)
+        public void LoadTexture2D()
         {
 
 
-            vkGetPhysicalDeviceMemoryProperties(NativeDevice.NativeAdapter.handle, out VkPhysicalDeviceMemoryProperties memoryProperties);
-            vkGetBufferMemoryRequirements(NativeDevice.handle, buffer, out VkMemoryRequirements stagingMemReq);
+            Description.MipLevels = 1; // TODO: MipMaps
 
-            uint heapIndex = NativeDevice.GetMemoryTypeIndex(stagingMemReq.memoryTypeBits, VkMemoryPropertyFlags.HostVisible);
 
-            VkMemoryAllocateInfo memAllocInfo = new VkMemoryAllocateInfo()
-            {
-                sType = VkStructureType.MemoryAllocateInfo,
-                pNext = null,
-                allocationSize = stagingMemReq.size,
-                memoryTypeIndex = heapIndex
-            };
-
-            VkDeviceMemory stagingMemory;
-            VkResult result = vkAllocateMemory(NativeDevice.handle, &memAllocInfo, null, &stagingMemory);
-            result.CheckResult();
-
-            result = vkBindBufferMemory(NativeDevice.handle, buffer, stagingMemory, 0);
-            result.CheckResult();
-
-            void* vertexPtr;
-            result = vkMapMemory(NativeDevice.handle, stagingMemory, 0, 1, 0, &vertexPtr); // TODO: Mipmaps
-            result.CheckResult();
-
-            // TODO: MemoryCopy Texture
-            //fixed (byte* dataPtr = &tex2D.Data)
-            //{
-
-            //    Interop.MemoryHelper.Copy(pixelsPtr, dataBox.DataPointer, dataBox.SlicePitch);
-
-            //}
-
-            vkUnmapMemory(NativeDevice.handle, stagingMemory);
 
             // Setup buffer copy regions for each mip level.
-            VkBufferImageCopy[] bufferCopyRegions = new VkBufferImageCopy[tex2D.MipMaps]; // TODO: stackalloc and Mipmaps
+            VkBufferImageCopy[] bufferCopyRegions = new VkBufferImageCopy[MipLevels]; // TODO: stackalloc
             int offset = 0;
             for (int i = 0; i < bufferCopyRegions.Length; i++)
             {
+
                 bufferCopyRegions = new[]
                 {
                     new VkBufferImageCopy
                     {
                         imageSubresource = new VkImageSubresourceLayers(VkImageAspectFlags.Color, (uint)i, 0, 1),
-                        // TODO: Mipmaps
-                        //imageExtent = tex2D.Mipmaps[0].Extent, 
+                        imageExtent = new VkExtent3D(Width, Height,1),
                         bufferOffset = (ulong)offset
                     }
                 };
-                offset += 1 >> i; // TODO: Mipmaps
+                offset += Size;
             }
 
-            // Create optimal tiled target image.
-            VkImageCreateInfo createInfo = new VkImageCreateInfo
-            {
-                sType = VkStructureType.ImageCreateInfo,
-                pNext = null,
-                imageType = VkImageType.Image2D,
-                format = (VkFormat)tex2D.Format, // TODO: ToVkFormat 
-                mipLevels = 1, // TODO: Mipmaps
-                arrayLayers = 1,
-                samples = VkSampleCountFlags.Count1,
-                tiling = VkImageTiling.Optimal,
-                sharingMode = VkSharingMode.Exclusive,
-                initialLayout = VkImageLayout.Undefined,
-                //extent = tex2D.Mipmaps[0].Extent,
-                usage = VkImageUsageFlags.Sampled | VkImageUsageFlags.TransferDst
-            };
-
-            vkCreateImage(NativeDevice.handle, &createInfo, null, out VkImage image);
 
 
-            vkGetImageMemoryRequirements(NativeDevice.handle, image, out VkMemoryRequirements imageMemReq);
-
-
-            uint imageHeapIndex = NativeDevice.GetMemoryTypeIndex(imageMemReq.memoryTypeBits, VkMemoryPropertyFlags.DeviceLocal);
-
-            VkMemoryAllocateInfo allocInfo = new VkMemoryAllocateInfo
-            {
-                sType = VkStructureType.MemoryAllocateInfo,
-                pNext = null,
-                allocationSize = imageMemReq.size,
-                memoryTypeIndex = imageHeapIndex,
-            };
-            VkDeviceMemory memory;
-            result = vkAllocateMemory(NativeDevice.handle, &allocInfo, null, &memory);
-            result.CheckResult();
-
-            result = vkBindImageMemory(NativeDevice.handle, image, memory, 0);
-            result.CheckResult();
-
-            VkImageSubresourceRange subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1); // TODO: Mipmaps
+            VkImageSubresourceRange subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, (uint)MipLevels, 0, 1);
 
             // Copy the data from staging buffers to device local buffers.
             VkCommandBufferAllocateInfo allocInfo2 = new VkCommandBufferAllocateInfo()
             {
                 sType = VkStructureType.CommandBufferAllocateInfo,
-                //commandPool = ctx.GraphicsCommandPool,  
-                //TODO: GraphicsCommandPool?
+                commandPool = NativeDevice.graphics_cmd_pool,
 
                 level = VkCommandBufferLevel.Primary,
                 commandBufferCount = 1,
             };
-            VkCommandBuffer cmdBuffer = default;
-
-            vkAllocateCommandBuffers(NativeDevice.handle, &allocInfo2, &cmdBuffer); //TODO: CommandBuffer.Copy() 
+            VkCommandBuffer cmdBuffer;
+            vkAllocateCommandBuffers(NativeDevice.handle, &allocInfo2, &cmdBuffer);
 
             VkCommandBufferBeginInfo beginInfo = new VkCommandBufferBeginInfo()
             {
@@ -473,7 +389,7 @@ namespace Zeckoxe.Graphics
             {
                 sType = VkStructureType.ImageMemoryBarrier,
                 pNext = null,
-                image = image,
+                image = handle,
                 subresourceRange = subresourceRange,
                 srcAccessMask = 0,
                 dstAccessMask = VkAccessFlags.TransferWrite,
@@ -487,14 +403,14 @@ namespace Zeckoxe.Graphics
 
             fixed (VkBufferImageCopy* regionsPtr = bufferCopyRegions)
             {
-                vkCmdCopyBufferToImage(cmdBuffer, buffer, image, VkImageLayout.TransferDstOptimal, (uint)bufferCopyRegions.Length, regionsPtr);
+                vkCmdCopyBufferToImage(cmdBuffer, buffer.handle, handle, VkImageLayout.TransferDstOptimal, (uint)bufferCopyRegions.Length, regionsPtr);
             }
 
             VkImageMemoryBarrier imageMemoryBarrier2 = new VkImageMemoryBarrier
             {
                 sType = VkStructureType.ImageMemoryBarrier,
                 pNext = null,
-                image = image,
+                image = handle,
                 subresourceRange = subresourceRange,
                 srcAccessMask = VkAccessFlags.TransferWrite,
                 dstAccessMask = VkAccessFlags.ShaderRead,
@@ -514,8 +430,7 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.FenceCreateInfo,
                 pNext = null
             };
-            result = vkCreateFence(NativeDevice.handle, &fenceCreateInfo, null, out VkFence fence);
-            result.CheckResult();
+            vkCreateFence(NativeDevice.handle, &fenceCreateInfo, null, out VkFence fence);
 
             VkSubmitInfo submitInfo = new VkSubmitInfo
             {
@@ -525,45 +440,68 @@ namespace Zeckoxe.Graphics
                 pCommandBuffers = &cmdBuffer
             };
 
-            vkQueueSubmit(NativeDevice.nativeCommandQueue, submitInfo, fence); // TODO: GraphicsQueue
+            vkQueueSubmit(NativeDevice.nativeCommandQueue, submitInfo, fence);
 
-            result = vkWaitForFences(NativeDevice.handle, 1, &fence, false, ulong.MaxValue);
-            result.CheckResult();
+            vkWaitForFences(NativeDevice.handle, 1, &fence, false, ulong.MaxValue);
 
             // Cleanup staging resources.
             vkDestroyFence(NativeDevice.handle, fence, null);
-            vkFreeMemory(NativeDevice.handle, stagingMemory, null);
-            vkDestroyBuffer(NativeDevice.handle, buffer, null);
+            vkFreeMemory(NativeDevice.handle, buffer_memory, null);
+            vkDestroyBuffer(NativeDevice.handle, buffer.handle, null);
 
             // Create image view.
             VkImageViewCreateInfo imageViewCreateInfo = new VkImageViewCreateInfo()
             {
                 sType = VkStructureType.ImageViewCreateInfo,
-                image = image,
+                image = handle,
                 viewType = VkImageViewType.Image2D,
-                format = (VkFormat)tex2D.Format, // TODO: ToVkFormat 
+                format = (VkFormat)Format,
                 subresourceRange = subresourceRange
             };
 
             vkCreateImageView(NativeDevice.handle, &imageViewCreateInfo, null, out VkImageView view);
 
+
+            View = view;
+
+
         }
+
+
+
+        private void set_data()
+        {
+        }
+
+        private void set_data_cubemap()
+        {
+        }
+
+
+
+
+
 
         public void Dispose()
         {
             if (IsDepthStencil)
+            {
                 vkDestroyImageView(NativeDevice.handle, depth_stencil_view, null);
+            }
             else
+            {
                 vkDestroyImageView(NativeDevice.handle, View, null);
-
+            }
 
             if (handle != VkImage.Null)
+            {
                 vkDestroyImage(NativeDevice.handle, handle, null);
-
+            }
 
             if (memory != VkDeviceMemory.Null)
+            {
                 vkFreeMemory(NativeDevice.handle, memory, null);
-
+            }
         }
 
     }
