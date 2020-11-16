@@ -185,7 +185,7 @@ namespace Zeckoxe.Graphics
                     VkDescriptorImageInfo imageInfo = new()
                     {
                         imageLayout = VkImageLayout.ShaderReadOnlyOptimal,
-                        imageView = r._texture.View,
+                        imageView = r._texture.image_view,
                         sampler = r._sampler.handle,
                     };
 
