@@ -111,7 +111,7 @@ namespace Zeckoxe.Graphics
         }
 
 
-        public void SetTexture2DSampler(int offset, Texture texture, Sampler sampler)
+        public void SetTexture2DSampler(int offset, Texture2D texture, Sampler sampler)
         {
 
             resourceInfos.Add(new ResourceInfo

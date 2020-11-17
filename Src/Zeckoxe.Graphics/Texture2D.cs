@@ -5,28 +5,20 @@
 	Texture2D.cs
 =============================================================================*/
 
-using System.IO;
 using Vortice.Vulkan;
 using Zeckoxe.Graphics.Toolkit;
 
 namespace Zeckoxe.Graphics
 {
-    public static unsafe class Texture2D 
+    public unsafe class Texture2D : Texture
     {
-
-        //public Texture2D(Device device) : base(device, new TextureDescription() 
-        //{ 
-        //    Flags = TextureFlags.ShaderResource,
-
-        //})
-        //{
-        //    //Recreate();
-        //}
-
-
-        public static unsafe Texture LoadFromData(Device device, TextureData tex2D)
+        public Texture2D(Device device, TextureDescription description) : base(device, description)
         {
-            var text2d = new Texture(device, new TextureDescription
+        }
+
+        public static Texture2D LoadFromData(Device device, TextureData tex2D)
+        {
+            Texture2D text2d = new Texture2D(device, new TextureDescription
             {
                 Flags = TextureFlags.ShaderResource,
                 Usage = GraphicsResourceUsage.Staging,
@@ -44,7 +36,7 @@ namespace Zeckoxe.Graphics
             return text2d;
         }
 
-        public static unsafe Texture LoadFromFile(Device device, string path)
+        public static Texture2D LoadFromFile(Device device, string path)
         {
             TextureData tex2D = new TextureData();
 
@@ -63,9 +55,9 @@ namespace Zeckoxe.Graphics
                 tex2D = IMGLoader.LoadFromFile(path);
             }
 
-            
 
-            var text2d = new Texture(device, new TextureDescription
+
+            Texture2D text2d = new Texture2D(device, new TextureDescription
             {
                 Flags = TextureFlags.ShaderResource,
                 Usage = GraphicsResourceUsage.Staging,
