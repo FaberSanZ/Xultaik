@@ -541,7 +541,10 @@ namespace Zeckoxe.Graphics
 
         public void Dispose()
         {
-            //vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
+            if (_debugMessenger != VkDebugUtilsMessengerEXT.Null)
+            {
+                vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
+            }
             vkDestroyInstance(instance, null);
         }
     }

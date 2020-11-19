@@ -160,6 +160,7 @@ namespace Zeckoxe.Graphics
             if (IsDepthStencil)
             {
                 depth_stencil_view = get_depth_stencil_view();
+                format = NativeDevice.NativeAdapter.get_supported_depth_format(PixelFormatExtensions.depth_formats);
             }
 
             if (IsShaderResource)

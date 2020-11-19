@@ -212,7 +212,7 @@ namespace Samples.Samples
                 {
                     FillMode = FillMode.Solid,
                     CullMode = CullMode.None,
-                    FrontFace = FrontFace.Clockwise,
+                    FrontFace = FrontFace.CounterClockwise,
                 },
                 PipelineVertexInput = new()
                 {
