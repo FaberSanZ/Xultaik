@@ -15,7 +15,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zeckoxe.Graphics;
 using Zeckoxe.Physics;
@@ -24,30 +23,7 @@ using Schema = glTFLoader.Schema;
 
 namespace Zeckoxe.GLTF
 {
-    public class Primitive
-    {
-        public string name;
-        public int indexBase;
-        public int vertexBase;
-        public int vertexCount;
-        public int indexCount;
-        public int material;
-        public BoundingBox bb;
 
-        public Primitive() { }
-        public Primitive(int vertexCount, int indexCount, int vertexBase = 0, int indexBase = 0)
-        {
-            this.vertexCount = vertexCount;
-            this.indexCount = indexCount;
-            this.vertexBase = vertexBase;
-            this.indexBase = indexBase;
-        }
-
-        public void Draw(CommandBuffer cmd, int instanceCount = 1, int firstInstance = 0)
-        {
-            cmd.DrawIndexed(indexCount, instanceCount, indexBase, vertexBase, firstInstance);
-        }
-    }
 
 
 
@@ -63,20 +39,30 @@ namespace Zeckoxe.GLTF
                 //first search entry assembly
                 stream = Assembly.GetEntryAssembly().GetManifestResourceStream(resId);
                 if (stream != null)
+                {
                     return stream;
+                }
                 //if not found, search assembly named with the 1st element of the resId
                 string assemblyName = resId.Split('.')[0];
                 Assembly a = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(aa => aa.GetName().Name == assemblyName);
                 if (a == null)
+                {
                     throw new Exception($"Assembly '{assemblyName}' not found for ressource '{path}'.");
+                }
+
                 stream = a.GetManifestResourceStream(resId);
                 if (stream == null)
+                {
                     throw new Exception("Resource not found: " + path);
+                }
             }
             else
             {
                 if (!File.Exists(path))
+                {
                     throw new FileNotFoundException("File not found: ", path);
+                }
+
                 stream = new FileStream(path, FileMode.Open, FileAccess.Read);
             }
             return stream;
@@ -93,11 +79,19 @@ namespace Zeckoxe.GLTF
         public static void FromFloatArray(ref Vector3 v, float[] floats)
         {
             if (floats.Length > 0)
+            {
                 v.X = floats[0];
+            }
+
             if (floats.Length > 1)
+            {
                 v.Y = floats[1];
+            }
+
             if (floats.Length > 2)
+            {
                 v.Z = floats[2];
+            }
         }
         /// <summary>
         /// Populate a Vector4 with values from a float array
@@ -105,13 +99,24 @@ namespace Zeckoxe.GLTF
         public static void FromFloatArray(ref Vector4 v, float[] floats)
         {
             if (floats.Length > 0)
+            {
                 v.X = floats[0];
+            }
+
             if (floats.Length > 1)
+            {
                 v.Y = floats[1];
+            }
+
             if (floats.Length > 2)
+            {
                 v.Z = floats[2];
+            }
+
             if (floats.Length > 3)
+            {
                 v.W = floats[3];
+            }
         }
         /// <summary>
         /// Populate a Quaternion with values from a float array
@@ -119,13 +124,24 @@ namespace Zeckoxe.GLTF
         public static void FromFloatArray(ref System.Numerics.Quaternion v, float[] floats)
         {
             if (floats.Length > 0)
+            {
                 v.X = floats[0];
+            }
+
             if (floats.Length > 1)
+            {
                 v.Y = floats[1];
+            }
+
             if (floats.Length > 2)
+            {
                 v.Z = floats[2];
+            }
+
             if (floats.Length > 3)
+            {
                 v.W = floats[3];
+            }
         }
         /// <summary>
         /// Populate a Vector2 with values from a byte array starting at offset
@@ -170,11 +186,19 @@ namespace Zeckoxe.GLTF
         public static void ImportFloatArray(this ref Vector3 v, float[] floats)
         {
             if (floats.Length > 0)
+            {
                 v.X = floats[0];
+            }
+
             if (floats.Length > 1)
+            {
                 v.Y = floats[1];
+            }
+
             if (floats.Length > 2)
+            {
                 v.Z = floats[2];
+            }
         }
         public static Vector3 Transform(this Vector3 v, ref Matrix4x4 mat, bool translate = false)
         {
@@ -199,10 +223,13 @@ namespace Zeckoxe.GLTF
         public void AddPrimitive(Primitive p)
         {
             if (Primitives.Count == 0)
-                bb = p.bb;
+            {
+                bb = p.BoundingBox;
+            }
             else
-                bb += p.bb;
-
+            {
+                bb += p.BoundingBox;
+            }
 
             Primitives.Add(p);
         }
@@ -259,9 +286,8 @@ namespace Zeckoxe.GLTF
 
         internal void CreateBuffers()
         {
-            ulong vertexCount, indexCount;
 
-            GetVertexCount(out vertexCount, out indexCount);
+            GetVertexCount(out ulong vertexCount, out ulong indexCount);
 
             int vertSize = (int)vertexCount * Marshal.SizeOf<VertexPositionNormal>();
             int idxSize = (int)indexCount * (IndexType == IndexType.Uint16 ? 2 : 4);
@@ -271,7 +297,7 @@ namespace Zeckoxe.GLTF
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = (int)vertSize,
+                SizeInBytes = vertSize,
             });
 
 
@@ -279,7 +305,7 @@ namespace Zeckoxe.GLTF
             {
                 BufferFlags = BufferFlags.IndexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = (int)idxSize,
+                SizeInBytes = idxSize,
             });
 
 
@@ -358,20 +384,13 @@ namespace Zeckoxe.GLTF
             }
         }
 
-
-
-
-
-
-
-        List<Mesh> meshes;
+        private List<Mesh> meshes;
 
 
         public List<Mesh> LoadMeshes<TVertex>(IndexType indexType, Graphics.Buffer vbo, ulong vboOffset, Graphics.Buffer ibo, ulong iboOffset)
         {
-            ulong vCount, iCount;
 
-            GetVertexCount(out vCount, out iCount);
+            GetVertexCount(out ulong vCount, out ulong iCount);
 
             int vertexByteSize = Marshal.SizeOf<TVertex>();
             ulong vertSize = vCount * (ulong)vertexByteSize;
@@ -411,8 +430,7 @@ namespace Zeckoxe.GLTF
                         {
                             Schema.Accessor AccPos = null, AccNorm = null, AccUv = null, AccUv1 = null;
 
-                            int accessorIdx;
-                            if (p.Attributes.TryGetValue("POSITION", out accessorIdx))
+                            if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
                             {
                                 AccPos = gltf.Accessors[accessorIdx];
                                 ensureBufferIsLoaded(gltf.BufferViews[(int)AccPos.BufferView].Buffer);
@@ -435,15 +453,15 @@ namespace Zeckoxe.GLTF
 
                             Primitive prim = new Primitive
                             {
-                                indexBase = indexCount,
-                                vertexBase = vertexCount,
-                                vertexCount = AccPos.Count,
-                                material = (p.Material ?? 0)
+                                IndexBase = indexCount,
+                                VertexBase = vertexCount,
+                                VertexCount = AccPos.Count,
+                                Material = (p.Material ?? 0)
                             };
 
-                            prim.bb.Min.ImportFloatArray(AccPos.Min);
-                            prim.bb.Max.ImportFloatArray(AccPos.Max);
-                            prim.bb.IsValid = true;
+                            prim.BoundingBox.Min.ImportFloatArray(AccPos.Min);
+                            prim.BoundingBox.Max.ImportFloatArray(AccPos.Max);
+                            prim.BoundingBox.IsValid = true;
 
                             //Interleaving vertices
                             byte* inPosPtr = null, inNormPtr = null, inUvPtr = null, inUv1Ptr = null;
@@ -472,7 +490,7 @@ namespace Zeckoxe.GLTF
                             }
 
                             //TODO: use vertex attributes scan for copying data if they exists
-                            for (int j = 0; j < prim.vertexCount; j++)
+                            for (int j = 0; j < prim.VertexCount; j++)
                             {
                                 System.Buffer.MemoryCopy(inPosPtr, stagVertPtr, 12, 12);
                                 inPosPtr += 12;
@@ -516,7 +534,10 @@ namespace Zeckoxe.GLTF
                                         uint* usPtr = (uint*)stagIdxPtr;
                                         ushort* inPtr = (ushort*)inIdxPtr;
                                         for (int i = 0; i < acc.Count; i++)
+                                        {
                                             usPtr[i] = inPtr[i];
+                                        }
+
                                         stagIdxPtr += (long)acc.Count * 4;
                                     }
                                 }
@@ -532,7 +553,10 @@ namespace Zeckoxe.GLTF
                                         ushort* usPtr = (ushort*)stagIdxPtr;
                                         uint* inPtr = (uint*)inIdxPtr;
                                         for (int i = 0; i < acc.Count; i++)
+                                        {
                                             usPtr[i] = (ushort)inPtr[i];
+                                        }
+
                                         stagIdxPtr += (long)acc.Count * 2;
                                     }
                                 }
@@ -543,21 +567,29 @@ namespace Zeckoxe.GLTF
                                     {
                                         ushort* usPtr = (ushort*)stagIdxPtr;
                                         for (int i = 0; i < acc.Count; i++)
-                                            usPtr[i] = (ushort)inIdxPtr[i];
+                                        {
+                                            usPtr[i] = inIdxPtr[i];
+                                        }
+
                                         stagIdxPtr += (long)acc.Count * 2;
                                     }
                                     else
                                     {
                                         uint* usPtr = (uint*)stagIdxPtr;
                                         for (int i = 0; i < acc.Count; i++)
-                                            usPtr[i] = (uint)inIdxPtr[i];
+                                        {
+                                            usPtr[i] = inIdxPtr[i];
+                                        }
+
                                         stagIdxPtr += (long)acc.Count * 4;
                                     }
                                 }
                                 else
+                                {
                                     throw new NotImplementedException();
+                                }
 
-                                prim.indexCount = acc.Count;
+                                prim.IndexCount = acc.Count;
                                 indexCount += acc.Count;
                             }
 
@@ -605,9 +637,11 @@ namespace Zeckoxe.GLTF
 
             foreach (Mesh m in Meshes)
             {
-                foreach (var p in m.Primitives)
+                foreach (Primitive primitive in m.Primitives)
                 {
-                    commandBuffer.DrawIndexed(p.indexCount, 1, p.indexBase, p.vertexBase, 0);
+                    commandBuffer.DrawIndexed(primitive.IndexCount, 1, primitive.IndexBase, primitive.VertexBase, 0);
+
+                    //primitive.Draw(commandBuffer);
                 }
             }
         }
@@ -618,7 +652,9 @@ namespace Zeckoxe.GLTF
         {
             defaultScene = -1;
             if (gltf.Scene == null)
+            {
                 return new Scene[] { };
+            }
 
             List<Scene> scenes = new List<Scene>();
             defaultScene = (int)gltf.Scene;
@@ -634,7 +670,9 @@ namespace Zeckoxe.GLTF
                 });
 
                 if (scene.Nodes.Length == 0)
+                {
                     continue;
+                }
 
                 scenes[i].Root = new Node
                 {
@@ -643,7 +681,9 @@ namespace Zeckoxe.GLTF
                 };
 
                 foreach (int nodeIdx in scene.Nodes)
+                {
                     LoadNode(scenes[i].Root, gltf.Nodes[nodeIdx]);
+                }
             }
             return scenes.ToArray();
         }
@@ -671,11 +711,19 @@ namespace Zeckoxe.GLTF
             }
 
             if (gltfNode.Translation != null)
+            {
                 FromFloatArray(ref translation, gltfNode.Translation);
+            }
+
             if (gltfNode.Translation != null)
+            {
                 FromFloatArray(ref rotation, gltfNode.Rotation);
+            }
+
             if (gltfNode.Translation != null)
+            {
                 FromFloatArray(ref scale, gltfNode.Scale);
+            }
 
             localTransform *=
                 Matrix4x4.CreateScale(scale) *
@@ -696,40 +744,63 @@ namespace Zeckoxe.GLTF
             {
                 node.Children = new List<Node>();
                 for (int i = 0; i < gltfNode.Children.Length; i++)
+                {
                     LoadNode(node, gltf.Nodes[gltfNode.Children[i]]);
+                }
             }
 
             if (gltfNode.Mesh != null)
+            {
                 node.Mesh = meshes[(int)gltfNode.Mesh];
+            }
         }
 
         public static void FromFloatArray(ref Vector3 v, float[] floats)
         {
             if (floats.Length > 0)
+            {
                 v.X = floats[0];
+            }
+
             if (floats.Length > 1)
+            {
                 v.Y = floats[1];
+            }
+
             if (floats.Length > 2)
+            {
                 v.Z = floats[2];
+            }
         }
 
 
         public static void FromFloatArray(ref System.Numerics.Quaternion v, float[] floats)
         {
             if (floats.Length > 0)
+            {
                 v.X = floats[0];
+            }
+
             if (floats.Length > 1)
+            {
                 v.Y = floats[1];
+            }
+
             if (floats.Length > 2)
+            {
                 v.Z = floats[2];
+            }
+
             if (floats.Length > 3)
+            {
                 v.W = floats[3];
+            }
         }
 
 
 
 
-       
+
 
 
         public void Update()
