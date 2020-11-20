@@ -63,7 +63,6 @@ The rendering backend is completely focused on Vulkan, however the Engine greatl
 - Granite (<https://github.com/Themaister/Granite>)
 - Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
 - Vortice.Vulkan (<https://github.com/amerkoleci/Vortice.Vulkan>)
-- SharpGLTF (<https://github.com/vpenades/SharpGLTF>)
 - DefaultEcs (<https://github.com/Doraku/DefaultEcs>)
 
 

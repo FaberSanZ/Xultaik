@@ -23,45 +23,8 @@ using Schema = glTFLoader.Schema;
 
 namespace Zeckoxe.GLTF
 {
-
-
-
-
-
-    public class Mesh
-    {
-        public string Name;
-        public List<Primitive> Primitives = new List<Primitive>();
-        public BoundingBox bb;
-
-        /// <summary>
-        /// add primitive and update mesh bounding box
-        /// </summary>
-        public void AddPrimitive(Primitive p)
-        {
-            if (Primitives.Count == 0)
-            {
-                bb = p.BoundingBox;
-            }
-            else
-            {
-                bb += p.BoundingBox;
-            }
-
-            Primitives.Add(p);
-        }
-    }
-
-
-
-
     public unsafe class GLTFLoader
     {
-
-
-
-
-
 
         internal Gltf gltf;
         internal string baseDirectory;
@@ -77,7 +40,6 @@ namespace Zeckoxe.GLTF
         public GLTFLoader(Device device, string path)
         {
             _device = device;
-
             _path = path;
 
             baseDirectory = Path.GetDirectoryName(path);
