@@ -9,6 +9,7 @@
 
 using System.Collections.Generic;
 using System.Numerics;
+using Zeckoxe.Physics;
 
 namespace Zeckoxe.GLTF
 {
@@ -60,7 +61,7 @@ namespace Zeckoxe.GLTF
 
             if (Mesh is not null)
             {
-                aabb = Mesh.bb.getAABB(curTransform);
+                aabb = Mesh.bb.GetAABB(curTransform);
             }
 
             if (Children is not null)

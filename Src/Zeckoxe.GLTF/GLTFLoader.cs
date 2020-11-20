@@ -18,71 +18,12 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zeckoxe.Graphics;
+using Zeckoxe.Physics;
 using Schema = glTFLoader.Schema;
 
 
 namespace Zeckoxe.GLTF
 {
-
-
-
-
-
-
-    public struct BoundingBox
-    {
-        public Vector3 min;
-        public Vector3 max;
-        public bool isValid;
-        public BoundingBox(Vector3 min, Vector3 max, bool isValid = false)
-        {
-            this.min = min;
-            this.max = max;
-            this.isValid = isValid;
-        }
-        public BoundingBox getAABB(Matrix4x4 m)
-        {
-            if (!isValid)
-                return default(BoundingBox);
-            Vector3 mini = new Vector3(m.M41, m.M42, m.M43);
-            Vector3 maxi = mini;
-            Vector3 v0, v1;
-
-            Vector3 right = new Vector3(m.M11, m.M12, m.M13);
-            v0 = right * this.min.X;
-            v1 = right * this.max.X;
-            mini += Vector3.Min(v0, v1);
-            maxi += Vector3.Max(v0, v1);
-
-            Vector3 up = new Vector3(m.M21, m.M22, m.M23);
-            v0 = up * this.min.Y;
-            v1 = up * this.max.Y;
-            mini += Vector3.Min(v0, v1);
-            maxi += Vector3.Max(v0, v1);
-
-            Vector3 back = new Vector3(m.M31, m.M32, m.M33);
-            v0 = back * this.min.Z;
-            v1 = back * this.max.Z;
-            mini += Vector3.Min(v0, v1);
-            maxi += Vector3.Max(v0, v1);
-
-            return new BoundingBox(mini, maxi, true);
-        }
-
-        public float Width => max.X - min.X;
-        public float Height => max.Y - min.Y;
-        public float Depth => max.Z - min.Z;
-
-        public Vector3 Center => new Vector3(Width / 2f + min.X, Height / 2f + min.Y, Depth / 2f + min.Z);
-
-        public static BoundingBox operator +(BoundingBox bb1, BoundingBox bb2)
-        {
-            return bb1.isValid ? bb2.isValid ? new BoundingBox(Vector3.Min(bb1.min, bb2.min), Vector3.Min(bb1.max, bb2.max), true) : bb1 : bb2.isValid ? bb2 : default(BoundingBox);
-        }
-        public override string ToString() => isValid ? string.Format($" {min}->{max}") : "Invalid";
-    }
-
-
     public class Primitive
     {
         public string name;
@@ -175,7 +116,7 @@ namespace Zeckoxe.GLTF
         /// <summary>
         /// Populate a Quaternion with values from a float array
         /// </summary>
-        public static void FromFloatArray(ref Quaternion v, float[] floats)
+        public static void FromFloatArray(ref System.Numerics.Quaternion v, float[] floats)
         {
             if (floats.Length > 0)
                 v.X = floats[0];
@@ -216,7 +157,7 @@ namespace Zeckoxe.GLTF
         /// <summary>
         /// Populate a Quaternion with values from a byte array starting at offset
         /// </summary>
-        public static void FromByteArray(ref Quaternion v, byte[] byteArray, int offset)
+        public static void FromByteArray(ref System.Numerics.Quaternion v, byte[] byteArray, int offset)
         {
             v.X = BitConverter.ToSingle(byteArray, offset);
             v.Y = BitConverter.ToSingle(byteArray, offset + 4);
@@ -500,9 +441,9 @@ namespace Zeckoxe.GLTF
                                 material = (p.Material ?? 0)
                             };
 
-                            prim.bb.min.ImportFloatArray(AccPos.Min);
-                            prim.bb.max.ImportFloatArray(AccPos.Max);
-                            prim.bb.isValid = true;
+                            prim.bb.Min.ImportFloatArray(AccPos.Min);
+                            prim.bb.Max.ImportFloatArray(AccPos.Max);
+                            prim.bb.IsValid = true;
 
                             //Interleaving vertices
                             byte* inPosPtr = null, inNormPtr = null, inUvPtr = null, inUv1Ptr = null;
@@ -715,7 +656,7 @@ namespace Zeckoxe.GLTF
             //Debug.WriteLine("Loading node {0}", gltfNode.Name);
 
             Vector3 translation = new Vector3();
-            Quaternion rotation = Quaternion.Identity;
+            System.Numerics.Quaternion rotation = System.Numerics.Quaternion.Identity;
             Vector3 scale = new Vector3(1);
             Matrix4x4 localTransform = Matrix4x4.Identity;
 
@@ -773,7 +714,7 @@ namespace Zeckoxe.GLTF
         }
 
 
-        public static void FromFloatArray(ref Quaternion v, float[] floats)
+        public static void FromFloatArray(ref System.Numerics.Quaternion v, float[] floats)
         {
             if (floats.Length > 0)
                 v.X = floats[0];

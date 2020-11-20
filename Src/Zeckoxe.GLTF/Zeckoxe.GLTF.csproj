@@ -7,12 +7,11 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0019" />
-    <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0-alpha0019" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Graphics.csproj" />
+    <ProjectReference Include="..\Zeckoxe.Physics\Zeckoxe.Physics.csproj" />
   </ItemGroup>
 
 </Project>

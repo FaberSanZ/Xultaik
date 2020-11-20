@@ -10,6 +10,7 @@
 
 using System.Collections.Generic;
 using System.Numerics;
+using Zeckoxe.Physics;
 
 namespace Zeckoxe.GLTF
 {
