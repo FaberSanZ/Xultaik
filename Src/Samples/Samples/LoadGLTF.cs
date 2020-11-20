@@ -61,13 +61,12 @@ namespace Samples.Samples
         public Camera Camera { get; set; }
         public GameTime GameTime { get; set; }
         public GLTFLoader GLTFModel { get; set; }
-        public int[] Indices { get; set; }
-        public VertexPositionNormal[] Vertices { get; set; }
+        public List<Mesh> Meshes { get; private set; }
 
 
-        public Dictionary<string, DescriptorSet> DescriptorSets = new();
-        public Dictionary<string, Buffer> Buffers = new();
-        public Dictionary<string, GraphicsPipelineState> PipelineStates = new();
+        public DescriptorSet Descriptor;
+        public Buffer ConstBuffer;
+        public GraphicsPipelineState PipelineState;
         public Dictionary<string, ShaderBytecode> Shaders = new();
 
         // TransformUniform 
@@ -103,48 +102,11 @@ namespace Samples.Samples
             uniform = new(Camera.Projection, Model, Camera.View);
 
 
-            GLTFModel = new("Models/DamagedHelmet.gltf");
 
-            Indices = GLTFModel.Indices;
-            Vertices = GLTFModel.GetPositionNormalAsArray();
-
-
-            CreateBuffers();
             CreatePipelineState();
 
 
-
-            DescriptorSets["Descriptor1"] = new(PipelineStates["Solid"]);
-            DescriptorSets["Descriptor1"].SetUniformBuffer(0, Buffers["ConstBuffer1"]); // Binding 0: Uniform buffer (Vertex shader)
-            DescriptorSets["Descriptor1"].Build();
-
-            yaw = 0f;
-            pitch = 4.5f;
-            roll = 0.15f;
-        }
-
-
-        public void CreateBuffers()
-        {
-            Buffers["VertexBuffer"] = new(Device, new()
-            {
-                BufferFlags = BufferFlags.VertexBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf(Vertices),
-            });
-            Buffers["VertexBuffer"].SetData(Vertices);
-
-
-            Buffers["IndexBuffer"] = new(Device, new()
-            {
-                BufferFlags = BufferFlags.IndexBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf(Indices),
-            });
-            Buffers["IndexBuffer"].SetData(Indices);
-
-
-            Buffers["ConstBuffer1"] = new(Device, new()
+            ConstBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -152,7 +114,23 @@ namespace Samples.Samples
             });
 
 
+
+            Descriptor = new(PipelineState);
+            Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
+            Descriptor.Build();
+
+            GLTFModel = new GLTFLoader(Device, "Models/DamagedHelmet.gltf");
+
+            yaw = 0f;
+            pitch = 4.5f;
+            roll = 0.15f;
         }
+
+
+
+
+
+
 
 
         public void CreatePipelineState()
@@ -191,7 +169,7 @@ namespace Samples.Samples
             };
 
 
-            PipelineStates["Solid"] = new(new() 
+            PipelineState = new(new() 
             {
                 Framebuffer = Framebuffer,
 
@@ -237,7 +215,7 @@ namespace Samples.Samples
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, 0.0f, 0.0f);
             uniform.Update(Camera, Model);
-            Buffers["ConstBuffer1"].SetData(ref uniform);
+            ConstBuffer.SetData(ref uniform);
 
 
 
@@ -258,14 +236,10 @@ namespace Samples.Samples
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 
-            commandBuffer.SetVertexBuffers(new Buffer[] { Buffers["VertexBuffer"] });
-            commandBuffer.SetIndexBuffer(Buffers["IndexBuffer"]);
+            commandBuffer.SetGraphicPipeline(PipelineState);
+            commandBuffer.BindDescriptorSets(Descriptor);
 
-
-
-            commandBuffer.SetGraphicPipeline(PipelineStates["Solid"]);
-            commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor1"]);
-            commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
+            GLTFModel.Draw(commandBuffer);
 
 
         }

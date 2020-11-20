@@ -1,4 +1,6 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
 
 /*=============================================================================
 	GLTFLoader.cs
@@ -10,441 +12,791 @@ using glTFLoader.Schema;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zeckoxe.Graphics;
+using Schema = glTFLoader.Schema;
 
 
 namespace Zeckoxe.GLTF
 {
-    public class BufferInfo : IDisposable
+    public class Scene
     {
-        public byte[] bufferBytes;
-        public IntPtr bufferPointer;
-        public GCHandle bufferHandle;
+        public string Name;
+        public Node Root;
+        public List<Node> GetNodes() => Root?.Children;
+        public Node FindNode(string name) => Root == null ? null : Root.FindNode(name);
 
-        public BufferInfo(byte[] bufferBytes)
+        public BoundingBox AABB => Root.GetAABB(Matrix4x4.Identity);
+    }
+
+
+
+
+
+    public struct BoundingBox
+    {
+        public Vector3 min;
+        public Vector3 max;
+        public bool isValid;
+        public BoundingBox(Vector3 min, Vector3 max, bool isValid = false)
         {
-            this.bufferBytes = bufferBytes;
-            bufferHandle = GCHandle.Alloc(this.bufferBytes, GCHandleType.Pinned);
-            bufferPointer = Marshal.UnsafeAddrOfPinnedArrayElement(this.bufferBytes, 0);
+            this.min = min;
+            this.max = max;
+            this.isValid = isValid;
+        }
+        public BoundingBox getAABB(Matrix4x4 m)
+        {
+            if (!isValid)
+                return default(BoundingBox);
+            Vector3 mini = new Vector3(m.M41, m.M42, m.M43);
+            Vector3 maxi = mini;
+            Vector3 v0, v1;
+
+            Vector3 right = new Vector3(m.M11, m.M12, m.M13);
+            v0 = right * this.min.X;
+            v1 = right * this.max.X;
+            mini += Vector3.Min(v0, v1);
+            maxi += Vector3.Max(v0, v1);
+
+            Vector3 up = new Vector3(m.M21, m.M22, m.M23);
+            v0 = up * this.min.Y;
+            v1 = up * this.max.Y;
+            mini += Vector3.Min(v0, v1);
+            maxi += Vector3.Max(v0, v1);
+
+            Vector3 back = new Vector3(m.M31, m.M32, m.M33);
+            v0 = back * this.min.Z;
+            v1 = back * this.max.Z;
+            mini += Vector3.Min(v0, v1);
+            maxi += Vector3.Max(v0, v1);
+
+            return new BoundingBox(mini, maxi, true);
         }
 
-        public void Dispose()
+        public float Width => max.X - min.X;
+        public float Height => max.Y - min.Y;
+        public float Depth => max.Z - min.Z;
+
+        public Vector3 Center => new Vector3(Width / 2f + min.X, Height / 2f + min.Y, Depth / 2f + min.Z);
+
+        public static BoundingBox operator +(BoundingBox bb1, BoundingBox bb2)
         {
-            bufferHandle.Free();
+            return bb1.isValid ? bb2.isValid ? new BoundingBox(Vector3.Min(bb1.min, bb2.min), Vector3.Min(bb1.max, bb2.max), true) : bb1 : bb2.isValid ? bb2 : default(BoundingBox);
+        }
+        public override string ToString() => isValid ? string.Format($" {min}->{max}") : "Invalid";
+    }
+
+
+    public class Primitive
+    {
+        public string name;
+        public int indexBase;
+        public int vertexBase;
+        public int vertexCount;
+        public int indexCount;
+        public int material;
+        public BoundingBox bb;
+
+        public Primitive() { }
+        public Primitive(int vertexCount, int indexCount, int vertexBase = 0, int indexBase = 0)
+        {
+            this.vertexCount = vertexCount;
+            this.indexCount = indexCount;
+            this.vertexBase = vertexBase;
+            this.indexBase = indexBase;
+        }
+
+        public void Draw(CommandBuffer cmd, int instanceCount = 1, int firstInstance = 0)
+        {
+            cmd.DrawIndexed(indexCount, instanceCount, indexBase, vertexBase, firstInstance);
         }
     }
 
 
-    public class MeshInfo
+
+    public static partial class Utils
     {
-        public BufferView IndicesBufferView;
-        public BufferView[] AttributeBufferView;
-
-        public MeshInfo(BufferView indices, BufferView[] attributes)
+        public static Stream GetStreamFromPath(string path)
         {
-            IndicesBufferView = indices;
-            AttributeBufferView = attributes;
-        }
-    }
+            Stream stream = null;
 
-
-    public class GLTFLoader_0 : IDisposable
-    {
-        public Gltf model;
-
-        public BufferInfo[] Buffers;
-        public MeshInfo[] Meshes;
-
-        public GLTFLoader_0(string filePath)
-        {
-            using (FileStream stream = File.OpenRead(filePath))
+            if (path.StartsWith("#", StringComparison.Ordinal))
             {
-                if (stream == null || !stream.CanRead)
-                {
-                    throw new ArgumentException("Invalid parameter. Stream must be readable", "imageStream");
-                }
-
-                Stream seekedStream = stream;
-                MemoryStream memstream = null;
-                if (!stream.CanSeek)
-                {
-                    memstream = new MemoryStream();
-                    stream.CopyTo(memstream);
-
-                    memstream.Seek(0, SeekOrigin.Begin);
-                    seekedStream = memstream;
-                }
-
-                model = Interface.LoadModel(stream);
-                ReadModel(filePath);
-            }
-        }
-
-        private void ReadModel(string filePath)
-        {
-            // read all buffers
-            int numBuffers = model.Buffers.Length;
-            Buffers = new BufferInfo[numBuffers];
-
-            for (int i = 0; i < numBuffers; ++i)
-            {
-                byte[] bufferBytes = model.LoadBinaryBuffer(i, filePath);
-                Buffers[i] = new BufferInfo(bufferBytes);
-            }
-
-            // Read meshes
-            int meshCount = model.Meshes.Length;
-            Meshes = new MeshInfo[meshCount];
-            for (int m = 0; m < meshCount; m++)
-            {
-                glTFLoader.Schema.Mesh mesh = model.Meshes[m];
-
-                BufferView indices = null;
-                BufferView[] attributes = null;
-                for (int p = 0; p < mesh.Primitives.Length; p++)
-                {
-                    MeshPrimitive primitive = mesh.Primitives[p];
-
-                    if (primitive.Indices.HasValue)
-                    {
-                        indices = ReadAccessor(primitive.Indices.Value);
-                    }
-
-                    int attributeCount = primitive.Attributes.Values.Count;
-                    attributes = new BufferView[attributeCount];
-                    int insertIndex = 0;
-                    foreach (KeyValuePair<string, int> attribute in primitive.Attributes)
-                    {
-                        attributes[insertIndex++] = ReadAccessor(attribute.Value);
-                    }
-                }
-
-                Meshes[m] = new MeshInfo(indices, attributes);
-            }
-        }
-
-
-        private BufferView ReadAccessor(int index)
-        {
-            Accessor accessor = model.Accessors[index];
-
-            if (accessor.BufferView.HasValue)
-            {
-                return model.BufferViews[accessor.BufferView.Value];
+                string resId = path.Substring(1);
+                //first search entry assembly
+                stream = Assembly.GetEntryAssembly().GetManifestResourceStream(resId);
+                if (stream != null)
+                    return stream;
+                //if not found, search assembly named with the 1st element of the resId
+                string assemblyName = resId.Split('.')[0];
+                Assembly a = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(aa => aa.GetName().Name == assemblyName);
+                if (a == null)
+                    throw new Exception($"Assembly '{assemblyName}' not found for ressource '{path}'.");
+                stream = a.GetManifestResourceStream(resId);
+                if (stream == null)
+                    throw new Exception("Resource not found: " + path);
             }
             else
             {
-                return null;
+                if (!File.Exists(path))
+                    throw new FileNotFoundException("File not found: ", path);
+                stream = new FileStream(path, FileMode.Open, FileAccess.Read);
             }
+            return stream;
+        }
+        /// <summary>Convert angle from degree to radian.</summary>
+        public static float DegreesToRadians(float degrees)
+        {
+            return degrees * (float)Math.PI / 180f;
         }
 
-        public void Dispose()
+        /// <summary>
+        /// Populate a Vector3 with values from a float array
+        /// </summary>
+        public static void FromFloatArray(ref Vector3 v, float[] floats)
         {
-            if (Buffers == null)
-            {
-                return;
-            }
+            if (floats.Length > 0)
+                v.X = floats[0];
+            if (floats.Length > 1)
+                v.Y = floats[1];
+            if (floats.Length > 2)
+                v.Z = floats[2];
+        }
+        /// <summary>
+        /// Populate a Vector4 with values from a float array
+        /// </summary>
+        public static void FromFloatArray(ref Vector4 v, float[] floats)
+        {
+            if (floats.Length > 0)
+                v.X = floats[0];
+            if (floats.Length > 1)
+                v.Y = floats[1];
+            if (floats.Length > 2)
+                v.Z = floats[2];
+            if (floats.Length > 3)
+                v.W = floats[3];
+        }
+        /// <summary>
+        /// Populate a Quaternion with values from a float array
+        /// </summary>
+        public static void FromFloatArray(ref Quaternion v, float[] floats)
+        {
+            if (floats.Length > 0)
+                v.X = floats[0];
+            if (floats.Length > 1)
+                v.Y = floats[1];
+            if (floats.Length > 2)
+                v.Z = floats[2];
+            if (floats.Length > 3)
+                v.W = floats[3];
+        }
+        /// <summary>
+        /// Populate a Vector2 with values from a byte array starting at offset
+        /// </summary>
+        public static void FromByteArray(ref Vector2 v, byte[] byteArray, int offset)
+        {
+            v.X = BitConverter.ToSingle(byteArray, offset);
+            v.Y = BitConverter.ToSingle(byteArray, offset + 4);
+        }
+        /// <summary>
+        /// Populate a Vector3 with values from a byte array starting at offset
+        /// </summary>
+        public static void FromByteArray(ref Vector3 v, byte[] byteArray, int offset)
+        {
+            v.X = BitConverter.ToSingle(byteArray, offset);
+            v.Y = BitConverter.ToSingle(byteArray, offset + 4);
+            v.Z = BitConverter.ToSingle(byteArray, offset + 8);
+        }
+        /// <summary>
+        /// Populate a Vector4 with values from a byte array starting at offset
+        /// </summary>
+        public static void FromByteArray(ref Vector4 v, byte[] byteArray, int offset)
+        {
+            v.X = BitConverter.ToSingle(byteArray, offset);
+            v.Y = BitConverter.ToSingle(byteArray, offset + 4);
+            v.Z = BitConverter.ToSingle(byteArray, offset + 8);
+            v.W = BitConverter.ToSingle(byteArray, offset + 12);
+        }
+        /// <summary>
+        /// Populate a Quaternion with values from a byte array starting at offset
+        /// </summary>
+        public static void FromByteArray(ref Quaternion v, byte[] byteArray, int offset)
+        {
+            v.X = BitConverter.ToSingle(byteArray, offset);
+            v.Y = BitConverter.ToSingle(byteArray, offset + 4);
+            v.Z = BitConverter.ToSingle(byteArray, offset + 8);
+            v.W = BitConverter.ToSingle(byteArray, offset + 12);
+        }
 
-            for (int i = 0; i < Buffers.Length; i++)
-            {
-                Buffers[i].Dispose();
-            }
 
-            Buffers = null;
+
+        public static void ImportFloatArray(this ref Vector3 v, float[] floats)
+        {
+            if (floats.Length > 0)
+                v.X = floats[0];
+            if (floats.Length > 1)
+                v.Y = floats[1];
+            if (floats.Length > 2)
+                v.Z = floats[2];
+        }
+        public static Vector3 Transform(this Vector3 v, ref Matrix4x4 mat, bool translate = false)
+        {
+            Vector4 v4 = Vector4.Transform(new Vector4(v, translate ? 1f : 0f), mat);
+            return new Vector3(v4.X, v4.Y, v4.Z);
+        }
+        public static Vector3 ToVector3(this Vector4 v)
+        {
+            return new Vector3(v.X, v.Y, v.Z);
         }
     }
+
+    public class Mesh
+    {
+        public string Name;
+        public List<Primitive> Primitives = new List<Primitive>();
+        public BoundingBox bb;
+
+        /// <summary>
+        /// add primitive and update mesh bounding box
+        /// </summary>
+        public void AddPrimitive(Primitive p)
+        {
+            if (Primitives.Count == 0)
+                bb = p.bb;
+            else
+                bb += p.bb;
+
+
+            Primitives.Add(p);
+        }
+    }
+
+
 
 
     public unsafe class GLTFLoader
     {
 
-        private readonly List<Vector3> _Positions;
-        private readonly List<Vector3> _Normal;
-        private readonly List<Vector2> _Texture;
-        private readonly List<Vector3> _Color;
 
 
-        public int[] Indices;
 
-        public GraphicsPipelineState GLTFPipeline { get; set; }
 
+
+        internal Gltf gltf;
+        internal string baseDirectory;
+
+        internal byte[][] loadedBuffers;
+        internal GCHandle[] bufferHandles;
+
+
+        internal Device _device;
+
+
+
+        public GLTFLoader(Device device, string path)
+        {
+            _device = device;
+
+            _path = path;
+
+            baseDirectory = Path.GetDirectoryName(path);
+            gltf = Interface.LoadModel(path);
+            loadedBuffers = new byte[gltf.Buffers.Length][];
+            bufferHandles = new GCHandle[gltf.Buffers.Length];
+
+
+            CreateBuffers();
+        }
         public TextureData TextureData { get; set; }
 
 
-        public Gltf model;
+        public Graphics.Buffer VertexBuffer { get; private set; }
+        public Graphics.Buffer IndexBuffer { get; private set; }
 
-        public BufferInfo[] Buffers;
-        public MeshInfo[] Meshes;
-        private readonly List<VertexPositionNormal> vertices;
+        public List<Mesh> Meshes { get; set; }
 
-        public GLTFLoader(string FileName)
+        public IndexType IndexType { get; set; }
+
+
+
+
+        internal void CreateBuffers()
         {
+            ulong vertexCount, indexCount;
 
-            //Vertices = new ModelPart<Vertex>();
+            GetVertexCount(out vertexCount, out indexCount);
 
-            //Indices = new ModelPart<int>();
+            int vertSize = (int)vertexCount * Marshal.SizeOf<VertexPositionNormal>();
+            int idxSize = (int)indexCount * (IndexType == IndexType.Uint16 ? 2 : 4);
+            Console.WriteLine(IndexType);
 
-
-            GLTFLoader_0 gltf = new GLTFLoader_0(FileName);
-
-            MeshInfo mesh = gltf.Meshes[0];
-
-
-
-
-
-
-            // Positions
-            BufferView vpositionsBufferView = mesh.AttributeBufferView[1];
-            int positionsCount = vpositionsBufferView.ByteLength / Unsafe.SizeOf<Vector3>();
-            System.Numerics.Vector3* positions = stackalloc System.Numerics.Vector3[positionsCount];
-            IntPtr vpositionsPointer = gltf.Buffers[vpositionsBufferView.Buffer].bufferPointer + vpositionsBufferView.ByteOffset;
-            Unsafe.CopyBlock(positions, (void*)vpositionsPointer, (uint)vpositionsBufferView.ByteLength);
-
-            // Normals
-            BufferView vnormalsBufferView = mesh.AttributeBufferView[0];
-            int normalsCount = vnormalsBufferView.ByteLength / Unsafe.SizeOf<Vector3>();
-            System.Numerics.Vector3* normals = stackalloc System.Numerics.Vector3[normalsCount];
-            IntPtr vnormalsPointer = gltf.Buffers[vnormalsBufferView.Buffer].bufferPointer + vnormalsBufferView.ByteOffset;
-            Unsafe.CopyBlock(normals, (void*)vnormalsPointer, (uint)vnormalsBufferView.ByteLength);
-
-            // Texcoords
-            BufferView vtexcoordsBufferView = mesh.AttributeBufferView[2];
-            int texcoordsCount = vtexcoordsBufferView.ByteLength / Unsafe.SizeOf<Vector2>();
-            System.Numerics.Vector2* texcoords = stackalloc System.Numerics.Vector2[texcoordsCount];
-            IntPtr vtexcoordsPointer = gltf.Buffers[vtexcoordsBufferView.Buffer].bufferPointer + vtexcoordsBufferView.ByteOffset;
-            Unsafe.CopyBlock(texcoords, (void*)vtexcoordsPointer, (uint)vtexcoordsBufferView.ByteLength);
-
-
-            // Index buffer
-            // Indices
-            BufferView indicesBufferView = mesh.IndicesBufferView;
-            int indicesCount = indicesBufferView.ByteLength / sizeof(ushort);
-            ushort[] indexData = new ushort[indicesCount];
-            IntPtr indicesPointer = gltf.Buffers[indicesBufferView.Buffer].bufferPointer + indicesBufferView.ByteOffset;
-            fixed (ushort* indicesPtr = indexData)
+            VertexBuffer = new(_device, new()
             {
-                Unsafe.CopyBlock(indicesPtr, (void*)indicesPointer, (uint)indicesBufferView.ByteLength);
-            }
+                BufferFlags = BufferFlags.VertexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = (int)vertSize,
+            });
 
 
-            _Positions = new();
-            _Normal = new();
-            _Texture = new();
-
-            vertices = new();
-
-            for (int i = 0; i < positionsCount; i++)
+            IndexBuffer = new(_device, new()
             {
+                BufferFlags = BufferFlags.IndexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = (int)idxSize,
+            });
 
-                //_Positions[i] = positions[i];
-                //_Normal[i] = normals[i];
-                //_Texture[i] = texcoords[i];
 
 
-                vertices.Add(new VertexPositionNormal()
-                {
-                    Position = positions[i],
-                    Normal = normals[i],
-                });
-            }
-
-            Indices = new int[indexData.Length];
-
-            for (int i = 0; i < Indices.Length; i++)
-            {
-                Indices[i] = indexData[i];
-            }
-
-            //foreach (ushort item in indexData)
-            //{
-            //    idx.Add((int)item);
-
-            //}
-
-            //Indices = idx.ToArray();
+            Meshes = LoadMeshes<VertexPositionNormal>(IndexType, VertexBuffer, 0, IndexBuffer, 0);
 
 
         }
 
 
-        private void ReadModel(string filePath)
+
+
+        internal byte[] loadDataUri(Schema.Image img)
         {
-            // read all buffers
-            int numBuffers = model.Buffers.Length;
-            Buffers = new BufferInfo[numBuffers];
+            int idxComa = img.Uri.IndexOf(",", 5, StringComparison.Ordinal);
+            return Convert.FromBase64String(img.Uri.Substring(idxComa + 1));
+        }
+        internal byte[] loadDataUri(Schema.Buffer buff)
+        {
+            int idxComa = buff.Uri.IndexOf(",", 5, StringComparison.Ordinal);
+            return Convert.FromBase64String(buff.Uri.Substring(idxComa + 1));
+        }
 
-            for (int i = 0; i < numBuffers; ++i)
+
+        public void GetVertexCount(out ulong vertexCount, out ulong indexCount)
+        {
+            vertexCount = 0;
+            indexCount = 0;
+            IndexType = IndexType.Uint16;
+            //compute size of stagging buf
+            foreach (Schema.Mesh mesh in gltf.Meshes)
             {
-                byte[] bufferBytes = model.LoadBinaryBuffer(i, filePath);
-                Buffers[i] = new BufferInfo(bufferBytes);
-            }
-
-            // Read meshes
-            int meshCount = model.Meshes.Length;
-            Meshes = new MeshInfo[meshCount];
-            for (int m = 0; m < meshCount; m++)
-            {
-                glTFLoader.Schema.Mesh mesh = model.Meshes[m];
-
-                BufferView indices = null;
-                BufferView[] attributes = null;
-                for (int p = 0; p < mesh.Primitives.Length; p++)
+                foreach (Schema.MeshPrimitive p in mesh.Primitives)
                 {
-                    MeshPrimitive primitive = mesh.Primitives[p];
-
-                    if (primitive.Indices.HasValue)
+                    if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
                     {
-                        indices = ReadAccessor(primitive.Indices.Value);
+                        vertexCount += (ulong)gltf.Accessors[accessorIdx].Count;
                     }
 
-                    int attributeCount = primitive.Attributes.Values.Count;
-                    attributes = new BufferView[attributeCount];
-                    int insertIndex = 0;
-                    foreach (KeyValuePair<string, int> attribute in primitive.Attributes)
+                    if (p.Indices != null)
                     {
-                        attributes[insertIndex++] = ReadAccessor(attribute.Value);
+                        indexCount += (ulong)gltf.Accessors[(int)p.Indices].Count;
+                        if (gltf.Accessors[(int)p.Indices].ComponentType == Accessor.ComponentTypeEnum.UNSIGNED_INT)
+                        {
+                            IndexType = IndexType.Uint32;
+                        }
+                    }
+                }
+            }
+        }
+
+        public uint ImageCount => gltf.Images == null ? 0 : (uint)gltf.Images.Length;
+
+        private readonly string _path;
+
+        private void ensureBufferIsLoaded(int bufferIdx)
+        {
+            if (loadedBuffers[bufferIdx] == null)
+            {
+                //load full buffer
+                string uri = gltf.Buffers[bufferIdx].Uri;
+                if (string.IsNullOrEmpty(uri))//glb
+                {
+                    loadedBuffers[bufferIdx] = gltf.LoadBinaryBuffer(bufferIdx, _path);
+                }
+                else if (uri.StartsWith("data", StringComparison.Ordinal))
+                {
+                    loadedBuffers[bufferIdx] = loadDataUri(gltf.Buffers[bufferIdx]);//TODO:check this func=>System.Buffers.Text.Base64.EncodeToUtf8InPlace
+                }
+                else
+                {
+                    loadedBuffers[bufferIdx] = File.ReadAllBytes(Path.Combine(baseDirectory, gltf.Buffers[bufferIdx].Uri));
+                }
+
+                bufferHandles[bufferIdx] = GCHandle.Alloc(loadedBuffers[bufferIdx], GCHandleType.Pinned);
+            }
+        }
+
+
+
+
+
+
+
+        List<Mesh> meshes;
+
+
+        public List<Mesh> LoadMeshes<TVertex>(IndexType indexType, Graphics.Buffer vbo, ulong vboOffset, Graphics.Buffer ibo, ulong iboOffset)
+        {
+            ulong vCount, iCount;
+
+            GetVertexCount(out vCount, out iCount);
+
+            int vertexByteSize = Marshal.SizeOf<TVertex>();
+            ulong vertSize = vCount * (ulong)vertexByteSize;
+            ulong idxSize = iCount * (indexType == IndexType.Uint16 ? 2ul : 4ul);
+            ulong size = vertSize + idxSize;
+
+            int vertexCount = 0, indexCount = 0;
+            int autoNamedMesh = 1;
+
+            meshes = new List<Mesh>();
+
+
+            vbo.Map();
+            ibo.Map();
+
+            {
+
+                unsafe
+                {
+                    byte* stagVertPtrInit = (byte*)vbo.MappedData.ToPointer();
+                    byte* stagIdxPtrInit = (byte*)(ibo.MappedData.ToPointer());
+                    byte* stagVertPtr = stagVertPtrInit;
+                    byte* stagIdxPtr = stagIdxPtrInit;
+
+                    foreach (Schema.Mesh mesh in gltf.Meshes)
+                    {
+
+                        string meshName = mesh.Name;
+                        if (string.IsNullOrEmpty(meshName))
+                        {
+                            meshName = "mesh_" + autoNamedMesh.ToString();
+                            autoNamedMesh++;
+                        }
+                        Mesh m = new Mesh { Name = meshName };
+
+                        foreach (Schema.MeshPrimitive p in mesh.Primitives)
+                        {
+                            Schema.Accessor AccPos = null, AccNorm = null, AccUv = null, AccUv1 = null;
+
+                            int accessorIdx;
+                            if (p.Attributes.TryGetValue("POSITION", out accessorIdx))
+                            {
+                                AccPos = gltf.Accessors[accessorIdx];
+                                ensureBufferIsLoaded(gltf.BufferViews[(int)AccPos.BufferView].Buffer);
+                            }
+                            if (p.Attributes.TryGetValue("NORMAL", out accessorIdx))
+                            {
+                                AccNorm = gltf.Accessors[accessorIdx];
+                                ensureBufferIsLoaded(gltf.BufferViews[(int)AccNorm.BufferView].Buffer);
+                            }
+                            if (p.Attributes.TryGetValue("TEXCOORD_0", out accessorIdx))
+                            {
+                                AccUv = gltf.Accessors[accessorIdx];
+                                ensureBufferIsLoaded(gltf.BufferViews[(int)AccUv.BufferView].Buffer);
+                            }
+                            if (p.Attributes.TryGetValue("TEXCOORD_1", out accessorIdx))
+                            {
+                                AccUv1 = gltf.Accessors[accessorIdx];
+                                ensureBufferIsLoaded(gltf.BufferViews[(int)AccUv1.BufferView].Buffer);
+                            }
+
+                            Primitive prim = new Primitive
+                            {
+                                indexBase = indexCount,
+                                vertexBase = vertexCount,
+                                vertexCount = AccPos.Count,
+                                material = (p.Material ?? 0)
+                            };
+
+                            prim.bb.min.ImportFloatArray(AccPos.Min);
+                            prim.bb.max.ImportFloatArray(AccPos.Max);
+                            prim.bb.isValid = true;
+
+                            //Interleaving vertices
+                            byte* inPosPtr = null, inNormPtr = null, inUvPtr = null, inUv1Ptr = null;
+
+                            Schema.BufferView bv = gltf.BufferViews[(int)AccPos.BufferView];
+                            inPosPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                            inPosPtr += AccPos.ByteOffset + bv.ByteOffset;
+
+                            if (AccNorm != null)
+                            {
+                                bv = gltf.BufferViews[(int)AccNorm.BufferView];
+                                inNormPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                                inNormPtr += AccNorm.ByteOffset + bv.ByteOffset;
+                            }
+                            if (AccUv != null)
+                            {
+                                bv = gltf.BufferViews[(int)AccUv.BufferView];
+                                inUvPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                                inUvPtr += AccUv.ByteOffset + bv.ByteOffset;
+                            }
+                            if (AccUv1 != null)
+                            {
+                                bv = gltf.BufferViews[(int)AccUv1.BufferView];
+                                inUv1Ptr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                                inUv1Ptr += AccUv1.ByteOffset + bv.ByteOffset;
+                            }
+
+                            //TODO: use vertex attributes scan for copying data if they exists
+                            for (int j = 0; j < prim.vertexCount; j++)
+                            {
+                                System.Buffer.MemoryCopy(inPosPtr, stagVertPtr, 12, 12);
+                                inPosPtr += 12;
+                                if (inNormPtr != null)
+                                {
+                                    System.Buffer.MemoryCopy(inNormPtr, stagVertPtr + 12, 12, 12);
+                                    inNormPtr += 12;
+                                }
+                                if (inUvPtr != null)
+                                {
+                                    System.Buffer.MemoryCopy(inUvPtr, stagVertPtr + 24, 8, 8);
+                                    inUvPtr += 8;
+                                }
+                                if (inUv1Ptr != null)
+                                {
+                                    System.Buffer.MemoryCopy(inUv1Ptr, stagVertPtr + 32, 8, 8);
+                                    inUv1Ptr += 8;
+                                }
+                                stagVertPtr += vertexByteSize;
+                            }
+
+                            //indices loading
+                            if (p.Indices != null)
+                            {
+                                Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
+                                bv = gltf.BufferViews[(int)acc.BufferView];
+
+                                byte* inIdxPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                                inIdxPtr += acc.ByteOffset + bv.ByteOffset;
+
+                                //TODO:double check this, I dont seems to increment stag pointer
+                                if (acc.ComponentType == Schema.Accessor.ComponentTypeEnum.UNSIGNED_SHORT)
+                                {
+                                    if (indexType == IndexType.Uint16)
+                                    {
+                                        System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 2, (long)acc.Count * 2);
+                                        stagIdxPtr += (long)acc.Count * 2;
+                                    }
+                                    else
+                                    {
+                                        uint* usPtr = (uint*)stagIdxPtr;
+                                        ushort* inPtr = (ushort*)inIdxPtr;
+                                        for (int i = 0; i < acc.Count; i++)
+                                            usPtr[i] = inPtr[i];
+                                        stagIdxPtr += (long)acc.Count * 4;
+                                    }
+                                }
+                                else if (acc.ComponentType == Schema.Accessor.ComponentTypeEnum.UNSIGNED_INT)
+                                {
+                                    if (indexType == IndexType.Uint32)
+                                    {
+                                        System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 4, (long)acc.Count * 4);
+                                        stagIdxPtr += (long)acc.Count * 4;
+                                    }
+                                    else
+                                    {
+                                        ushort* usPtr = (ushort*)stagIdxPtr;
+                                        uint* inPtr = (uint*)inIdxPtr;
+                                        for (int i = 0; i < acc.Count; i++)
+                                            usPtr[i] = (ushort)inPtr[i];
+                                        stagIdxPtr += (long)acc.Count * 2;
+                                    }
+                                }
+                                else if (acc.ComponentType == Schema.Accessor.ComponentTypeEnum.UNSIGNED_BYTE)
+                                {
+                                    //convert
+                                    if (indexType == IndexType.Uint16)
+                                    {
+                                        ushort* usPtr = (ushort*)stagIdxPtr;
+                                        for (int i = 0; i < acc.Count; i++)
+                                            usPtr[i] = (ushort)inIdxPtr[i];
+                                        stagIdxPtr += (long)acc.Count * 2;
+                                    }
+                                    else
+                                    {
+                                        uint* usPtr = (uint*)stagIdxPtr;
+                                        for (int i = 0; i < acc.Count; i++)
+                                            usPtr[i] = (uint)inIdxPtr[i];
+                                        stagIdxPtr += (long)acc.Count * 4;
+                                    }
+                                }
+                                else
+                                    throw new NotImplementedException();
+
+                                prim.indexCount = acc.Count;
+                                indexCount += acc.Count;
+                            }
+
+                            m.AddPrimitive(prim);
+
+                            vertexCount += AccPos.Count;
+                        }
+                        meshes.Add(m);
                     }
                 }
 
-                Meshes[m] = new MeshInfo(indices, attributes);
+                vbo.Unmap();
+                ibo.Unmap();
+
+                //CommandBuffer cmd = new CommandBuffer(_device, CommandBufferType.AsyncTransfer);
+                //cmd.Start();
+
+                //stagging.CopyTo(cmd, vbo, vertSize, 0, vboOffset);
+                //if (iCount > 0)
+                //    stagging.CopyTo(cmd, ibo, idxSize, vertSize, iboOffset);
+
+                //cmd.End();
+
+                //transferQ.Submit(cmd);
+
+                //dev.WaitIdle();
+                //cmd.Free();
+
             }
+
+            return meshes;
         }
 
 
-        private BufferView ReadAccessor(int index)
+
+
+
+        public void Draw(CommandBuffer commandBuffer)
         {
-            Accessor accessor = model.Accessors[index];
+            commandBuffer.SetVertexBuffers(new[] { VertexBuffer });
+            commandBuffer.SetIndexBuffer(IndexBuffer, 0, IndexType);
 
-            if (accessor.BufferView.HasValue)
+
+            //commandBuffer.BindDescriptorSets(new DescriptorSet);
+
+            foreach (Mesh m in Meshes)
             {
-                return model.BufferViews[accessor.BufferView.Value];
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-
-
-        public Span<VertexPositionColorTexture> GetVertexPositionColorTextureAsSpan()
-        {
-            VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[_Positions.Count];
-
-            for (int i = 0; i < _Positions.Count; i++)
-            {
-                vertices[i] = new VertexPositionColorTexture()
+                foreach (var p in m.Primitives)
                 {
-                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
-                    Color = _Color[i] != null ? _Color[i] : Vector3.One,
-                    TextureCoordinate = _Texture[i] != null ? _Texture[i] : Vector2.One,
-                };
+                    commandBuffer.DrawIndexed(p.indexCount, 1, p.indexBase, p.vertexBase, 0);
+                }
             }
-
-            return vertices.AsSpan(); // TODO: GetPositionNormal AsSpan
-        }
-
-
-        public Span<VertexPositionNormal> GetPositionNormalAsSpan()
-        {
-            VertexPositionNormal[] vertices = new VertexPositionNormal[_Positions.Count];
-
-            for (int i = 0; i < _Positions.Count; i++)
-            {
-                vertices[i] = new VertexPositionNormal()
-                {
-                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
-                    Normal = _Normal[i] != null ? _Normal[i] : Vector3.One,
-                };
-            }
-
-            return vertices.AsSpan(); // TODO: GetPositionNormal AsSpan
         }
 
 
 
-
-
-        public VertexPositionColorTexture[] GetVertexPositionColorTextureAsArray()
+        public Scene[] LoadScenes(out int defaultScene)
         {
-            VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[_Positions.Count];
+            defaultScene = -1;
+            if (gltf.Scene == null)
+                return new Scene[] { };
 
-            for (int i = 0; i < _Positions.Count; i++)
+            List<Scene> scenes = new List<Scene>();
+            defaultScene = (int)gltf.Scene;
+
+            for (int i = 0; i < gltf.Scenes.Length; i++)
             {
-                vertices[i] = new VertexPositionColorTexture()
+                Schema.Scene scene = gltf.Scenes[i];
+                //Debug.WriteLine("Loading Scene {0}", scene.Name);
+
+                scenes.Add(new Scene
                 {
-                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
-                    Color = Vector3.One,
-                    TextureCoordinate = new Vector2(_Texture[i].X, _Texture[i].Y) //!= null ? _Texture[i] : Vector2.One,
-                };
+                    Name = scene.Name,
+                });
 
-                //vertices[i].Position.Y *= -1.0f;
-                //vertices[i].normal.y *= -1.0f;
+                if (scene.Nodes.Length == 0)
+                    continue;
 
-
-                vertices[i].FlipWinding();
-            }
-
-            return vertices;
-        }
-
-
-        public VertexPositionTexture[] GetVertexPositionTextureAsArray()
-        {
-            VertexPositionTexture[] vertices = new VertexPositionTexture[_Positions.Count];
-
-            for (int i = 0; i < _Positions.Count; i++)
-            {
-                vertices[i] = new VertexPositionTexture()
+                scenes[i].Root = new Node
                 {
-                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
-                    TextureCoordinate = new Vector2(2 * _Texture[i].X, 2 * _Texture[i].Y + 1) //!= null ? _Texture[i] : Vector2.One,
+                    LocalMatrix = Matrix4x4.Identity,
+                    Children = new List<Node>()
                 };
 
-                //vertices[i].Position.Y *= -1.0f;
-                //vertices[i].normal.y *= -1.0f;
-
-
-                //vertices[i].FlipWinding();
+                foreach (int nodeIdx in scene.Nodes)
+                    LoadNode(scenes[i].Root, gltf.Nodes[nodeIdx]);
             }
-
-            return vertices;
-        }
-
-        public VertexPositionNormal[] GetPositionNormalAsArray()
-        {
-            return vertices.ToArray();
+            return scenes.ToArray();
         }
 
 
-        public IEnumerable<VertexPositionNormal> GetPositionNormal()
+
+
+        public void LoadNode(Node parentNode, Schema.Node gltfNode)
         {
-            for (int i = 0; i < _Positions.Count; i++)
+            //Debug.WriteLine("Loading node {0}", gltfNode.Name);
+
+            Vector3 translation = new Vector3();
+            Quaternion rotation = Quaternion.Identity;
+            Vector3 scale = new Vector3(1);
+            Matrix4x4 localTransform = Matrix4x4.Identity;
+
+            if (gltfNode.Matrix != null)
             {
-                yield return new VertexPositionNormal()
-                {
-                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
-                    Normal = _Normal[i] != null ? _Normal[i] : Vector3.One,
-                };
+                float[] M = gltfNode.Matrix;
+                localTransform = new Matrix4x4(
+                    M[0], M[1], M[2], M[3],
+                    M[4], M[5], M[6], M[7],
+                    M[8], M[9], M[10], M[11],
+                   M[12], M[13], M[14], M[15]);
             }
+
+            if (gltfNode.Translation != null)
+                FromFloatArray(ref translation, gltfNode.Translation);
+            if (gltfNode.Translation != null)
+                FromFloatArray(ref rotation, gltfNode.Rotation);
+            if (gltfNode.Translation != null)
+                FromFloatArray(ref scale, gltfNode.Scale);
+
+            localTransform *=
+                Matrix4x4.CreateScale(scale) *
+                Matrix4x4.CreateFromQuaternion(rotation) *
+                Matrix4x4.CreateTranslation(translation);
+
+            //localTransform = Matrix4x4.Identity;
+
+            Node node = new Node
+            {
+                LocalMatrix = localTransform,
+                Parent = parentNode,
+                Name = gltfNode.Name
+            };
+            parentNode.Children.Add(node);
+
+            if (gltfNode.Children != null)
+            {
+                node.Children = new List<Node>();
+                for (int i = 0; i < gltfNode.Children.Length; i++)
+                    LoadNode(node, gltf.Nodes[gltfNode.Children[i]]);
+            }
+
+            if (gltfNode.Mesh != null)
+                node.Mesh = meshes[(int)gltfNode.Mesh];
         }
 
-        public IEnumerable<VertexPositionNormalColor> GetPositionNormalColor()
+        public static void FromFloatArray(ref Vector3 v, float[] floats)
         {
-            for (int i = 0; i < _Positions.Count; i++)
-            {
-                yield return new VertexPositionNormalColor()
-                {
-                    Position = _Positions[i] != null ? _Positions[i] : Vector3.One,
-                    Normal = _Normal[i] != null ? _Normal[i] : Vector3.One,
-                    Color = _Color[i] != null ? _Color[i] : Vector3.One,
-                };
-            }
+            if (floats.Length > 0)
+                v.X = floats[0];
+            if (floats.Length > 1)
+                v.Y = floats[1];
+            if (floats.Length > 2)
+                v.Z = floats[2];
         }
+
+
+        public static void FromFloatArray(ref Quaternion v, float[] floats)
+        {
+            if (floats.Length > 0)
+                v.X = floats[0];
+            if (floats.Length > 1)
+                v.Y = floats[1];
+            if (floats.Length > 2)
+                v.Z = floats[2];
+            if (floats.Length > 3)
+                v.W = floats[3];
+        }
+
+
+
+
+       
 
 
         public void Update()

@@ -26,6 +26,7 @@ namespace Zeckoxe.Graphics
 
 
 
+        internal IntPtr mappedData;
 
 
         public Buffer(Device graphicsDevice, BufferDescription description) : base(graphicsDevice)
@@ -35,6 +36,8 @@ namespace Zeckoxe.Graphics
             Recreate();
         }
 
+
+        public IntPtr MappedData => mappedData;
 
         public BufferDescription BufferDescription { get; set; }
         public int SizeInBytes => BufferDescription.SizeInBytes;
@@ -149,6 +152,21 @@ namespace Zeckoxe.Graphics
 
 
 
+        public void Map(ulong offset = 0)
+        {
+            void* ppData;
+            vkMapMemory(NativeDevice.handle, memory, offset, (ulong)BufferDescription.SizeInBytes, 0, &ppData);
+            mappedData = (IntPtr)ppData;
+        }
+        public void Unmap()
+        {
+
+            vkUnmapMemory(NativeDevice.handle, memory);
+            mappedData = IntPtr.Zero;
+        }
+
+
+
         public void SetData<T>(Span<T> Data) where T : struct
         {
             DynamicData(Data);
@@ -251,6 +269,19 @@ namespace Zeckoxe.Graphics
         public void Dispose()
         {
 
+        }
+
+        public void CopyTo(CommandBuffer cmd, Buffer buff, ulong size = 0, ulong srcOffset = 0, ulong dstOffset = 0)
+        {
+
+            VkBufferCopy bufferCopy = new VkBufferCopy
+            {
+                size = size,
+                srcOffset = srcOffset,
+                dstOffset = dstOffset
+            };
+            vkCmdCopyBuffer(cmd.handle, handle, buff.handle, 1, &bufferCopy);
+            
         }
     }
 }
