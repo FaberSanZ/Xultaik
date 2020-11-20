@@ -14,7 +14,7 @@ namespace Zeckoxe.GLTF
 
     public static partial class Utils
     {
-        public static void ImportFloatArray(this ref Vector3 v, float[] floats)
+        public static void ImportFloatArray(this Vector3 v, float[] floats)
         {
             if (floats.Length > 0)
             {

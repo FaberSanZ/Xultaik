@@ -60,7 +60,7 @@ namespace Samples.Samples
 
         public Camera Camera { get; set; }
         public GameTime GameTime { get; set; }
-        public GLTFLoader GLTFModel { get; set; }
+        public GLTFLoader<VertexPositionNormal> GLTFModel { get; set; }
         public List<Mesh> Meshes { get; private set; }
 
 
@@ -119,7 +119,7 @@ namespace Samples.Samples
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
             Descriptor.Build();
 
-            GLTFModel = new GLTFLoader(Device, "Models/DamagedHelmet.gltf");
+            GLTFModel = new(Device, "Models/DamagedHelmet.gltf");
 
             yaw = 0f;
             pitch = 4.5f;

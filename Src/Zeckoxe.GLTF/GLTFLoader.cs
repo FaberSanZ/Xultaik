@@ -23,7 +23,7 @@ using Schema = glTFLoader.Schema;
 
 namespace Zeckoxe.GLTF
 {
-    public unsafe class GLTFLoader
+    public unsafe class GLTFLoader<TVertex>
     {
 
         internal Gltf gltf;
@@ -35,6 +35,7 @@ namespace Zeckoxe.GLTF
 
         internal Device _device;
 
+        internal List<Mesh> meshes;
 
 
         public GLTFLoader(Device device, string path)
@@ -47,14 +48,21 @@ namespace Zeckoxe.GLTF
             loadedBuffers = new byte[gltf.Buffers.Length][];
             bufferHandles = new GCHandle[gltf.Buffers.Length];
 
+            GetVertexCount();
 
-            CreateBuffers();
+            create_buffers();
+
+
+            Meshes = LoadMeshes(IndexType, 0, 0);
+
         }
         public TextureData TextureData { get; set; }
 
-
         public Graphics.Buffer VertexBuffer { get; private set; }
+        public int VertexCount { get; private set; }
+
         public Graphics.Buffer IndexBuffer { get; private set; }
+        public int IndexCount { get; private set; }
 
         public List<Mesh> Meshes { get; set; }
 
@@ -63,20 +71,13 @@ namespace Zeckoxe.GLTF
 
 
 
-        internal void CreateBuffers()
+        internal void create_buffers()
         {
-
-            GetVertexCount(out ulong vertexCount, out ulong indexCount);
-
-            int vertSize = (int)vertexCount * Marshal.SizeOf<VertexPositionNormal>();
-            int idxSize = (int)indexCount * (IndexType == IndexType.Uint16 ? 2 : 4);
-            Console.WriteLine(IndexType);
-
             VertexBuffer = new(_device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = vertSize,
+                SizeInBytes = VertexCount * Marshal.SizeOf<TVertex>(),
             });
 
 
@@ -84,35 +85,30 @@ namespace Zeckoxe.GLTF
             {
                 BufferFlags = BufferFlags.IndexBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = idxSize,
+                SizeInBytes = IndexCount * (IndexType is IndexType.Uint16 ? 2 : 4),
             });
-
-
-
-            Meshes = LoadMeshes<VertexPositionNormal>(IndexType, VertexBuffer, 0, IndexBuffer, 0);
-
-
         }
 
 
 
 
-        internal byte[] loadDataUri(Schema.Image img)
+        internal byte[] load_data_uri(Schema.Image img)
         {
             int idxComa = img.Uri.IndexOf(",", 5, StringComparison.Ordinal);
             return Convert.FromBase64String(img.Uri.Substring(idxComa + 1));
         }
-        internal byte[] loadDataUri(Schema.Buffer buff)
+
+        internal byte[] load_data_uri(Schema.Buffer buff)
         {
             int idxComa = buff.Uri.IndexOf(",", 5, StringComparison.Ordinal);
             return Convert.FromBase64String(buff.Uri.Substring(idxComa + 1));
         }
 
 
-        public void GetVertexCount(out ulong vertexCount, out ulong indexCount)
+        internal void GetVertexCount()
         {
-            vertexCount = 0;
-            indexCount = 0;
+            VertexCount = 0;
+            IndexCount = 0;
             IndexType = IndexType.Uint16;
             //compute size of stagging buf
             foreach (Schema.Mesh mesh in gltf.Meshes)
@@ -121,12 +117,12 @@ namespace Zeckoxe.GLTF
                 {
                     if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
                     {
-                        vertexCount += (ulong)gltf.Accessors[accessorIdx].Count;
+                        VertexCount += gltf.Accessors[accessorIdx].Count;
                     }
 
                     if (p.Indices != null)
                     {
-                        indexCount += (ulong)gltf.Accessors[(int)p.Indices].Count;
+                        IndexCount += gltf.Accessors[(int)p.Indices].Count;
                         if (gltf.Accessors[(int)p.Indices].ComponentType == Accessor.ComponentTypeEnum.UNSIGNED_INT)
                         {
                             IndexType = IndexType.Uint32;
@@ -140,7 +136,7 @@ namespace Zeckoxe.GLTF
 
         private readonly string _path;
 
-        private void ensureBufferIsLoaded(int bufferIdx)
+        private void ensure_buffer_is_loaded(int bufferIdx)
         {
             if (loadedBuffers[bufferIdx] == null)
             {
@@ -152,7 +148,7 @@ namespace Zeckoxe.GLTF
                 }
                 else if (uri.StartsWith("data", StringComparison.Ordinal))
                 {
-                    loadedBuffers[bufferIdx] = loadDataUri(gltf.Buffers[bufferIdx]);//TODO:check this func=>System.Buffers.Text.Base64.EncodeToUtf8InPlace
+                    loadedBuffers[bufferIdx] = load_data_uri(gltf.Buffers[bufferIdx]); //TODO: check this func=>System.Buffers.Text.Base64.EncodeToUtf8InPlace
                 }
                 else
                 {
@@ -163,17 +159,14 @@ namespace Zeckoxe.GLTF
             }
         }
 
-        private List<Mesh> meshes;
 
 
-        public List<Mesh> LoadMeshes<TVertex>(IndexType indexType, Graphics.Buffer vbo, ulong vboOffset, Graphics.Buffer ibo, ulong iboOffset)
+        public List<Mesh> LoadMeshes(IndexType indexType, ulong vboOffset, ulong iboOffset)
         {
 
-            GetVertexCount(out ulong vCount, out ulong iCount);
-
             int vertexByteSize = Marshal.SizeOf<TVertex>();
-            ulong vertSize = vCount * (ulong)vertexByteSize;
-            ulong idxSize = iCount * (indexType == IndexType.Uint16 ? 2ul : 4ul);
+            ulong vertSize = (ulong)(VertexCount * vertexByteSize);
+            ulong idxSize = (ulong)IndexCount * (indexType is IndexType.Uint16 ? 2ul : 4ul);
             ulong size = vertSize + idxSize;
 
             int vertexCount = 0, indexCount = 0;
@@ -182,15 +175,15 @@ namespace Zeckoxe.GLTF
             meshes = new List<Mesh>();
 
 
-            vbo.Map();
-            ibo.Map();
+            VertexBuffer.Map();
+            IndexBuffer.Map();
 
             {
 
                 unsafe
                 {
-                    byte* stagVertPtrInit = (byte*)vbo.MappedData.ToPointer();
-                    byte* stagIdxPtrInit = (byte*)(ibo.MappedData.ToPointer());
+                    byte* stagVertPtrInit = (byte*)VertexBuffer.MappedData.ToPointer();
+                    byte* stagIdxPtrInit = (byte*)(IndexBuffer.MappedData.ToPointer());
                     byte* stagVertPtr = stagVertPtrInit;
                     byte* stagIdxPtr = stagIdxPtrInit;
 
@@ -212,22 +205,22 @@ namespace Zeckoxe.GLTF
                             if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
                             {
                                 AccPos = gltf.Accessors[accessorIdx];
-                                ensureBufferIsLoaded(gltf.BufferViews[(int)AccPos.BufferView].Buffer);
+                                ensure_buffer_is_loaded(gltf.BufferViews[(int)AccPos.BufferView].Buffer);
                             }
                             if (p.Attributes.TryGetValue("NORMAL", out accessorIdx))
                             {
                                 AccNorm = gltf.Accessors[accessorIdx];
-                                ensureBufferIsLoaded(gltf.BufferViews[(int)AccNorm.BufferView].Buffer);
+                                ensure_buffer_is_loaded(gltf.BufferViews[(int)AccNorm.BufferView].Buffer);
                             }
                             if (p.Attributes.TryGetValue("TEXCOORD_0", out accessorIdx))
                             {
                                 AccUv = gltf.Accessors[accessorIdx];
-                                ensureBufferIsLoaded(gltf.BufferViews[(int)AccUv.BufferView].Buffer);
+                                ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv.BufferView].Buffer);
                             }
                             if (p.Attributes.TryGetValue("TEXCOORD_1", out accessorIdx))
                             {
                                 AccUv1 = gltf.Accessors[accessorIdx];
-                                ensureBufferIsLoaded(gltf.BufferViews[(int)AccUv1.BufferView].Buffer);
+                                ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv1.BufferView].Buffer);
                             }
 
                             Primitive prim = new Primitive
@@ -235,7 +228,11 @@ namespace Zeckoxe.GLTF
                                 IndexBase = indexCount,
                                 VertexBase = vertexCount,
                                 VertexCount = AccPos.Count,
-                                Material = (p.Material ?? 0)
+                                Material = p.Material ?? 0,
+                                //BoundingBox = new()
+                                //{
+
+                                //}
                             };
 
                             prim.BoundingBox.Min.ImportFloatArray(AccPos.Min);
@@ -380,8 +377,8 @@ namespace Zeckoxe.GLTF
                     }
                 }
 
-                vbo.Unmap();
-                ibo.Unmap();
+                VertexBuffer.Unmap();
+                IndexBuffer.Unmap();
 
                 //CommandBuffer cmd = new CommandBuffer(_device, CommandBufferType.AsyncTransfer);
                 //cmd.Start();
