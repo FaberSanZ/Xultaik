@@ -23,15 +23,7 @@ using Schema = glTFLoader.Schema;
 
 namespace Zeckoxe.GLTF
 {
-    public class Scene
-    {
-        public string Name;
-        public Node Root;
-        public List<Node> GetNodes() => Root?.Children;
-        public Node FindNode(string name) => Root == null ? null : Root.FindNode(name);
 
-        public BoundingBox AABB => Root.GetAABB(Matrix4x4.Identity);
-    }
 
 
 

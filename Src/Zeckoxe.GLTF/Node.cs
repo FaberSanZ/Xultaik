@@ -14,9 +14,6 @@ namespace Zeckoxe.GLTF
 {
     public class Node
     {
-
-
-
         public Node()
         {
 
@@ -29,7 +26,7 @@ namespace Zeckoxe.GLTF
         public Matrix4x4 LocalMatrix { get; set; }
         public Mesh Mesh { get; set; }
 
-        public Matrix4x4 Matrix => Parent == null ? LocalMatrix : Parent.Matrix * LocalMatrix;
+        public Matrix4x4 Matrix => Parent is null ? LocalMatrix : Parent.Matrix * LocalMatrix;
 
         public Node FindNode(string name)
         {
@@ -38,7 +35,7 @@ namespace Zeckoxe.GLTF
                 return this;
             }
 
-            if (Children == null)
+            if (Children is null)
             {
                 return null;
             }
@@ -61,12 +58,12 @@ namespace Zeckoxe.GLTF
             Matrix4x4 curTransform = LocalMatrix * currentTransform;
             BoundingBox aabb = new BoundingBox();
 
-            if (Mesh != null)
+            if (Mesh is not null)
             {
                 aabb = Mesh.bb.getAABB(curTransform);
             }
 
-            if (Children != null)
+            if (Children is not null)
             {
                 for (int i = 0; i < Children.Count; i++)
                 {
