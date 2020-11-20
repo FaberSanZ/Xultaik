@@ -61,7 +61,7 @@ namespace Zeckoxe.GLTF
 
             if (Mesh is not null)
             {
-                aabb = Mesh.bb.GetAABB(curTransform);
+                aabb = Mesh.BoundingBox.GetAABB(curTransform);
             }
 
             if (Children is not null)
