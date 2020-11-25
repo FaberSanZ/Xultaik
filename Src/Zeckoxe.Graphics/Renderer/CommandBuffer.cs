@@ -593,13 +593,10 @@ namespace Zeckoxe.Graphics
             vkCmdDraw(handle, (uint)vertexCount, (uint)instanceCount, (uint)firstVertex, (uint)firstInstance);
         }
 
-
-
         public void DrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance)
         {
             vkCmdDrawIndexed(handle, (uint)indexCount, (uint)instanceCount, (uint)firstIndex, vertexOffset, (uint)firstInstance);
         }
-
 
         public void PushConstant(GraphicsPipelineState pipelineLayout, ShaderStage stageFlags, Object data, uint offset = 0)
         {
