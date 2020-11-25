@@ -7,12 +7,102 @@
 =============================================================================*/
 
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Graphics
 {
+    public static class ExtensionMethods
+    {
+        /// <summary>
+        /// Extensions method to check byte array equality.
+        /// </summary>
+        public static bool AreEquals(this byte[] b, byte[] other)
+        {
+            if (b.Length != other.Length)
+                return false;
+            for (int i = 0; i < b.Length; i++)
+            {
+                if (b[i] != other[i])
+                    return false;
+            }
+            return true;
+        }
 
+        /// <summary>
+        /// list of pinned GCHandles used to pass value from managed to unmanaged code.
+        /// </summary>
+        public static Dictionary<object, GCHandle> handles = new Dictionary<object, GCHandle>();
+
+        /// <summary>
+        /// Unpin the specified object and free the GCHandle associated.
+        /// </summary>
+        public static void Unpin(this object obj)
+        {
+            if (!handles.ContainsKey(obj))
+            {
+                Debug.WriteLine("Trying to unpin unpinned object: {0}.", obj);
+                return;
+            }
+            handles[obj].Free();
+            handles.Remove(obj);
+        }
+
+        /// <summary>
+        /// Pin the specified object and return a pointer. MUST be Unpined as soon as possible.
+        /// </summary>
+        public static IntPtr Pin(this object obj)
+        {
+            if (handles.ContainsKey(obj))
+            {
+                Debug.WriteLine("Trying to pin already pinned object: {0}", obj);
+                return handles[obj].AddrOfPinnedObject();
+            }
+
+            GCHandle hnd = GCHandle.Alloc(obj, GCHandleType.Pinned);
+            handles.Add(obj, hnd);
+            return hnd.AddrOfPinnedObject();
+        }
+        public static IntPtr Pin<T>(this List<T> obj)
+        {
+            if (handles.ContainsKey(obj))
+                Debug.WriteLine("Pinning already pinned object: {0}", obj);
+
+            GCHandle hnd = GCHandle.Alloc(obj.ToArray(), GCHandleType.Pinned);
+            handles.Add(obj, hnd);
+            return hnd.AddrOfPinnedObject();
+        }
+        public static IntPtr Pin<T>(this T[] obj)
+        {
+            if (handles.ContainsKey(obj))
+                Debug.WriteLine("Pinning already pinned object: {0}", obj);
+
+            GCHandle hnd = GCHandle.Alloc(obj, GCHandleType.Pinned);
+            handles.Add(obj, hnd);
+            return hnd.AddrOfPinnedObject();
+        }
+        public static IntPtr Pin(this string obj)
+        {
+            if (handles.ContainsKey(obj))
+            {
+                Debug.WriteLine("Trying to pin already pinned object: {0}", obj);
+                return handles[obj].AddrOfPinnedObject();
+            }
+            byte[] n = System.Text.Encoding.UTF8.GetBytes(obj + '\0');
+            GCHandle hnd = GCHandle.Alloc(n, GCHandleType.Pinned);
+            handles.Add(obj, hnd);
+            return hnd.AddrOfPinnedObject();
+        }
+
+
+
+
+
+    }
     public class Queue
     {
 
@@ -456,14 +546,18 @@ namespace Zeckoxe.Graphics
 
         public void SetViewport(float Width, float Height, float X, float Y, float MinDepth = 0.0f, float MaxDepth = 1.0f)
         {
-            VkViewport Viewport = new(X, Y, Width, Height, MinDepth, MaxDepth);
+            float vpY = Height + Y;
+            float vpHeight = -Height;
+
+
+            VkViewport Viewport = new(X, vpY, Width, vpHeight, MinDepth, MaxDepth);
 
             vkCmdSetViewport(handle, 0, 1, &Viewport);
         }
 
         public void SetVertexBuffer(Buffer buffer, ulong offsets = 0)
         {
-            fixed (VkBuffer* bufferptr = &buffer.handle)
+            fixed (VkBuffer* bufferptr = &buffer.handle) 
             {
                 vkCmdBindVertexBuffers(handle, 0, 1, bufferptr, &offsets);
             }
@@ -504,6 +598,13 @@ namespace Zeckoxe.Graphics
         public void DrawIndexed(int indexCount, int instanceCount, int firstIndex, int vertexOffset, int firstInstance)
         {
             vkCmdDrawIndexed(handle, (uint)indexCount, (uint)instanceCount, (uint)firstIndex, vertexOffset, (uint)firstInstance);
+        }
+
+
+        public void PushConstant(GraphicsPipelineState pipelineLayout, ShaderStage stageFlags, Object data, uint offset = 0)
+        {
+            vkCmdPushConstants(handle, pipelineLayout._pipelineLayout, (VkShaderStageFlags)stageFlags, offset, (uint)Marshal.SizeOf(data), data.Pin().ToPointer());
+            data.Unpin();
         }
 
 

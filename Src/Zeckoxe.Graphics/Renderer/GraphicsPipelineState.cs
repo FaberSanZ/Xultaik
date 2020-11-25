@@ -122,13 +122,24 @@ namespace Zeckoxe.Graphics
 
         internal void CreatePipelineLayout()
         {
+
+            VkPushConstantRange* PushConstant = stackalloc VkPushConstantRange[1];
+            PushConstant[0] = new()
+            {
+                offset = 0,
+                size = (uint)Interop.SizeOf<System.Numerics.Matrix4x4>(),
+                stageFlags = VkShaderStageFlags.Vertex,
+            };
+
             // Create the Pipeline layout that is used to generate the rendering pipelines that are based on this descriptor set layout
             // In a more complex scenario you would have different Pipeline layouts for different descriptor set layouts that could be reused
             VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = new VkPipelineLayoutCreateInfo
             {
                 sType = VkStructureType.PipelineLayoutCreateInfo,
                 pNext = null,
-                setLayoutCount = 1
+                setLayoutCount = 1,
+                pPushConstantRanges = PushConstant,
+                pushConstantRangeCount = 1,
             };
             VkDescriptorSetLayout descriptorSetLayout = _descriptorSetLayout;
             pPipelineLayoutCreateInfo.pSetLayouts = &descriptorSetLayout;

@@ -17,10 +17,48 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
 
             model = SharpGLTF.Schema2.ModelRoot.Load(path);
 
-            create_buffers();
+            List<VertexPositionColor> vertexBuffer = new(); List<int> indexBuffe = new();
+
+            Meshes = new();
+            foreach (SharpGLTF.Schema2.Mesh mesh in model.LogicalMeshes)
+            {
+                Meshes.Add(create_buffers(mesh, vertexBuffer, indexBuffe));
+
+                
+            }
 
 
-            Meshes = LoadMeshes();
+            foreach (SharpGLTF.Schema2.Mesh mesh in model.LogicalMeshes)
+            {
+                foreach (var item in mesh.LogicalParent.LogicalNodes)
+                {
+                    System.Console.WriteLine(item.Mesh);
+                }
+            }
+
+
+
+            VertexBuffer = new(_device, new()
+            {
+                BufferFlags = BufferFlags.VertexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = vertexBuffer.Count * Marshal.SizeOf<TVertex>(),
+            });
+
+
+            IndexBuffer = new(_device, new()
+            {
+                BufferFlags = BufferFlags.IndexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = indexBuffe.Count * Marshal.SizeOf<int>(),
+            });
+
+
+            VertexBuffer.SetData<VertexPositionColor>(vertexBuffer.ToArray());
+            IndexBuffer.SetData<int>(indexBuffe.ToArray());
+
+
+            //Meshes = LoadMeshes();
         }
 
 
@@ -37,9 +75,67 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
 
 
 
-        internal void create_buffers()
+        internal Mesh create_buffers(SharpGLTF.Schema2.Mesh mesh, List<VertexPositionColor> vertexBuffer, List<int> indexBuffer)
         {
+            Mesh m = new Mesh { Name = mesh.Name };
 
+            foreach (SharpGLTF.Schema2.MeshPrimitive p in mesh.Primitives)
+            {
+
+                int indexStart = indexBuffer.Count;
+                int vertexStart = vertexBuffer.Count;
+                int indexCount = 0;
+                int vertexCount = 0;
+
+
+
+                IList<System.Numerics.Vector3> positions = p.GetVertexAccessor("POSITION")?.AsVector3Array();
+                IList<System.Numerics.Vector3> normals = p.GetVertexAccessor("NORMAL")?.AsVector3Array();
+
+
+
+                //prim.BoundingBox.Min.ImportFloatArray(positions.Min().);
+                //prim.BoundingBox.Max.ImportFloatArray(AccPos.Max);
+                //prim.BoundingBox.IsValid = true;
+
+                //Interleaving vertices
+
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    //Vector4 tangent = default; // tangents![i];
+                    vertexBuffer.Add(new(positions[i], normals[i]));
+                }
+                //vertexBuffer.AddRange(vertices);
+                vertexCount = positions.Count;
+                //indices loading
+
+                (int A, int B, int C)[] triangleIndices = p.GetTriangleIndices()?.ToArray();
+
+                int[] indices = triangleIndices?.SelectMany(i => new[] { i.A, i.B, i.C }).ToArray();
+
+                for (int i = 0; i < indices.Length; i++)
+                {
+                    indexBuffer.Add(indices[i] + vertexStart);
+
+                }
+                indexCount = indices.Length;
+
+                Primitive prim = new Primitive
+                {
+                    FirstVertex = vertexStart,
+                    VertexCount = vertexCount,
+                    FirstIndex = indexStart,
+                    IndexCount = indexCount,
+                };
+
+                m.AddPrimitive(prim);
+
+
+
+
+            }
+
+            return m;
         }
 
 
@@ -47,10 +143,6 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
 
         public List<Mesh> LoadMeshes()
         {
-
-
-
-            int vertexCount = 0, indexCount = 0;
             int autoNamedMesh = 1;
 
             meshes = new List<Mesh>();
@@ -69,7 +161,6 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
 
                     foreach (SharpGLTF.Schema2.Mesh mesh in model.LogicalMeshes)
                     {
-
                         string meshName = mesh.Name;
                         if (string.IsNullOrEmpty(meshName))
                         {
@@ -80,10 +171,10 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
                         System.Console.WriteLine(m.Name);
                         foreach (SharpGLTF.Schema2.MeshPrimitive p in mesh.Primitives)
                         {
-   
 
-                            var positions = p.GetVertexAccessor("POSITION")?.AsVector3Array();
-                            var normals = p.GetVertexAccessor("NORMAL")?.AsVector3Array();
+
+                            IList<System.Numerics.Vector3> positions = p.GetVertexAccessor("POSITION")?.AsVector3Array();
+                            IList<System.Numerics.Vector3> normals = p.GetVertexAccessor("NORMAL")?.AsVector3Array();
 
 
 
@@ -117,10 +208,9 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
                                 //VertexCount = positions.Count,
                             };
 
-                            indexCount += indices.Count();
-                            vertexCount += positions.Count;
                             prim.IndexCount = indices.Count();
-
+                            prim.FirstIndex = p.IndexAccessor.LogicalIndex;
+                            System.Console.WriteLine(p.IndexAccessor.LogicalIndex);
                             m.AddPrimitive(prim);
 
 
@@ -132,24 +222,7 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
                 }
 
 
-                VertexBuffer = new(_device, new()
-                {
-                    BufferFlags = BufferFlags.VertexBuffer,
-                    Usage = GraphicsResourceUsage.Dynamic,
-                    SizeInBytes = vertex.Count * Marshal.SizeOf<TVertex>(),
-                });
 
-
-                IndexBuffer = new(_device, new()
-                {
-                    BufferFlags = BufferFlags.IndexBuffer,
-                    Usage = GraphicsResourceUsage.Dynamic,
-                    SizeInBytes = Indices.Count *  Marshal.SizeOf<int>(),
-                });
-
-
-                VertexBuffer.SetData<VertexPositionColor>(vertex.ToArray());
-                IndexBuffer.SetData<int>(Indices.ToArray());
 
             }
 
@@ -174,7 +247,7 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
         {
             foreach (Primitive primitive in m.Primitives)
             {
-                commandBuffer.DrawIndexed(primitive.IndexCount, 1, primitive.FirstIndex, primitive.FirstVertex, 0);
+                commandBuffer.DrawIndexed(primitive.IndexCount, 1, primitive.FirstIndex, 0, 0);
             }
 
         }

@@ -14,7 +14,7 @@ using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.Games;
-using Zeckoxe.GLTF.SharpGLTFNew;
+using Zeckoxe.GLTF;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.Physics;
@@ -60,7 +60,7 @@ namespace Samples.Samples
 
         public Camera Camera { get; set; }
         public GameTime GameTime { get; set; }
-        public GLTFLoader<VertexPositionNormal> GLTFModel { get; set; }
+        public GLTFLoader<VertexPositionColor> GLTFModel { get; set; }
         //public List<Mesh> Meshes { get; private set; }
 
 
@@ -90,7 +90,7 @@ namespace Samples.Samples
             Camera = new()
             {
                 Mode = CameraType.Free,
-                Position = new(1, -.3f, -3.5f),
+                Position = new(-1, -.3f, -0),
             };
 
             Camera.SetLens(Window.Width, Window.Height);
@@ -119,11 +119,11 @@ namespace Samples.Samples
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
             Descriptor.Build();
 
-            GLTFModel = new(Device, "Models/DamagedHelmet.gltf");
+            GLTFModel = new(Device, "Models/sponza.gltf");
 
             yaw = 0f;
-            pitch = 4.5f;
-            roll = 0.15f;
+            pitch = 0;
+            roll = 0;
         }
 
 
@@ -164,7 +164,7 @@ namespace Samples.Samples
                 {
                     Binding = 0,
                     InputRate = VertexInputRate.Vertex,
-                    Stride = VertexPositionNormal.Size,
+                    Stride = VertexPositionColor.Size,
                 }
             };
 
@@ -213,7 +213,7 @@ namespace Samples.Samples
             Camera.Update(game);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, 0.0f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, -7.0f, 0.0f);
             uniform.Update(Camera, Model);
             ConstBuffer.SetData(ref uniform);
 
@@ -233,16 +233,13 @@ namespace Samples.Samples
             CommandBuffer commandBuffer = Context.CommandBuffer;
 
             commandBuffer.BeginFramebuffer(Framebuffer, .5f, .5f, .5f);
-            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
 
             commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.BindDescriptorSets(Descriptor);
 
-            GLTFModel.Draw(commandBuffer);
-            //GLTFModel.DrawAll(commandBuffer);
-
-
+            GLTFModel.Draw(commandBuffer, PipelineState);
         }
 
 

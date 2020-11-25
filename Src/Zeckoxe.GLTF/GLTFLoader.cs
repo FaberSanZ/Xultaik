@@ -14,17 +14,64 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zeckoxe.Graphics;
-using Zeckoxe.Physics;
 using Schema = glTFLoader.Schema;
 
 
 namespace Zeckoxe.GLTF
 {
+    public enum DescriptorBindingFlags
+    {
+        ImageBaseColor = 0x00000001,
+        ImageNormalMap = 0x00000002
+    }
+
+
+    public enum VertexComponent
+    {
+        Position,
+        Normal,
+        UV,
+        Color,
+        Tangent,
+        Joint0,
+        Weight0
+    }
+
+
+    public enum FileLoadingFlags
+    {
+        None = 0x00000000,
+        PreTransformVertices = 0x00000001,
+        PreMultiplyVertexColors = 0x00000002,
+        FlipY = 0x00000004,
+        DontLoadImages = 0x00000008
+    };
+
+    public enum RenderFlags
+    {
+        BindImages = 0x00000001,
+        RenderOpaqueNodes = 0x00000002,
+        RenderAlphaMaskedNodes = 0x00000004,
+        RenderAlphaBlendedNodes = 0x00000008
+    };
+
+
     public unsafe class GLTFLoader<TVertex>
     {
+        private struct Vertex
+        {
+            private Vector3 pos;
+            private Vector3 normal;
+            private Vector2 uv;
+            private Vector4 color;
+            private Vector4 joint0;
+            private Vector4 weight0;
+            private Vector4 tangent;
+        };
+
 
         internal Gltf gltf;
         internal string baseDirectory;
@@ -35,7 +82,15 @@ namespace Zeckoxe.GLTF
 
         internal Device _device;
 
-        internal List<Mesh> meshes;
+
+        internal List<Node> nodes;
+        internal List<Node> linearNodes;
+
+        internal bool buffersBound = false;
+        List<VertexPositionColor> vertexBuffer = new();
+
+        List<int> indexBuffe = new();
+
 
 
         public GLTFLoader(Device device, string path)
@@ -50,16 +105,70 @@ namespace Zeckoxe.GLTF
 
             GetVertexCount();
 
-            create_buffers();
+            //create_buffers();
 
 
-            Meshes = LoadMeshes();
-            Scenes = LoadScenes().ToList();
+
+
+
+            Meshes = new();
+            foreach (Schema.Mesh mesh in gltf.Meshes)
+            {
+                Meshes.Add(loadNode(mesh, vertexBuffer, indexBuffe));
+            }
+
+
+            Scenes = LoadScenes();
+
+
+            //for (int i = 0; i < vertexBuffer.Count; i++)
+            //{
+            //    VertexPositionColor vertex = vertexBuffer[i];
+
+
+            //    vertex.Position.Y *= -1.0f;
+            //    vertex.Color.Y *= -1.0f;
+
+            //    vertexBuffer[i] = vertex;
+            //}
+
+
+            //foreach (var sc in Scenes)
+            //{
+            //    foreach (Node node in sc.Root.Children)
+            //    {
+            //        //PreTransform(node, sc.Root.LocalMatrix);
+            //    }
+            //}
+
+
+
+
+            VertexBuffer = new(_device, new()
+            {
+                BufferFlags = BufferFlags.VertexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = vertexBuffer.Count * Marshal.SizeOf<TVertex>(),
+            });
+
+
+            IndexBuffer = new(_device, new()
+            {
+                BufferFlags = BufferFlags.IndexBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = indexBuffe.Count * Marshal.SizeOf<int>(),
+            });
+            VertexBuffer.SetData<VertexPositionColor>(vertexBuffer.ToArray());
+            IndexBuffer.SetData<int>(indexBuffe.ToArray());
+
+            //Meshes = LoadMeshes();
+
+
+            Console.WriteLine(IndexType);
         }
 
-
-        int defaultSceneIndex = -1;
-        List<Scene> Scenes;
+        private readonly int defaultSceneIndex = -1;
+        private readonly List<Scene> Scenes;
 
         public TextureData TextureData { get; set; }
 
@@ -164,6 +273,211 @@ namespace Zeckoxe.GLTF
             }
         }
 
+        private unsafe void AttributeCopyData<T>(ref T[] array, int attributeByteLength, void* attributePointer) where T : unmanaged
+        {
+            array = new T[attributeByteLength / Unsafe.SizeOf<T>()];
+            fixed (T* arrayPtr = &array[0])
+            {
+                Unsafe.CopyBlock(arrayPtr, attributePointer, (uint)attributeByteLength);
+            }
+        }
+
+        internal Mesh loadNode(Schema.Mesh mesh, List<VertexPositionColor> vertexBuffer, List<int> indexBuffer)
+        {
+            Mesh m = new Mesh { Name = mesh.Name };
+
+            foreach (Schema.MeshPrimitive p in mesh.Primitives)
+            {
+                ulong indexStart = (ulong)indexBuffer.Count;
+                ulong vertexStart = (ulong)vertexBuffer.Count;
+                int indexCount = 0;
+                int vertexCount = 0;
+
+                Schema.Accessor AccPos = null, AccNorm = null, AccUv = null, AccUv1 = null;
+
+                if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
+                {
+                    AccPos = gltf.Accessors[accessorIdx];
+                    ensure_buffer_is_loaded(gltf.BufferViews[(int)AccPos.BufferView].Buffer);
+                }
+                if (p.Attributes.TryGetValue("NORMAL", out accessorIdx))
+                {
+                    AccNorm = gltf.Accessors[accessorIdx];
+                    ensure_buffer_is_loaded(gltf.BufferViews[(int)AccNorm.BufferView].Buffer);
+                }
+                if (p.Attributes.TryGetValue("TEXCOORD_0", out accessorIdx))
+                {
+                    AccUv = gltf.Accessors[accessorIdx];
+                    ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv.BufferView].Buffer);
+                }
+                if (p.Attributes.TryGetValue("TEXCOORD_1", out accessorIdx))
+                {
+                    AccUv1 = gltf.Accessors[accessorIdx];
+                    ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv1.BufferView].Buffer);
+                }
+
+
+
+                //prim.BoundingBox.Min.ImportFloatArray(AccPos.Min);
+                //prim.BoundingBox.Max.ImportFloatArray(AccPos.Max);
+                //prim.BoundingBox.IsValid = true;
+
+                //Interleaving vertices
+                byte* inPosPtr = null, inNormPtr = null, inUvPtr = null, inUv1Ptr = null;
+
+                Vector3[] positions = new Vector3[0];
+                Vector3[] normals = new Vector3[0];
+                Vector2[] texcoords = new Vector2[0];
+                Vector3[] tangents = new Vector3[0];
+
+                Schema.BufferView bv = gltf.BufferViews[(int)AccPos.BufferView];
+                inPosPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                inPosPtr += AccPos.ByteOffset + bv.ByteOffset;
+                this.AttributeCopyData(ref positions, AccPos.Count * Unsafe.SizeOf<Vector3>(), inPosPtr);
+
+
+                if (AccNorm is not null)
+                {
+                    bv = gltf.BufferViews[(int)AccNorm.BufferView];
+                    inNormPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                    inNormPtr += AccNorm.ByteOffset + bv.ByteOffset;
+
+                    AttributeCopyData(ref normals, AccPos.Count * Unsafe.SizeOf<Vector3>(), inNormPtr);
+                }
+
+
+                vertexCount = AccPos.Count;
+
+
+                //TODO: use vertex attributes scan for copying data if they exists
+                for (int i = 0; i < AccPos.Count; i++)
+                {
+                    Vector3 position = positions[i];
+                    Vector3 normal = (normals.Length > i) ? normals[i] : Vector3.Zero;
+                    vertexBuffer.Add(new(position, normal));
+                }
+
+                //indices loading
+                if (p.Indices is not null)
+                {
+                    Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
+                    bv = gltf.BufferViews[(int)acc.BufferView];
+
+
+                    indexCount = acc.Count;
+
+                    byte* inIdxPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                    inIdxPtr += acc.ByteOffset + bv.ByteOffset;
+
+                    //TODO:double check this, I dont seems to increment stag pointer
+                    if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_SHORT)
+                    {
+                        if (IndexType is IndexType.Uint16)
+                        {
+                            ushort* buf = stackalloc ushort[acc.Count];
+
+                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 2);
+
+
+                            for (int index = 0; index < acc.Count; index++)
+                            {
+                                indexBuffer.Add(buf[index] + (int)vertexStart);
+                            }
+
+                        }
+                        else
+                        {
+                            ushort* buf = stackalloc ushort[acc.Count];
+
+                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 4);
+
+
+                            for (int index = 0; index < acc.Count; index++)
+                            {
+                                indexBuffer.Add(buf[index] + (int)vertexStart);
+                            }
+                        }
+                    }
+                    else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_INT)
+                    {
+                        if (IndexType is IndexType.Uint16)
+                        {
+                            int* buf = stackalloc int[acc.Count];
+
+                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 2);
+
+
+                            for (int index = 0; index < acc.Count; index++)
+                            {
+                                indexBuffer.Add(buf[index] + (int)vertexStart);
+                            }
+
+                        }
+                        else
+                        {
+                            int* buf = stackalloc int[acc.Count];
+
+                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 4);
+
+
+                            for (int index = 0; index < acc.Count; index++)
+                            {
+                                indexBuffer.Add(buf[index] + (int)vertexStart);
+                            }
+                        }
+                    }
+                    else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_BYTE)
+                    {
+                        //convert
+                        if (IndexType is IndexType.Uint16)
+                        {
+                            byte* buf = stackalloc byte[acc.Count];
+
+                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 2);
+
+
+                            for (int index = 0; index < acc.Count; index++)
+                            {
+                                indexBuffer.Add(buf[index] + (int)vertexStart);
+                            }
+
+                        }
+                        else
+                        {
+                            byte* buf = stackalloc byte[acc.Count];
+
+                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 4);
+
+
+                            for (int index = 0; index < acc.Count; index++)
+                            {
+                                indexBuffer.Add(buf[index] + (int)vertexStart);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+
+                }
+
+
+                Primitive prim = new Primitive
+                {
+                    FirstIndex = (int)indexStart,
+                    FirstVertex = (int)vertexStart,
+                    VertexCount = vertexCount,
+                    IndexCount = indexCount,
+                };
+
+                m.AddPrimitive(prim);
+
+            }
+
+
+            return m;
+        }
 
 
         public List<Mesh> LoadMeshes()
@@ -176,8 +490,6 @@ namespace Zeckoxe.GLTF
 
             //int vertexCount = 0, indexCount = 0;
             int autoNamedMesh = 1;
-
-            meshes = new List<Mesh>();
 
 
             VertexBuffer.Map();
@@ -234,21 +546,11 @@ namespace Zeckoxe.GLTF
                                 ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv1.BufferView].Buffer);
                             }
 
-                            Primitive prim = new Primitive
-                            {
-                                FirstIndex = (int)indexStart,
-                                FirstVertex = (int)vertexStart,
-                                VertexCount = vertexCount,
-                                Material = p.Material ?? 0,
-                                //BoundingBox = new()
-                                //{
 
-                                //}
-                            };
 
-                            prim.BoundingBox.Min.ImportFloatArray(AccPos.Min);
-                            prim.BoundingBox.Max.ImportFloatArray(AccPos.Max);
-                            prim.BoundingBox.IsValid = true;
+                            //prim.BoundingBox.Min.ImportFloatArray(AccPos.Min);
+                            //prim.BoundingBox.Max.ImportFloatArray(AccPos.Max);
+                            //prim.BoundingBox.IsValid = true;
 
                             //Interleaving vertices
                             byte* inPosPtr = null, inNormPtr = null, inUvPtr = null, inUv1Ptr = null;
@@ -276,8 +578,11 @@ namespace Zeckoxe.GLTF
                                 inUv1Ptr += AccUv1.ByteOffset + bv.ByteOffset;
                             }
 
+                            vertexCount = AccPos.Count;
+
+
                             //TODO: use vertex attributes scan for copying data if they exists
-                            for (int j = 0; j < prim.VertexCount; j++)
+                            for (int j = 0; j < AccPos.Count; j++)
                             {
                                 System.Buffer.MemoryCopy(inPosPtr, stagVertPtr, 12, 12);
                                 inPosPtr += 12;
@@ -304,6 +609,9 @@ namespace Zeckoxe.GLTF
                             {
                                 Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
                                 bv = gltf.BufferViews[(int)acc.BufferView];
+
+
+                                indexCount = acc.Count;
 
                                 byte* inIdxPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                                 inIdxPtr += acc.ByteOffset + bv.ByteOffset;
@@ -376,15 +684,25 @@ namespace Zeckoxe.GLTF
                                     throw new NotImplementedException();
                                 }
 
-                                prim.IndexCount = acc.Count;
-                                indexCount += acc.Count;
+
+                                Primitive prim = new Primitive
+                                {
+                                    FirstIndex = (int)indexStart,
+                                    FirstVertex = (int)vertexStart,
+                                    VertexCount = vertexCount,
+                                    Material = p.Material ?? 0,
+                                };
+
+
+
+                                prim.IndexCount = indexCount;
+                                m.AddPrimitive(prim);
                             }
 
-                            m.AddPrimitive(prim);
 
                             vertexCount += AccPos.Count;
                         }
-                        meshes.Add(m);
+                        Meshes.Add(m);
                     }
                 }
 
@@ -407,61 +725,100 @@ namespace Zeckoxe.GLTF
 
             }
 
-            return meshes;
+            return Meshes;
         }
 
 
-        public void DrawAll(CommandBuffer cmd)
-        {
-
-        }
-
-
-        public void RenderNode(CommandBuffer cmd, Node node, Matrix4x4 currentTransform)
+        public void PreTransform(Node node, Matrix4x4 currentTransform)
         {
             Matrix4x4 localMat = node.LocalMatrix * currentTransform;
+
+
+
+            //vertexBuffer.Clear();
+            if (node.Mesh != null)
+            {
+                foreach (Primitive p in node.Mesh.Primitives)
+                {
+
+                }
+            }
+            if (node.Children == null)
+            {
+                return;
+            }
+
+            foreach (Node child in node.Children)
+            {
+                PreTransform(child, localMat);
+            }
+        }
+
+        public void RenderNode(CommandBuffer cmd, Node node, Matrix4x4 currentTransform, GraphicsPipelineState pipelineState)
+        {
+            Matrix4x4 localMat = node.LocalMatrix * currentTransform;
+
+            cmd.PushConstant(pipelineState, ShaderStage.Vertex, localMat);
 
 
             if (node.Mesh != null)
             {
                 foreach (Primitive p in node.Mesh.Primitives)
-                { 
-                    cmd.DrawIndexed(p.IndexCount, 1, p.FirstIndex, p.FirstVertex, 0);
+                {
+                    cmd.DrawIndexed(p.IndexCount, 1, p.FirstIndex, 0, 0);
                 }
             }
             if (node.Children == null)
+            {
                 return;
+            }
 
             foreach (Node child in node.Children)
-                RenderNode(cmd, child, localMat);
+            {
+                RenderNode(cmd, child, localMat, pipelineState);
+            }
         }
 
 
 
 
-        public void Draw(CommandBuffer commandBuffer)
+        public void DrawNode2(CommandBuffer commandBuffer, Mesh m)
+        {
+            foreach (Primitive primitive in m.Primitives)
+            {
+                commandBuffer.DrawIndexed(primitive.IndexCount, 1, primitive.FirstIndex, 0, 0);
+
+            }
+
+        }
+
+
+
+        public void Draw(CommandBuffer commandBuffer, GraphicsPipelineState pipelineState)
         {
             commandBuffer.SetVertexBuffers(new[] { VertexBuffer });
-            commandBuffer.SetIndexBuffer(IndexBuffer, 0, IndexType);
+            commandBuffer.SetIndexBuffer(IndexBuffer, 0, IndexType.Uint32);
 
 
             //commandBuffer.BindDescriptorSets(new DescriptorSet);
 
-            foreach (Scene sc in Scenes)
+            foreach (var sc in Scenes)
             {
                 foreach (Node node in sc.Root.Children)
-                    RenderNode(commandBuffer, node, sc.Root.LocalMatrix);
+                {
+                    RenderNode(commandBuffer, node, sc.Root.LocalMatrix, pipelineState);
+                }
             }
         }
 
 
 
-        public Scene[] LoadScenes()
+        public List<Scene> LoadScenes()
         {
-            var defaultScene = -1;
+            int defaultScene = -1;
             if (gltf.Scene == null)
             {
-                return new Scene[] { };
+                return new();
             }
 
             List<Scene> scenes = new List<Scene>();
@@ -493,7 +850,7 @@ namespace Zeckoxe.GLTF
                     LoadNode(scenes[i].Root, gltf.Nodes[nodeIdx]);
                 }
             }
-            return scenes.ToArray();
+            return scenes;
         }
 
 
@@ -559,7 +916,7 @@ namespace Zeckoxe.GLTF
 
             if (gltfNode.Mesh != null)
             {
-                node.Mesh = meshes[(int)gltfNode.Mesh];
+                node.Mesh = Meshes[(int)gltfNode.Mesh];
             }
         }
 
