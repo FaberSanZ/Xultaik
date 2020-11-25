@@ -52,47 +52,6 @@ namespace Zeckoxe.Graphics
         {
             RayTracingScratchBuffer scratchBuffer = default;
 
-            VkMemoryRequirements2 memoryRequirements2;
-            memoryRequirements2.sType = VkStructureType.MemoryRequirements2;
-
-            VkAccelerationStructureMemoryRequirementsInfoKHR accelerationStructureMemoryRequirements = default;
-            accelerationStructureMemoryRequirements.sType = VkStructureType.AccelerationStructureMemoryRequirementsInfoKHR;
-            accelerationStructureMemoryRequirements.type = VkAccelerationStructureMemoryRequirementsTypeKHR.BuildScratch;
-            accelerationStructureMemoryRequirements.buildType = VkAccelerationStructureBuildTypeKHR.Device;
-            accelerationStructureMemoryRequirements.accelerationStructure = accelerationStructure;
-            vkGetAccelerationStructureMemoryRequirementsKHR(NativeDevice.handle, &accelerationStructureMemoryRequirements, &memoryRequirements2);
-
-            VkBufferCreateInfo bufferCI = new VkBufferCreateInfo
-            {
-                sType = VkStructureType.BufferCreateInfo,
-                size = memoryRequirements2.memoryRequirements.size,
-                usage = VkBufferUsageFlags.RayTracingKHR | VkBufferUsageFlags.ShaderDeviceAddress,
-                sharingMode = VkSharingMode.Exclusive
-            };
-            vkCreateBuffer(NativeDevice.handle, &bufferCI, null, out scratchBuffer.buffer);
-
-            vkGetBufferMemoryRequirements(NativeDevice.handle, scratchBuffer.buffer, out VkMemoryRequirements memoryRequirements);
-
-            VkMemoryAllocateFlagsInfo memoryAllocateFI = default;
-            memoryAllocateFI.sType = VkStructureType.MemoryAllocateFlagsInfo;
-            memoryAllocateFI.flags = VkMemoryAllocateFlags.DeviceAddress;
-
-            VkMemoryAllocateInfo memoryAI = default;
-            memoryAI.sType = VkStructureType.MemoryAllocateInfo;
-            memoryAI.pNext = &memoryAllocateFI;
-            memoryAI.allocationSize = memoryRequirements.size;
-            memoryAI.memoryTypeIndex = NativeDevice.GetMemoryType(memoryRequirements.memoryTypeBits, VkMemoryPropertyFlags.DeviceLocal);
-            VkDeviceMemory memory = default;
-            vkAllocateMemory(NativeDevice.handle, &memoryAI, null, &memory);
-            scratchBuffer.memory = memory;
-
-            vkBindBufferMemory(NativeDevice.handle, scratchBuffer.buffer, scratchBuffer.memory, 0);
-
-            VkBufferDeviceAddressInfo buffer_device_address_info = default;
-            buffer_device_address_info.sType = VkStructureType.BufferDeviceAddressInfo;
-            buffer_device_address_info.buffer = scratchBuffer.buffer;
-            scratchBuffer.deviceAddress = (uint)vkGetBufferDeviceAddressKHR(NativeDevice.handle, &buffer_device_address_info); //TODO: vkGetBufferDeviceAddressKHR -> Vortice.Vulkan bug.
-
             return scratchBuffer;
         }
 

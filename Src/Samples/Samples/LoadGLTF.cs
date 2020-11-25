@@ -14,7 +14,7 @@ using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.Games;
-using Zeckoxe.GLTF;
+using Zeckoxe.GLTF.SharpGLTFNew;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.Physics;
@@ -61,7 +61,7 @@ namespace Samples.Samples
         public Camera Camera { get; set; }
         public GameTime GameTime { get; set; }
         public GLTFLoader<VertexPositionNormal> GLTFModel { get; set; }
-        public List<Mesh> Meshes { get; private set; }
+        //public List<Mesh> Meshes { get; private set; }
 
 
         public DescriptorSet Descriptor;
@@ -240,6 +240,7 @@ namespace Samples.Samples
             commandBuffer.BindDescriptorSets(Descriptor);
 
             GLTFModel.Draw(commandBuffer);
+            //GLTFModel.DrawAll(commandBuffer);
 
 
         }

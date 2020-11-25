@@ -18,19 +18,19 @@ namespace Zeckoxe.GLTF
         {
         }
 
-        public Primitive(int vertexCount, int indexCount, int vertexBase = 0, int indexBase = 0)
+        public Primitive(int vertexCount, int indexCount, int firstVertex = 0, int firstIndex = 0)
         {
             VertexCount = vertexCount;
             IndexCount = indexCount;
-            VertexBase = vertexBase;
-            IndexBase = indexBase;
+            FirstVertex = firstVertex;
+            FirstIndex = firstIndex;
         }
 
         public BoundingBox BoundingBox;
 
         public string Name { get; set; }
-        public int IndexBase { get; set; }
-        public int VertexBase { get; set; }
+        public int FirstIndex { get; set; }
+        public int FirstVertex { get; set; }
         public int VertexCount { get; set; }
         public int IndexCount { get; set; }
         public int Material { get; set; }
@@ -41,7 +41,7 @@ namespace Zeckoxe.GLTF
 
         public void Draw(CommandBuffer cmd, int instanceCount = 1, int firstInstance = 0)
         {
-            cmd.DrawIndexed(IndexCount, instanceCount, IndexBase, VertexBase, firstInstance);
+            //cmd.DrawIndexed(IndexCount, instanceCount, IndexBase, VertexBase, firstInstance);
         }
     }
 }

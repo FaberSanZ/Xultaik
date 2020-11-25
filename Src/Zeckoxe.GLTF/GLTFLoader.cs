@@ -53,9 +53,14 @@ namespace Zeckoxe.GLTF
             create_buffers();
 
 
-            Meshes = LoadMeshes(IndexType, 0, 0);
-
+            Meshes = LoadMeshes();
+            Scenes = LoadScenes().ToList();
         }
+
+
+        int defaultSceneIndex = -1;
+        List<Scene> Scenes;
+
         public TextureData TextureData { get; set; }
 
         public Graphics.Buffer VertexBuffer { get; private set; }
@@ -161,15 +166,15 @@ namespace Zeckoxe.GLTF
 
 
 
-        public List<Mesh> LoadMeshes(IndexType indexType, ulong vboOffset, ulong iboOffset)
+        public List<Mesh> LoadMeshes()
         {
 
             int vertexByteSize = Marshal.SizeOf<TVertex>();
             ulong vertSize = (ulong)(VertexCount * vertexByteSize);
-            ulong idxSize = (ulong)IndexCount * (indexType is IndexType.Uint16 ? 2ul : 4ul);
+            ulong idxSize = (ulong)IndexCount * (IndexType is IndexType.Uint16 ? 2ul : 4ul);
             ulong size = vertSize + idxSize;
 
-            int vertexCount = 0, indexCount = 0;
+            //int vertexCount = 0, indexCount = 0;
             int autoNamedMesh = 1;
 
             meshes = new List<Mesh>();
@@ -200,6 +205,12 @@ namespace Zeckoxe.GLTF
 
                         foreach (Schema.MeshPrimitive p in mesh.Primitives)
                         {
+                            ulong indexStart = vertSize;
+                            ulong vertexStart = idxSize;
+                            int indexCount = 0;
+                            int vertexCount = 0;
+
+
                             Schema.Accessor AccPos = null, AccNorm = null, AccUv = null, AccUv1 = null;
 
                             if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
@@ -225,9 +236,9 @@ namespace Zeckoxe.GLTF
 
                             Primitive prim = new Primitive
                             {
-                                IndexBase = indexCount,
-                                VertexBase = vertexCount,
-                                VertexCount = AccPos.Count,
+                                FirstIndex = (int)indexStart,
+                                FirstVertex = (int)vertexStart,
+                                VertexCount = vertexCount,
                                 Material = p.Material ?? 0,
                                 //BoundingBox = new()
                                 //{
@@ -246,19 +257,19 @@ namespace Zeckoxe.GLTF
                             inPosPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                             inPosPtr += AccPos.ByteOffset + bv.ByteOffset;
 
-                            if (AccNorm != null)
+                            if (AccNorm is not null)
                             {
                                 bv = gltf.BufferViews[(int)AccNorm.BufferView];
                                 inNormPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                                 inNormPtr += AccNorm.ByteOffset + bv.ByteOffset;
                             }
-                            if (AccUv != null)
+                            if (AccUv is not null)
                             {
                                 bv = gltf.BufferViews[(int)AccUv.BufferView];
                                 inUvPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                                 inUvPtr += AccUv.ByteOffset + bv.ByteOffset;
                             }
-                            if (AccUv1 != null)
+                            if (AccUv1 is not null)
                             {
                                 bv = gltf.BufferViews[(int)AccUv1.BufferView];
                                 inUv1Ptr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
@@ -270,17 +281,17 @@ namespace Zeckoxe.GLTF
                             {
                                 System.Buffer.MemoryCopy(inPosPtr, stagVertPtr, 12, 12);
                                 inPosPtr += 12;
-                                if (inNormPtr != null)
+                                if (inNormPtr is not null)
                                 {
                                     System.Buffer.MemoryCopy(inNormPtr, stagVertPtr + 12, 12, 12);
                                     inNormPtr += 12;
                                 }
-                                if (inUvPtr != null)
+                                if (inUvPtr is not null)
                                 {
                                     System.Buffer.MemoryCopy(inUvPtr, stagVertPtr + 24, 8, 8);
                                     inUvPtr += 8;
                                 }
-                                if (inUv1Ptr != null)
+                                if (inUv1Ptr is not null)
                                 {
                                     System.Buffer.MemoryCopy(inUv1Ptr, stagVertPtr + 32, 8, 8);
                                     inUv1Ptr += 8;
@@ -289,7 +300,7 @@ namespace Zeckoxe.GLTF
                             }
 
                             //indices loading
-                            if (p.Indices != null)
+                            if (p.Indices is not null)
                             {
                                 Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
                                 bv = gltf.BufferViews[(int)acc.BufferView];
@@ -298,9 +309,9 @@ namespace Zeckoxe.GLTF
                                 inIdxPtr += acc.ByteOffset + bv.ByteOffset;
 
                                 //TODO:double check this, I dont seems to increment stag pointer
-                                if (acc.ComponentType == Schema.Accessor.ComponentTypeEnum.UNSIGNED_SHORT)
+                                if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_SHORT)
                                 {
-                                    if (indexType == IndexType.Uint16)
+                                    if (IndexType is IndexType.Uint16)
                                     {
                                         System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 2, (long)acc.Count * 2);
                                         stagIdxPtr += (long)acc.Count * 2;
@@ -317,9 +328,9 @@ namespace Zeckoxe.GLTF
                                         stagIdxPtr += (long)acc.Count * 4;
                                     }
                                 }
-                                else if (acc.ComponentType == Schema.Accessor.ComponentTypeEnum.UNSIGNED_INT)
+                                else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_INT)
                                 {
-                                    if (indexType == IndexType.Uint32)
+                                    if (IndexType is IndexType.Uint32)
                                     {
                                         System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 4, (long)acc.Count * 4);
                                         stagIdxPtr += (long)acc.Count * 4;
@@ -336,10 +347,10 @@ namespace Zeckoxe.GLTF
                                         stagIdxPtr += (long)acc.Count * 2;
                                     }
                                 }
-                                else if (acc.ComponentType == Schema.Accessor.ComponentTypeEnum.UNSIGNED_BYTE)
+                                else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_BYTE)
                                 {
                                     //convert
-                                    if (indexType == IndexType.Uint16)
+                                    if (IndexType is IndexType.Uint16)
                                     {
                                         ushort* usPtr = (ushort*)stagIdxPtr;
                                         for (int i = 0; i < acc.Count; i++)
@@ -400,6 +411,31 @@ namespace Zeckoxe.GLTF
         }
 
 
+        public void DrawAll(CommandBuffer cmd)
+        {
+
+        }
+
+
+        public void RenderNode(CommandBuffer cmd, Node node, Matrix4x4 currentTransform)
+        {
+            Matrix4x4 localMat = node.LocalMatrix * currentTransform;
+
+
+            if (node.Mesh != null)
+            {
+                foreach (Primitive p in node.Mesh.Primitives)
+                { 
+                    cmd.DrawIndexed(p.IndexCount, 1, p.FirstIndex, p.FirstVertex, 0);
+                }
+            }
+            if (node.Children == null)
+                return;
+
+            foreach (Node child in node.Children)
+                RenderNode(cmd, child, localMat);
+        }
+
 
 
 
@@ -411,22 +447,18 @@ namespace Zeckoxe.GLTF
 
             //commandBuffer.BindDescriptorSets(new DescriptorSet);
 
-            foreach (Mesh m in Meshes)
+            foreach (Scene sc in Scenes)
             {
-                foreach (Primitive primitive in m.Primitives)
-                {
-                    commandBuffer.DrawIndexed(primitive.IndexCount, 1, primitive.IndexBase, primitive.VertexBase, 0);
-
-                    //primitive.Draw(commandBuffer);
-                }
+                foreach (Node node in sc.Root.Children)
+                    RenderNode(commandBuffer, node, sc.Root.LocalMatrix);
             }
         }
 
 
 
-        public Scene[] LoadScenes(out int defaultScene)
+        public Scene[] LoadScenes()
         {
-            defaultScene = -1;
+            var defaultScene = -1;
             if (gltf.Scene == null)
             {
                 return new Scene[] { };

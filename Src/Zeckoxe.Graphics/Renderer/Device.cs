@@ -46,7 +46,8 @@ namespace Zeckoxe.Graphics
         internal VkPhysicalDeviceProperties device_properties;
         internal VkPhysicalDeviceSubgroupProperties subgroup_properties;
         internal VkPhysicalDevice8BitStorageFeatures storage_8bit_features;
-        internal VkPhysicalDeviceRayTracingFeaturesKHR ray_tracing_features;
+        internal VkPhysicalDeviceRayTracingPipelineFeaturesKHR ray_tracing_features;
+        internal VkPhysicalDeviceAccelerationStructureFeaturesKHR acceleration_structure_features;
         internal VkPhysicalDevice16BitStorageFeatures storage_16bit_features;
         internal VkPhysicalDeviceShaderFloat16Int8Features float16_int8_features;
         internal VkPhysicalDeviceFeatures enabled_features;
@@ -297,10 +298,11 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.PhysicalDevice8bitStorageFeatures,
             };
 
-            ray_tracing_features = new()
+            acceleration_structure_features = new()
             {
-                sType = VkStructureType.PhysicalDeviceRayTracingFeaturesKHR
+                sType = VkStructureType.PhysicalDeviceAccelerationStructureFeaturesKHR,
             };
+
 
             bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
 
@@ -321,15 +323,19 @@ namespace Zeckoxe.Graphics
                     }
                 }
                 
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing") && NativeAdapter.SupportsMaintenance_3)
+
+
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && NativeAdapter.SupportsMaintenance_3)
                 {
-                    DeviceExtensionsNames.Add("VK_KHR_ray_tracing");
-                    fixed (VkPhysicalDeviceRayTracingFeaturesKHR* feature = &ray_tracing_features)
+                    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
+                    fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
                     {
                         *ppNext = feature;
                         ppNext = &feature->pNext;
                     }
                 }
+
+
             }
 
             if (NativeAdapter.device_extensions_names.Contains("VK_KHR_swapchain"))
@@ -376,7 +382,28 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.PhysicalDeviceConservativeRasterizationPropertiesEXT,
             };
 
+            ray_tracing_features = new()
+            {
+                sType = VkStructureType.PhysicalDeviceRayTracingPipelineFeaturesKHR
+            };
+
+
             ppNext = &props.pNext;
+
+
+            if (has_pdf2)
+            {
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing_pipeline"))
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_ray_tracing_pipeline");
+                    fixed (VkPhysicalDeviceRayTracingPipelineFeaturesKHR* feature = &ray_tracing_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                }
+            }
+
 
             if (NativeAdapter.device_extensions_names.Contains("VK_EXT_conservative_rasterization"))
             {
