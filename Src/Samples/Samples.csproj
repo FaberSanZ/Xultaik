@@ -5,6 +5,10 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Samples\LoadGLTF.cs~RFb4470bf.TMP" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Desktop\Zeckoxe.Desktop.csproj" />
@@ -102,6 +106,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\sponza.gltf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\LoadGLTF\shader.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\LoadGLTF\shader.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Shaders\PositionColor\shader.frag">

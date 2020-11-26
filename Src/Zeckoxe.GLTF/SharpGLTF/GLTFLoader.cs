@@ -32,7 +32,7 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
             {
                 foreach (var item in mesh.LogicalParent.LogicalNodes)
                 {
-                    System.Console.WriteLine(item.Mesh);
+                    System.Console.WriteLine(item.Mesh.Name);
                 }
             }
 
@@ -129,10 +129,6 @@ namespace Zeckoxe.GLTF.SharpGLTFNew
                 };
 
                 m.AddPrimitive(prim);
-
-
-
-
             }
 
             return m;

@@ -122,29 +122,50 @@ namespace Zeckoxe.Graphics
 
         internal void CreatePipelineLayout()
         {
-
-            VkPushConstantRange* PushConstant = stackalloc VkPushConstantRange[1];
-            PushConstant[0] = new()
+            VkDescriptorSetLayout* descriptor_set_layout = stackalloc VkDescriptorSetLayout[1]
             {
-                offset = 0,
-                size = (uint)Interop.SizeOf<System.Numerics.Matrix4x4>(),
-                stageFlags = VkShaderStageFlags.Vertex,
+                _descriptorSetLayout
             };
+
+            var push_constants = PipelineStateDescription.PushConstants;
+
+            VkPushConstantRange* push_constant = stackalloc VkPushConstantRange[push_constants.Count];
+
+
+
+            for (int i = 0; i < push_constants.Count; i++)
+            {
+                push_constant[i] = new()
+                {
+                    offset = (uint)push_constants[i].Offset,
+                    size = (uint)push_constants[i].Size,
+                    stageFlags = (VkShaderStageFlags)push_constants[i].Stage, //TODO: push_constants VkShaderStageFlags
+                };
+            }
 
             // Create the Pipeline layout that is used to generate the rendering pipelines that are based on this descriptor set layout
             // In a more complex scenario you would have different Pipeline layouts for different descriptor set layouts that could be reused
-            VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = new VkPipelineLayoutCreateInfo
+            VkPipelineLayoutCreateInfo layout_create_info = new VkPipelineLayoutCreateInfo
             {
                 sType = VkStructureType.PipelineLayoutCreateInfo,
                 pNext = null,
-                setLayoutCount = 1,
-                pPushConstantRanges = PushConstant,
-                pushConstantRangeCount = 1,
+                flags = VkPipelineLayoutCreateFlags.None,
             };
-            VkDescriptorSetLayout descriptorSetLayout = _descriptorSetLayout;
-            pPipelineLayoutCreateInfo.pSetLayouts = &descriptorSetLayout;
 
-            vkCreatePipelineLayout(NativeDevice.handle, &pPipelineLayoutCreateInfo, null, out _pipelineLayout);
+            if (push_constants.Any())
+            {
+                layout_create_info.pPushConstantRanges = push_constant;
+                layout_create_info.pushConstantRangeCount = (uint)push_constants.Count;
+            }
+
+            if (descriptor_set_layout is not null)
+            {
+                layout_create_info.pSetLayouts = descriptor_set_layout;
+                layout_create_info.setLayoutCount = 1;
+            }
+
+
+            vkCreatePipelineLayout(NativeDevice.handle, &layout_create_info, null, out _pipelineLayout);
         }
 
 

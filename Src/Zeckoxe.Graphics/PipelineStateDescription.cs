@@ -28,6 +28,8 @@ namespace Zeckoxe.Graphics
 
         public List<DescriptorSetLayout> Layouts { get; set; } = new List<DescriptorSetLayout>();
 
+        public List<PushConstantRange> PushConstants { get; set; } = new List<PushConstantRange>();
+
         
 
 

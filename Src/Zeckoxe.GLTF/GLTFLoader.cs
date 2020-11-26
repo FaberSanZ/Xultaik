@@ -12,10 +12,10 @@ using glTFLoader.Schema;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Zeckoxe.Core;
 using Zeckoxe.Graphics;
 using Schema = glTFLoader.Schema;
 
@@ -87,9 +87,8 @@ namespace Zeckoxe.GLTF
         internal List<Node> linearNodes;
 
         internal bool buffersBound = false;
-        List<VertexPositionColor> vertexBuffer = new();
-
-        List<int> indexBuffe = new();
+        private readonly List<VertexPositionColor> vertexBuffer = new();
+        private readonly List<int> indexBuffe = new();
 
 
 
@@ -102,8 +101,6 @@ namespace Zeckoxe.GLTF
             gltf = Interface.LoadModel(path);
             loadedBuffers = new byte[gltf.Buffers.Length][];
             bufferHandles = new GCHandle[gltf.Buffers.Length];
-
-            GetVertexCount();
 
             //create_buffers();
 
@@ -219,33 +216,6 @@ namespace Zeckoxe.GLTF
         }
 
 
-        internal void GetVertexCount()
-        {
-            VertexCount = 0;
-            IndexCount = 0;
-            IndexType = IndexType.Uint16;
-            //compute size of stagging buf
-            foreach (Schema.Mesh mesh in gltf.Meshes)
-            {
-                foreach (Schema.MeshPrimitive p in mesh.Primitives)
-                {
-                    if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
-                    {
-                        VertexCount += gltf.Accessors[accessorIdx].Count;
-                    }
-
-                    if (p.Indices != null)
-                    {
-                        IndexCount += gltf.Accessors[(int)p.Indices].Count;
-                        if (gltf.Accessors[(int)p.Indices].ComponentType == Accessor.ComponentTypeEnum.UNSIGNED_INT)
-                        {
-                            IndexType = IndexType.Uint32;
-                        }
-                    }
-                }
-            }
-        }
-
         public uint ImageCount => gltf.Images == null ? 0 : (uint)gltf.Images.Length;
 
         private readonly string _path;
@@ -286,31 +256,36 @@ namespace Zeckoxe.GLTF
         {
             Mesh m = new Mesh { Name = mesh.Name };
 
-            foreach (Schema.MeshPrimitive p in mesh.Primitives)
+            foreach (Schema.MeshPrimitive primitive in mesh.Primitives)
             {
                 ulong indexStart = (ulong)indexBuffer.Count;
                 ulong vertexStart = (ulong)vertexBuffer.Count;
                 int indexCount = 0;
                 int vertexCount = 0;
 
-                Schema.Accessor AccPos = null, AccNorm = null, AccUv = null, AccUv1 = null;
+                Schema.Accessor AccPos = null;
+                Schema.Accessor AccNorm = null;
+                Schema.Accessor AccUv = null;
+                Schema.Accessor AccUv1 = null;
 
-                if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
+                Schema.BufferView bufferView = default;
+
+                if (primitive.Attributes.TryGetValue("POSITION", out int accessorIdx))
                 {
                     AccPos = gltf.Accessors[accessorIdx];
                     ensure_buffer_is_loaded(gltf.BufferViews[(int)AccPos.BufferView].Buffer);
                 }
-                if (p.Attributes.TryGetValue("NORMAL", out accessorIdx))
+                if (primitive.Attributes.TryGetValue("NORMAL", out accessorIdx))
                 {
                     AccNorm = gltf.Accessors[accessorIdx];
                     ensure_buffer_is_loaded(gltf.BufferViews[(int)AccNorm.BufferView].Buffer);
                 }
-                if (p.Attributes.TryGetValue("TEXCOORD_0", out accessorIdx))
+                if (primitive.Attributes.TryGetValue("TEXCOORD_0", out accessorIdx))
                 {
                     AccUv = gltf.Accessors[accessorIdx];
                     ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv.BufferView].Buffer);
                 }
-                if (p.Attributes.TryGetValue("TEXCOORD_1", out accessorIdx))
+                if (primitive.Attributes.TryGetValue("TEXCOORD_1", out accessorIdx))
                 {
                     AccUv1 = gltf.Accessors[accessorIdx];
                     ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv1.BufferView].Buffer);
@@ -325,22 +300,22 @@ namespace Zeckoxe.GLTF
                 //Interleaving vertices
                 byte* inPosPtr = null, inNormPtr = null, inUvPtr = null, inUv1Ptr = null;
 
-                Vector3[] positions = new Vector3[0];
-                Vector3[] normals = new Vector3[0];
-                Vector2[] texcoords = new Vector2[0];
-                Vector3[] tangents = new Vector3[0];
+                Vector3[] positions = Array.Empty<Vector3>();
+                Vector3[] normals = Array.Empty<Vector3>();
+                Vector2[] texcoords = Array.Empty<Vector2>();
+                Vector3[] tangents = Array.Empty<Vector3>();
 
-                Schema.BufferView bv = gltf.BufferViews[(int)AccPos.BufferView];
-                inPosPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                inPosPtr += AccPos.ByteOffset + bv.ByteOffset;
+                bufferView = gltf.BufferViews[(int)AccPos.BufferView];
+                inPosPtr = (byte*)bufferHandles[bufferView.Buffer].AddrOfPinnedObject().ToPointer();
+                inPosPtr += AccPos.ByteOffset + bufferView.ByteOffset;
                 this.AttributeCopyData(ref positions, AccPos.Count * Unsafe.SizeOf<Vector3>(), inPosPtr);
 
 
                 if (AccNorm is not null)
                 {
-                    bv = gltf.BufferViews[(int)AccNorm.BufferView];
-                    inNormPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                    inNormPtr += AccNorm.ByteOffset + bv.ByteOffset;
+                    bufferView = gltf.BufferViews[(int)AccNorm.BufferView];
+                    inNormPtr = (byte*)bufferHandles[bufferView.Buffer].AddrOfPinnedObject().ToPointer();
+                    inNormPtr += AccNorm.ByteOffset + bufferView.ByteOffset;
 
                     AttributeCopyData(ref normals, AccPos.Count * Unsafe.SizeOf<Vector3>(), inNormPtr);
                 }
@@ -358,107 +333,68 @@ namespace Zeckoxe.GLTF
                 }
 
                 //indices loading
-                if (p.Indices is not null)
+                if (primitive.Indices is not null)
                 {
-                    Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
-                    bv = gltf.BufferViews[(int)acc.BufferView];
+                    Schema.Accessor acc = gltf.Accessors[(int)primitive.Indices];
+                    bufferView = gltf.BufferViews[(int)acc.BufferView];
 
 
                     indexCount = acc.Count;
 
-                    byte* inIdxPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                    inIdxPtr += acc.ByteOffset + bv.ByteOffset;
+                    byte* inIdxPtr = (byte*)bufferHandles[bufferView.Buffer].AddrOfPinnedObject().ToPointer();
+                    inIdxPtr += acc.ByteOffset + bufferView.ByteOffset;
 
-                    //TODO:double check this, I dont seems to increment stag pointer
-                    if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_SHORT)
+                    switch (acc.ComponentType)
                     {
-                        if (IndexType is IndexType.Uint16)
-                        {
-                            ushort* buf = stackalloc ushort[acc.Count];
-
-                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 2);
-
-
+                        case Accessor.ComponentTypeEnum.UNSIGNED_BYTE:
+                            byte* buf_0 = stackalloc byte[acc.Count];
+                            Unsafe.CopyBlock(buf_0, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<byte>());
                             for (int index = 0; index < acc.Count; index++)
                             {
-                                indexBuffer.Add(buf[index] + (int)vertexStart);
+                                indexBuffer.Add(buf_0[index] + (int)vertexStart);
                             }
 
-                        }
-                        else
-                        {
-                            ushort* buf = stackalloc ushort[acc.Count];
-
-                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 4);
+                            break;
 
 
+                        case Accessor.ComponentTypeEnum.UNSIGNED_SHORT:
+                            ushort* buf_1 = stackalloc ushort[acc.Count];
+                            Unsafe.CopyBlock(buf_1, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<ushort>());
                             for (int index = 0; index < acc.Count; index++)
                             {
-                                indexBuffer.Add(buf[index] + (int)vertexStart);
+                                indexBuffer.Add(buf_1[index] + (int)vertexStart);
                             }
-                        }
+
+                            break;
+
+
+                        case Accessor.ComponentTypeEnum.UNSIGNED_INT:
+                            int* buf_2 = stackalloc int[acc.Count];
+                            Unsafe.CopyBlock(buf_2, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<int>());
+                            for (int index = 0; index < acc.Count; index++)
+                            {
+                                indexBuffer.Add(buf_2[index] + (int)vertexStart);
+                            }
+
+                            break;
+
+
+                        case Accessor.ComponentTypeEnum.FLOAT:
+                            float* buf_3 = stackalloc float[acc.Count];
+                            Unsafe.CopyBlock(buf_3, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<int>());
+                            for (int index = 0; index < acc.Count; index++)
+                            {
+                                indexBuffer.Add((int)buf_3[index] + (int)vertexStart);
+                            }
+
+                            break;
+
+
+                        default:
+                            throw new NotImplementedException();
+
                     }
-                    else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_INT)
-                    {
-                        if (IndexType is IndexType.Uint16)
-                        {
-                            int* buf = stackalloc int[acc.Count];
 
-                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 2);
-
-
-                            for (int index = 0; index < acc.Count; index++)
-                            {
-                                indexBuffer.Add(buf[index] + (int)vertexStart);
-                            }
-
-                        }
-                        else
-                        {
-                            int* buf = stackalloc int[acc.Count];
-
-                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 4);
-
-
-                            for (int index = 0; index < acc.Count; index++)
-                            {
-                                indexBuffer.Add(buf[index] + (int)vertexStart);
-                            }
-                        }
-                    }
-                    else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_BYTE)
-                    {
-                        //convert
-                        if (IndexType is IndexType.Uint16)
-                        {
-                            byte* buf = stackalloc byte[acc.Count];
-
-                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 2);
-
-
-                            for (int index = 0; index < acc.Count; index++)
-                            {
-                                indexBuffer.Add(buf[index] + (int)vertexStart);
-                            }
-
-                        }
-                        else
-                        {
-                            byte* buf = stackalloc byte[acc.Count];
-
-                            Unsafe.CopyBlock(buf, inIdxPtr, (uint)acc.Count * 4);
-
-
-                            for (int index = 0; index < acc.Count; index++)
-                            {
-                                indexBuffer.Add(buf[index] + (int)vertexStart);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
 
                 }
 
@@ -733,17 +669,18 @@ namespace Zeckoxe.GLTF
         {
             Matrix4x4 localMat = node.LocalMatrix * currentTransform;
 
-
-
             //vertexBuffer.Clear();
-            if (node.Mesh != null)
+            if (node.Mesh is not null)
             {
                 foreach (Primitive p in node.Mesh.Primitives)
                 {
+                    for (int i = 0; i < p.VertexCount; i++)
+                    {
 
+                    }
                 }
             }
-            if (node.Children == null)
+            if (node.Children is null)
             {
                 return;
             }
@@ -758,17 +695,18 @@ namespace Zeckoxe.GLTF
         {
             Matrix4x4 localMat = node.LocalMatrix * currentTransform;
 
-            cmd.PushConstant(pipelineState, ShaderStage.Vertex, localMat);
+            cmd.PushConstant<Matrix4x4>(pipelineState, ShaderStage.Vertex, localMat);
 
 
-            if (node.Mesh != null)
+            if (node.Mesh is not null)
             {
                 foreach (Primitive p in node.Mesh.Primitives)
                 {
                     cmd.DrawIndexed(p.IndexCount, 1, p.FirstIndex, 0, 0);
                 }
             }
-            if (node.Children == null)
+
+            if (node.Children is null)
             {
                 return;
             }
@@ -782,14 +720,12 @@ namespace Zeckoxe.GLTF
 
 
 
-        public void DrawNode2(CommandBuffer commandBuffer, Mesh m)
+        public void DrawNode(CommandBuffer commandBuffer, Mesh m)
         {
             foreach (Primitive primitive in m.Primitives)
             {
                 commandBuffer.DrawIndexed(primitive.IndexCount, 1, primitive.FirstIndex, 0, 0);
-
             }
-
         }
 
 
@@ -802,7 +738,7 @@ namespace Zeckoxe.GLTF
 
             //commandBuffer.BindDescriptorSets(new DescriptorSet);
 
-            foreach (var sc in Scenes)
+            foreach (Scene sc in Scenes)
             {
                 foreach (Node node in sc.Root.Children)
                 {
@@ -821,7 +757,7 @@ namespace Zeckoxe.GLTF
                 return new();
             }
 
-            List<Scene> scenes = new List<Scene>();
+            List<Scene> scenes = new();
             defaultScene = (int)gltf.Scene;
 
             for (int i = 0; i < gltf.Scenes.Length; i++)
@@ -829,20 +765,20 @@ namespace Zeckoxe.GLTF
                 Schema.Scene scene = gltf.Scenes[i];
                 //Debug.WriteLine("Loading Scene {0}", scene.Name);
 
-                scenes.Add(new Scene
+                scenes.Add(new()
                 {
                     Name = scene.Name,
                 });
 
-                if (scene.Nodes.Length == 0)
+                if (scene.Nodes.Length is 0)
                 {
                     continue;
                 }
 
-                scenes[i].Root = new Node
+                scenes[i].Root = new()
                 {
                     LocalMatrix = Matrix4x4.Identity,
-                    Children = new List<Node>()
+                    Children = new()
                 };
 
                 foreach (int nodeIdx in scene.Nodes)
@@ -860,54 +796,53 @@ namespace Zeckoxe.GLTF
         {
             //Debug.WriteLine("Loading node {0}", gltfNode.Name);
 
-            Vector3 translation = new Vector3();
+            Vector3 translation = new();
             System.Numerics.Quaternion rotation = System.Numerics.Quaternion.Identity;
-            Vector3 scale = new Vector3(1);
+            Vector3 scale = new(1);
             Matrix4x4 localTransform = Matrix4x4.Identity;
 
-            if (gltfNode.Matrix != null)
+            if (gltfNode.Matrix is not null)
             {
                 float[] M = gltfNode.Matrix;
-                localTransform = new Matrix4x4(
+
+                localTransform = new(
                     M[0], M[1], M[2], M[3],
                     M[4], M[5], M[6], M[7],
                     M[8], M[9], M[10], M[11],
                    M[12], M[13], M[14], M[15]);
             }
 
-            if (gltfNode.Translation != null)
+            if (gltfNode.Translation is not null)
             {
                 FromFloatArray(ref translation, gltfNode.Translation);
             }
 
-            if (gltfNode.Translation != null)
+            if (gltfNode.Translation is not null)
             {
                 FromFloatArray(ref rotation, gltfNode.Rotation);
             }
 
-            if (gltfNode.Translation != null)
+            if (gltfNode.Translation is not null)
             {
                 FromFloatArray(ref scale, gltfNode.Scale);
             }
 
-            localTransform *=
-                Matrix4x4.CreateScale(scale) *
-                Matrix4x4.CreateFromQuaternion(rotation) *
-                Matrix4x4.CreateTranslation(translation);
+            localTransform *= Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation);
 
             //localTransform = Matrix4x4.Identity;
 
-            Node node = new Node
+            Node node = new()
             {
                 LocalMatrix = localTransform,
                 Parent = parentNode,
                 Name = gltfNode.Name
             };
+
             parentNode.Children.Add(node);
 
             if (gltfNode.Children != null)
             {
-                node.Children = new List<Node>();
+                node.Children = new();
                 for (int i = 0; i < gltfNode.Children.Length; i++)
                 {
                     LoadNode(node, gltf.Nodes[gltfNode.Children[i]]);
@@ -962,18 +897,10 @@ namespace Zeckoxe.GLTF
             }
         }
 
-
-
-
-
-
-
         public void Update()
         {
 
         }
-
-
 
     }
 }

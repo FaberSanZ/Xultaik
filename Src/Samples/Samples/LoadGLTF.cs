@@ -17,7 +17,7 @@ using Zeckoxe.Games;
 using Zeckoxe.GLTF;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
-using Zeckoxe.Physics;
+//using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Samples.Samples
@@ -25,6 +25,165 @@ namespace Samples.Samples
 
     public class LoadGLTF : Game, IDisposable
     {
+        public class Camera
+        {
+            /// <summary>Corection matrix for vulkan projection</summary>
+            public static readonly Matrix4x4 VKProjectionCorrection = new Matrix4x4(
+                    1, 0, 0, 0,
+                    0, -1, 0, 0,
+                    0, 0, 1f / 2, 0,
+                    0, 0, 1f / 2, 1
+                );
+
+            public enum CamType { LookAt, FirstPerson };
+
+            float fov, aspectRatio, zNear = 0.1f, zFar = 128f, zoom = 1.0f;
+            float moveSpeed = 0.1f, rotSpeed = 0.01f, zoomSpeed = 0.01f;
+
+            Vector3 rotation = Vector3.Zero;
+            Vector3 position = Vector3.Zero;
+            Matrix4x4 model = Matrix4x4.Identity;
+
+            public Vector3 Position => position;
+            public Vector3 Rotation => rotation;
+            public float NearPlane => zNear;
+            public float FarPlane => zFar;
+
+            public CamType Type;
+
+            public float AspectRatio
+            {
+                get { return aspectRatio; }
+                set
+                {
+                    aspectRatio = value;
+                    Update();
+                }
+            }
+            public float FieldOfView
+            {
+                get { return fov; }
+                set
+                {
+                    fov = value;
+                    Update();
+                }
+            }
+            public Matrix4x4 Perspective
+            {
+                get { return Matrix4x4.CreatePerspectiveFieldOfView(fov, aspectRatio, zNear, zFar); }
+            }
+
+            public Camera(float fieldOfView, float aspectRatio, float nearPlane = 0.1f, float farPlane = 16f)
+            {
+                fov = fieldOfView;
+                this.aspectRatio = aspectRatio;
+                zNear = nearPlane;
+                zFar = farPlane;
+                Update();
+            }
+
+            public void Rotate(float x, float y, float z = 0)
+            {
+                rotation.X += rotSpeed * x;
+                rotation.Y += rotSpeed * y;
+                rotation.Z += rotSpeed * z;
+                Update();
+            }
+            public float Zoom
+            {
+                get { return zoom; }
+                set
+                {
+                    zoom = value;
+                    Update();
+                }
+            }
+            public void SetRotation(float x, float y, float z = 0)
+            {
+                rotation.X = x;
+                rotation.Y = y;
+                rotation.Z = z;
+                Update();
+            }
+            public void SetPosition(float x, float y, float z = 0)
+            {
+                position.X = x;
+                position.Y = y;
+                position.Z = z;
+                Update();
+            }
+            public void Move(float x, float y, float z = 0)
+            {
+                position.X += moveSpeed * x;
+                position.Y += moveSpeed * y;
+                position.Z += moveSpeed * z;
+                Update();
+            }
+            public void SetZoom(float factor)
+            {
+                zoom += zoomSpeed * factor;
+                Update();
+            }
+
+            public Matrix4x4 Projection { get; private set; }
+            public Matrix4x4 View { get; private set; }
+            public Matrix4x4 Model
+            {
+                get { return model; }
+                set
+                {
+                    model = value;
+                    Update();
+                }
+            }
+
+            public Matrix4x4 SkyboxView
+            {
+                get
+                {
+                    return
+                        Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotation.Z) *
+                        Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, rotation.Y) *
+                        Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, rotation.X);
+                }
+            }
+
+            public Matrix4x4 CreatePerspectiveFieldOfView(float fov, float aspectRatio, float zNear, float zFar)
+            {
+                float f = (float)(1.0 / System.Math.Tan(0.5 * fov));
+                return new Matrix4x4(
+                    f / aspectRatio, 0, 0, 0,
+                    0, -f, 0, 0,
+                    0, 0, zFar / (zNear - zFar), -1,
+                    0, 0, zNear * zFar / (zNear - zFar), 0
+                );
+            }
+
+            public void Update()
+            {
+                Projection = CreatePerspectiveFieldOfView(fov, aspectRatio, zNear, zFar);
+
+                Matrix4x4 translation = Matrix4x4.CreateTranslation(position * zoom);// * new Vector3(1,1,-1)) ;
+                if (Type == CamType.LookAt)
+                {
+                    View =
+                            Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotation.Z) *
+                            Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, rotation.Y) *
+                            Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, rotation.X) *
+                            translation;
+                }
+                else
+                {
+                    View = translation *
+                            Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, rotation.X) *
+                            Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, rotation.Y) *
+                            Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotation.Z);
+                }
+            }
+        }
+
+
         [StructLayout(LayoutKind.Sequential)]
         public struct TransformUniform
         {
@@ -35,11 +194,13 @@ namespace Samples.Samples
                 V = v;
             }
 
-            public Matrix4x4 P;
-
             public Matrix4x4 M;
 
             public Matrix4x4 V;
+
+            public Matrix4x4 P;
+
+
 
             public void Update(Camera camera, Matrix4x4 m)
             {
@@ -58,7 +219,7 @@ namespace Samples.Samples
 
 
 
-        public Camera Camera { get; set; }
+        public Camera camera { get; set; }
         public GameTime GameTime { get; set; }
         public GLTFLoader<VertexPositionColor> GLTFModel { get; set; }
         //public List<Mesh> Meshes { get; private set; }
@@ -83,23 +244,26 @@ namespace Samples.Samples
             Window.Title += " - (LoadGLTF) ";
         }
 
+        public float DegreesToRadians(float degrees)
+        {
+            return degrees * (float)Math.PI / 180f;
+        }
+
         public override void Initialize()
         {
             base.Initialize();
 
-            Camera = new()
-            {
-                Mode = CameraType.Free,
-                Position = new(-1, -.3f, -0),
-            };
-
-            Camera.SetLens(Window.Width, Window.Height);
+            camera = new Camera(DegreesToRadians(45f), 1f, 0.1f, 64f);
+            camera.SetRotation(DegreesToRadians(0), 0, 0);
+            camera.SetPosition(0, 0, -3.5f);
+            camera.AspectRatio = (float)Window.Width / Window.Height;
+            //Camera.SetLens(Window.Width, Window.Height);
 
 
             // Reset Model
             Model = Matrix4x4.Identity;
 
-            uniform = new(Camera.Projection, Model, Camera.View);
+            uniform = new(camera.Projection, Model, camera.View);
 
 
 
@@ -119,7 +283,7 @@ namespace Samples.Samples
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
             Descriptor.Build();
 
-            GLTFModel = new(Device, "Models/sponza.gltf");
+            GLTFModel = new(Device, "Models/DamagedHelmet.gltf");
 
             yaw = 0f;
             pitch = 0;
@@ -135,8 +299,8 @@ namespace Samples.Samples
 
         public void CreatePipelineState()
         {
-            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment);
-            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex);
+            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/LoadGLTF/shader.frag", ShaderStage.Fragment);
+            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/LoadGLTF/shader.vert", ShaderStage.Vertex);
 
 
             List<VertexInputAttribute> VertexAttributeDescriptions = new()
@@ -184,6 +348,11 @@ namespace Samples.Samples
                     }
                 },
 
+                PushConstants = 
+                {
+                    new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>())
+                },
+
                 InputAssemblyState = InputAssemblyState.Default(),
 
                 RasterizationState = new()
@@ -210,11 +379,11 @@ namespace Samples.Samples
 
         public override void Update(GameTime game)
         {
-            Camera.Update(game);
+            //camera.Update(game);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, -7.0f, 0.0f);
-            uniform.Update(Camera, Model);
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, .0f, 0.0f);
+            uniform.Update(camera, Model);
             ConstBuffer.SetData(ref uniform);
 
 

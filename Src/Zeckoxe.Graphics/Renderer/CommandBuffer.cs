@@ -13,25 +13,13 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Graphics
 {
     public static class ExtensionMethods
     {
-        /// <summary>
-        /// Extensions method to check byte array equality.
-        /// </summary>
-        public static bool AreEquals(this byte[] b, byte[] other)
-        {
-            if (b.Length != other.Length)
-                return false;
-            for (int i = 0; i < b.Length; i++)
-            {
-                if (b[i] != other[i])
-                    return false;
-            }
-            return true;
-        }
+
 
         /// <summary>
         /// list of pinned GCHandles used to pass value from managed to unmanaged code.
@@ -598,9 +586,9 @@ namespace Zeckoxe.Graphics
             vkCmdDrawIndexed(handle, (uint)indexCount, (uint)instanceCount, (uint)firstIndex, vertexOffset, (uint)firstInstance);
         }
 
-        public void PushConstant(GraphicsPipelineState pipelineLayout, ShaderStage stageFlags, Object data, uint offset = 0)
+        public void PushConstant<T>(GraphicsPipelineState pipelineLayout, ShaderStage stageFlags, T data, uint offset = 0) where T : unmanaged
         {
-            vkCmdPushConstants(handle, pipelineLayout._pipelineLayout, (VkShaderStageFlags)stageFlags, offset, (uint)Marshal.SizeOf(data), data.Pin().ToPointer());
+            vkCmdPushConstants(handle, pipelineLayout._pipelineLayout, (VkShaderStageFlags)stageFlags, offset, (uint)Interop.SizeOf<T>(), Interop.AllocToPointer<T>(ref data));
             data.Unpin();
         }
 

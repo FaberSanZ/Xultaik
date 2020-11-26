@@ -18,18 +18,19 @@ namespace Samples.Samples
         [StructLayout(LayoutKind.Sequential)]
         public struct TransformUniform
         {
-            public TransformUniform(Matrix4x4 p, Matrix4x4 m, Matrix4x4 v)
+            public TransformUniform(Matrix4x4 m, Matrix4x4 v, Matrix4x4 p)
             {
                 P = p;
                 M = m;
                 V = v;
             }
 
-            public Matrix4x4 P;
-
             public Matrix4x4 M;
 
             public Matrix4x4 V;
+
+            public Matrix4x4 P;
+
 
             public void Update(Camera camera, Matrix4x4 m)
             {
