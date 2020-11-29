@@ -310,7 +310,7 @@ namespace Zeckoxe.Graphics
             VkCommandBufferAllocateInfo allocInfo2 = new VkCommandBufferAllocateInfo()
             {
                 sType = VkStructureType.CommandBufferAllocateInfo,
-                commandPool = NativeDevice.graphics_cmd_pool,
+                commandPool = NativeDevice.transfer_cmd_pool,
 
                 level = VkCommandBufferLevel.Primary,
                 commandBufferCount = 1,
@@ -409,7 +409,7 @@ namespace Zeckoxe.Graphics
                 pCommandBuffers = &cmdBuffer
             };
 
-            vkQueueSubmit(NativeDevice.nativeCommandQueue, submitInfo, fence.handle);
+            vkQueueSubmit(NativeDevice.transfer_queue, submitInfo, fence.handle);
 
             fence.Wait();
 

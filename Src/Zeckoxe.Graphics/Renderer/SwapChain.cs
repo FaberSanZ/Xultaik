@@ -504,7 +504,7 @@ namespace Zeckoxe.Graphics
 
         public void Present()
         {
-            VkSemaphore Semaphore = NativeDevice.renderFinishedSemaphore;
+            VkSemaphore Semaphore = NativeDevice.render_finished_semaphore;
             VkSwapchainKHR swapchain = handle;
             CommandBuffer commandBuffer = NativeDevice.NativeCommand;
             uint imageIndex = commandBuffer.imageIndex;
@@ -522,7 +522,7 @@ namespace Zeckoxe.Graphics
             };
 
 
-            vkQueuePresentKHR(NativeDevice.nativeCommandQueue, &present_info);
+            vkQueuePresentKHR(NativeDevice.command_queue, &present_info);
         }
 
         public void Dispose()
