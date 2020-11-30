@@ -1,4 +1,11 @@
-﻿
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+/*=============================================================================
+	ArrayConverter.cs
+=============================================================================*/
+
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +37,7 @@ namespace GltfLoader
                 return ReadImpl<float>(ref reader);
 
             Type type = typeToConvert.IsArray && IsEnum(typeToConvert.GetElementType()) ? typeToConvert.GetElementType() : throw new NotImplementedException();
-            int[] numArray = this.ReadImpl<int>(ref reader);
+            int[] numArray = ReadImpl<int>(ref reader);
             Array instance = Array.CreateInstance(type, numArray.Length);
 
 
