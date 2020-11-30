@@ -7,17 +7,18 @@
 =============================================================================*/
 
 
-using glTFLoader;
-using glTFLoader.Schema;
+using GltfLoader;
+using GltfLoader.Schema;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Zeckoxe.Core;
 using Zeckoxe.Graphics;
-using Schema = glTFLoader.Schema;
+using Schema = GltfLoader.Schema;
 
 
 namespace Zeckoxe.GLTF
@@ -59,7 +60,7 @@ namespace Zeckoxe.GLTF
     };
 
 
-    public unsafe class GLTFLoader<TVertex>
+    public class GLTFLoader<TVertex>
     {
         private struct Vertex
         {
@@ -92,12 +93,16 @@ namespace Zeckoxe.GLTF
 
 
 
+
+
         public GLTFLoader(Device device, string path)
         {
             _device = device;
             _path = path;
 
             baseDirectory = Path.GetDirectoryName(path);
+
+
             gltf = Interface.LoadModel(path);
             loadedBuffers = new byte[gltf.Buffers.Length][];
             bufferHandles = new GCHandle[gltf.Buffers.Length];
@@ -252,7 +257,7 @@ namespace Zeckoxe.GLTF
             }
         }
 
-        internal Mesh loadNode(Schema.Mesh mesh, List<VertexPositionColor> vertexBuffer, List<int> indexBuffer)
+        internal unsafe Mesh loadNode(Schema.Mesh mesh, List<VertexPositionColor> vertexBuffer, List<int> indexBuffer)
         {
             Mesh m = new Mesh { Name = mesh.Name };
 
@@ -346,7 +351,7 @@ namespace Zeckoxe.GLTF
 
                     switch (acc.ComponentType)
                     {
-                        case Accessor.ComponentTypeEnum.UNSIGNED_BYTE:
+                        case Accessor.GltfComponentType.UnsignedByte:
                             byte* buf_0 = stackalloc byte[acc.Count];
                             Unsafe.CopyBlock(buf_0, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<byte>());
                             for (int index = 0; index < acc.Count; index++)
@@ -357,7 +362,7 @@ namespace Zeckoxe.GLTF
                             break;
 
 
-                        case Accessor.ComponentTypeEnum.UNSIGNED_SHORT:
+                        case Accessor.GltfComponentType.UnsignedShort:
                             ushort* buf_1 = stackalloc ushort[acc.Count];
                             Unsafe.CopyBlock(buf_1, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<ushort>());
                             for (int index = 0; index < acc.Count; index++)
@@ -368,7 +373,7 @@ namespace Zeckoxe.GLTF
                             break;
 
 
-                        case Accessor.ComponentTypeEnum.UNSIGNED_INT:
+                        case Accessor.GltfComponentType.UnsignedInt:
                             int* buf_2 = stackalloc int[acc.Count];
                             Unsafe.CopyBlock(buf_2, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<int>());
                             for (int index = 0; index < acc.Count; index++)
@@ -379,7 +384,7 @@ namespace Zeckoxe.GLTF
                             break;
 
 
-                        case Accessor.ComponentTypeEnum.FLOAT:
+                        case Accessor.GltfComponentType.Float:
                             float* buf_3 = stackalloc float[acc.Count];
                             Unsafe.CopyBlock(buf_3, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<int>());
                             for (int index = 0; index < acc.Count; index++)
@@ -541,99 +546,99 @@ namespace Zeckoxe.GLTF
                             }
 
                             //indices loading
-                            if (p.Indices is not null)
-                            {
-                                Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
-                                bv = gltf.BufferViews[(int)acc.BufferView];
+                            //if (p.Indices is not null)
+                            //{
+                            //    Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
+                            //    bv = gltf.BufferViews[(int)acc.BufferView];
 
 
-                                indexCount = acc.Count;
+                            //    indexCount = acc.Count;
 
-                                byte* inIdxPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                                inIdxPtr += acc.ByteOffset + bv.ByteOffset;
+                            //    byte* inIdxPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                            //    inIdxPtr += acc.ByteOffset + bv.ByteOffset;
 
-                                //TODO:double check this, I dont seems to increment stag pointer
-                                if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_SHORT)
-                                {
-                                    if (IndexType is IndexType.Uint16)
-                                    {
-                                        System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 2, (long)acc.Count * 2);
-                                        stagIdxPtr += (long)acc.Count * 2;
-                                    }
-                                    else
-                                    {
-                                        uint* usPtr = (uint*)stagIdxPtr;
-                                        ushort* inPtr = (ushort*)inIdxPtr;
-                                        for (int i = 0; i < acc.Count; i++)
-                                        {
-                                            usPtr[i] = inPtr[i];
-                                        }
+                            //    //TODO:double check this, I dont seems to increment stag pointer
+                            //    if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_SHORT)
+                            //    {
+                            //        if (IndexType is IndexType.Uint16)
+                            //        {
+                            //            System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 2, (long)acc.Count * 2);
+                            //            stagIdxPtr += (long)acc.Count * 2;
+                            //        }
+                            //        else
+                            //        {
+                            //            uint* usPtr = (uint*)stagIdxPtr;
+                            //            ushort* inPtr = (ushort*)inIdxPtr;
+                            //            for (int i = 0; i < acc.Count; i++)
+                            //            {
+                            //                usPtr[i] = inPtr[i];
+                            //            }
 
-                                        stagIdxPtr += (long)acc.Count * 4;
-                                    }
-                                }
-                                else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_INT)
-                                {
-                                    if (IndexType is IndexType.Uint32)
-                                    {
-                                        System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 4, (long)acc.Count * 4);
-                                        stagIdxPtr += (long)acc.Count * 4;
-                                    }
-                                    else
-                                    {
-                                        ushort* usPtr = (ushort*)stagIdxPtr;
-                                        uint* inPtr = (uint*)inIdxPtr;
-                                        for (int i = 0; i < acc.Count; i++)
-                                        {
-                                            usPtr[i] = (ushort)inPtr[i];
-                                        }
+                            //            stagIdxPtr += (long)acc.Count * 4;
+                            //        }
+                            //    }
+                            //    else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_INT)
+                            //    {
+                            //        if (IndexType is IndexType.Uint32)
+                            //        {
+                            //            System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 4, (long)acc.Count * 4);
+                            //            stagIdxPtr += (long)acc.Count * 4;
+                            //        }
+                            //        else
+                            //        {
+                            //            ushort* usPtr = (ushort*)stagIdxPtr;
+                            //            uint* inPtr = (uint*)inIdxPtr;
+                            //            for (int i = 0; i < acc.Count; i++)
+                            //            {
+                            //                usPtr[i] = (ushort)inPtr[i];
+                            //            }
 
-                                        stagIdxPtr += (long)acc.Count * 2;
-                                    }
-                                }
-                                else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_BYTE)
-                                {
-                                    //convert
-                                    if (IndexType is IndexType.Uint16)
-                                    {
-                                        ushort* usPtr = (ushort*)stagIdxPtr;
-                                        for (int i = 0; i < acc.Count; i++)
-                                        {
-                                            usPtr[i] = inIdxPtr[i];
-                                        }
+                            //            stagIdxPtr += (long)acc.Count * 2;
+                            //        }
+                            //    }
+                            //    else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_BYTE)
+                            //    {
+                            //        //convert
+                            //        if (IndexType is IndexType.Uint16)
+                            //        {
+                            //            ushort* usPtr = (ushort*)stagIdxPtr;
+                            //            for (int i = 0; i < acc.Count; i++)
+                            //            {
+                            //                usPtr[i] = inIdxPtr[i];
+                            //            }
 
-                                        stagIdxPtr += (long)acc.Count * 2;
-                                    }
-                                    else
-                                    {
-                                        uint* usPtr = (uint*)stagIdxPtr;
-                                        for (int i = 0; i < acc.Count; i++)
-                                        {
-                                            usPtr[i] = inIdxPtr[i];
-                                        }
+                            //            stagIdxPtr += (long)acc.Count * 2;
+                            //        }
+                            //        else
+                            //        {
+                            //            uint* usPtr = (uint*)stagIdxPtr;
+                            //            for (int i = 0; i < acc.Count; i++)
+                            //            {
+                            //                usPtr[i] = inIdxPtr[i];
+                            //            }
 
-                                        stagIdxPtr += (long)acc.Count * 4;
-                                    }
-                                }
-                                else
-                                {
-                                    throw new NotImplementedException();
-                                }
-
-
-                                Primitive prim = new Primitive
-                                {
-                                    FirstIndex = (int)indexStart,
-                                    FirstVertex = (int)vertexStart,
-                                    VertexCount = vertexCount,
-                                    Material = p.Material ?? 0,
-                                };
+                            //            stagIdxPtr += (long)acc.Count * 4;
+                            //        }
+                            //    }
+                            //    else
+                            //    {
+                            //        throw new NotImplementedException();
+                            //    }
 
 
+                            //    Primitive prim = new Primitive
+                            //    {
+                            //        FirstIndex = (int)indexStart,
+                            //        FirstVertex = (int)vertexStart,
+                            //        VertexCount = vertexCount,
+                            //        Material = p.Material ?? 0,
+                            //    };
 
-                                prim.IndexCount = indexCount;
-                                m.AddPrimitive(prim);
-                            }
+
+
+                            //    prim.IndexCount = indexCount;
+                            //    m.AddPrimitive(prim);
+                            //}
 
 
                             vertexCount += AccPos.Count;

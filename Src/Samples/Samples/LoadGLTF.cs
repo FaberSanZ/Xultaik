@@ -255,7 +255,7 @@ namespace Samples.Samples
 
             camera = new Camera(DegreesToRadians(45f), 1f, 0.1f, 64f);
             camera.SetRotation(DegreesToRadians(0), 0, 0);
-            camera.SetPosition(0, 0, -10.5f);
+            camera.SetPosition(0, 0, -4.0f);
             camera.AspectRatio = (float)Window.Width / Window.Height;
             //Camera.SetLens(Window.Width, Window.Height);
 
@@ -283,7 +283,7 @@ namespace Samples.Samples
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
             Descriptor.Build();
 
-            GLTFModel = new(Device, "Models/Robot/robot.gltf");
+            GLTFModel = new(Device, "Models/DamagedHelmet.gltf");
 
             yaw = 0f;
             pitch = 0;
@@ -382,7 +382,7 @@ namespace Samples.Samples
             //camera.Update(game);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, -3.0f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, .0f, 0.0f);
             uniform.Update(camera, Model);
             ConstBuffer.SetData(ref uniform);
 

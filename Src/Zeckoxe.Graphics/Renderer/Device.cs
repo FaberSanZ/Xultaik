@@ -50,8 +50,7 @@ namespace Zeckoxe.Graphics
         internal DescriptorPool _descriptorPoolManager_0;
         internal DescriptorPool _descriptorPoolManager_1;
 
-
-
+        
         internal VkPhysicalDeviceProperties device_properties;
         internal VkPhysicalDeviceSubgroupProperties subgroup_properties;
         internal VkPhysicalDevice8BitStorageFeatures storage_8bit_features;
@@ -292,12 +291,16 @@ namespace Zeckoxe.Graphics
                 sType = VkStructureType.PhysicalDeviceAccelerationStructureFeaturesKHR,
             };
 
+            descriptor_indexing_features = new()
+            {
+                sType = VkStructureType.PhysicalDeviceDescriptorIndexingFeatures,
+            };
+
 
             bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
 
 
             void** ppNext = &features.pNext;
-
 
             if (has_pdf2)
             {
@@ -323,6 +326,21 @@ namespace Zeckoxe.Graphics
                         ppNext = &feature->pNext;
                     }
                 }
+
+
+                if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing"))
+                {
+                    DeviceExtensionsNames.Add("VK_EXT_descriptor_indexing");
+                    fixed (VkPhysicalDeviceDescriptorIndexingFeatures* feature = &descriptor_indexing_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                }
+
+                
+
+
 
 
             }
@@ -416,7 +434,7 @@ namespace Zeckoxe.Graphics
 
 
 
-            vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out handle).CheckResult();
+            vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out handle).CheckResult();            
 
         }
 
