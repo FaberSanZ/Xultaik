@@ -18,57 +18,53 @@ namespace GltfLoader
         public override Array Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (typeToConvert == typeof(bool[]))
-            {
-                return this.ReadImpl<bool>(ref reader);
-            }
+                return ReadImpl<bool>(ref reader);
 
             if (typeToConvert == typeof(int[]))
-            {
-                return this.ReadImpl<int>(ref reader);
-            }
+                return ReadImpl<int>(ref reader);
 
             if (typeToConvert == typeof(string[]))
-            {
-                return this.ReadImpl<string>(ref reader);
-            }
+                return ReadImpl<string>(ref reader);
 
             if (typeToConvert == typeof(float[]))
-            {
-                return this.ReadImpl<float>(ref reader);
-            }
+                return ReadImpl<float>(ref reader);
 
-            Type type = typeToConvert.IsArray && ArrayConverter.IsEnum(typeToConvert.GetElementType()) ? typeToConvert.GetElementType() : throw new NotImplementedException();
+            Type type = typeToConvert.IsArray && IsEnum(typeToConvert.GetElementType()) ? typeToConvert.GetElementType() : throw new NotImplementedException();
             int[] numArray = this.ReadImpl<int>(ref reader);
             Array instance = Array.CreateInstance(type, numArray.Length);
-            for (int index = 0; index < numArray.Length; ++index)
+
+
+            for (int i = 0; i < numArray.Length; ++i)
             {
                 IEnumerator enumerator = Enum.GetValues(type).GetEnumerator();
                 do
                 {
                     enumerator.MoveNext();
                 }
-                while ((int)enumerator.Current != numArray[index]);
-                instance.SetValue(enumerator.Current, index);
+                while ((int)enumerator.Current != numArray[i]);
+                instance.SetValue(enumerator.Current, i);
             }
             return instance;
         }
 
         private T[] ReadImpl<T>(ref Utf8JsonReader reader)
         {
-            if (reader.TokenType != JsonTokenType.StartArray)
+            if (reader.TokenType is not JsonTokenType.StartArray)
             {
                 return new T[1]
                 {
-                    (T) this.GetValue(typeof (T), ref reader)
+                    (T)GetValue(typeof (T), ref reader)
                 };
             }
 
 
             reader.Read();
-            List<T> objList = new List<T>();
-            while (reader.TokenType != JsonTokenType.EndArray)
+
+            List<T> objList = new();
+
+            while (reader.TokenType is not JsonTokenType.EndArray)
             {
-                objList.Add((T)this.GetValue(typeof(T), ref reader));
+                objList.Add((T)GetValue(typeof(T), ref reader));
                 reader.Read();
             }
             return objList.ToArray();
@@ -77,24 +73,16 @@ namespace GltfLoader
         private object GetValue(Type type, ref Utf8JsonReader reader)
         {
             if (type == typeof(bool))
-            {
                 return reader.GetBoolean();
-            }
 
             if (type == typeof(int))
-            {
                 return reader.GetInt32();
-            }
 
             if (type == typeof(string))
-            {
                 return reader.GetString();
-            }
 
             if (type == typeof(float))
-            {
                 return reader.GetSingle();
-            }
 
             throw new NotSupportedException();
         }
