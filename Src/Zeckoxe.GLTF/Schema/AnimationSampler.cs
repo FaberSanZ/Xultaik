@@ -1,66 +1,59 @@
-﻿
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+
+/*=============================================================================
+	AnimationSampler.cs
+=============================================================================*/
 
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GltfLoader.Schema
+namespace Zeckoxe.GLTF.Schema
 {
-  public class AnimationSampler
-  {
-    private int _input;
-    private AnimationSampler.GltfInterpolation _interpolation;
-    private int _output;
-    private Dictionary<string, object> _extensions;
-    private Extras _extras;
-
-    [JsonPropertyName("input")]
-    public int Input
+    public class AnimationSampler
     {
-      get => this._input;
-      set => this._input = (double) value >= 0.0 ? value : throw new ArgumentOutOfRangeException(nameof (Input), (object) value, "Expected value to be greater than or equal to 0");
+
+        [JsonPropertyName("input")]
+        public int Input { get; set; }
+
+
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyName("interpolation")]
+        public AnimationSampler.GltfInterpolation Interpolation { get; set; }
+
+
+
+        [JsonPropertyName("output")]
+        public int Output { get; set; }
+
+
+
+        [JsonPropertyName("extensions")]
+        public Dictionary<string, object> Extensions { get; set; }
+
+
+
+        [JsonPropertyName("extras")]
+        public Extras Extras { get; set; }
+
+
+
+
+        public bool ShouldSerializeInterpolation() => (uint)Interpolation > 0U;
+
+        public bool ShouldSerializeExtensions() => Extensions is not null;
+
+        public bool ShouldSerializeExtras() => Extras is not null;
+        
+
+        public enum GltfInterpolation
+        {
+            Linear,
+            Step,
+            Cubicspline,
+        }
     }
-
-    [JsonConverter(typeof (JsonStringEnumConverter))]
-    [JsonPropertyName("interpolation")]
-    public AnimationSampler.GltfInterpolation Interpolation
-    {
-      get => this._interpolation;
-      set => this._interpolation = value;
-    }
-
-    [JsonPropertyName("output")]
-    public int Output
-    {
-      get => this._output;
-      set => this._output = (double) value >= 0.0 ? value : throw new ArgumentOutOfRangeException(nameof (Output), (object) value, "Expected value to be greater than or equal to 0");
-    }
-
-    [JsonPropertyName("extensions")]
-    public Dictionary<string, object> Extensions
-    {
-      get => this._extensions;
-      set => this._extensions = value;
-    }
-
-    [JsonPropertyName("extras")]
-    public Extras Extras
-    {
-      get => this._extras;
-      set => this._extras = value;
-    }
-
-    public bool ShouldSerializeInterpolation() => (uint) this._interpolation > 0U;
-
-    public bool ShouldSerializeExtensions() => this._extensions != null;
-
-    public bool ShouldSerializeExtras() => this._extras != null;
-
-    public enum GltfInterpolation
-    {
-      Linear,
-      Step,
-      Cubicspline,
-    }
-  }
 }

@@ -1,50 +1,44 @@
-﻿
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
-using System;
+
+/*=============================================================================
+	AccessorSparseValues.cs
+=============================================================================*/
+
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GltfLoader.Schema
+namespace Zeckoxe.GLTF.Schema
 {
-  public class AccessorSparseValues
-  {
-    private int _bufferView;
-    private int _byteOffset;
-    private Dictionary<string, object> _extensions;
-    private Extras _extras;
-
-    [JsonPropertyName("bufferView")]
-    public int BufferView
+    public class AccessorSparseValues
     {
-      get => this._bufferView;
-      set => this._bufferView = (double) value >= 0.0 ? value : throw new ArgumentOutOfRangeException(nameof (BufferView), (object) value, "Expected value to be greater than or equal to 0");
+        [JsonPropertyName("bufferView")]
+        public int BufferView { get; set; }
+
+
+
+        [JsonPropertyName("byteOffset")]
+        public int ByteOffset { get; set; }
+
+
+
+        [JsonPropertyName("extensions")]
+        public Dictionary<string, object> Extensions { get; set; }
+
+
+
+        [JsonPropertyName("extras")]
+        public Extras Extras { get; set; }
+
+
+
+
+        public bool ShouldSerializeByteOffset() => (uint)ByteOffset > 0U;
+
+        public bool ShouldSerializeExtensions() => Extensions is not null;
+
+        public bool ShouldSerializeExtras() => Extras is not null;
+        
     }
-
-    [JsonPropertyName("byteOffset")]
-    public int ByteOffset
-    {
-      get => this._byteOffset;
-      set => this._byteOffset = (double) value >= 0.0 ? value : throw new ArgumentOutOfRangeException(nameof (ByteOffset), (object) value, "Expected value to be greater than or equal to 0");
-    }
-
-    [JsonPropertyName("extensions")]
-    public Dictionary<string, object> Extensions
-    {
-      get => this._extensions;
-      set => this._extensions = value;
-    }
-
-    [JsonPropertyName("extras")]
-    public Extras Extras
-    {
-      get => this._extras;
-      set => this._extras = value;
-    }
-
-    public bool ShouldSerializeByteOffset() => (uint) this._byteOffset > 0U;
-
-    public bool ShouldSerializeExtensions() => this._extensions != null;
-
-    public bool ShouldSerializeExtras() => this._extras != null;
-  }
 }

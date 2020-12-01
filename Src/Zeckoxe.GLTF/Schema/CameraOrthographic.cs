@@ -1,63 +1,48 @@
-﻿
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+
+/*=============================================================================
+	CameraOrthographic.cs
+=============================================================================*/
+
+
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GltfLoader.Schema
+namespace Zeckoxe.GLTF.Schema
 {
-  public class CameraOrthographic
-  {
-    private float _xmag;
-    private float _ymag;
-    private float _zfar;
-    private float _znear;
-    private Dictionary<string, object> _extensions;
-    private Extras _extras;
-
-    [JsonPropertyName("xmag")]
-    public float Xmag
+    public class CameraOrthographic
     {
-      get => this._xmag;
-      set => this._xmag = value;
+
+        [JsonPropertyName("xmag")]
+        public float Xmag { get; set; }
+
+
+
+        [JsonPropertyName("ymag")]
+        public float Ymag { get; set; }
+
+
+
+        [JsonPropertyName("zfar")]
+        public float Zfar { get; set; }
+
+
+
+        [JsonPropertyName("znear")]
+        public float Znear { get; set; }
+
+
+
+        [JsonPropertyName("extensions")]
+        public Dictionary<string, object> Extensions { get; set; }
+
+
+
+        [JsonPropertyName("extras")]
+        public Extras Extras { get; set; }
+
     }
-
-    [JsonPropertyName("ymag")]
-    public float Ymag
-    {
-      get => this._ymag;
-      set => this._ymag = value;
-    }
-
-    [JsonPropertyName("zfar")]
-    public float Zfar
-    {
-      get => this._zfar;
-      set => this._zfar = (double) value > 0.0 ? value : throw new ArgumentOutOfRangeException(nameof (Zfar), (object) value, "Expected value to be greater than 0");
-    }
-
-    [JsonPropertyName("znear")]
-    public float Znear
-    {
-      get => this._znear;
-      set => this._znear = (double) value >= 0.0 ? value : throw new ArgumentOutOfRangeException(nameof (Znear), (object) value, "Expected value to be greater than or equal to 0");
-    }
-
-    [JsonPropertyName("extensions")]
-    public Dictionary<string, object> Extensions
-    {
-      get => this._extensions;
-      set => this._extensions = value;
-    }
-
-    [JsonPropertyName("extras")]
-    public Extras Extras
-    {
-      get => this._extras;
-      set => this._extras = value;
-    }
-
-    public bool ShouldSerializeExtensions() => this._extensions != null;
-
-    public bool ShouldSerializeExtras() => this._extras != null;
-  }
 }

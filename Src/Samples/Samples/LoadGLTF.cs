@@ -283,7 +283,7 @@ namespace Samples.Samples
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
             Descriptor.Build();
 
-            GLTFModel = new(Device, "Models/DamagedHelmet.gltf");
+            GLTFModel = new(Device, "Models/DamagedHelmet.glb");
 
             yaw = 0f;
             pitch = 0;

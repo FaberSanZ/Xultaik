@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace GltfLoader
+namespace Zeckoxe.GLTF
 {
     internal class ArrayConverter : JsonConverter<Array>
     {

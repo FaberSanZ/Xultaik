@@ -3,12 +3,23 @@
 
 
 /*=============================================================================
-	Extras.cs
+	GltfComponentType.cs
 =============================================================================*/
 
 namespace Zeckoxe.GLTF.Schema
 {
-  public class Extras
-  {
-  }
+    public enum GltfComponentType
+    {
+        Byte = 0x00001400,
+
+        UnsignedByte = 0x00001401,
+
+        Short = 0x00001402,
+
+        UnsignedShort = 0x00001403,
+
+        UnsignedInt = 0x00001405,
+
+        Float = 0x00001406,
+    }
 }

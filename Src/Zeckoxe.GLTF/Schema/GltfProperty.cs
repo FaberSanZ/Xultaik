@@ -1,31 +1,26 @@
-﻿
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+
+/*=============================================================================
+	GltfChildOfRootProperty.cs
+=============================================================================*/
 
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GltfLoader.Schema
+namespace Zeckoxe.GLTF.Schema
 {
-  public class GltfProperty
-  {
-    private Dictionary<string, object> _extensions;
-    private Extras _extras;
-
-    [JsonPropertyName("extensions")]
-    public Dictionary<string, object> Extensions
+    public class GltfProperty
     {
-      get => this._extensions;
-      set => this._extensions = value;
+
+        [JsonPropertyName("extensions")]
+        public Dictionary<string, object> Extensions { get; set; }
+
+
+
+        [JsonPropertyName("extras")]
+        public Extras Extras { get; set; }
+
     }
-
-    [JsonPropertyName("extras")]
-    public Extras Extras
-    {
-      get => this._extras;
-      set => this._extras = value;
-    }
-
-    public bool ShouldSerializeExtensions() => this._extensions != null;
-
-    public bool ShouldSerializeExtras() => this._extras != null;
-  }
 }

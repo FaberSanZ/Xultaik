@@ -1,65 +1,43 @@
-﻿
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+
+/*=============================================================================
+	MaterialOcclusionTextureInfo.cs
+=============================================================================*/
+
 
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GltfLoader.Schema
+namespace Zeckoxe.GLTF.Schema
 {
-  public class MaterialOcclusionTextureInfo
-  {
-    private int _index;
-    private int _texCoord;
-    private float _strength = 1f;
-    private Dictionary<string, object> _extensions;
-    private Extras _extras;
-
-    [JsonPropertyName("index")]
-    public int Index
+    public class MaterialOcclusionTextureInfo
     {
-      get => this._index;
-      set => this._index = (double) value >= 0.0 ? value : throw new ArgumentOutOfRangeException(nameof (Index), (object) value, "Expected value to be greater than or equal to 0");
+
+        [JsonPropertyName("index")]
+        public int Index { get; set; }
+
+
+
+        [JsonPropertyName("texCoord")]
+        public int TexCoord { get; set; }
+
+
+
+        [JsonPropertyName("strength")]
+        public float Strength { get; set; }
+
+
+
+        [JsonPropertyName("extensions")]
+        public Dictionary<string, object> Extensions { get; set; }
+
+
+
+        [JsonPropertyName("extras")]
+        public Extras Extras { get; set; }
+
     }
-
-    [JsonPropertyName("texCoord")]
-    public int TexCoord
-    {
-      get => this._texCoord;
-      set => this._texCoord = (double) value >= 0.0 ? value : throw new ArgumentOutOfRangeException(nameof (TexCoord), (object) value, "Expected value to be greater than or equal to 0");
-    }
-
-    [JsonPropertyName("strength")]
-    public float Strength
-    {
-      get => this._strength;
-      set
-      {
-        if ((double) value < 0.0)
-          throw new ArgumentOutOfRangeException(nameof (Strength), (object) value, "Expected value to be greater than or equal to 0");
-        this._strength = (double) value <= 1.0 ? value : throw new ArgumentOutOfRangeException(nameof (Strength), (object) value, "Expected value to be less than or equal to 1");
-      }
-    }
-
-    [JsonPropertyName("extensions")]
-    public Dictionary<string, object> Extensions
-    {
-      get => this._extensions;
-      set => this._extensions = value;
-    }
-
-    [JsonPropertyName("extras")]
-    public Extras Extras
-    {
-      get => this._extras;
-      set => this._extras = value;
-    }
-
-    public bool ShouldSerializeTexCoord() => (uint) this._texCoord > 0U;
-
-    public bool ShouldSerializeStrength() => (double) this._strength != 1.0;
-
-    public bool ShouldSerializeExtensions() => this._extensions != null;
-
-    public bool ShouldSerializeExtras() => this._extras != null;
-  }
 }

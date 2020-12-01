@@ -7,8 +7,7 @@
 =============================================================================*/
 
 
-using GltfLoader;
-using GltfLoader.Schema;
+using Zeckoxe.GLTF.Schema;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +17,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Zeckoxe.Core;
 using Zeckoxe.Graphics;
-using Schema = GltfLoader.Schema;
+using Schema = Zeckoxe.GLTF.Schema;
 
 
 namespace Zeckoxe.GLTF
@@ -164,9 +163,6 @@ namespace Zeckoxe.GLTF
             IndexBuffer.SetData<int>(indexBuffe.ToArray());
 
             //Meshes = LoadMeshes();
-
-
-            Console.WriteLine(IndexType);
         }
 
         private readonly int defaultSceneIndex = -1;
@@ -251,6 +247,7 @@ namespace Zeckoxe.GLTF
         private unsafe void AttributeCopyData<T>(ref T[] array, int attributeByteLength, void* attributePointer) where T : unmanaged
         {
             array = new T[attributeByteLength / Unsafe.SizeOf<T>()];
+
             fixed (T* arrayPtr = &array[0])
             {
                 Unsafe.CopyBlock(arrayPtr, attributePointer, (uint)attributeByteLength);
@@ -351,7 +348,7 @@ namespace Zeckoxe.GLTF
 
                     switch (acc.ComponentType)
                     {
-                        case Accessor.GltfComponentType.UnsignedByte:
+                        case GltfComponentType.UnsignedByte:
                             byte* buf_0 = stackalloc byte[acc.Count];
                             Unsafe.CopyBlock(buf_0, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<byte>());
                             for (int index = 0; index < acc.Count; index++)
@@ -362,7 +359,7 @@ namespace Zeckoxe.GLTF
                             break;
 
 
-                        case Accessor.GltfComponentType.UnsignedShort:
+                        case GltfComponentType.UnsignedShort:
                             ushort* buf_1 = stackalloc ushort[acc.Count];
                             Unsafe.CopyBlock(buf_1, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<ushort>());
                             for (int index = 0; index < acc.Count; index++)
@@ -373,7 +370,7 @@ namespace Zeckoxe.GLTF
                             break;
 
 
-                        case Accessor.GltfComponentType.UnsignedInt:
+                        case GltfComponentType.UnsignedInt:
                             int* buf_2 = stackalloc int[acc.Count];
                             Unsafe.CopyBlock(buf_2, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<int>());
                             for (int index = 0; index < acc.Count; index++)
@@ -384,7 +381,7 @@ namespace Zeckoxe.GLTF
                             break;
 
 
-                        case Accessor.GltfComponentType.Float:
+                        case GltfComponentType.Float:
                             float* buf_3 = stackalloc float[acc.Count];
                             Unsafe.CopyBlock(buf_3, inIdxPtr, (uint)acc.Count * (uint)Interop.SizeOf<int>());
                             for (int index = 0; index < acc.Count; index++)

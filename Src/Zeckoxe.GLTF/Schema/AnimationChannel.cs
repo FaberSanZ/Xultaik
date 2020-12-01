@@ -1,50 +1,46 @@
-﻿
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+
+/*=============================================================================
+	AnimationChannel.cs
+=============================================================================*/
 
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GltfLoader.Schema
+namespace Zeckoxe.GLTF.Schema
 {
-  public class AnimationChannel
-  {
-    private int _sampler;
-    private AnimationChannelTarget _target;
-    private Dictionary<string, object> _extensions;
-    private Extras _extras;
-
-    [JsonPropertyName("sampler")]
-    public int Sampler
+    public class AnimationChannel
     {
-      get => this._sampler;
-      set => this._sampler = (double) value >= 0.0 ? value : throw new ArgumentOutOfRangeException(nameof (Sampler), (object) value, "Expected value to be greater than or equal to 0");
+        [JsonPropertyName("sampler")]
+        public int Sampler { get; set; }
+
+
+
+        [JsonPropertyName("target")]
+        public AnimationChannelTarget Target { get; set; }
+
+
+
+        [JsonPropertyName("extensions")]
+        public Dictionary<string, object> Extensions { get; set; }
+
+
+
+        [JsonPropertyName("extras")]
+        public Extras Extras { get; set; }
+
+
+
+
+
+        public bool ShouldSerializeTarget() => Target is not null;
+
+        public bool ShouldSerializeExtensions() => Extensions is not null;
+
+        public bool ShouldSerializeExtras() => Extras is not null;
+        
     }
-
-    [JsonPropertyName("target")]
-    public AnimationChannelTarget Target
-    {
-      get => this._target;
-      set => this._target = value;
-    }
-
-    [JsonPropertyName("extensions")]
-    public Dictionary<string, object> Extensions
-    {
-      get => this._extensions;
-      set => this._extensions = value;
-    }
-
-    [JsonPropertyName("extras")]
-    public Extras Extras
-    {
-      get => this._extras;
-      set => this._extras = value;
-    }
-
-    public bool ShouldSerializeTarget() => this._target != null;
-
-    public bool ShouldSerializeExtensions() => this._extensions != null;
-
-    public bool ShouldSerializeExtras() => this._extras != null;
-  }
 }

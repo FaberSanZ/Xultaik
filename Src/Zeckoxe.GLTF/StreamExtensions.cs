@@ -7,7 +7,7 @@
 
 using System.IO;
 
-namespace GltfLoader
+namespace Zeckoxe.GLTF
 {
     internal static class StreamExtensions
     {

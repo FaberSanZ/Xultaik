@@ -3,12 +3,26 @@
 
 
 /*=============================================================================
-	Extras.cs
+	GltfType.cs
 =============================================================================*/
 
 namespace Zeckoxe.GLTF.Schema
 {
-  public class Extras
-  {
-  }
+    public enum GltfType
+    {
+        Scalar,
+
+        Vec2,
+
+        Vec3,
+
+        Vec4,
+
+        Mat2,
+
+        Mat3,
+
+        Mat4,
+    }
+
 }

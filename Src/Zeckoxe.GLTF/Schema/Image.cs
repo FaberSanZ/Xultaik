@@ -1,80 +1,47 @@
-﻿
+﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+
+
+/*=============================================================================
+	Image.cs
+=============================================================================*/
 
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GltfLoader.Schema
+namespace Zeckoxe.GLTF.Schema
 {
-  public class Image
-  {
-    private string _uri;
-    private string _mimeType;
-    private int? _bufferView;
-    private string _name;
-    private Dictionary<string, object> _extensions;
-    private Extras _extras;
-
-    [JsonPropertyName("uri")]
-    public string Uri
+    public class Image
     {
-      get => this._uri;
-      set => this._uri = value;
+
+        [JsonPropertyName("uri")]
+        public string Uri { get; set; }
+
+
+
+        [JsonPropertyName("mimeType")]
+        public string MimeType { get; set; }
+
+
+
+        [JsonPropertyName("bufferView")]
+        public int? BufferView { get; set; }
+
+
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+
+
+        [JsonPropertyName("extensions")]
+        public Dictionary<string, object> Extensions { get; set; }
+
+
+
+        [JsonPropertyName("extras")]
+        public Extras Extras { get; set; }
+
     }
-
-    [JsonPropertyName("mimeType")]
-    public string MimeType
-    {
-      get => this._mimeType;
-      set => this._mimeType = value;
-    }
-
-    [JsonPropertyName("bufferView")]
-    public int? BufferView
-    {
-      get => this._bufferView;
-      set
-      {
-        int? nullable1 = value;
-        float? nullable2 = nullable1.HasValue ? new float?((float) nullable1.GetValueOrDefault()) : new float?();
-        float num = 0.0f;
-        if ((double) nullable2.GetValueOrDefault() < (double) num & nullable2.HasValue)
-          throw new ArgumentOutOfRangeException(nameof (BufferView), (object) value, "Expected value to be greater than or equal to 0");
-        this._bufferView = value;
-      }
-    }
-
-    [JsonPropertyName("name")]
-    public string Name
-    {
-      get => this._name;
-      set => this._name = value;
-    }
-
-    [JsonPropertyName("extensions")]
-    public Dictionary<string, object> Extensions
-    {
-      get => this._extensions;
-      set => this._extensions = value;
-    }
-
-    [JsonPropertyName("extras")]
-    public Extras Extras
-    {
-      get => this._extras;
-      set => this._extras = value;
-    }
-
-    public bool ShouldSerializeUri() => this._uri != null;
-
-    public bool ShouldSerializeMimeType() => this._mimeType != null;
-
-    public bool ShouldSerializeBufferView() => this._bufferView.HasValue;
-
-    public bool ShouldSerializeName() => this._name != null;
-
-    public bool ShouldSerializeExtensions() => this._extensions != null;
-
-    public bool ShouldSerializeExtras() => this._extras != null;
-  }
 }

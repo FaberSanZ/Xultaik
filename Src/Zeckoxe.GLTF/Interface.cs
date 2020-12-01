@@ -7,7 +7,6 @@
 
 
 
-using GltfLoader.Schema;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,8 +14,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Zeckoxe.GLTF.Schema;
 
-namespace GltfLoader
+namespace Zeckoxe.GLTF
 {
     public static class Interface
     {
@@ -65,32 +65,43 @@ namespace GltfLoader
             Stream fileData = binaryFile ? new MemoryStream(ParseBinary(stream)) : stream;
 
 
-
             return JsonSerializer.DeserializeAsync<Gltf>(fileData);
         }
 
-        public static Gltf LoadModel(string stream)
+        public static Gltf LoadModel(string path)
         {
-            //bool binaryFile = false;
+            using Stream stream = File.OpenRead(path);
 
-            //uint magic = 0;
-            //magic |= (uint)stream.ReadByte();
-            //magic |= (uint)stream.ReadByte() << 8;
-            //magic |= (uint)stream.ReadByte() << 16;
-            //magic |= (uint)stream.ReadByte() << 24;
+            bool binaryFile = false;
 
-            //if (magic is GLTFHEADER)
-            //    binaryFile = true;
+            uint magic = 0;
+            magic |= (uint)stream.ReadByte();
+            magic |= (uint)stream.ReadByte() << 8;
+            magic |= (uint)stream.ReadByte() << 16;
+            magic |= (uint)stream.ReadByte() << 24;
 
-            //stream.Position = 0; // restart read position
+            if (magic is GLTFHEADER)
+                binaryFile = true;
+
+            stream.Position = 0; // restart read position
 
             //Stream fileData = binaryFile ? new MemoryStream(ParseBinary(stream)) : stream;
 
-            //Utf8JsonReader utf8Json = new Utf8JsonReader()
 
-            return JsonSerializer.Deserialize<Gltf>(File.ReadAllText(stream));
+
+            if (binaryFile)
+            {
+                ReadOnlySpan<byte> span = new(ParseBinary(stream));
+                return JsonSerializer.Deserialize<Gltf>(span);
+            }
+
+
+            return JsonSerializer.Deserialize<Gltf>(File.ReadAllText(path));
+
         }
 
+
+       
 
 
 
@@ -578,7 +589,7 @@ namespace GltfLoader
             string inputDirectoryPath = Path.GetDirectoryName(inputFilePath);
 
             Gltf model = LoadModelAsync(inputFilePath).Result;
-            GltfLoader.Schema.Buffer binBuffer = null;
+            Schema.Buffer binBuffer = null;
             byte[] binBufferData = null;
 
             if (model.Buffers is not null && string.IsNullOrEmpty(model.Buffers[0].Uri))
