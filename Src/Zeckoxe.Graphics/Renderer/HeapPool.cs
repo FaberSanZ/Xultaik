@@ -28,7 +28,7 @@ namespace Zeckoxe.Graphics
 
             [VkDescriptorType.StorageImage] = (MaxSets / 64),
 
-            [VkDescriptorType.UniformTexelBuffer] = (MaxSets / 16),
+            [VkDescriptorType.UniformTexelBuffer] = (MaxSets * 2),
 
             [VkDescriptorType.StorageTexelBuffer] = (MaxSets / 64),
 

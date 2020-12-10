@@ -13,39 +13,28 @@ using static Vortice.Vulkan.Vulkan;
 namespace Zeckoxe.Graphics
 {
 
-
-
-
-
     public unsafe class DescriptorPool : GraphicsResource
     {
-        internal object _lock = new object();
+
+        internal VkDescriptorSet DescriptorSet;
 
 
-        internal VkDescriptorSet Set;
-        internal VkDescriptorPool Pool;
+        internal VkDescriptorPool handle;
 
-
-
-
-        public ulong GetPoolHandle()
-        {
-            return Pool.Handle;
-        }
-
-        public ulong GetDescriptorSetHandle()
-        {
-            return Set.Handle;
-        }
 
         public DescriptorPool(Device device) : base(device)
         {
+            HeapPool = new HeapPool(device);
+
+
+            handle = HeapPool.Create();
         }
 
 
-        public (VkDescriptorSet, VkDescriptorPool) Allocate(VkDescriptorSetLayout setLayout)
+        public HeapPool HeapPool { get; internal set; }
+
+        internal VkDescriptorSet Allocate(VkDescriptorSetLayout setLayout)
         {
-            VkDescriptorPool pool = new HeapPool(NativeDevice).CreateObject();
 
             VkDescriptorSetAllocateInfo descriptor_set_allocate_info = new()
             {
@@ -53,21 +42,19 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 descriptorSetCount = 1,
                 pSetLayouts = &setLayout,
-                descriptorPool = pool,
+                descriptorPool = handle,
             };
 
 
-            VkDescriptorSet set;
-            vkAllocateDescriptorSets(NativeDevice.handle, &descriptor_set_allocate_info, &set).CheckResult();
+            VkDescriptorSet descriptor_set;
+            vkAllocateDescriptorSets(NativeDevice.handle, &descriptor_set_allocate_info, &descriptor_set).CheckResult();
 
-            return (set, pool);
+            return descriptor_set;
         }
 
         public void Free()
         {
-            lock (_lock)
-            {
-            }
+
         }
 
 
