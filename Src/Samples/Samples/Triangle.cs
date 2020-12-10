@@ -9,7 +9,6 @@ using Zeckoxe.Games;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.Physics;
-using Zeckoxe.ShaderCompiler;
 using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Samples.Samples

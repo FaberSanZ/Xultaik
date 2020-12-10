@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Zeckoxe.ShaderCompiler;
+using Shaderc;
 
 namespace Zeckoxe.Graphics
 {
@@ -42,12 +42,38 @@ namespace Zeckoxe.Graphics
         All = int.MaxValue
     }
 
+
+    public class ShaderBytecodeOptions
+    {
+        public bool InvertY { get; set; }
+    }
+
     public class ShaderBytecode
     {
-        public ShaderBytecode(string path, ShaderStage stage)
+        public ShaderBytecode(string path, ShaderStage stage, ShaderBytecodeOptions options = default)
         {
-            Data = Compiler.LoadFromFile(path, ToStage(stage));
             Stage = stage;
+
+
+            if (options == default)
+                options = new() { InvertY = false, };
+
+            Options _options = new(false)
+            {
+                SourceLanguage = SourceLanguage.Glsl,
+                InvertY = options.InvertY,
+                //Optimization = OptimizationLevel.Performance,
+            };
+
+
+            using Compiler compiler = new(_options);
+
+            Result result = compiler.Compile(path, StageToShaderKind(stage));
+
+            Data = result.GetData();
+
+
+
         }
 
         public ShaderBytecode(byte[] buffer, ShaderStage stage)
@@ -62,51 +88,51 @@ namespace Zeckoxe.Graphics
         public ShaderStage Stage { get; set; }
 
         // TODO: ToStage
-        private static int ToStage(ShaderStage stage)
+        private static ShaderKind StageToShaderKind(ShaderStage stage)
         {
             switch (stage)
             {
                 case ShaderStage.Vertex:
-                    return 0;
+                    return ShaderKind.VertexShader;
 
                 case ShaderStage.Fragment:
-                    return 1;
+                    return ShaderKind.FragmentShader;
 
                 case ShaderStage.Compute:
-                    return 0;
+                    return ShaderKind.ComputeShader;
 
                 case ShaderStage.Geometry:
-                    return 0;
+                    return ShaderKind.GeometryShader;
 
                 case ShaderStage.TessellationControl:
-                    return 0;
+                    return ShaderKind.TessControlShader;
 
                 case ShaderStage.TessellationEvaluation:
-                    return 0;
+                    return ShaderKind.TessEvaluationShader;
 
                 case ShaderStage.RaygenKHR:
-                    return 0;
+                    return ShaderKind.RaygenShader;
 
                 case ShaderStage.AnyHitKHR:
-                    return 0;
+                    return ShaderKind.AnyhitShader;
 
                 case ShaderStage.ClosestHitKHR:
-                    return 0;
+                    return ShaderKind.ClosesthitShader;
 
                 case ShaderStage.MissKHR:
-                    return 0;
+                    return ShaderKind.MissShader;
 
                 case ShaderStage.IntersectionKHR:
-                    return 0;
+                    return ShaderKind.IntersectionShader;
 
                 case ShaderStage.CallableKHR:
-                    return 0;
+                    return ShaderKind.CallableShader;
 
                 case ShaderStage.TaskNV:
-                    return 0;
+                    return ShaderKind.TaskShader;
 
                 case ShaderStage.MeshNV:
-                    return 0;
+                    return ShaderKind.MeshShader;
 
                 default:
                     return 0;

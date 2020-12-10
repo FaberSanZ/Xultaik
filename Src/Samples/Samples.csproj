@@ -16,7 +16,6 @@
     <ProjectReference Include="..\Zeckoxe.GLTF\Zeckoxe.GLTF.csproj" />
     <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Graphics.csproj" />
     <ProjectReference Include="..\Zeckoxe.Physics\Zeckoxe.Physics.csproj" />
-    <ProjectReference Include="..\Zeckoxe.ShaderCompiler\Zeckoxe.ShaderCompiler.csproj" />
   </ItemGroup>
 
 

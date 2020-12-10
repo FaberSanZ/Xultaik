@@ -153,7 +153,8 @@ namespace Zeckoxe.Graphics
 
 
             _descriptorPoolManager_0 = new(this);
-            _descriptorPoolManager_1 = new(this);
+            _descriptorPoolManager_1 = _descriptorPoolManager_0;
+
         }
 
 
