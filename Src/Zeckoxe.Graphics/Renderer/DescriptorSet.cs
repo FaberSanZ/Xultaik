@@ -77,8 +77,12 @@ namespace Zeckoxe.Graphics
 
         internal uint count = 0;
 
-        internal DescriptorAllocationToken _descriptorAllocationToken;
-        internal DescriptorResourceCounts _descriptorCounts;
+
+
+
+        internal List<BufferInfo> buffers = new();
+        internal List<ImageSamplerInfo> images = new();
+        internal List<ResourceInfo> resourceInfos = new();
 
 
         public DescriptorSet(GraphicsPipelineState pipelineState) : base(pipelineState.NativeDevice)
@@ -89,25 +93,19 @@ namespace Zeckoxe.Graphics
         }
 
 
-
-
         public GraphicsPipelineState PipelineState { get; set; }
         public List<DescriptorPool> Descriptors { get; set; }
 
-
-        internal List<BufferInfo> buffers = new();
-        internal List<ImageSamplerInfo> images = new();
-        internal List<ResourceInfo> resourceInfos = new();
 
 
         internal void SetupDescriptorPool()
         {
 
             VkDescriptorSetLayout descriptor_set_layout = PipelineState._descriptorSetLayout;
-            _descriptorCounts = PipelineState.DescriptorResourceCounts;
-            _descriptorAllocationToken = NativeDevice._descriptorPoolManager_0.Allocate(_descriptorCounts, descriptor_set_layout);
 
-            _descriptorSet = _descriptorAllocationToken.Set;
+            var _descriptorAllocationToken = NativeDevice._descriptorPoolManager_0.Allocate(descriptor_set_layout);
+
+            _descriptorSet = _descriptorAllocationToken.Item1;
         }
 
 

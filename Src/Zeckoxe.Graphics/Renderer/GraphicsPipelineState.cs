@@ -32,7 +32,6 @@ namespace Zeckoxe.Graphics
         }
 
         public PipelineStateDescription PipelineStateDescription { get; set; }
-        internal DescriptorResourceCounts DescriptorResourceCounts { get; set;}
 
         private void Recreate()
         {
@@ -98,13 +97,6 @@ namespace Zeckoxe.Graphics
 
             }
 
-
-            DescriptorResourceCounts = new DescriptorResourceCounts(
-                uniformBufferCount,
-                sampledImageCount,
-                samplerCount,
-                storageBufferCount,
-                storageImageCount);
 
 
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
