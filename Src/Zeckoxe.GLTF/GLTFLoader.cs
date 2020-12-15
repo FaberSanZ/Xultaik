@@ -7,17 +7,15 @@
 =============================================================================*/
 
 
-using Zeckoxe.GLTF.Schema;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Zeckoxe.Core;
+using Zeckoxe.GLTF.Schema;
 using Zeckoxe.Graphics;
-using Schema = Zeckoxe.GLTF.Schema;
 
 
 namespace Zeckoxe.GLTF
@@ -43,11 +41,12 @@ namespace Zeckoxe.GLTF
 
     public enum FileLoadingFlags
     {
-        None = 0x00000000,
-        PreTransformVertices = 0x00000001,
-        PreMultiplyVertexColors = 0x00000002,
-        FlipY = 0x00000004,
-        DontLoadImages = 0x00000008
+        None = 1 << 0,
+        PreTransformVertices = 1 << 1,
+        PreTransformPushConstant = 1 << 2,
+        PreMultiplyVertexColors = 1 << 3,
+        FlipY = 1 << 4,
+        DontLoadImages = 1 << 5
     };
 
     public enum RenderFlags
@@ -58,7 +57,10 @@ namespace Zeckoxe.GLTF
         RenderAlphaBlendedNodes = 0x00000008
     };
 
-
+    public class GLTFOptions
+    {
+        public FileLoadingFlags FileLoading { get; set; }
+    }
     public class GLTFLoader<TVertex>
     {
         private struct Vertex
@@ -87,18 +89,30 @@ namespace Zeckoxe.GLTF
         internal List<Node> linearNodes;
 
         internal bool buffersBound = false;
+
         private readonly List<VertexPositionColor> vertexBuffer = new();
         private readonly List<int> indexBuffe = new();
+        private readonly int defaultSceneIndex = -1;
+        private readonly List<Scene> Scenes;
+        private readonly string _path;
 
 
 
 
-
-        public GLTFLoader(Device device, string path)
+        public GLTFLoader(Device device, string path, GLTFOptions options = default)
         {
             _device = device;
             _path = path;
 
+            if (options == default)
+            {
+                options = new()
+                {
+                    FileLoading = FileLoadingFlags.PreTransformVertices,
+                };
+            }
+
+            Options = options;
             baseDirectory = Path.GetDirectoryName(path);
 
 
@@ -106,43 +120,22 @@ namespace Zeckoxe.GLTF
             loadedBuffers = new byte[gltf.Buffers.Length][];
             bufferHandles = new GCHandle[gltf.Buffers.Length];
 
-            //create_buffers();
-
-
-
-
 
             Meshes = new();
             foreach (Schema.Mesh mesh in gltf.Meshes)
-            {
                 Meshes.Add(loadNode(mesh, vertexBuffer, indexBuffe));
-            }
 
 
             Scenes = LoadScenes();
 
 
-            //for (int i = 0; i < vertexBuffer.Count; i++)
-            //{
-            //    VertexPositionColor vertex = vertexBuffer[i];
+            if ((Options.FileLoading & FileLoadingFlags.PreTransformVertices) != 0)
+                foreach (Scene sc in Scenes)
+                    foreach (Node node in sc.Root.Children)
+                        PreTransform(node, sc.Root.LocalMatrix);
 
 
-            //    vertex.Position.Y *= -1.0f;
-            //    vertex.Color.Y *= -1.0f;
-
-            //    vertexBuffer[i] = vertex;
-            //}
-
-
-            //foreach (var sc in Scenes)
-            //{
-            //    foreach (Node node in sc.Root.Children)
-            //    {
-            //        //PreTransform(node, sc.Root.LocalMatrix);
-            //    }
-            //}
-
-
+            LoadMaterial();
 
 
             VertexBuffer = new(_device, new()
@@ -165,8 +158,14 @@ namespace Zeckoxe.GLTF
             //Meshes = LoadMeshes();
         }
 
-        private readonly int defaultSceneIndex = -1;
-        private readonly List<Scene> Scenes;
+
+
+
+        public uint ImageCount => gltf.Images == null ? 0 : (uint)gltf.Images.Length;
+
+        public GLTFOptions Options { get; }
+
+
 
         public TextureData TextureData { get; set; }
 
@@ -217,9 +216,6 @@ namespace Zeckoxe.GLTF
         }
 
 
-        public uint ImageCount => gltf.Images == null ? 0 : (uint)gltf.Images.Length;
-
-        private readonly string _path;
 
         private void ensure_buffer_is_loaded(int bufferIdx)
         {
@@ -457,7 +453,6 @@ namespace Zeckoxe.GLTF
                         {
                             ulong indexStart = vertSize;
                             ulong vertexStart = idxSize;
-                            int indexCount = 0;
                             int vertexCount = 0;
 
 
@@ -542,101 +537,6 @@ namespace Zeckoxe.GLTF
                                 stagVertPtr += vertexByteSize;
                             }
 
-                            //indices loading
-                            //if (p.Indices is not null)
-                            //{
-                            //    Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
-                            //    bv = gltf.BufferViews[(int)acc.BufferView];
-
-
-                            //    indexCount = acc.Count;
-
-                            //    byte* inIdxPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                            //    inIdxPtr += acc.ByteOffset + bv.ByteOffset;
-
-                            //    //TODO:double check this, I dont seems to increment stag pointer
-                            //    if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_SHORT)
-                            //    {
-                            //        if (IndexType is IndexType.Uint16)
-                            //        {
-                            //            System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 2, (long)acc.Count * 2);
-                            //            stagIdxPtr += (long)acc.Count * 2;
-                            //        }
-                            //        else
-                            //        {
-                            //            uint* usPtr = (uint*)stagIdxPtr;
-                            //            ushort* inPtr = (ushort*)inIdxPtr;
-                            //            for (int i = 0; i < acc.Count; i++)
-                            //            {
-                            //                usPtr[i] = inPtr[i];
-                            //            }
-
-                            //            stagIdxPtr += (long)acc.Count * 4;
-                            //        }
-                            //    }
-                            //    else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_INT)
-                            //    {
-                            //        if (IndexType is IndexType.Uint32)
-                            //        {
-                            //            System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 4, (long)acc.Count * 4);
-                            //            stagIdxPtr += (long)acc.Count * 4;
-                            //        }
-                            //        else
-                            //        {
-                            //            ushort* usPtr = (ushort*)stagIdxPtr;
-                            //            uint* inPtr = (uint*)inIdxPtr;
-                            //            for (int i = 0; i < acc.Count; i++)
-                            //            {
-                            //                usPtr[i] = (ushort)inPtr[i];
-                            //            }
-
-                            //            stagIdxPtr += (long)acc.Count * 2;
-                            //        }
-                            //    }
-                            //    else if (acc.ComponentType is Schema.Accessor.ComponentTypeEnum.UNSIGNED_BYTE)
-                            //    {
-                            //        //convert
-                            //        if (IndexType is IndexType.Uint16)
-                            //        {
-                            //            ushort* usPtr = (ushort*)stagIdxPtr;
-                            //            for (int i = 0; i < acc.Count; i++)
-                            //            {
-                            //                usPtr[i] = inIdxPtr[i];
-                            //            }
-
-                            //            stagIdxPtr += (long)acc.Count * 2;
-                            //        }
-                            //        else
-                            //        {
-                            //            uint* usPtr = (uint*)stagIdxPtr;
-                            //            for (int i = 0; i < acc.Count; i++)
-                            //            {
-                            //                usPtr[i] = inIdxPtr[i];
-                            //            }
-
-                            //            stagIdxPtr += (long)acc.Count * 4;
-                            //        }
-                            //    }
-                            //    else
-                            //    {
-                            //        throw new NotImplementedException();
-                            //    }
-
-
-                            //    Primitive prim = new Primitive
-                            //    {
-                            //        FirstIndex = (int)indexStart,
-                            //        FirstVertex = (int)vertexStart,
-                            //        VertexCount = vertexCount,
-                            //        Material = p.Material ?? 0,
-                            //    };
-
-
-
-                            //    prim.IndexCount = indexCount;
-                            //    m.AddPrimitive(prim);
-                            //}
-
 
                             vertexCount += AccPos.Count;
                         }
@@ -646,25 +546,89 @@ namespace Zeckoxe.GLTF
 
                 VertexBuffer.Unmap();
                 IndexBuffer.Unmap();
-
-                //CommandBuffer cmd = new CommandBuffer(_device, CommandBufferType.AsyncTransfer);
-                //cmd.Start();
-
-                //stagging.CopyTo(cmd, vbo, vertSize, 0, vboOffset);
-                //if (iCount > 0)
-                //    stagging.CopyTo(cmd, ibo, idxSize, vertSize, iboOffset);
-
-                //cmd.End();
-
-                //transferQ.Submit(cmd);
-
-                //dev.WaitIdle();
-                //cmd.Free();
-
             }
 
             return Meshes;
         }
+
+
+        public Material[] LoadMaterial()
+        {
+            if (gltf.Materials == null)
+                return new Material[] { };
+
+            List<Material> materials = new List<Material>();
+
+            foreach (Schema.Material mat in gltf.Materials)
+            {
+                //Debug.WriteLine("loading material: " + mat.Name);
+                Material pbr = new Material();
+                pbr.Name = mat.Name;
+
+                pbr.alphaCutoff = mat.AlphaCutoff;
+                //pbr.alphaCutoff = mat.NormalTexture.;
+                //pbr.alphaMode = (AlphaMode)mat.AlphaMode;
+
+                //FromFloatArray(ref pbr.emissiveFactor, mat.EmissiveFactor);
+                Console.WriteLine(mat.Name);
+
+                
+                if (mat.EmissiveTexture != null)
+                {
+                    pbr.emissiveTexture = mat.EmissiveTexture.Index;
+                    //if (mat.EmissiveTexture.TexCoord == 1)
+                    //    pbr.availableAttachments1 |= AttachmentType.Emissive;
+                    //else
+                    //    pbr.availableAttachments |= AttachmentType.Emissive;
+                }
+                if (mat.NormalTexture != null)
+                {
+                    pbr.normalTexture = mat.NormalTexture.Index;
+                    //if (mat.NormalTexture.TexCoord == 1)
+                    //    pbr.availableAttachments1 |= AttachmentType.Normal;
+                    //else
+                    //    pbr.availableAttachments |= AttachmentType.Normal;
+                }
+                if (mat.OcclusionTexture != null)
+                {
+                    //pbr.occlusionTexture = mat.OcclusionTexture.Index;
+                    //if (mat.OcclusionTexture.TexCoord == 1)
+                    //    pbr.availableAttachments1 |= AttachmentType.AmbientOcclusion;
+                    //else
+                    //    pbr.availableAttachments |= AttachmentType.AmbientOcclusion;
+                }
+
+                if (mat.PbrMetallicRoughness != null)
+                {
+                    //if (mat.PbrMetallicRoughness.BaseColorTexture != null)
+                    //{
+                    //    pbr.baseColorTexture = mat.PbrMetallicRoughness.BaseColorTexture.Index;
+                    //    if (mat.PbrMetallicRoughness.BaseColorTexture.TexCoord == 1)
+                    //        pbr.availableAttachments1 |= AttachmentType.Color;
+                    //    else
+                    //        pbr.availableAttachments |= AttachmentType.Color;
+                    //}
+
+                    //FromFloatArray(ref pbr.baseColorFactor, mat.PbrMetallicRoughness.BaseColorFactor);
+
+                    //if (mat.PbrMetallicRoughness.MetallicRoughnessTexture != null)
+                    //{
+                    //    pbr.metallicRoughnessTexture = mat.PbrMetallicRoughness.MetallicRoughnessTexture.Index;
+                    //    if (mat.PbrMetallicRoughness.MetallicRoughnessTexture.TexCoord == 1)
+                    //        pbr.availableAttachments1 |= AttachmentType.PhysicalProps;
+                    //    else
+                    //        pbr.availableAttachments |= AttachmentType.PhysicalProps;
+                    //}
+                    pbr.metallicFactor = mat.PbrMetallicRoughness.MetallicFactor;
+                    pbr.roughnessFactor = mat.PbrMetallicRoughness.RoughnessFactor;
+
+                    pbr.workflow = Material.Workflow.PhysicalyBaseRendering;
+                }
+                materials.Add(pbr);
+            }
+            return materials.ToArray();
+        }
+
 
 
         public void PreTransform(Node node, Matrix4x4 currentTransform)
@@ -678,7 +642,11 @@ namespace Zeckoxe.GLTF
                 {
                     for (int i = 0; i < p.VertexCount; i++)
                     {
+                        Vector3 position = Vector3.Transform(vertexBuffer[p.FirstVertex + i].Position, localMat);
+                        Vector3 color = Vector3.TransformNormal(vertexBuffer[p.FirstVertex + i].Color, localMat);
+                        //Vector3 color = vertexBuffer[p.FirstVertex + i].Color;
 
+                        vertexBuffer[p.FirstVertex + i] = new VertexPositionColor(position, Vector3.Normalize(color));
                     }
                 }
             }
@@ -697,7 +665,10 @@ namespace Zeckoxe.GLTF
         {
             Matrix4x4 localMat = node.LocalMatrix * currentTransform;
 
-            cmd.PushConstant<Matrix4x4>(pipelineState, ShaderStage.Vertex, localMat);
+
+            if ((Options.FileLoading & FileLoadingFlags.PreTransformPushConstant) != 0)
+                cmd.PushConstant<Matrix4x4>(pipelineState, ShaderStage.Vertex, localMat);
+
 
 
             if (node.Mesh is not null)
@@ -740,13 +711,20 @@ namespace Zeckoxe.GLTF
 
             //commandBuffer.BindDescriptorSets(new DescriptorSet);
 
-            foreach (Scene sc in Scenes)
+            //foreach (Scene sc in Scenes)
+            //{
+            //    foreach (Node node in sc.Root.Children)
+            //    {
+            //        RenderNode(commandBuffer, node, sc.Root.LocalMatrix, pipelineState);
+            //    }
+            //}
+
+            foreach (var m in Meshes)
             {
-                foreach (Node node in sc.Root.Children)
-                {
-                    RenderNode(commandBuffer, node, sc.Root.LocalMatrix, pipelineState);
-                }
+
+                DrawNode(commandBuffer, m);
             }
+
         }
 
 
@@ -754,7 +732,7 @@ namespace Zeckoxe.GLTF
         public List<Scene> LoadScenes()
         {
             int defaultScene = -1;
-            if (gltf.Scene == null)
+            if (gltf.Scene is null)
             {
                 return new();
             }

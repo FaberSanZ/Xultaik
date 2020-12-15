@@ -153,8 +153,9 @@ namespace Zeckoxe.Graphics
 
 
             _descriptorPoolManager_0 = new(this);
-            _descriptorPoolManager_1 = _descriptorPoolManager_0;
 
+            //_descriptorPoolManager_1 = _descriptorPoolManager_0;
+            //_descriptorPoolManager_1.HeapPool.Reset(_descriptorPoolManager_1.handle);
         }
 
 
@@ -186,7 +187,7 @@ namespace Zeckoxe.Graphics
 
 
 
-        // Multi GPU Helper Functions
+        // Multi GPU Helper 
         internal int calculate_shared_device_mask(int gpuCount)
         {
             return (1 << gpuCount) - 1;

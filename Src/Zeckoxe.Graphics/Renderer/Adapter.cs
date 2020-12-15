@@ -62,6 +62,8 @@ namespace Zeckoxe.Graphics
 
         public uint VendorId => device_properties.vendorID;
 
+        public bool Validation = false;
+
         public bool RayTracingSupport => false;
 
         public float TimestampPeriod => device_properties.limits.timestampPeriod;
@@ -157,6 +159,14 @@ namespace Zeckoxe.Graphics
 
         public void Recreate()
         {
+
+            var _validation = Parameters.Settings.Validation;
+
+            Validation = (_validation & ValidationType.Default) is not 0
+                || (_validation & ValidationType.Console) is not 0
+                || (_validation & ValidationType.Debug) is not 0
+                || (_validation & ValidationType.ImGui) is not 0;
+
             vkInitialize().CheckResult();
 
             supports_extensions();
@@ -178,6 +188,7 @@ namespace Zeckoxe.Graphics
 
 
             Log = new();
+
 
             if ((Parameters.Settings.Validation & ValidationType.Default) != 0)
                 Log.Add(new ConsoleLog());
@@ -321,7 +332,7 @@ namespace Zeckoxe.Graphics
                 pfnUserCallback = Interop.GetFunctionPointerForDelegate(_debugMessengerCallbackFunc = DebugMessengerCallback),
             };
 
-            if ((Parameters.Settings.Validation & ValidationType.None) is 0)
+            if (Validation)
             {
                 inst_info.pNext = &debugUtilsCreateInfo;
                 inst_info.ppEnabledLayerNames = Interop.String.AllocToPointers(layers);
@@ -455,19 +466,19 @@ namespace Zeckoxe.Graphics
         {
             string message = Interop.String.FromPointer(pCallbackData->pMessage);
 
-            if (messageTypes == VkDebugUtilsMessageTypeFlagsEXT.Validation)
+            if (messageTypes is VkDebugUtilsMessageTypeFlagsEXT.Validation)
             {
-                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
+                if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Error)
                 {
                     
-                    if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
+                    if (Validation)
                         foreach (var l in Log)
                             l.Error("Vulkan", $"Validation: {messageSeverity} - {message}");
 
                 }
-                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
+                else if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
-                    if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
+                    if (Validation)
                         foreach (var l in Log)
                             l.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
                 }
@@ -475,15 +486,15 @@ namespace Zeckoxe.Graphics
             }
             else
             {
-                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
+                if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Error)
                 {
-                    if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
+                    if (Validation)
                         foreach (var l in Log)
                             l.Error("Vulkan", $"[Vulkan]: {messageSeverity} - {message}");
                 }
-                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
+                else if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
-                    if (!((Parameters.Settings.Validation & ValidationType.None) != 0))
+                    if (Validation)
                         foreach (var l in Log)
                             l.Warn($"[Vulkan]: {messageSeverity} - {message}");
                 }
@@ -542,9 +553,8 @@ namespace Zeckoxe.Graphics
         public void Dispose()
         {
             if (_debugMessenger != VkDebugUtilsMessengerEXT.Null)
-            {
                 vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
-            }
+
             vkDestroyInstance(instance, null);
         }
     }

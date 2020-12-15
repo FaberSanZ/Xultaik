@@ -283,7 +283,7 @@ namespace Samples.Samples
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
             Descriptor.Build();
 
-            GLTFModel = new(Device, "Models/DamagedHelmet.glb");
+            GLTFModel = new(Device, "Models/DamagedHelmet.gltf");
 
             yaw = 0f;
             pitch = 0;
@@ -348,10 +348,10 @@ namespace Samples.Samples
                     }
                 },
 
-                PushConstants = 
-                {
-                    new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>())
-                },
+                //PushConstants = 
+                //{
+                //    new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>())
+                //},
 
                 InputAssemblyState = InputAssemblyState.Default(),
 

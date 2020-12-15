@@ -22,7 +22,7 @@ namespace Zeckoxe.Graphics
         {
             [VkDescriptorType.Sampler] = (MaxSets * 2),
 
-            [VkDescriptorType.CombinedImageSampler] = (MaxSets * 3), // TODO: CombinedImageSampler MaxDescriptorTypeCounts
+            [VkDescriptorType.CombinedImageSampler] = (MaxSets * 3),
 
             [VkDescriptorType.SampledImage] = (MaxSets / 2),
 
@@ -56,11 +56,8 @@ namespace Zeckoxe.Graphics
 
         internal VkDescriptorPool Create()
         {
-            // No allocator ready to be used, let's create a new one
-
 
             uint PoolSize = (uint)MaxDescriptorTypeCounts.Count;
-
 
             VkDescriptorPoolSize* sizes = stackalloc VkDescriptorPoolSize[(int)PoolSize];
 
@@ -69,25 +66,28 @@ namespace Zeckoxe.Graphics
             {
                 KeyValuePair<VkDescriptorType, uint> item = MaxDescriptorTypeCounts.ElementAt(index);
 
+                
                 sizes[index] = new()
                 {
+                    type = item.Key,
                     descriptorCount = item.Value,
-                    type = item.Key
                 };
 
             }
 
 
-            VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = new VkDescriptorPoolCreateInfo
+            VkDescriptorPoolCreateInfo pool_create_info = new VkDescriptorPoolCreateInfo
             {
                 sType = VkStructureType.DescriptorPoolCreateInfo,
+                pNext = null,
+                flags = VkDescriptorPoolCreateFlags.None,
                 poolSizeCount = PoolSize,
                 pPoolSizes = sizes,
                 maxSets = MaxSets,
             };
 
 
-            vkCreateDescriptorPool(NativeDevice.handle, &descriptorPoolCreateInfo, null, out VkDescriptorPool descriptorPool);
+            vkCreateDescriptorPool(NativeDevice.handle, &pool_create_info, null, out VkDescriptorPool descriptorPool);
             return descriptorPool;
         }
 
