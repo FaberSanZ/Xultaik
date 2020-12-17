@@ -43,8 +43,9 @@ namespace Samples.Samples
         public VertexPositionColor[] vertices = new[]
         {
             // front face
-            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new VertexPositionColor { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
+            new VertexPositionColor( new Vector3(-0.5f,  0.5f, -0.5f), new Vector3(1.0f, 0.0f, 0.0f)),
+            new VertexPositionColor(new Vector3(0.5f, -0.5f, -0.5f), new Vector3(1.0f, 0.0f, 1.0f)),
+
             new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
             new VertexPositionColor { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 

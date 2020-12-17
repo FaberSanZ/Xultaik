@@ -55,6 +55,10 @@ namespace Zeckoxe.Graphics
                 tex2D = IMGLoader.LoadFromFile(path);
             }
 
+            if (path.EndsWith(".jpg"))
+            {
+                tex2D = IMGLoader.LoadFromFile(path);
+            }
 
 
             Texture2D text2d = new Texture2D(device, new TextureDescription

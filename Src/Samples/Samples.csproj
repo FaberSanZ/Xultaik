@@ -23,6 +23,9 @@
     <None Update="IndustryForgedDark512.ktx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Models\BoxVertexColors.glb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Models\robot\bg.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

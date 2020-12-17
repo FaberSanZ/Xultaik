@@ -18,8 +18,13 @@ out gl_PerVertex
 };
 
 
+layout(push_constant) uniform PushConsts {
+    mat4 model;
+} pc;
+
+
 void main() 
 {
 	outColor = inColor;
-	gl_Position = ubo.projectionMatrix * ubo.viewMatrix * ubo.modelMatrix * vec4(inPos.xyz, 1.0);
+	gl_Position = ubo.projectionMatrix * ubo.viewMatrix * (ubo.modelMatrix * pc.model) * vec4(inPos.xyz, 1.0);
 }

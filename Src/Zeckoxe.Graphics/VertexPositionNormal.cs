@@ -19,9 +19,13 @@ namespace Zeckoxe.Graphics
             Normal = normal;
         }
 
-        public Vector3 Position;
 
-        public Vector3 Normal;
+        [VertexAttribute(VertexAttributeType.Position, PixelFormat.R32G32B32SFloat)]
+        public Vector3 Position { get; set; }
+
+
+        [VertexAttribute(VertexAttributeType.Normal, PixelFormat.R32G32B32SFloat)]
+        public Vector3 Normal { get; set; }
 
 
 

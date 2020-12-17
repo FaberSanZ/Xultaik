@@ -12,25 +12,33 @@ using System.Runtime.InteropServices;
 
 namespace Zeckoxe.Graphics
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct VertexPositionTexture : IEquatable<VertexPositionTexture>
+    public interface IVertex
     {
 
-        public VertexPositionTexture(Vector3 position, Vector2 textureCoordinate)
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    public struct VertexPositionTexture : IEquatable<VertexPositionTexture>, IVertex
+    {
+
+        public VertexPositionTexture(Vector3 position, Vector2 textureCoordinate, Vector3 _color)
             : this()
         {
             Position = position;
             TextureCoordinate = textureCoordinate;
+            _color = color;
+
         }
 
 
         public Vector3 Position;
+        public Vector3 color;
 
 
         public Vector2 TextureCoordinate;
 
 
-        public static readonly int Size = 20;
+        public static readonly int Size = Marshal.SizeOf<VertexPositionTexture>();
 
 
 

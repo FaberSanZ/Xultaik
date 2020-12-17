@@ -221,7 +221,7 @@ namespace Samples.Samples
 
         public Camera camera { get; set; }
         public GameTime GameTime { get; set; }
-        public GLTFLoader<VertexPositionColor> GLTFModel { get; set; }
+        public GLTFLoader<VertexPositionNormal> GLTFModel { get; set; }
         //public List<Mesh> Meshes { get; private set; }
 
 
@@ -328,7 +328,7 @@ namespace Samples.Samples
                 {
                     Binding = 0,
                     InputRate = VertexInputRate.Vertex,
-                    Stride = VertexPositionColor.Size,
+                    Stride = VertexPositionNormal.Size,
                 }
             };
 
@@ -348,10 +348,10 @@ namespace Samples.Samples
                     }
                 },
 
-                //PushConstants = 
-                //{
-                //    new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>())
-                //},
+                PushConstants =
+                {
+                    new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>())
+                },
 
                 InputAssemblyState = InputAssemblyState.Default(),
 
