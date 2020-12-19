@@ -6,7 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Samples\Lighting.cs~RF2fa5f55e.TMP" />
     <None Remove="Samples\LoadGLTF.cs~RFb4470bf.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Vortice.Dxc" Version="1.8.38" />
   </ItemGroup>
 
 
@@ -20,10 +25,16 @@
 
 
   <ItemGroup>
+    <None Update="floor_tiles.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="IndustryForgedDark512.ktx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\BoxVertexColors.glb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\NormalTangentTest.glb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\robot\bg.png">
@@ -110,6 +121,12 @@
     <None Update="Models\sponza.gltf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Shaders\Lighting\shader.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\Lighting\shader.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Shaders\LoadGLTF\shader.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -126,6 +143,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Shaders\Texture\shader.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Stonewall.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="UVCheckerMap08-512.png">

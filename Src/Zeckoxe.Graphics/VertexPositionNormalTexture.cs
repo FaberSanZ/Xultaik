@@ -9,11 +9,12 @@
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Zeckoxe.Core;
 
 namespace Zeckoxe.Graphics
 {
 
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionNormalTexture : IEquatable<VertexPositionNormalTexture>
     {
 
@@ -24,17 +25,22 @@ namespace Zeckoxe.Graphics
             TextureCoordinate = textureCoordinate;
         }
 
-
-        public Vector3 Position;
-
-
-        public Vector3 Normal;
+        [VertexAttribute(VertexAttributeType.Position, PixelFormat.Undefined)]
+        public Vector3 Position { get; set; }
 
 
-        public Vector2 TextureCoordinate;
+
+        [VertexAttribute(VertexAttributeType.Normal, PixelFormat.Undefined)]
+        public Vector3 Normal { get; set; }
 
 
-        public static readonly int Size = 32;
+
+        [VertexAttribute(VertexAttributeType.TextureCoordinate, PixelFormat.Undefined)]
+        public Vector2 TextureCoordinate { get; set; }
+
+
+
+        public static readonly int Size = Interop.SizeOf<VertexPositionNormalTexture>();
 
 
         public bool Equals(VertexPositionNormalTexture other)
@@ -66,7 +72,7 @@ namespace Zeckoxe.Graphics
 
         public void FlipWinding()
         {
-            TextureCoordinate.X = (1.0f - TextureCoordinate.X);
+            //TextureCoordinate.X = (1.0f - TextureCoordinate.X);
         }
 
         public static bool operator ==(VertexPositionNormalTexture left, VertexPositionNormalTexture right)

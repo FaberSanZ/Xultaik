@@ -104,7 +104,6 @@ namespace Zeckoxe.GLTF
             Meshes = LoadMeshes();
 
             Scenes = LoadScenes();
-
         }
 
 
@@ -142,6 +141,45 @@ namespace Zeckoxe.GLTF
         }
 
 
+
+
+        public List<Texture2D> LoadTexture()
+        {
+            if (gltf.Images == null)
+                return null;
+
+            List<Texture2D> textures = new List<Texture2D>();
+
+            foreach (Schema.Image img in gltf.Images)
+            {
+                Texture2D texture = null;
+
+                string imgName = img.Name;
+
+                if (img.BufferView is not null)
+                {
+                    //load image from gltf buffer view
+                    Schema.BufferView bv = gltf.BufferViews[(int)img.BufferView];
+                    ensure_buffer_is_loaded(bv.Buffer);
+                }
+                else if (img.Uri.StartsWith("data:", StringComparison.Ordinal))
+                {
+                    //load base64 encoded image
+                    texture = Texture2D.LoadFromData(_device, load_data_uri(img));
+                }
+                else
+                {
+                    texture = Texture2D.LoadFromFile(_device, Path.Combine(baseDirectory, img.Uri));
+                    imgName += ";" + img.Uri;
+                }
+
+                if (texture is not null)
+                    textures.Add(texture);
+
+
+            }
+            return textures;
+        }
 
         private void ensure_buffer_is_loaded(int bufferIdx)
         {
@@ -389,7 +427,7 @@ namespace Zeckoxe.GLTF
         }
 
 
-        public List<Mesh> LoadMeshes()
+        public unsafe List<Mesh> LoadMeshes()
         {
             GetVertexCount(out var vCount, out var iCount, out var idxType);
 
@@ -428,258 +466,299 @@ namespace Zeckoxe.GLTF
 
             IEnumerable<PropertyInfo> propertyInfos = typeof(TVertex).GetTypeInfo().GetProperties();
 
+
+            byte* stagVertPtrInit = (byte*)VertexBuffer.MappedData.ToPointer();
+            byte* stagIdxPtrInit = (byte*)(IndexBuffer.MappedData.ToPointer());
+            byte* stagVertPtr = stagVertPtrInit;
+            byte* stagIdxPtr = stagIdxPtrInit;
+
+            foreach (Schema.Mesh mesh in gltf.Meshes)
             {
 
-                unsafe
+                string meshName = mesh.Name;
+                if (string.IsNullOrEmpty(meshName))
                 {
-                    byte* stagVertPtrInit = (byte*)VertexBuffer.MappedData.ToPointer();
-                    byte* stagIdxPtrInit = (byte*)(IndexBuffer.MappedData.ToPointer());
-                    byte* stagVertPtr = stagVertPtrInit;
-                    byte* stagIdxPtr = stagIdxPtrInit;
+                    meshName = "mesh_" + autoNamedMesh.ToString();
+                    autoNamedMesh++;
+                }
+                Mesh m = new Mesh { Name = meshName };
 
-                    foreach (Schema.Mesh mesh in gltf.Meshes)
+                foreach (Schema.MeshPrimitive p in mesh.Primitives)
+                {
+
+
+                    Schema.Accessor AccPos = null, AccNorm = null, AccUv = null, AccUv1 = null, AccColor = null, AccTan = null;
+
+                    if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
+                    {
+                        AccPos = gltf.Accessors[accessorIdx];
+                        ensure_buffer_is_loaded(gltf.BufferViews[(int)AccPos.BufferView].Buffer);
+                    }
+                    if (p.Attributes.TryGetValue("NORMAL", out accessorIdx))
+                    {
+                        AccNorm = gltf.Accessors[accessorIdx];
+                        ensure_buffer_is_loaded(gltf.BufferViews[(int)AccNorm.BufferView].Buffer);
+                    }
+                    if (p.Attributes.TryGetValue("TEXCOORD_0", out accessorIdx))
+                    {
+                        AccUv = gltf.Accessors[accessorIdx];
+                        ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv.BufferView].Buffer);
+                    }
+                    if (p.Attributes.TryGetValue("TEXCOORD_1", out accessorIdx))
+                    {
+                        AccUv1 = gltf.Accessors[accessorIdx];
+                        ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv1.BufferView].Buffer);
+                    }
+
+                    if (p.Attributes.TryGetValue("COLOR_0", out accessorIdx))
+                    {
+                        AccColor = gltf.Accessors[accessorIdx];
+                        ensure_buffer_is_loaded(gltf.BufferViews[(int)AccColor.BufferView].Buffer);
+                        ColorType = AccColor.Type is GltfType.Vec3 ? ColorType.Vec3 : ColorType.Vec4;
+                    }
+
+                    if (p.Attributes.TryGetValue("TANGENT", out accessorIdx))
+                    {
+                        AccTan = gltf.Accessors[accessorIdx];
+                        ensure_buffer_is_loaded(gltf.BufferViews[(int)AccTan.BufferView].Buffer);
+                        //ColorType = AccColor.Type is GltfType.Vec3 ? ColorType.Vec3 : ColorType.Vec4;
+
+                        Console.WriteLine(accessorIdx);
+                        Console.WriteLine("AccTan");
+
+                    }
+
+
+                    Primitive prim = new()
+                    {
+                        FirstIndex = indexCount,
+                        FirstVertex = vertexCount,
+                        VertexCount = AccPos.Count,
+                        //Material = (uint)(p.Material ?? 0)
+                    };
+
+                    //prim.BoundingBox.Min.ImportFloatArray(AccPos.Min);
+                    //prim.BoundingBox.Max.ImportFloatArray(AccPos.Max);
+                    //prim.BoundingBox.IsValid = true;
+
+                    //Interleaving vertices
+                    byte* inPosPtr = null, inNormPtr = null, inUvPtr = null, inUv1Ptr = null, inColorPtr = null, inTanPtr = null;
+
+                    Schema.BufferView bv = gltf.BufferViews[(int)AccPos.BufferView];
+                    inPosPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                    inPosPtr += AccPos.ByteOffset + bv.ByteOffset;
+
+                    if (AccNorm is not null)
+                    {
+                        bv = gltf.BufferViews[(int)AccNorm.BufferView];
+                        inNormPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                        inNormPtr += AccNorm.ByteOffset + bv.ByteOffset;
+                        Console.WriteLine("AccNorm");
+
+                    }
+                    if (AccUv is not null)
+                    {
+                        bv = gltf.BufferViews[(int)AccUv.BufferView];
+                        inUvPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                        inUvPtr += AccUv.ByteOffset + bv.ByteOffset;
+                        Console.WriteLine("AccUv");
+                    }
+                    if (AccUv1 is not null)
+                    {
+                        bv = gltf.BufferViews[(int)AccUv1.BufferView];
+                        inUv1Ptr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                        inUv1Ptr += AccUv1.ByteOffset + bv.ByteOffset;
+                        Console.WriteLine("AccUv1");
+                    }
+
+                    if (AccColor is not null)
+                    {
+                        bv = gltf.BufferViews[(int)AccColor.BufferView];
+                        inColorPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                        inColorPtr += AccColor.ByteOffset + bv.ByteOffset;
+                        Console.WriteLine("AccColor");
+                    }
+
+
+                    if (AccTan is not null)
+                    {
+                        bv = gltf.BufferViews[(int)AccTan.BufferView];
+                        inTanPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                        inTanPtr += AccTan.ByteOffset + bv.ByteOffset;
+
+
+                        Console.WriteLine("AccTan");
+                        Console.WriteLine("AccTan");
+                    }
+
+                    for (int j = 0; j < AccPos.Count; j++)
                     {
 
-                        string meshName = mesh.Name;
-                        if (string.IsNullOrEmpty(meshName))
+                        int pad = 0;
+
+                        foreach (PropertyInfo info in propertyInfos)
                         {
-                            meshName = "mesh_" + autoNamedMesh.ToString();
-                            autoNamedMesh++;
+                            VertexAttribute attribute = info.GetCustomAttribute<VertexAttribute>();
+                    //Console.WriteLine(attribute.Type);
+
+                            //Console.WriteLine(attribute.Type);
+                            if (attribute is not null)
+                            {
+
+                                if (inPosPtr is not null && attribute.Type is VertexAttributeType.Position)
+                                {
+                                    //if (propertyInfos.First().GetCustomAttribute<VertexAttribute>().Type is attribute.Type)
+                                    //    pad += 0;
+                                    //else
+                                    //    pad += 12;
+
+                                    pad += 0;
+
+                                    System.Buffer.MemoryCopy(inPosPtr, stagVertPtr + pad, 12, 12);
+                                    inPosPtr += 12;
+                                }
+
+
+
+                                if (inTanPtr is not null && attribute.Type is VertexAttributeType.Tangent)
+                                {
+                                    //if (propertyInfos.First().GetCustomAttribute<VertexAttribute>().Type is attribute.Type)
+                                    //    pad += 0;
+                                    //else
+                                    //    pad += 12;
+
+                                    pad += 16;
+
+                                    System.Buffer.MemoryCopy(inTanPtr, stagVertPtr + pad, 16, 16);
+                                    inTanPtr += 16;
+                                }
+
+
+                                if (inColorPtr is not null && attribute.Type is VertexAttributeType.Color)
+                                {
+                                    if (ColorType is ColorType.Vec4)
+                                    {
+                                        pad += 16;
+                                        System.Buffer.MemoryCopy(inColorPtr, stagVertPtr + pad, 16, 16);
+                                        inColorPtr += 16;
+                                    }
+                                    else
+                                    {
+                                        pad += 12;
+                                        System.Buffer.MemoryCopy(inColorPtr, stagVertPtr + pad, 12, 12);
+                                        inColorPtr += 12;
+                                    }
+
+                                }
+
+                                if (inNormPtr is not null && attribute.Type is VertexAttributeType.Normal)
+                                {
+                                    pad += 12;
+                                    System.Buffer.MemoryCopy(inNormPtr, stagVertPtr + pad, 12, 12);
+                                    inNormPtr += 12;
+                                }
+
+                                if (inUvPtr is not null && attribute.Type is VertexAttributeType.TextureCoordinate)
+                                {
+                                    pad += 8;
+                                    System.Buffer.MemoryCopy(inUvPtr, stagVertPtr + pad, 8, 8);
+                                    inUvPtr += 8;
+
+                                }
+
+                                if (inUv1Ptr is not null && attribute.Type is VertexAttributeType.TextureCoordinate1)
+                                {
+                                    pad += 8;
+                                    System.Buffer.MemoryCopy(inUv1Ptr, stagVertPtr + pad, 8, 8);
+                                    inUv1Ptr += 8;
+                                }
+
+
+                            }
+
+
                         }
-                        Mesh m = new Mesh { Name = meshName };
 
-                        foreach (Schema.MeshPrimitive p in mesh.Primitives)
-                        {
+                        stagVertPtr += vertexByteSize;
 
 
-                            Schema.Accessor AccPos = null, AccNorm = null, AccUv = null, AccUv1 = null, AccColor = null;
-
-                            if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
-                            {
-                                AccPos = gltf.Accessors[accessorIdx];
-                                ensure_buffer_is_loaded(gltf.BufferViews[(int)AccPos.BufferView].Buffer);
-                            }
-                            if (p.Attributes.TryGetValue("NORMAL", out accessorIdx))
-                            {
-                                AccNorm = gltf.Accessors[accessorIdx];
-                                ensure_buffer_is_loaded(gltf.BufferViews[(int)AccNorm.BufferView].Buffer);
-                            }
-                            if (p.Attributes.TryGetValue("TEXCOORD_0", out accessorIdx))
-                            {
-                                AccUv = gltf.Accessors[accessorIdx];
-                                ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv.BufferView].Buffer);
-                            }
-                            if (p.Attributes.TryGetValue("TEXCOORD_1", out accessorIdx))
-                            {
-                                AccUv1 = gltf.Accessors[accessorIdx];
-                                ensure_buffer_is_loaded(gltf.BufferViews[(int)AccUv1.BufferView].Buffer);
-                            }
-
-                            if (p.Attributes.TryGetValue("COLOR_0", out accessorIdx))
-                            {
-                                AccColor = gltf.Accessors[accessorIdx];
-                                ensure_buffer_is_loaded(gltf.BufferViews[(int)AccColor.BufferView].Buffer);
-                                ColorType = AccColor.Type is  GltfType.Vec3 ? ColorType.Vec3 : ColorType.Vec4;
-                            }
-                            
-
-                            Primitive prim = new()
-                            {
-                                FirstIndex = indexCount,
-                                FirstVertex = vertexCount,
-                                VertexCount = AccPos.Count,
-                                //Material = (uint)(p.Material ?? 0)
-                            };
-
-                            //prim.BoundingBox.Min.ImportFloatArray(AccPos.Min);
-                            //prim.BoundingBox.Max.ImportFloatArray(AccPos.Max);
-                            //prim.BoundingBox.IsValid = true;
-
-                            //Interleaving vertices
-                            byte* inPosPtr = null, inNormPtr = null, inUvPtr = null, inUv1Ptr = null, inColorPtr = null;
-
-                            Schema.BufferView bv = gltf.BufferViews[(int)AccPos.BufferView];
-                            inPosPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                            inPosPtr += AccPos.ByteOffset + bv.ByteOffset;
-
-                            if (AccNorm is not null)
-                            {
-                                bv = gltf.BufferViews[(int)AccNorm.BufferView];
-                                inNormPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                                inNormPtr += AccNorm.ByteOffset + bv.ByteOffset;
-                            }
-                            if (AccUv is not null)
-                            {
-                                bv = gltf.BufferViews[(int)AccUv.BufferView];
-                                inUvPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                                inUvPtr += AccUv.ByteOffset + bv.ByteOffset;
-                            }
-                            if (AccUv1 is not null)
-                            {
-                                bv = gltf.BufferViews[(int)AccUv1.BufferView];
-                                inUv1Ptr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                                inUv1Ptr += AccUv1.ByteOffset + bv.ByteOffset;
-                            }
-
-                            if (AccColor is not null)
-                            {
-                                bv = gltf.BufferViews[(int)AccColor.BufferView];
-                                inColorPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                                inColorPtr += AccColor.ByteOffset + bv.ByteOffset;
-                            }
-
-
-                            for (int j = 0; j < AccPos.Count; j++)
-                            {
-
-                                int pad = 0;
-
-                                foreach (PropertyInfo info in propertyInfos)
-                                {
-                                    VertexAttribute attribute = info.GetCustomAttribute<VertexAttribute>();
-
-                                    if (attribute is not null)
-                                    {
-
-                                        if (inPosPtr is not null && attribute.Type is VertexAttributeType.Position)
-                                        {
-                                            //if (propertyInfos.First().GetCustomAttribute<VertexAttribute>().Type is attribute.Type)
-                                            //    pad += 0;
-                                            //else
-                                            //    pad += 12;
-
-                                            pad += 0;
-
-                                            System.Buffer.MemoryCopy(inPosPtr, stagVertPtr + pad, 12, 12);
-                                            inPosPtr += 12;
-                                        }
-
-
-                                        else if (inColorPtr is not null && attribute.Type is VertexAttributeType.Color)
-                                        {
-                                            if (ColorType is ColorType.Vec4)
-                                            {
-                                                pad += 16;
-                                                System.Buffer.MemoryCopy(inColorPtr, stagVertPtr + pad, 16, 16);
-                                                inColorPtr += 16;
-                                            }
-                                            else
-                                            {
-                                                pad += 12;
-                                                System.Buffer.MemoryCopy(inColorPtr, stagVertPtr + pad, 12, 12);
-                                                inColorPtr += 12;
-                                            }
-
-                                        }
-
-                                        else if (inNormPtr is not null && attribute.Type is VertexAttributeType.Normal)
-                                        {
-                                            pad += 12;
-                                            System.Buffer.MemoryCopy(inNormPtr, stagVertPtr + pad, 12, 12);
-                                            inNormPtr += 12;
-                                        }
-
-                                        else if(inUvPtr is not null && attribute.Type is VertexAttributeType.TextureCoordinate)
-                                        {
-                                            pad += 8;
-                                            System.Buffer.MemoryCopy(inUvPtr, stagVertPtr + pad, 8, 8);
-                                            inUvPtr += 8;
-                                        }
-
-                                        else if(inUv1Ptr is not null && attribute.Type is VertexAttributeType.TextureCoordinate1)
-                                        {
-                                            pad += 8;
-                                            System.Buffer.MemoryCopy(inUv1Ptr, stagVertPtr + pad, 8, 8);
-                                            inUv1Ptr += 8;
-                                        }
-
-
-            
-                                    }
-
-
-                                }
-
-                                stagVertPtr += vertexByteSize;
-
-
-                            }
-
-
-                            //indices loading
-                            if (p.Indices != null)
-                            {
-                                Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
-                                bv = gltf.BufferViews[(int)acc.BufferView];
-
-                                byte* inIdxPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
-                                inIdxPtr += acc.ByteOffset + bv.ByteOffset;
-
-                                //TODO:double check this, I dont seems to increment stag pointer
-                                if (acc.ComponentType == GltfComponentType.UnsignedShort)
-                                {
-                                    if (IndexType == IndexType.Uint16)
-                                    {
-                                        System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 2, (long)acc.Count * 2);
-                                        stagIdxPtr += (long)acc.Count * 2;
-                                    }
-                                    else
-                                    {
-                                        uint* usPtr = (uint*)stagIdxPtr;
-                                        ushort* inPtr = (ushort*)inIdxPtr;
-                                        for (int i = 0; i < acc.Count; i++)
-                                            usPtr[i] = inPtr[i];
-                                        stagIdxPtr += (long)acc.Count * 4;
-                                    }
-                                }
-                                else if (acc.ComponentType == GltfComponentType.UnsignedInt)
-                                {
-                                    if (IndexType == IndexType.Uint32)
-                                    {
-                                        System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 4, (long)acc.Count * 4);
-                                        stagIdxPtr += (long)acc.Count * 4;
-                                    }
-                                    else
-                                    {
-                                        ushort* usPtr = (ushort*)stagIdxPtr;
-                                        uint* inPtr = (uint*)inIdxPtr;
-                                        for (int i = 0; i < acc.Count; i++)
-                                            usPtr[i] = (ushort)inPtr[i];
-                                        stagIdxPtr += (long)acc.Count * 2;
-                                    }
-                                }
-                                else if (acc.ComponentType == GltfComponentType.UnsignedByte)
-                                {
-                                    //convert
-                                    if (IndexType == IndexType.Uint16)
-                                    {
-                                        ushort* usPtr = (ushort*)stagIdxPtr;
-                                        for (int i = 0; i < acc.Count; i++)
-                                            usPtr[i] = (ushort)inIdxPtr[i];
-                                        stagIdxPtr += (long)acc.Count * 2;
-                                    }
-                                    else
-                                    {
-                                        uint* usPtr = (uint*)stagIdxPtr;
-                                        for (int i = 0; i < acc.Count; i++)
-                                            usPtr[i] = (uint)inIdxPtr[i];
-                                        stagIdxPtr += (long)acc.Count * 4;
-                                    }
-                                }
-                                else
-                                    throw new NotImplementedException();
-
-                                prim.IndexCount = acc.Count;
-                                indexCount += acc.Count;
-                            }
-
-
-                            m.AddPrimitive(prim);
-                            vertexCount += AccPos.Count;
-                        }
-                        Meshes.Add(m);
                     }
+
+
+                    //indices loading
+                    if (p.Indices != null)
+                    {
+                        Schema.Accessor acc = gltf.Accessors[(int)p.Indices];
+                        bv = gltf.BufferViews[(int)acc.BufferView];
+
+                        byte* inIdxPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                        inIdxPtr += acc.ByteOffset + bv.ByteOffset;
+
+                        //TODO:double check this, I dont seems to increment stag pointer
+                        if (acc.ComponentType == GltfComponentType.UnsignedShort)
+                        {
+                            if (IndexType == IndexType.Uint16)
+                            {
+                                System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 2, (long)acc.Count * 2);
+                                stagIdxPtr += (long)acc.Count * 2;
+                            }
+                            else
+                            {
+                                uint* usPtr = (uint*)stagIdxPtr;
+                                ushort* inPtr = (ushort*)inIdxPtr;
+                                for (int i = 0; i < acc.Count; i++)
+                                    usPtr[i] = inPtr[i];
+                                stagIdxPtr += (long)acc.Count * 4;
+                            }
+                        }
+                        else if (acc.ComponentType == GltfComponentType.UnsignedInt)
+                        {
+                            if (IndexType == IndexType.Uint32)
+                            {
+                                System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 4, (long)acc.Count * 4);
+                                stagIdxPtr += (long)acc.Count * 4;
+                            }
+                            else
+                            {
+                                ushort* usPtr = (ushort*)stagIdxPtr;
+                                uint* inPtr = (uint*)inIdxPtr;
+                                for (int i = 0; i < acc.Count; i++)
+                                    usPtr[i] = (ushort)inPtr[i];
+                                stagIdxPtr += (long)acc.Count * 2;
+                            }
+                        }
+                        else if (acc.ComponentType == GltfComponentType.UnsignedByte)
+                        {
+                            //convert
+                            if (IndexType == IndexType.Uint16)
+                            {
+                                ushort* usPtr = (ushort*)stagIdxPtr;
+                                for (int i = 0; i < acc.Count; i++)
+                                    usPtr[i] = (ushort)inIdxPtr[i];
+                                stagIdxPtr += (long)acc.Count * 2;
+                            }
+                            else
+                            {
+                                uint* usPtr = (uint*)stagIdxPtr;
+                                for (int i = 0; i < acc.Count; i++)
+                                    usPtr[i] = (uint)inIdxPtr[i];
+                                stagIdxPtr += (long)acc.Count * 4;
+                            }
+                        }
+                        else
+                            throw new NotImplementedException();
+
+                        prim.IndexCount = acc.Count;
+                        indexCount += acc.Count;
+                    }
+
+
+                    m.AddPrimitive(prim);
+                    vertexCount += AccPos.Count;
                 }
+                Meshes.Add(m);
+
+
 
                 VertexBuffer.Unmap();
                 IndexBuffer.Unmap();

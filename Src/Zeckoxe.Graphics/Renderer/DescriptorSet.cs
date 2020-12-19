@@ -102,8 +102,8 @@ namespace Zeckoxe.Graphics
         {
 
             VkDescriptorSetLayout descriptor_set_layout = PipelineState._descriptorSetLayout;
-
-            _descriptorSet = NativeDevice._descriptorPoolManager_0.Allocate(descriptor_set_layout);
+            NativeDevice._descriptorPoolManager_0.Allocate(descriptor_set_layout);
+            _descriptorSet = NativeDevice._descriptorPoolManager_0.handle;
         }
 
 

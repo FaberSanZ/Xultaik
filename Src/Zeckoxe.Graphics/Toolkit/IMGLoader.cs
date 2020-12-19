@@ -23,6 +23,47 @@ namespace Zeckoxe.Graphics.Toolkit
     {
         private Image<Rgba32> _image;
 
+
+        public IMGLoader(byte[] data)
+        {
+            _image = SixLabors.ImageSharp.Image.Load<Rgba32>(data);
+            Span<Rgba32> pixels = _image.GetPixelSpan();
+
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                ref Rgba32 pixel = ref pixels[i];
+                byte a = pixel.A;
+
+                if (a is 0)
+                {
+                    pixel.PackedValue = 0;
+                }
+                else
+                {
+                    pixel.R = (byte)((pixel.R * a) >> 8);
+                    pixel.G = (byte)((pixel.G * a) >> 8);
+                    pixel.B = (byte)((pixel.B * a) >> 8);
+                }
+            }
+
+            TextureData _data = new TextureData()
+            {
+                Width = _image.Width,
+                Height = _image.Height,
+                Format = PixelFormat.R8G8B8A8UNorm,
+                Size = _image.Width * _image.Height * 4,
+                Depth = 1,
+                IsCubeMap = false,
+                MipMaps = (int)Math.Floor(Math.Log(Math.Max(_image.Width, _image.Height))) + 1, // TODO: MipMaps 
+                Data = MemoryMarshal.AsBytes(pixels).ToArray(),
+            };
+
+
+            TextureData = _data;
+
+        }
+
+
         public IMGLoader(string filename)
         {
             _image = SixLabors.ImageSharp.Image.Load<Rgba32>(filename);
@@ -78,7 +119,10 @@ namespace Zeckoxe.Graphics.Toolkit
         public bool IsCubeMap => false;
 
 
-
+        public static TextureData LoadFromData(byte[] data)
+        {
+            return new IMGLoader(data).TextureData;
+        }
 
         public static TextureData LoadFromFile(string filename)
         {

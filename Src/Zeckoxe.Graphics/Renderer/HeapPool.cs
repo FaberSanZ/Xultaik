@@ -42,19 +42,20 @@ namespace Zeckoxe.Graphics
 
             [VkDescriptorType.InputAttachment] = (MaxSets / 64),
 
-            [VkDescriptorType.AccelerationStructureKHR] = (MaxSets / 2), // TODO: AccelerationStructureKHR MaxDescriptorTypeCounts
+            [VkDescriptorType.AccelerationStructureKHR] = MaxSets, // TODO: AccelerationStructureKHR
         };
 
 
 
 
-
+        internal VkDescriptorPool handle;
 
         public HeapPool(Device device) : base(device)
         {
+
         }
 
-        internal VkDescriptorPool Create()
+        internal void Create()
         {
 
             uint PoolSize = (uint)MaxDescriptorTypeCounts.Count;
@@ -87,23 +88,22 @@ namespace Zeckoxe.Graphics
             };
 
 
-            vkCreateDescriptorPool(NativeDevice.handle, &pool_create_info, null, out VkDescriptorPool descriptorPool);
-            return descriptorPool;
+            vkCreateDescriptorPool(NativeDevice.handle, &pool_create_info, null, out handle);
         }
 
-        internal void Reset(VkDescriptorPool obj)
+        public void Reset()
         {
-            vkResetDescriptorPool(NativeDevice.handle, obj, VkDescriptorPoolResetFlags.None);
+            vkResetDescriptorPool(NativeDevice.handle, handle, VkDescriptorPoolResetFlags.None);
         }
 
-        internal void Destroy(VkDescriptorPool obj)
+        public void Destroy()
         {
-            vkDestroyDescriptorPool(NativeDevice.handle, obj, null);
+            vkDestroyDescriptorPool(NativeDevice.handle, handle, null);
         }
 
         public void Dispose()
         {
-
+            // Destroy();
         }
     }
 }

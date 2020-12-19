@@ -36,6 +36,29 @@ namespace Zeckoxe.Graphics
             return text2d;
         }
 
+
+        public static Texture2D LoadFromData(Device device, byte[] data)
+        {
+            var tex2D = IMGLoader.LoadFromData(data);
+
+            Texture2D text2d = new Texture2D(device, new TextureDescription
+            {
+                Flags = TextureFlags.ShaderResource,
+                Usage = GraphicsResourceUsage.Staging,
+                Width = tex2D.Width,
+                Height = tex2D.Height,
+                Size = tex2D.Size,
+                Data = tex2D.Data,
+                format = (VkFormat)tex2D.Format,
+                Format = tex2D.Format,
+                Dimension = ImageDimension.Texture2D,
+            });
+
+            text2d.LoadTexture2D();
+
+            return text2d;
+        }
+
         public static Texture2D LoadFromFile(Device device, string path)
         {
             TextureData tex2D = new TextureData();

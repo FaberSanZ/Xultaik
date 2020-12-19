@@ -64,7 +64,6 @@ namespace Zeckoxe.Graphics
         internal VkPhysicalDeviceImagelessFramebufferFeatures imageless_features;
         internal VkPhysicalDeviceSubgroupSizeControlFeaturesEXT subgroup_size_control_features;
         internal VkPhysicalDeviceSubgroupSizeControlPropertiesEXT subgroup_size_control_properties;
-        internal VkPhysicalDeviceComputeShaderDerivativesFeaturesNV compute_shader_derivative_features;
         internal VkPhysicalDeviceHostQueryResetFeatures host_query_reset_features;
         internal VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT demote_to_helper_invocation_features;
         internal VkPhysicalDeviceScalarBlockLayoutFeatures scalar_block_features;
@@ -155,7 +154,7 @@ namespace Zeckoxe.Graphics
             _descriptorPoolManager_0 = new(this);
 
             //_descriptorPoolManager_1 = _descriptorPoolManager_0;
-            //_descriptorPoolManager_1.HeapPool.Reset(_descriptorPoolManager_1.handle);
+            //_descriptorPoolManager_1.HeapPool.Reset();
         }
 
 
@@ -556,7 +555,7 @@ namespace Zeckoxe.Graphics
             {
                 sType = VkStructureType.SemaphoreCreateInfo,
                 pNext = null,
-                flags = 0
+                flags = VkSemaphoreCreateFlags.None
             };
 
             vkCreateSemaphore(handle, &semaphore_create_info, null, out VkSemaphore semaphore);
@@ -571,7 +570,7 @@ namespace Zeckoxe.Graphics
             {
                 sType = VkStructureType.CommandPoolCreateInfo,
                 queueFamilyIndex = index,
-                flags = VkCommandPoolCreateFlags.Transient,
+                flags = VkCommandPoolCreateFlags.None,
                 pNext = null,
             };
 

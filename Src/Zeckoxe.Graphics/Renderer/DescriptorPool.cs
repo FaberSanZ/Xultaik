@@ -16,24 +16,24 @@ namespace Zeckoxe.Graphics
     public unsafe class DescriptorPool : GraphicsResource
     {
 
-        internal VkDescriptorSet DescriptorSet;
+        internal VkDescriptorSet handle;
 
 
-        internal VkDescriptorPool handle;
+        internal VkDescriptorPool pool;
 
 
         public DescriptorPool(Device device) : base(device)
         {
             HeapPool = new HeapPool(device);
+            HeapPool.Create();
 
-
-            handle = HeapPool.Create();
+            pool = HeapPool.handle;
         }
 
 
         public HeapPool HeapPool { get; internal set; }
 
-        internal VkDescriptorSet Allocate(VkDescriptorSetLayout setLayout)
+        internal void Allocate(VkDescriptorSetLayout setLayout)
         {
 
             VkDescriptorSetAllocateInfo descriptor_set_allocate_info = new()
@@ -42,14 +42,13 @@ namespace Zeckoxe.Graphics
                 pNext = null,
                 descriptorSetCount = 1,
                 pSetLayouts = &setLayout,
-                descriptorPool = handle,
+                descriptorPool = pool,
             };
 
 
             VkDescriptorSet descriptor_set;
             vkAllocateDescriptorSets(NativeDevice.handle, &descriptor_set_allocate_info, &descriptor_set).CheckResult();
-
-            return descriptor_set;
+            handle = descriptor_set;
         }
 
         public void Free()
