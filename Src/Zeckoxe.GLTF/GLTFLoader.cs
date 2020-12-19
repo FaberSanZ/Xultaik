@@ -553,7 +553,6 @@ namespace Zeckoxe.GLTF
                         bv = gltf.BufferViews[(int)AccNorm.BufferView];
                         inNormPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                         inNormPtr += AccNorm.ByteOffset + bv.ByteOffset;
-                        Console.WriteLine("AccNorm");
 
                     }
                     if (AccUv is not null)
@@ -561,14 +560,12 @@ namespace Zeckoxe.GLTF
                         bv = gltf.BufferViews[(int)AccUv.BufferView];
                         inUvPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                         inUvPtr += AccUv.ByteOffset + bv.ByteOffset;
-                        Console.WriteLine("AccUv");
                     }
                     if (AccUv1 is not null)
                     {
                         bv = gltf.BufferViews[(int)AccUv1.BufferView];
                         inUv1Ptr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                         inUv1Ptr += AccUv1.ByteOffset + bv.ByteOffset;
-                        Console.WriteLine("AccUv1");
                     }
 
                     if (AccColor is not null)
@@ -576,7 +573,6 @@ namespace Zeckoxe.GLTF
                         bv = gltf.BufferViews[(int)AccColor.BufferView];
                         inColorPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                         inColorPtr += AccColor.ByteOffset + bv.ByteOffset;
-                        Console.WriteLine("AccColor");
                     }
 
 
@@ -585,10 +581,6 @@ namespace Zeckoxe.GLTF
                         bv = gltf.BufferViews[(int)AccTan.BufferView];
                         inTanPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                         inTanPtr += AccTan.ByteOffset + bv.ByteOffset;
-
-
-                        Console.WriteLine("AccTan");
-                        Console.WriteLine("AccTan");
                     }
 
                     for (int j = 0; j < AccPos.Count; j++)
@@ -599,9 +591,9 @@ namespace Zeckoxe.GLTF
                         foreach (PropertyInfo info in propertyInfos)
                         {
                             VertexAttribute attribute = info.GetCustomAttribute<VertexAttribute>();
-                    //Console.WriteLine(attribute.Type);
 
                             //Console.WriteLine(attribute.Type);
+
                             if (attribute is not null)
                             {
 

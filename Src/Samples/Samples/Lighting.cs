@@ -266,19 +266,14 @@ namespace Samples.Samples
 
             uniform = new(camera.Projection, Model, camera.View);
 
-            //Matrix4x4.Invert(camera.View, out Matrix4x4 inv);
-
-            //light = new LightBuffer(new Vector4(1, 1, 1, 0), new Vector4(inv.M41, inv.M42, inv.M43, 0), new Vector4(1, 1, 1, 10));
 
             CreatePipelineState();
-
-
-
 
 
             Texture2D text1 = Texture2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
             Texture2D text2 = Texture2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
             Texture2D text3 = Texture2D.LoadFromFile(Device, "floor_tiles.bmp");
+
             Sampler sampler = new Sampler(Device);
 
 
@@ -368,8 +363,6 @@ namespace Samples.Samples
                     Format = PixelFormat.R32G32SFloat,
                     Offset = Interop.SizeOf<Vector2>() + Interop.SizeOf<Vector3>(),
                 },
-
-
             };
 
             List<VertexInputBinding> VertexBindingDescriptions = new()
@@ -402,8 +395,6 @@ namespace Samples.Samples
                         Type = DescriptorType.CombinedImageSampler,
                         Binding = 1,
                     },
-
-
                 },
 
                 PushConstants =
