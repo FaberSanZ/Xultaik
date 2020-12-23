@@ -6,12 +6,16 @@
 
 
 
+
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Zeckoxe.Core;
-using Zeckoxe.Desktop.GLFWNative;
 using Zeckoxe.Graphics;
+using Silk.NET;
+using Silk.NET.GLFW;
+using Silk.NET.Core.Loader;
+using Zeckoxe.Desktop.GLFWNative;
 
 namespace Zeckoxe.Desktop
 {
@@ -20,11 +24,11 @@ namespace Zeckoxe.Desktop
         private string _title;
 
 
+        Glfw glfw = GlfwProvider.GLFW.Value;
 
+        WindowHandle* pWindowHandle;
 
-
-
-        internal IntPtr pWindow { get; private set; }
+        internal IntPtr WindowHandle => new IntPtr(pWindowHandle);
 
         public Window(string title, int width, int height)
         {
@@ -32,16 +36,16 @@ namespace Zeckoxe.Desktop
             Width = width;
             Height = height;
 
-            GLFW.GlfwInit();
-            GLFW.GlfwInitHint(GLFW.GLFW_VISIBLE, 0);
+            glfw.WindowHint(WindowHintBool.Visible, false);
 
-            pWindow = GLFW.GlfwCreateWindow(width, height, _title, IntPtr.Zero, IntPtr.Zero);
+            pWindowHandle = glfw.CreateWindow(width, height, _title, (Monitor*)IntPtr.Zero.ToPointer(), null);
         }
 
 
         public int Width { get; set; }
         public int Height { get; set; }
-        public IntPtr Win32Handle => GLFW.GlfwGetWin32Window(pWindow);
+
+        public IntPtr Win32Handle => glfw.Library.LoadFunction<GLFW.glfwGetWin32Window>(nameof(GLFW.glfwGetWin32Window))(pWindowHandle);
 
         public string Title
         {
@@ -52,7 +56,7 @@ namespace Zeckoxe.Desktop
                 if (value != _title)
                 {
                     _title = value;
-                    GLFW.GlfwSetWindowTitle(pWindow, Interop.String.ToPointer(value));
+                    glfw.SetWindowTitle(pWindowHandle, value);
                 }
             }
         }
@@ -69,7 +73,7 @@ namespace Zeckoxe.Desktop
         {
             if (adapter.SupportsWin32Surface)
             {
-                IntPtr hwnd = GLFW.GlfwGetWin32Window(pWindow);
+                IntPtr hwnd = Win32Handle;
                 IntPtr hinstance = Process.GetCurrentProcess().Handle;
 
                 if (hwnd != IntPtr.Zero && hinstance != IntPtr.Zero)
@@ -119,18 +123,18 @@ namespace Zeckoxe.Desktop
         public void RenderLoop(Action render)
         {
 
-            while (GLFW.GlfwWindowShouldClose(pWindow) == 0)
+            while (!glfw.WindowShouldClose(pWindowHandle))
             {
                 render();
 
-                GLFW.GlfwPollEvents();
+                glfw.PollEvents();
             }
 
         }
 
         public void Show()
         {
-            GLFW.ShowWindow(pWindow);
+            glfw.ShowWindow(pWindowHandle);
         }
 
         public void Dispose()

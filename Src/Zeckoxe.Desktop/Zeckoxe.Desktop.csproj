@@ -7,26 +7,14 @@
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="..\..\deps\GLFW\win-x64\glfw3.dll">
-      <PackagePath>runtimes/win-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\deps\GLFW\win-x86\glfw3.dll">
-      <PackagePath>runtimes/win-x86/native</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NativeLibraryLoader" Version="1.0.12" />
+    <PackageReference Include="Silk.NET.GLFW" Version="1.9.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Core\Zeckoxe.Core.csproj" />
     <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Graphics.csproj" />
   </ItemGroup>
-
 
 </Project>

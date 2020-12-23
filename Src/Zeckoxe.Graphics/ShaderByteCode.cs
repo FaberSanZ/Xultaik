@@ -60,7 +60,7 @@ namespace Zeckoxe.Graphics
 
             Options _options = new(false)
             {
-                SourceLanguage = SourceLanguage.Glsl,
+                SourceLanguage = Shaderc.SourceLanguage.Glsl,
                 InvertY = options.InvertY,
                 //Optimization = OptimizationLevel.Performance,
             };

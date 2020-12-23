@@ -14,8 +14,6 @@ using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Samples.Samples
 {
-
-
     public class Lighting : Game, IDisposable
     {
         public class Camera

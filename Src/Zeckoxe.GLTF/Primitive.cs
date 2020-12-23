@@ -86,7 +86,7 @@ namespace Zeckoxe.GLTF
         public int FirstVertex { get; set; }
         public int VertexCount { get; set; }
         public int IndexCount { get; set; }
-        public Material Material { get; set; }
+        public int Material { get; set; }
 
 
 

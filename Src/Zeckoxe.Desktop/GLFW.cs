@@ -1,0 +1,33 @@
+﻿// Copyright(c) 2019-2020 Faber Leonardo.All Rights Reserved.
+
+/*=============================================================================
+	GLFW.cs
+=============================================================================*/
+
+
+using Silk.NET.GLFW;
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security;
+using Vortice.Vulkan;
+
+namespace Zeckoxe.Desktop.GLFWNative
+{
+    internal static unsafe partial class GLFW
+    {
+
+		internal delegate IntPtr glfwGetWin32Window(WindowHandle* window);
+
+		internal delegate IntPtr glfwGetX11Window(WindowHandle* window);
+		internal delegate IntPtr glfwGetX11Display();
+
+		internal delegate IntPtr glfwGetWaylandWindow(WindowHandle* window);
+		internal delegate IntPtr glfwGetWaylandDisplay();
+
+	}
+}
+
+	
+

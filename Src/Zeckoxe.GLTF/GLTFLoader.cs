@@ -464,7 +464,7 @@ namespace Zeckoxe.GLTF
             Meshes = new();
 
 
-            IEnumerable<PropertyInfo> propertyInfos = typeof(TVertex).GetTypeInfo().GetProperties();
+            IEnumerable<PropertyInfo> propertyInfos = typeof(TVertex).GetTypeInfo().GetRuntimeProperties();
 
 
             byte* stagVertPtrInit = (byte*)VertexBuffer.MappedData.ToPointer();
@@ -534,7 +534,7 @@ namespace Zeckoxe.GLTF
                         FirstIndex = indexCount,
                         FirstVertex = vertexCount,
                         VertexCount = AccPos.Count,
-                        //Material = (uint)(p.Material ?? 0)
+                        Material = (p.Material ?? 0)
                     };
 
                     //prim.BoundingBox.Min.ImportFloatArray(AccPos.Min);
@@ -600,7 +600,7 @@ namespace Zeckoxe.GLTF
                                 if (inPosPtr is not null && attribute.Type is VertexAttributeType.Position)
                                 {
                                     //if (propertyInfos.First().GetCustomAttribute<VertexAttribute>().Type is attribute.Type)
-                                    //    pad += 0;
+                                    //    pad = 0;
                                     //else
                                     //    pad += 12;
 
@@ -664,16 +664,10 @@ namespace Zeckoxe.GLTF
                                     System.Buffer.MemoryCopy(inUv1Ptr, stagVertPtr + pad, 8, 8);
                                     inUv1Ptr += 8;
                                 }
-
-
                             }
-
-
                         }
 
                         stagVertPtr += vertexByteSize;
-
-
                     }
 
 

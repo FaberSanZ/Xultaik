@@ -24,7 +24,8 @@ out gl_PerVertex
     vec4 gl_Position;   
 };
 
-layout(push_constant) uniform PushConsts {
+layout(push_constant) uniform PushConsts 
+{
     mat4 model;
 } pc;
 
