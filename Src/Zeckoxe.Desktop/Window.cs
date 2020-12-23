@@ -7,26 +7,19 @@
 
 
 
+using Silk.NET.GLFW;
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Zeckoxe.Core;
-using Zeckoxe.Graphics;
-using Silk.NET;
-using Silk.NET.GLFW;
-using Silk.NET.Core.Loader;
 using Zeckoxe.Desktop.GLFWNative;
+using Zeckoxe.Core;
 
 namespace Zeckoxe.Desktop
 {
     public unsafe class Window : IDisposable
     {
         private string _title;
-
-
-        Glfw glfw = GlfwProvider.GLFW.Value;
-
-        WindowHandle* pWindowHandle;
+        private readonly Glfw glfw = GlfwProvider.GLFW.Value;
+        private readonly WindowHandle* pWindowHandle;
 
         internal IntPtr WindowHandle => new IntPtr(pWindowHandle);
 
@@ -45,73 +38,80 @@ namespace Zeckoxe.Desktop
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public IntPtr Win32Handle => glfw.Library.LoadFunction<GLFW.glfwGetWin32Window>(nameof(GLFW.glfwGetWin32Window))(pWindowHandle);
+
+
+        public (int Width, int Height) FramebufferSize
+        {
+            get
+            {
+                glfw.GetFramebufferSize(pWindowHandle, out int width, out int height);
+
+                return (width, height);
+            }
+        }
 
         public string Title
         {
             get => _title;
-
-            set
-            {
-                if (value != _title)
-                {
-                    _title = value;
-                    glfw.SetWindowTitle(pWindowHandle, value);
-                }
-            }
+            set => glfw.SetWindowTitle(pWindowHandle, _title = value);
         }
 
 
-        public SwapchainSource GetSwapchainSource(Adapter adapter)
+        public IntPtr Win32Handle => glfw.Library.LoadFunction<GLFW.glfwGetWin32Window>(nameof(GLFW.glfwGetWin32Window))(pWindowHandle);
+
+        public IntPtr Win32Cocoa => glfw.Library.LoadFunction<GLFW.glfwGetWin32Window>(nameof(GLFW.glfwGetWin32Window))(pWindowHandle);
+
+        public IntPtr X11WindowHandle => glfw.Library.LoadFunction<GLFW.glfwGetX11Window>(nameof(GLFW.glfwGetX11Window))(pWindowHandle);
+        public IntPtr X11DisplayHandle => glfw.Library.LoadFunction<GLFW.glfwGetX11Display>(nameof(GLFW.glfwGetX11Display))();
+
+        public IntPtr WaylandWindowHandle => glfw.Library.LoadFunction<GLFW.glfwGetWaylandWindow>(nameof(GLFW.glfwGetX11Window))(pWindowHandle);
+        public IntPtr WaylandDisplayHandle => glfw.Library.LoadFunction<GLFW.glfwGetWaylandDisplay>(nameof(GLFW.glfwGetX11Display))();
+
+
+        public SwapchainSource SwapchainWin32
         {
-            if (adapter.SupportsWin32Surface)
+            get
             {
                 IntPtr hwnd = Win32Handle;
                 IntPtr hinstance = Process.GetCurrentProcess().Handle;
 
-                if (hwnd != IntPtr.Zero && hinstance != IntPtr.Zero)
-                {
-                    return SwapchainSource.CreateWin32(hwnd, hinstance);
-                }
+                if (hwnd == IntPtr.Zero && hinstance == IntPtr.Zero)
+                    return SwapchainSource.CreateWin32(IntPtr.Zero, IntPtr.Zero);
+
+                return SwapchainSource.CreateWin32(hwnd, hinstance);
             }
-
-
-            // TODO: CreateXlib
-            //if ()
-            //{
-            //    IntPtr x11Window = GLFW.GlfwGetX11Window(pWindow);
-            //    IntPtr x11Display = GLFW.GlfwGetX11Display();
-
-            //    if (x11Display != IntPtr.Zero && x11Window != IntPtr.Zero)
-            //    {
-            //        return SwapchainSource.CreateXlib(x11Display, x11Window);
-            //    }
-
-            //}
-
-            // TODO: CreateWayland
-            //if () 
-            //{
-            //    IntPtr waylandWindow = GLFW.GlfwGetWaylandWindow(pWindow);
-            //    IntPtr waylandDisplay = GLFW.GlfwGetWaylandDisplay();
-
-            //    if (waylandWindow != IntPtr.Zero && waylandDisplay != IntPtr.Zero)
-            //    {
-            //        return SwapchainSource.CreateWayland(waylandDisplay, waylandWindow);
-            //    }
-            //}
-
-            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
-
-
-            //ulong surface = default;
-
-
-            //IntPtr hwnd = GLFW.GlfwCreateWindowSurface(adapter.GetInstance().Handle ,pWindow , null, &surface);
-            //Console.WriteLine(hwnd.ToInt64());
-
-            //return SwapchainSource.CreateWindow(surface);
         }
+
+
+        public SwapchainSource SwapchainX11
+        {
+            get
+            {
+                IntPtr Display = X11DisplayHandle;
+                IntPtr Window = X11WindowHandle;
+
+                if (Window == IntPtr.Zero && Display == IntPtr.Zero)
+                    return SwapchainSource.CreateWin32(IntPtr.Zero, IntPtr.Zero);
+
+                return SwapchainSource.CreateXlib(Display, Window);
+            }
+        }
+
+
+        public SwapchainSource SwapchainWayland
+        {
+            get
+            {
+                IntPtr Display = WaylandDisplayHandle;
+                IntPtr Window = WaylandWindowHandle;
+
+                if (Window == IntPtr.Zero && Display == IntPtr.Zero)
+                    return SwapchainSource.CreateWin32(IntPtr.Zero, IntPtr.Zero);
+
+                return SwapchainSource.CreateXlib(Display, Window);
+            }
+        }
+
 
         public void RenderLoop(Action render)
         {

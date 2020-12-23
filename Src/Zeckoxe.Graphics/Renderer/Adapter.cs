@@ -77,7 +77,11 @@ namespace Zeckoxe.Graphics
         public bool SupportsSurface { get; private set; }
 
         public bool SupportsWin32Surface { get; private set; }
-
+        public bool SupportsWaylandSurface { get; private set; }
+        public bool SupportsMacOSSurface { get; private set; }
+        public bool SupportsX11Surface { get; private set; }
+        public bool SupportsAndroidSurface { get; private set; }
+        
 
         public bool SupportsExternal { get; private set; }
 
@@ -239,11 +243,13 @@ namespace Zeckoxe.Graphics
                 if (instance_extensions_names.Contains("VK_MVK_macos_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_MVK_macos_surface");
+                    SupportsMacOSSurface = true;
                 }
 
                 if (instance_extensions_names.Contains("VK_MVK_ios_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_MVK_ios_surface");
+                    SupportsMacOSSurface = true;
                 }
             }
 
@@ -257,11 +263,13 @@ namespace Zeckoxe.Graphics
                 if (instance_extensions_names.Contains("VK_KHR_xlib_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_xlib_surface");
+                    SupportsX11Surface = true;
                 }
 
                 if (instance_extensions_names.Contains("VK_KHR_wayland_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_wayland_surface");
+                    SupportsWaylandSurface = true;
                 }
             }
 

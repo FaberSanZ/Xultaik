@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Core\Zeckoxe.Core.csproj" />
-    <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Graphics.csproj" />
   </ItemGroup>
 
 </Project>

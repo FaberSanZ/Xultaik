@@ -11,7 +11,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
-using Vortice.Vulkan;
 
 namespace Zeckoxe.Desktop.GLFWNative
 {

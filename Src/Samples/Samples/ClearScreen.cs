@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Graphics;
 
@@ -49,11 +50,29 @@ namespace Samples.Samples
 
             Device = new(Adapter);
 
-            SwapChain = new(Device, Window.GetSwapchainSource(Adapter));
+            SwapChain = new(Device, GetSwapchainSource());
 
             Framebuffer = new(SwapChain);
 
             Context = new(Device);
+        }
+
+        // TODO: Support Cocoa
+        public SwapchainSource GetSwapchainSource()
+        {
+            if (Adapter.SupportsSurface)
+            {
+                if (Adapter.SupportsWin32Surface)
+                    return Window.SwapchainWin32;
+
+                if (Adapter.SupportsX11Surface)
+                    return Window.SwapchainX11;
+
+                if (Adapter.SupportsWaylandSurface)
+                    return Window.SwapchainWayland;
+            }
+
+            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
         }
 
 

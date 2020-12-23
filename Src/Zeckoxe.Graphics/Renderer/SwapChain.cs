@@ -13,8 +13,7 @@ using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using static Vortice.Vulkan.VkUtils;
-
-
+using Zeckoxe.Core;
 
 namespace Zeckoxe.Graphics
 {

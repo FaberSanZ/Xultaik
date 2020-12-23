@@ -13,6 +13,7 @@ using System.Numerics;
 using Zeckoxe.Games;
 using Zeckoxe.Graphics;
 using Zeckoxe.Desktop;
+using Zeckoxe.Core;
 
 namespace Zeckoxe.Engine
 {
@@ -79,11 +80,30 @@ namespace Zeckoxe.Engine
 
             Device = new Device(Adapter);
 
-            SwapChain = new SwapChain(Device, Window.GetSwapchainSource(Adapter));
+            SwapChain = new SwapChain(Device, GetSwapchainSource());
 
             Framebuffer = new Framebuffer(SwapChain);
 
             Context = new GraphicsContext(Device);
+        }
+
+
+        // TODO: Support Cocoa
+        public SwapchainSource GetSwapchainSource()
+        {
+            if (Adapter.SupportsSurface)
+            {
+                if (Adapter.SupportsWin32Surface)
+                    return Window.SwapchainWin32;
+
+                if (Adapter.SupportsX11Surface)
+                    return Window.SwapchainX11;
+
+                if (Adapter.SupportsWaylandSurface)
+                    return Window.SwapchainWayland;
+            }
+
+            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
         }
 
 
