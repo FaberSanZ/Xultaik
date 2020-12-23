@@ -88,7 +88,7 @@ namespace Zeckoxe.Engine
         }
 
 
-        // TODO: Support Cocoa
+        
         public SwapchainSource GetSwapchainSource()
         {
             if (Adapter.SupportsSurface)
@@ -101,6 +101,9 @@ namespace Zeckoxe.Engine
 
                 if (Adapter.SupportsWaylandSurface)
                     return Window.SwapchainWayland;
+
+                if (Adapter.SupportsMacOSSurface)
+                    return Window.SwapchainNS;
             }
 
             throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");

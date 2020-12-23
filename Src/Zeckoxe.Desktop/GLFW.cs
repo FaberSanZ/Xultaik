@@ -18,6 +18,7 @@ namespace Zeckoxe.Desktop.GLFWNative
     {
 
 		internal delegate IntPtr glfwGetWin32Window(WindowHandle* window);
+		internal delegate IntPtr glfwGetCocoaWindow(WindowHandle* window);
 
 		internal delegate IntPtr glfwGetX11Window(WindowHandle* window);
 		internal delegate IntPtr glfwGetX11Display();

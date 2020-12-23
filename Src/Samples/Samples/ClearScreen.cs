@@ -57,7 +57,6 @@ namespace Samples.Samples
             Context = new(Device);
         }
 
-        // TODO: Support Cocoa
         public SwapchainSource GetSwapchainSource()
         {
             if (Adapter.SupportsSurface)
@@ -70,6 +69,10 @@ namespace Samples.Samples
 
                 if (Adapter.SupportsWaylandSurface)
                     return Window.SwapchainWayland;
+
+                if (Adapter.SupportsMacOSSurface)
+                    return Window.SwapchainNS;
+                
             }
 
             throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
