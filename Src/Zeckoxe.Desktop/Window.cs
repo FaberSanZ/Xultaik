@@ -62,13 +62,6 @@ namespace Zeckoxe.Desktop
         }
 
 
-
-
-
-
-
-
-
         public SwapchainSource GetSwapchainSource(Adapter adapter)
         {
             if (adapter.SupportsWin32Surface)
