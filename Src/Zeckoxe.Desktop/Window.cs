@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved.
+﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 /*=============================================================================
 	Window.cs
 =============================================================================*/
-
-
 
 
 using Silk.NET.GLFW;
@@ -12,16 +11,51 @@ using System;
 using System.Diagnostics;
 using Zeckoxe.Desktop.GLFWNative;
 using Zeckoxe.Core;
+using System.Runtime.InteropServices;
 
 namespace Zeckoxe.Desktop
 {
+
+    public enum WindowState
+    {
+        /// <summary>
+        /// The window is in its regular configuration.
+        /// </summary>
+        Normal = 0,
+
+        /// <summary>
+        /// The window has been minimized to the task bar.
+        /// </summary>
+        Minimized,
+
+        /// <summary>
+        /// The window has been maximized, covering the entire desktop, but not the taskbar.
+        /// </summary>
+        Maximized,
+
+        /// <summary>
+        /// The window has been fullscreened, covering the entire surface of the monitor.
+        /// </summary>
+        Fullscreen
+    }
     public unsafe class Window : IDisposable
     {
         private string _title;
         private readonly Glfw glfw = GlfwProvider.GLFW.Value;
-        private readonly WindowHandle* pWindowHandle;
+        internal readonly WindowHandle* pWindowHandle;
 
         internal IntPtr WindowHandle => new IntPtr(pWindowHandle);
+
+
+
+        private GlfwCallbacks.WindowPosCallback? _onMove;
+        private GlfwCallbacks.WindowSizeCallback? _onResize;
+        private GlfwCallbacks.FramebufferSizeCallback? _onFramebufferResize;
+        private GlfwCallbacks.DropCallback? _onFileDrop;
+        private GlfwCallbacks.WindowCloseCallback? _onClosing;
+        private GlfwCallbacks.WindowFocusCallback? _onFocusChanged;
+        private GlfwCallbacks.WindowIconifyCallback? _onMinimized;
+        private GlfwCallbacks.WindowMaximizeCallback? _onMaximized;
 
         public Window(string title, int width, int height)
         {
@@ -32,7 +66,125 @@ namespace Zeckoxe.Desktop
             glfw.WindowHint(WindowHintBool.Visible, false);
 
             pWindowHandle = glfw.CreateWindow(width, height, _title, (Monitor*)IntPtr.Zero.ToPointer(), null);
+
+            Load?.Invoke();
+
+            _onMove = (window, x, y) =>
+            {
+                Move?.Invoke((x, y));
+            };
+
+            _onResize = (window, width, height) =>
+            {
+                Resize?.Invoke((width, height));
+            };
+
+            _onFramebufferResize = (window, width, height) =>
+            {
+                FramebufferResize?.Invoke((width, height));
+            };
+
+            _onClosing = window => Closing?.Invoke();
+
+            _onFocusChanged = (window, isFocused) => FocusChanged?.Invoke(isFocused);
+
+            _onMinimized = (window, isMinimized) =>
+            {
+                WindowState state;
+                // If minimized, we immediately know what value the new WindowState is.
+                if (isMinimized)
+                {
+                    state = WindowState.Minimized;
+                }
+                else
+                {
+                    // Otherwise, we have to query a few things to figure out out.
+                    if (glfw.GetWindowAttrib(pWindowHandle, WindowAttributeGetter.Maximized))
+                    {
+                        state = WindowState.Maximized;
+                    }
+                    else if (glfw.GetWindowMonitor(pWindowHandle) != null)
+                    {
+                        state = WindowState.Fullscreen;
+                    }
+                    else
+                    {
+                        state = WindowState.Normal;
+                    }
+                }
+
+                StateChanged?.Invoke(state);
+            };
+
+            _onMaximized = (window, isMaximized) =>
+            {
+                // Same here as in onMinimized.
+                WindowState state;
+                if (isMaximized)
+                {
+                    state = WindowState.Maximized;
+                }
+                else
+                {
+                    if (glfw.GetWindowAttrib(pWindowHandle, WindowAttributeGetter.Iconified))
+                    {
+                        state = WindowState.Minimized;
+                    }
+                    else if (glfw.GetWindowMonitor(pWindowHandle) != null)
+                    {
+                        state = WindowState.Fullscreen;
+                    }
+                    else
+                    {
+                        state = WindowState.Normal;
+                    }
+                }
+
+                StateChanged?.Invoke(state);
+            };
+
+            _onFileDrop = (window, count, paths) =>
+            {
+                var arrayOfPaths = new string[count];
+
+                if (count == 0 || paths == IntPtr.Zero)
+                {
+                    return;
+                }
+
+                for (var i = 0; i < count; i++)
+                {
+                    var p = Marshal.ReadIntPtr(paths, i * IntPtr.Size);
+                    arrayOfPaths[i] = Marshal.PtrToStringAnsi(p);
+                }
+
+                FileDrop?.Invoke(arrayOfPaths);
+            };
+
+
+            glfw.SetWindowPosCallback(pWindowHandle, _onMove);
+            glfw.SetWindowSizeCallback(pWindowHandle, _onResize);
+            glfw.SetWindowCloseCallback(pWindowHandle, _onClosing);
+            glfw.SetWindowFocusCallback(pWindowHandle, _onFocusChanged);
+            glfw.SetWindowIconifyCallback(pWindowHandle, _onMinimized);
+            glfw.SetWindowMaximizeCallback(pWindowHandle, _onMaximized);
+            glfw.SetFramebufferSizeCallback(pWindowHandle, _onFramebufferResize);
+            glfw.SetDropCallback(pWindowHandle, _onFileDrop);
+
+
+            
         }
+
+
+        public event Action<(int X, int Y)>? Move;
+        public event Action<WindowState>? StateChanged;
+        public event Action<string[]>? FileDrop;
+        public event Action<(int Width, int Height)>? Resize;
+        public event Action<(int Width, int Height)>? FramebufferResize;
+        public event Action? Closing;
+        public event Action<bool>? FocusChanged;
+        public event Action? Load;
+        public event Action<double>? Update;
 
 
         public int Width { get; set; }
@@ -127,17 +279,46 @@ namespace Zeckoxe.Desktop
         }
 
 
+
+        public Input Input => new Input(this);
+
+
+
         public void RenderLoop(Action render)
         {
 
             while (!glfw.WindowShouldClose(pWindowHandle))
             {
+                Update?.Invoke(0);
                 render();
-
                 glfw.PollEvents();
             }
 
         }
+
+
+        public void Reset()
+        {
+
+            //CoreReset();
+            UnregisterCallbacks();
+        }
+
+        private void UnregisterCallbacks()
+        {
+            if (_onClosing is not null)
+            {
+                glfw.GcUtility.Unpin(_onClosing);
+                glfw.GcUtility.Unpin(_onMaximized);
+                glfw.GcUtility.Unpin(_onMinimized);
+                glfw.GcUtility.Unpin(_onMove);
+                glfw.GcUtility.Unpin(_onResize);
+                glfw.GcUtility.Unpin(_onFramebufferResize);
+                glfw.GcUtility.Unpin(_onFileDrop);
+                glfw.GcUtility.Unpin(_onFocusChanged);
+            }
+        }
+
 
         public void Show()
         {

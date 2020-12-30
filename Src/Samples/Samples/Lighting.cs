@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Zeckoxe.Core;
@@ -446,7 +447,6 @@ namespace Samples.Samples
             yaw += 0.0006f * MathF.PI;
 
         }
-
 
 
 

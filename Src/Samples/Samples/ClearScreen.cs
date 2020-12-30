@@ -72,7 +72,6 @@ namespace Samples.Samples
 
                 if (Adapter.SupportsMacOSSurface)
                     return Window.SwapchainNS;
-                
             }
 
             throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");

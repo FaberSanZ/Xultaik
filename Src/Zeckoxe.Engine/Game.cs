@@ -8,12 +8,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using System.Numerics;
+using Zeckoxe.Core;
+using Zeckoxe.Desktop;
 using Zeckoxe.Games;
 using Zeckoxe.Graphics;
-using Zeckoxe.Desktop;
-using Zeckoxe.Core;
 
 namespace Zeckoxe.Engine
 {
@@ -43,6 +43,8 @@ namespace Zeckoxe.Engine
 
         public Window? Window { get; set; }
 
+        public Input? Input => Window.Input;
+
 
         public string EngineVersion => Adapter.EngineVersion.ToString();
 
@@ -69,7 +71,9 @@ namespace Zeckoxe.Engine
                     VSync = false,
                 },
             };
+
         }
+
 
         public override void InitializeVulkan()
         {
@@ -88,22 +92,30 @@ namespace Zeckoxe.Engine
         }
 
 
-        
+
         public SwapchainSource GetSwapchainSource()
         {
             if (Adapter.SupportsSurface)
             {
                 if (Adapter.SupportsWin32Surface)
+                {
                     return Window.SwapchainWin32;
+                }
 
                 if (Adapter.SupportsX11Surface)
+                {
                     return Window.SwapchainX11;
+                }
 
                 if (Adapter.SupportsWaylandSurface)
+                {
                     return Window.SwapchainWayland;
+                }
 
                 if (Adapter.SupportsMacOSSurface)
+                {
                     return Window.SwapchainNS;
+                }
             }
 
             throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");

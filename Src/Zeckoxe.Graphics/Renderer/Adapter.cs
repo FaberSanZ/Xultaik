@@ -258,6 +258,7 @@ namespace Zeckoxe.Graphics
                 if (instance_extensions_names.Contains("VK_KHR_android_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_android_surface");
+                    SupportsAndroidSurface = true;
                 }
 
                 if (instance_extensions_names.Contains("VK_KHR_xlib_surface"))
@@ -359,35 +360,21 @@ namespace Zeckoxe.Graphics
 
         internal void CreatePhysicalDevice()
         {
-
             // Physical Device
             uint count = 0;
             vkEnumeratePhysicalDevices(instance, &count, null);
+            VkPhysicalDevice* physicalDevicesptr = stackalloc VkPhysicalDevice[(int)count];
+            vkEnumeratePhysicalDevices(instance, &count, physicalDevicesptr);
+
             device_count = count;
 
-            VkPhysicalDevice[] physicalDevices = new VkPhysicalDevice[(int)count];
-            VkPhysicalDevice* physicalDevicesptr = stackalloc VkPhysicalDevice[(int)count];
+            handles = new VkPhysicalDevice[device_count];
 
+            if (device_count >= 1 )
+                handle = physicalDevicesptr[0];
 
-            if (device_count is 0)
-            {
-                // TODO: device_count is 0
-                return;
-            }
-            else if (device_count is 1)
-            {
-                vkEnumeratePhysicalDevices(instance, &count, physicalDevicesptr);
-            }
-            else if (device_count > 1)
-            {
-                fixed (VkPhysicalDevice* ptr = physicalDevices)
-                {
-                    vkEnumeratePhysicalDevices(instance, &count, ptr);
-                }
-            }
-
-            handle = physicalDevicesptr[0];
-            handles = device_count is 1 ? new[] { physicalDevicesptr[0] } : physicalDevices;
+            for (int i = 0; i < device_count; i++)
+                handles[i] = physicalDevicesptr[i];
 
         }
 

@@ -1,4 +1,4 @@
-﻿// Copyright(c) 2019-2020 Faber Leonardo.All Rights Reserved.
+﻿// Copyright(c) 2019-2021 Faber Leonardo.All Rights Reserved.
 
 /*=============================================================================
 	GLFW.cs
