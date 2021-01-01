@@ -41,7 +41,7 @@ The rendering backend is completely focused on Vulkan, however the Engine greatl
 - [ ] Inline uniform blocks (VK_EXT_inline_uniform_block)
 - [ ] Multiview rendering (VK_KHR_multiview)
 - [ ] Conditional rendering (VK_EXT_conditional_rendering)
-- [ ] Variable rate shading (VK_NV_shading_rate_image)
+- [ ] Shading rate (VK_KHR_fragment_shading_rate) 
 - [ ] VK_EXT_descriptor_indexing 
 - [ ] VK_KHR_timeline_semaphore 
 - [ ] VK_EXT_robustness2 
