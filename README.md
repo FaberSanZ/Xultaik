@@ -31,11 +31,11 @@ Games is not the real motivation behind this project.
 
 ## Features:
 
-- [ ] Ray Tracing -><hr>
-		- VK_KHR_acceleration_structure <hr>
-		- VK_KHR_ray_tracing_pipeline <hr>
-		- VK_KHR_ray_query <hr>
-		- VK_KHR_pipeline_library <hr>
+- [ ] Ray Tracing -><br>
+		- VK_KHR_acceleration_structure <br>
+		- VK_KHR_ray_tracing_pipeline <br>
+		- VK_KHR_ray_query <br>
+		- VK_KHR_pipeline_library <br>
 - [ ] Conservative rasterization (VK_EXT_conservative_rasterization)
 - [ ] Push descriptors (VK_KHR_push_descriptor)
 - [ ] Inline uniform blocks (VK_EXT_inline_uniform_block)
