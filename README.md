@@ -25,15 +25,39 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 The rendering backend is completely focused on Vulkan, however the Engine greatly simplifies the most painful points of writing Vulkan. 
 <br>
 
-The engine is designed to test and investigate graphics, physics and GPU acceleration techniques, including games. 
+The engine is designed to test and investigate graphics, physics and GPGPU techniques, including games. 
 Games is not the real motivation behind this project.
 
 
 ## Features:
 
-- [ ] KHR Ray Tracing
-- [x] Entity Component System
+- [ ] Ray Tracing (VK_KHR_acceleration_structure - VK_KHR_ray_tracing_pipeline - VK_KHR_ray_query - VK_KHR_pipeline_library)
+- [ ] Conservative rasterization (VK_EXT_conservative_rasterization)
+- [ ] Push descriptors (VK_KHR_push_descriptor)
+- [ ] Inline uniform blocks (VK_EXT_inline_uniform_block)
+- [ ] Multiview rendering (VK_KHR_multiview)
+- [ ] Conditional rendering (VK_EXT_conditional_rendering)
+- [ ] Variable rate shading (VK_NV_shading_rate_image)
+- [ ] VK_EXT_descriptor_indexing 
+- [ ] VK_KHR_timeline_semaphore 
+- [ ] VK_EXT_robustness2 
+- [ ] VK_KHR_buffer_device_address 
+- [ ] VK_EXT_extended_dynamic_state 
+- [ ] VK_KHR_deferred_host_operations
+- [ ] VK_KHR_device_group 
+- [ ] VK_KHR_device_group_creation 
+- [ ] VK_KHR_external_fence 
+- [ ] VK_KHR_external_memory 
+- [ ] VK_KHR_external_semaphore 
+- [ ] VK_KHR_sampler_ycbcr_conversion 
+- [ ] VK_KHR_imageless_framebuffer 
+- [ ] VK_EXT_memory_priority 
+- [ ] VK_KHR_draw_indirect_count
+- [ ] VK_EXT_inline_uniform_block 
 - [ ] Memory allocator (VMA)
+- [ ] Compute Shader
+- [ ] Geometry Shader
+- [ ] G-Buffer
 - [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
 - [ ] Tessellation (Phong, PN Triangles, and Displacement Mapping)
