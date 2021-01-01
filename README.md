@@ -22,11 +22,11 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 ## Low-level rendering backend
 
-The rendering backend is completely focused on Vulkan, however the Engine greatly simplifies the most painful points of writing Vulkan. 
-<br>
-
 The engine is designed to test and investigate graphics, physics and GPGPU techniques, including games. 
 Games is not the real motivation behind this project.
+
+The rendering backend is completely focused on Vulkan, however the Engine greatly simplifies the most painful points of writing Vulkan. 
+<br>
 
 
 ## Features:
