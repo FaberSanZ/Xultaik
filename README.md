@@ -58,6 +58,7 @@ The rendering backend is completely focused on Vulkan, however the Engine greatl
 - [ ] VK_EXT_memory_priority 
 - [ ] VK_KHR_draw_indirect_count
 - [ ] VK_EXT_inline_uniform_block 
+- [ ] VK_KHR_8bit_storage 
 - [ ] Memory allocator (VMA)
 - [ ] Compute Shader
 - [ ] Geometry Shader
