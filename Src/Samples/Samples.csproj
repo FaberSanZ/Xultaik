@@ -10,11 +10,6 @@
     <None Remove="Samples\LoadGLTF.cs~RFb4470bf.TMP" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="DefaultEcs" Version="0.14.4" />
-    <PackageReference Include="Vortice.Dxc" Version="1.8.38" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Desktop\Zeckoxe.Desktop.csproj" />

@@ -6,7 +6,6 @@
 =============================================================================*/
 
 
-using DefaultEcs;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -17,7 +16,6 @@ using Zeckoxe.Engine;
 using Zeckoxe.Games;
 using Zeckoxe.GLTF;
 using Zeckoxe.Graphics;
-//using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Samples.Samples
@@ -25,7 +23,7 @@ namespace Samples.Samples
 
     public interface IComponent
     {
-        public EntityServices Entity { get; set; }
+        public Entity Entity { get; set; }
         public DeviceInfo DeviceInfo { get; set; }
 
         public Transform Transform { get; set; }
@@ -37,38 +35,33 @@ namespace Samples.Samples
 
     public class DeviceInfo
     {
-        public EntityServices Entity { get; set; }
+        public Entity Entity { get; set; }
 
         public Device Device { get; set; }
         public Framebuffer Framebuffer { get; set; }
     }
 
 
-    public class EntityServices
+    public class Entity
     {
         public Transform Transform;
-        public DefaultEcs.Entity SceneNode;
 
         public List<IComponent> Components { get; set; } = new List<IComponent>();
         public List<string> ComponentsNames { get; set; } = new List<string>();
         public DeviceInfo DeviceInfo { get; }
 
-        public EntityServices(DeviceInfo deviceInfo)
+        public Entity(DeviceInfo deviceInfo)
         {
             Transform = new Transform();
-            World world = new World();
-            SceneNode = world.CreateEntity();
             DeviceInfo = deviceInfo;
 
             //SceneNode.Set
         }
 
 
-        public EntityServices(Game game)
+        public Entity(Game game)
         {
             Transform = new Transform();
-            World world = new World();
-            SceneNode = world.CreateEntity();
             DeviceInfo = new()
             {
                 Device = game.Device,
@@ -103,9 +96,6 @@ namespace Samples.Samples
         public void AddComponent(IComponent Component, string name = "")
         {
             Component.DeviceInfo = DeviceInfo;
-
-            SceneNode.Set<IComponent>(Component);
-
             ComponentsNames.Add(name);
             Components.Add(Component);
             Component.Entity = this;
@@ -201,32 +191,7 @@ namespace Samples.Samples
     {
         public class Camera
         {
-         //   public Ray GetRayFromScreenPoint(float screenX, float screenY, Window window)
-         //   {
-         //;
-
-         //       // Normalized Device Coordinates Top-Left (-1, 1) to Bottom-Right (1, -1)
-
-         //       float z = 1.0f;
-         //       Vector3 deviceCoords = new Vector3(x, y, z);
-
-         //       // Clip Coordinates
-         //       Vector4 clipCoords = new Vector4(deviceCoords.X, deviceCoords.Y, -1.0f, 1.0f);
-
-         //       // View Coordinates
-         //       Matrix4x4 invProj;
-         //       Matrix4x4.Invert(Projection, out invProj);
-         //       Vector4 viewCoords = Vector4.Transform(clipCoords, invProj);
-         //       viewCoords.Z = 1.0f;
-         //       viewCoords.W = 0.0f;
-
-         //       Matrix4x4 invView;
-         //       Matrix4x4.Invert(View, out invView);
-         //       Vector3 worldCoords = new Vector3(Vector4.Transform(viewCoords, invView).X, Vector4.Transform(viewCoords, invView).Y, Vector4.Transform(viewCoords, invView).Z);
-         //       worldCoords = Vector3.Normalize(worldCoords);
-
-         //       return new Ray(position, worldCoords);
-         //   }
+        
 
             public enum CamType { LookAt, FirstPerson };
 
@@ -370,7 +335,7 @@ namespace Samples.Samples
         }
 
 
-        public EntityServices Entity { get; set; }
+        public Entity Entity { get; set; }
         public DeviceInfo DeviceInfo { get; set; }
 
 
@@ -406,23 +371,6 @@ namespace Samples.Samples
     }
 
 
-    public static class ADDList
-    {
-        private static Random rng = new Random();
-
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            int n = list.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = rng.Next(n + 1);
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
-            }
-        }
-    }
 
     public class Model : IComponent
     {
@@ -486,7 +434,7 @@ namespace Samples.Samples
 
             int index = random.Next(0, textures.Count);
 
-            Console.WriteLine(index);
+            //Console.WriteLine(index);
 
             Descriptor = new(PipelineState);
             Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
@@ -495,7 +443,7 @@ namespace Samples.Samples
             Camera = camera;
         }
 
-        public EntityServices Entity { get; set; }
+        public Entity Entity { get; set; }
         public Transform Transform { get; set; }
 
 
@@ -623,7 +571,7 @@ namespace Samples.Samples
     }
     public class ECS : Game, IDisposable
     {
-        private EntityServices Entity;
+        private Entity Entity;
 
         public ECS() : base()
         {
@@ -643,44 +591,35 @@ namespace Samples.Samples
         {
             base.Initialize();
 
-
-            //Camera.SetLens(Window.Width, Window.Height);
-
-
-
-            Entity = new EntityServices(this);
+            Entity = new Entity(this);
             cameraComponent = new CameraComponent(Window);
 
-            for (int i = -2; i < 3; i++)
+            for (int x = -2; x < 3; x++)
             {
-                Entity.AddComponent(new Model("Models/mesh_mat.gltf", cameraComponent, new DeviceInfo() { Device = Device, Framebuffer = Framebuffer })
+                for (int y = -2; y < 3; y++)
                 {
-
-                    Transform = new Transform()
+                    Entity.AddComponent(new Model("Models/mesh_mat.gltf", cameraComponent, new DeviceInfo() { Device = Device, Framebuffer = Framebuffer })
                     {
-                        Position = new Vector3(i, 0, 0),
-                        Scale = new Vector3(.05f, .05f, .05f)
-                    },
 
-                }, "Model");
+                        Transform = new Transform()
+                        {
+                            Position = new Vector3(x, y, 0),
+                            Scale = new Vector3(.05f, .05f, .05f)
+                        },
+
+                    }, "Model");
+                }
+
 
             }
-            Input.Mice[0].DoubleClick += ECS_DoubleClick;
-
-
-
-
-
-            //(Entity.Get("i") as Model).Transform.Position = new Vector3(1,0,0);
-
         }
 
-        private void ECS_DoubleClick(Mouse arg1, MouseButton arg2, Vector2 arg3)
+        private void AddComponent()
         {
-            if (arg2 == MouseButton.Left)
+            var arg3 = Input.Mice[0].Position;
+
+            if (Input.Mice[0].IsButtonPressed(MouseButton.Left))
             {
-                cameraComponent.camera.Update();
-                //var ray = cameraComponent.camera.GetRayFromScreenPoint(arg3.X, arg3.Y, Window);
                 Matrix4x4 p = cameraComponent.camera.Projection;
 
                 // Convert screen pixel to view space.
@@ -693,9 +632,7 @@ namespace Samples.Samples
 
                 Matrix4x4 toWorld = invView;
 
-                ray = new Ray(
-                    Vector3.TransformNormal(ray.Position, toWorld),
-                    Vector3.TransformNormal(ray.Direction, toWorld));
+                ray = new Ray(Vector3.TransformNormal(ray.Position, toWorld), Vector3.TransformNormal(ray.Direction, toWorld));
 
                 Entity.AddComponent(new Model("Models/mesh_mat.gltf", new CameraComponent(Window), new DeviceInfo() { Device = Device, Framebuffer = Framebuffer })
                 {
@@ -714,23 +651,24 @@ namespace Samples.Samples
         private float x = 0.0f;
         public override void Update(GameTime game)
         {
-
-
-
             cameraComponent.camera.Update();
+
+
             for (int i = 0; i < Entity.Components.Count; i++)
             {
-                //Entity.Components[i].Transform.Rotation = Quaternion.CreateFromYawPitchRoll(x, 0, 0);
+                Entity.Components[i].Transform.Rotation = Quaternion.CreateFromYawPitchRoll(x, 0, 0);
             }
             //(Entity.Get("Model") as Model).Transform
-            //m.Transform
+            AddComponent();
+
             Entity.Update();
 
-            x += 0.001f;
+            x += 0.003f;
 
 
 
-
+            Console.WriteLine(Entity.Components.Count);
+            //Console.Clear();
         }
 
 
