@@ -13,8 +13,12 @@
     <PackageReference Include="Vortice.Vulkan" Version="1.2.162" />
   </ItemGroup>
 
+
+
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Core\Zeckoxe.Core.csproj" />
   </ItemGroup>
+
+
 
 </Project>

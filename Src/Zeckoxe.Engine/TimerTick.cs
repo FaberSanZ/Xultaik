@@ -8,17 +8,15 @@
 using System;
 using System.Diagnostics;
 
-namespace Zeckoxe.Games
+namespace Zeckoxe.Engine
 {
     public class TimerTick
     {
-
         private long startRawTime;
         private long lastRawTime;
         private int pauseCount;
         private long pauseStartTime;
         private long timePaused;
-
 
         public TimerTick()
         {

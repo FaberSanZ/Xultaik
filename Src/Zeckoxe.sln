@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28917.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Core", "Zeckoxe.Core\Zeckoxe.Core.csproj", "{C6AD4F88-09FA-4DE0-85F7-81A890E45D58}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Engine", "Zeckoxe.Engine\Zeckoxe.Engine.csproj", "{6F3D0642-0854-4A9B-BEF4-DCCE0763516A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Desktop", "Zeckoxe.Desktop\Zeckoxe.Desktop.csproj", "{DE2E4494-049F-42D1-ADD5-B4A59F3E497A}"
@@ -15,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Graphics", "Zeckoxe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Physics", "Zeckoxe.Physics\Zeckoxe.Physics.csproj", "{CAC36C68-C47D-473E-8778-E79008A77DB4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Games", "Zeckoxe.Games\Zeckoxe.Games.csproj", "{5D4703D8-C085-4479-A788-24C131C63C9F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples", "Samples\Samples.csproj", "{15E38A64-357C-4350-ABAF-C73A3C8CD123}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeckoxe.Core", "Zeckoxe.Core\Zeckoxe.Core.csproj", "{A6D29D4B-F0E7-4A35-95F4-8E733C797968}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C6AD4F88-09FA-4DE0-85F7-81A890E45D58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C6AD4F88-09FA-4DE0-85F7-81A890E45D58}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C6AD4F88-09FA-4DE0-85F7-81A890E45D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C6AD4F88-09FA-4DE0-85F7-81A890E45D58}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6F3D0642-0854-4A9B-BEF4-DCCE0763516A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F3D0642-0854-4A9B-BEF4-DCCE0763516A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F3D0642-0854-4A9B-BEF4-DCCE0763516A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,14 +43,14 @@ Global
 		{CAC36C68-C47D-473E-8778-E79008A77DB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAC36C68-C47D-473E-8778-E79008A77DB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAC36C68-C47D-473E-8778-E79008A77DB4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D4703D8-C085-4479-A788-24C131C63C9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D4703D8-C085-4479-A788-24C131C63C9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D4703D8-C085-4479-A788-24C131C63C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D4703D8-C085-4479-A788-24C131C63C9F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{15E38A64-357C-4350-ABAF-C73A3C8CD123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{15E38A64-357C-4350-ABAF-C73A3C8CD123}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15E38A64-357C-4350-ABAF-C73A3C8CD123}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15E38A64-357C-4350-ABAF-C73A3C8CD123}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6D29D4B-F0E7-4A35-95F4-8E733C797968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6D29D4B-F0E7-4A35-95F4-8E733C797968}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6D29D4B-F0E7-4A35-95F4-8E733C797968}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6D29D4B-F0E7-4A35-95F4-8E733C797968}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

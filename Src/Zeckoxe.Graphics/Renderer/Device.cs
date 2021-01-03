@@ -250,6 +250,16 @@ namespace Zeckoxe.Graphics
                 ComputeFamily = GraphicsFamily;
             }
 
+            float graphics_queue_prio = 0.5f;
+            float compute_queue_prio = 1.0f;
+            float transfer_queue_prio = 1.0f;
+
+            float* pri = stackalloc float[3]
+            {
+                graphics_queue_prio,
+                compute_queue_prio,
+                transfer_queue_prio
+            };
 
             // Dedicated transfer queue
             if ((requestedQueueTypes & VkQueueFlags.Transfer) is not 0)
@@ -264,7 +274,7 @@ namespace Zeckoxe.Graphics
                         sType = VkStructureType.DeviceQueueCreateInfo,
                         queueFamilyIndex = TransferFamily,
                         queueCount = 1,
-                        pQueuePriorities = &defaultQueuePriority
+                        pQueuePriorities = pri + 2
                     };
 
                     queue_create_infos[2] = queue_info;
@@ -277,25 +287,14 @@ namespace Zeckoxe.Graphics
             }
 
 
-            VkPhysicalDeviceFeatures2 features = new()
-            {
-                sType = VkStructureType.PhysicalDeviceFeatures2,
+            VkPhysicalDeviceFeatures2 features = new() 
+            { 
+                sType = VkStructureType.PhysicalDeviceFeatures2, 
             };
 
-            storage_8bit_features = new()
-            {
-                sType = VkStructureType.PhysicalDevice8bitStorageFeatures,
-            };
-
-            acceleration_structure_features = new()
-            {
-                sType = VkStructureType.PhysicalDeviceAccelerationStructureFeaturesKHR,
-            };
-
-            descriptor_indexing_features = new()
-            {
-                sType = VkStructureType.PhysicalDeviceDescriptorIndexingFeatures,
-            };
+            storage_8bit_features = new() { sType = VkStructureType.PhysicalDevice8bitStorageFeatures, };
+            acceleration_structure_features = new() { sType = VkStructureType.PhysicalDeviceAccelerationStructureFeaturesKHR, };
+            descriptor_indexing_features = new() { sType = VkStructureType.PhysicalDeviceDescriptorIndexingFeatures, };
 
 
             bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);

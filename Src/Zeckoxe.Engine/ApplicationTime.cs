@@ -8,15 +8,15 @@
 
 using System;
 
-namespace Zeckoxe.Games
+namespace Zeckoxe.Engine
 {
-    public class GameTime
+    public class ApplicationTime
     {
 
         private readonly TimerTick watch = new TimerTick();
 
 
-        public GameTime()
+        public ApplicationTime()
         {
             watch.Reset();
         }

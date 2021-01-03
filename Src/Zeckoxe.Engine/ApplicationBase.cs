@@ -10,22 +10,21 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Zeckoxe.Games
+namespace Zeckoxe.Engine
 {
-    public class GameBase
+    public class ApplicationBase
     {
-        private readonly ServiceProvider serviceProvider;
         private readonly object tickLock = new object();
 
         private bool isExiting;
         private readonly Stopwatch stopwatch = new Stopwatch();
 
-        protected GameBase()
+        protected ApplicationBase()
         {
 
         }
 
-        public GameTime Time { get; } = new GameTime();
+        public ApplicationTime Time { get; } = new ApplicationTime();
 
         public bool IsRunning { get; private set; }
 
@@ -113,7 +112,7 @@ namespace Zeckoxe.Games
         {
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(ApplicationTime gameTime)
         {
 
         }
@@ -123,7 +122,7 @@ namespace Zeckoxe.Games
 
         }
 
-        public virtual void Draw(GameTime gameTime)
+        public virtual void Draw(ApplicationTime gameTime)
         {
 
         }

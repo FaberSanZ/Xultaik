@@ -12,18 +12,18 @@ using System.Linq;
 using System.Numerics;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
-using Zeckoxe.Games;
+using Zeckoxe.Engine;
 using Zeckoxe.Graphics;
 
 namespace Zeckoxe.Engine
 {
-    public class Game : GameBase
+    public class Application : ApplicationBase
     {
-        public Game() : base()
+        public Application() : base()
         {
-
-
         }
+
+
         public PresentationParameters Parameters { get; set; }
 
         public Adapter Adapter { get; set; }
@@ -146,7 +146,7 @@ namespace Zeckoxe.Engine
 
             base.BeginDraw();
         }
-        public override void Update(GameTime gameTime)
+        public override void Update(ApplicationTime gameTime)
         {
             base.Update(gameTime);
         }

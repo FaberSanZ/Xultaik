@@ -7,10 +7,6 @@
 =============================================================================*/
 
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -41,6 +37,7 @@ namespace Zeckoxe.Graphics
 
         public void Recreate()
         {
+
             switch (Type)
             {
                 case CommandBufferType.Generic:
@@ -64,9 +61,9 @@ namespace Zeckoxe.Graphics
                     break;
             }
 
-
+            // TODO: Fence
             // Fences (Used to check draw command buffer completion)
-            VkFenceCreateInfo fenceCreateInfo = new VkFenceCreateInfo()
+            VkFenceCreateInfo fenceCreateInfo = new()
             {
                 sType = VkStructureType.FenceCreateInfo
             };
@@ -114,7 +111,7 @@ namespace Zeckoxe.Graphics
             }
 
 
-            VkCommandBufferBeginInfo beginInfo = new VkCommandBufferBeginInfo()
+            VkCommandBufferBeginInfo beginInfo = new()
             {
                 sType = VkStructureType.CommandBufferBeginInfo,
                 flags = VkCommandBufferUsageFlags.RenderPassContinue,
@@ -133,18 +130,14 @@ namespace Zeckoxe.Graphics
             // We use two attachments (color and depth) that are cleared at the start of the subpass and as such we need to set clear values for both
             VkClearValue* clearValues = stackalloc VkClearValue[2];
             clearValues[0].color = new(r, g, b, a);
-            clearValues[1].depthStencil = new(1, 0)
-            {
-                //depth = 1.0f,
-                //stencil = 0
-            };
+            clearValues[1].depthStencil = new(1, 0);
 
             int h = NativeDevice.NativeParameters.BackBufferHeight;
             int w = NativeDevice.NativeParameters.BackBufferWidth;
             int x = 0;
             int y = 0;
 
-            VkRenderPassBeginInfo renderPassBeginInfo = new VkRenderPassBeginInfo()
+            VkRenderPassBeginInfo renderPassBeginInfo = new()
             {
                 sType = VkStructureType.RenderPassBeginInfo,
                 renderArea = new(x, y, w, h),
@@ -161,9 +154,9 @@ namespace Zeckoxe.Graphics
 
         public void Clear(float R, float G, float B, float A = 1.0f)
         {
-            VkClearColorValue clearValue = new VkClearColorValue(R, G, B, A);
+            VkClearColorValue clearValue = new(R, G, B, A);
 
-            VkImageSubresourceRange clearRange = new VkImageSubresourceRange()
+            VkImageSubresourceRange clearRange = new()
             {
                 aspectMask = VkImageAspectFlags.Color,
                 baseMipLevel = 0,
@@ -236,13 +229,13 @@ namespace Zeckoxe.Graphics
 
         }
 
-        void copy_image(Texture dst, Texture src, VkOffset3D dst_offset,
+        private void copy_image(Texture dst, Texture src, VkOffset3D dst_offset,
                         VkOffset3D src_offset, VkExtent3D extent,
                         VkImageSubresourceLayers dst_subresource,
                         VkImageSubresourceLayers src_subresource)
         {
 
-            VkImageCopy region = new() 
+            VkImageCopy region = new()
             {
                 dstOffset = dst_offset,
                 srcOffset = src_offset,
@@ -265,10 +258,10 @@ namespace Zeckoxe.Graphics
 
             for (uint i = 0; i < levels; i++)
             {
-                regions[i] = new VkImageCopy
+                regions[i] = new()
                 {
                     extent = new(src.Width, src.Height, src.Depth),
-                    
+
                     dstSubresource = new()
                     {
                         mipLevel = i,
@@ -303,7 +296,7 @@ namespace Zeckoxe.Graphics
 
         internal void copy_buffer_to_image(Texture image, Buffer buffer, uint num_blits, VkBufferImageCopy* blits)
         {
-            vkCmdCopyBufferToImage(handle, buffer.handle ,image.handle, image.get_layout(VkImageLayout.TransferDstOptimal), num_blits, blits);
+            vkCmdCopyBufferToImage(handle, buffer.handle, image.handle, image.get_layout(VkImageLayout.TransferDstOptimal), num_blits, blits);
         }
 
         internal void copy_image_to_buffer(Buffer buffer, Texture image, uint num_blits, VkBufferImageCopy* blits)
@@ -314,9 +307,9 @@ namespace Zeckoxe.Graphics
 
 
 
-        internal void copy_buffer_to_image(Texture image, Buffer src, ulong buffer_offset,VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
+        internal void copy_buffer_to_image(Texture image, Buffer src, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
         {
-            VkBufferImageCopy region = new VkBufferImageCopy()
+            VkBufferImageCopy region = new()
             {
                 bufferOffset = buffer_offset,
                 bufferRowLength = row_length,
@@ -326,12 +319,12 @@ namespace Zeckoxe.Graphics
                 imageExtent = extent,
             };
 
-            vkCmdCopyBufferToImage(handle, src.handle, image.handle, image.get_layout(VkImageLayout.TransferDstOptimal),1, &region);
+            vkCmdCopyBufferToImage(handle, src.handle, image.handle, image.get_layout(VkImageLayout.TransferDstOptimal), 1, &region);
         }
 
         internal void copy_buffer_to_image(Buffer src, Texture image, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
         {
-            VkBufferImageCopy region = new VkBufferImageCopy()
+            VkBufferImageCopy region = new()
             {
                 bufferOffset = buffer_offset,
                 bufferRowLength = row_length,
@@ -399,7 +392,7 @@ namespace Zeckoxe.Graphics
         public void SetScissor(int width, int height, int x, int y)
         {
             // Update dynamic scissor state
-            VkRect2D scissor = new(x,y,width,height);
+            VkRect2D scissor = new(x, y, width, height);
 
             vkCmdSetScissor(handle, 0, 1, &scissor);
         }
@@ -410,14 +403,14 @@ namespace Zeckoxe.Graphics
             float vpHeight = -Height;
 
 
-            VkViewport Viewport = new(X, vpY, Width, vpHeight, MinDepth, MaxDepth);
+            VkViewport Viewport = new(X, Y, Width, Height, MinDepth, MaxDepth);
 
             vkCmdSetViewport(handle, 0, 1, &Viewport);
         }
 
         public void SetVertexBuffer(Buffer buffer, ulong offsets = 0)
         {
-            fixed (VkBuffer* bufferptr = &buffer.handle) 
+            fixed (VkBuffer* bufferptr = &buffer.handle)
             {
                 vkCmdBindVertexBuffers(handle, 0, 1, bufferptr, &offsets);
             }
@@ -460,7 +453,7 @@ namespace Zeckoxe.Graphics
 
         public void PushConstant<T>(GraphicsPipelineState pipelineLayout, ShaderStage stageFlags, T data, uint offset = 0) where T : unmanaged
         {
-            vkCmdPushConstants(handle, pipelineLayout._pipelineLayout, (VkShaderStageFlags)stageFlags, offset, (uint)Interop.SizeOf<T>(), Interop.AllocToPointer<T>(ref data));
+            vkCmdPushConstants(handle, pipelineLayout._pipelineLayout, (VkShaderStageFlags)stageFlags, offset, (uint)Interop.SizeOf<T>(), (void*)&data /*Interop.AllocToPointer<T>(ref data)*/);
         }
 
 
@@ -521,7 +514,7 @@ namespace Zeckoxe.Graphics
                 flags = VkCommandBufferUsageFlags.OneTimeSubmit,
             };
             vkBeginCommandBuffer(handle, &cmdBufInfo);
-            
+
         }
 
         public void End()

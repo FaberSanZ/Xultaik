@@ -13,7 +13,6 @@ using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
-using Zeckoxe.Games;
 using Zeckoxe.GLTF;
 using Zeckoxe.Graphics;
 using Buffer = Zeckoxe.Graphics.Buffer;
@@ -59,7 +58,7 @@ namespace Samples.Samples
         }
 
 
-        public Entity(Game game)
+        public Entity(Application game)
         {
             Transform = new Transform();
             DeviceInfo = new()
@@ -569,7 +568,7 @@ namespace Samples.Samples
             ConstBuffer.SetData(ref uniform);
         }
     }
-    public class ECS : Game, IDisposable
+    public class ECS : Application, IDisposable
     {
         private Entity Entity;
 
@@ -649,7 +648,7 @@ namespace Samples.Samples
         }
 
         private float x = 0.0f;
-        public override void Update(GameTime game)
+        public override void Update(ApplicationTime game)
         {
             cameraComponent.camera.Update();
 

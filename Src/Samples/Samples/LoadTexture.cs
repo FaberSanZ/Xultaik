@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
-using Zeckoxe.Games;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.Physics;
@@ -13,7 +12,7 @@ using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Samples.Samples
 {
-    public class LoadTexture : Game, IDisposable
+    public class LoadTexture : Application, IDisposable
     {
         internal int TextureWidth = 256; //Texture Data
         internal int TextureHeight = 256; //Texture Data
@@ -71,7 +70,7 @@ namespace Samples.Samples
 
 
         public Camera Camera { get; set; }
-        public GameTime GameTime { get; set; }
+        public ApplicationTime GameTime { get; set; }
 
         public int[] Indices = new[]
         {
@@ -294,7 +293,7 @@ namespace Samples.Samples
 
 
 
-        public override void Update(GameTime game)
+        public override void Update(ApplicationTime game)
         {
             Camera.Update(game);
 

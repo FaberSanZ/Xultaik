@@ -13,7 +13,6 @@ using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
-using Zeckoxe.Games;
 using Zeckoxe.GLTF;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
@@ -23,7 +22,7 @@ using Buffer = Zeckoxe.Graphics.Buffer;
 namespace Samples.Samples
 {
 
-    public class LoadGLTF : Game, IDisposable
+    public class LoadGLTF : Application, IDisposable
     {
         public class Camera
         {
@@ -220,7 +219,7 @@ namespace Samples.Samples
 
 
         public Camera camera { get; set; }
-        public GameTime GameTime { get; set; }
+        public ApplicationTime GameTime { get; set; }
         public GLTFLoader<VertexPositionNormal> GLTFModel { get; set; }
         //public List<Mesh> Meshes { get; private set; }
 
@@ -377,7 +376,7 @@ namespace Samples.Samples
 
 
 
-        public override void Update(GameTime game)
+        public override void Update(ApplicationTime game)
         {
             //camera.Update(game);
 

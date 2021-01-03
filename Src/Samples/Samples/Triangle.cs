@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
-using Zeckoxe.Games;
 using Zeckoxe.Graphics;
 using Zeckoxe.Graphics.Toolkit;
 using Zeckoxe.Physics;
@@ -13,7 +12,7 @@ using Buffer = Zeckoxe.Graphics.Buffer;
 
 namespace Samples.Samples
 {
-    public class Triangle : Game, IDisposable
+    public class Triangle : Application, IDisposable
     {
         [StructLayout(LayoutKind.Sequential)]
         public struct TransformUniform
@@ -211,7 +210,7 @@ namespace Samples.Samples
         }
 
 
-        public override void Update(GameTime game)
+        public override void Update(ApplicationTime game)
         {
             Camera.Update(game);
 

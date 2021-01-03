@@ -12,6 +12,7 @@
     <PackageReference Include="Silk.NET.GLFW" Version="1.9.0" />
   </ItemGroup>
 
+
   <ItemGroup>
     <ProjectReference Include="..\Zeckoxe.Core\Zeckoxe.Core.csproj" />
   </ItemGroup>

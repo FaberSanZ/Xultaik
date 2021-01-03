@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Zeckoxe.Core;
 
 namespace Zeckoxe.Physics
 {
@@ -75,7 +74,7 @@ namespace Zeckoxe.Physics
 
 
 
-        public static readonly int SizeInBytes = Interop.SizeOf<Quaternion>();
+        //public static readonly int SizeInBytes = Interop.SizeOf<Quaternion>();
 
         public static readonly Quaternion Zero = new Quaternion();
 

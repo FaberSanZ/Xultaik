@@ -7,7 +7,7 @@
 
 using System;
 using System.Numerics;
-using Zeckoxe.Games;
+using Zeckoxe.Engine;
 
 namespace Zeckoxe.Physics
 {
@@ -308,7 +308,7 @@ namespace Zeckoxe.Physics
         }
 
 
-        public void Update(GameTime gameTime)
+        public void Update(ApplicationTime gameTime)
         {
             Velocity = Vector3.Zero;
 
@@ -379,47 +379,47 @@ namespace Zeckoxe.Physics
             }
         }
 
-        public void MoveForward(GameTime gameTime, bool slow)
+        public void MoveForward(ApplicationTime gameTime, bool slow)
         {
             Move(gameTime, Forward, slow);
         }
 
-        public void MoveBackward(GameTime gameTime, bool slow)
+        public void MoveBackward(ApplicationTime gameTime, bool slow)
         {
             Move(gameTime, Backward, slow);
         }
 
-        public void MoveLeft(GameTime gameTime, bool slow)
+        public void MoveLeft(ApplicationTime gameTime, bool slow)
         {
             Move(gameTime, Left, slow);
         }
 
-        public void MoveRight(GameTime gameTime, bool slow)
+        public void MoveRight(ApplicationTime gameTime, bool slow)
         {
             Move(gameTime, Right, slow);
         }
 
-        public void RotateUp(GameTime gameTime, bool slow)
+        public void RotateUp(ApplicationTime gameTime, bool slow)
         {
             Rotate(gameTime, Left, slow);
         }
 
-        public void RotateDown(GameTime gameTime, bool slow)
+        public void RotateDown(ApplicationTime gameTime, bool slow)
         {
             Rotate(gameTime, Right, slow);
         }
 
-        public void RotateLeft(GameTime gameTime, bool slow)
+        public void RotateLeft(ApplicationTime gameTime, bool slow)
         {
             Rotate(gameTime, Down, slow);
         }
 
-        public void RotateRight(GameTime gameTime, bool slow)
+        public void RotateRight(ApplicationTime gameTime, bool slow)
         {
             Rotate(gameTime, Up, slow);
         }
 
-        public void RotateMouse(GameTime gameTime, float deltaX, float deltaY)
+        public void RotateMouse(ApplicationTime gameTime, float deltaX, float deltaY)
         {
             if (deltaX != 0f)
             {
@@ -436,12 +436,12 @@ namespace Zeckoxe.Physics
             }
         }
 
-        public void ZoomIn(GameTime gameTime, bool slow)
+        public void ZoomIn(ApplicationTime gameTime, bool slow)
         {
             Zoom(gameTime, true, slow);
         }
 
-        public void ZoomOut(GameTime gameTime, bool slow)
+        public void ZoomOut(ApplicationTime gameTime, bool slow)
         {
             Zoom(gameTime, false, slow);
         }
@@ -585,7 +585,7 @@ namespace Zeckoxe.Physics
             }
         }
 
-        private void Move(GameTime gameTime, Vector3 vector, bool slow)
+        private void Move(ApplicationTime gameTime, Vector3 vector, bool slow)
         {
             StopTranslations();
 
@@ -599,7 +599,7 @@ namespace Zeckoxe.Physics
             }
         }
 
-        private void Rotate(GameTime gameTime, Vector3 axis, bool slow)
+        private void Rotate(ApplicationTime gameTime, Vector3 axis, bool slow)
         {
             float degrees = (slow) ? SlowRotationDelta : RotationDelta;
 
@@ -634,7 +634,7 @@ namespace Zeckoxe.Physics
             }
         }
 
-        private void Zoom(GameTime gameTime, bool zoomIn, bool slow)
+        private void Zoom(ApplicationTime gameTime, bool zoomIn, bool slow)
         {
             StopTranslations();
 
@@ -673,7 +673,7 @@ namespace Zeckoxe.Physics
             }
         }
 
-        private void UpdateTranslations(GameTime gameTime)
+        private void UpdateTranslations(ApplicationTime gameTime)
         {
             if (translationMode != CameraTranslations.None)
             {
