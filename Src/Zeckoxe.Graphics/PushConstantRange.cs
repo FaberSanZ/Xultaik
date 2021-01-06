@@ -5,7 +5,7 @@
 	PushConstantRange.cs
 =============================================================================*/
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public class PushConstantRange
     {

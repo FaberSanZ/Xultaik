@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
-using Zeckoxe.Graphics;
+using Zeckoxe.Vulkan;
 
 namespace Samples.Samples
 {

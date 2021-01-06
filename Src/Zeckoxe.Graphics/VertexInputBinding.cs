@@ -5,7 +5,7 @@
 	VertexInputBinding.cs
 =============================================================================*/
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public class VertexInputBinding
     {

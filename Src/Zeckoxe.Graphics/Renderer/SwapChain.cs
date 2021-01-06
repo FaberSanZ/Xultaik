@@ -15,7 +15,7 @@ using static Vortice.Vulkan.Vulkan;
 using static Vortice.Vulkan.VkUtils;
 using Zeckoxe.Core;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     // Provided by VK_KHR_xlib_surface
     internal unsafe struct VkXlibSurfaceCreateInfoKHR

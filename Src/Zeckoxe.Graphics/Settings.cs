@@ -10,11 +10,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public class Settings
     {
         public ValidationType Validation { get; set; }
+
+        public OptionalDeviceExtensions OptionalDeviceExtensions { get; set; }
 
         public bool Fullscreen { get; set; }
 

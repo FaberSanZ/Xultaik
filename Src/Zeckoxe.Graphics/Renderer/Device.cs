@@ -12,7 +12,7 @@ using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public unsafe class Device : IDisposable
     {
@@ -50,7 +50,7 @@ namespace Zeckoxe.Graphics
         internal DescriptorPool _descriptorPoolManager_0;
         internal DescriptorPool _descriptorPoolManager_1;
 
-        
+
         internal VkPhysicalDeviceProperties device_properties;
         internal VkPhysicalDeviceSubgroupProperties subgroup_properties;
         internal VkPhysicalDevice8BitStorageFeatures storage_8bit_features;
@@ -147,7 +147,7 @@ namespace Zeckoxe.Graphics
             command_buffer_secondary = CreateCommandBufferSecondary();
 
 
-            NativeCommand = new(this, CommandBufferType.AsyncGraphics); 
+            NativeCommand = new(this, CommandBufferType.AsyncGraphics);
 
 
 
@@ -180,7 +180,9 @@ namespace Zeckoxe.Graphics
             queue_family_properties = new VkQueueFamilyProperties[count];
 
             for (int i = 0; i < count; i++)
+            {
                 queue_family_properties[i] = queue_family_properties_ptr[i];
+            }
         }
 
 
@@ -287,9 +289,9 @@ namespace Zeckoxe.Graphics
             }
 
 
-            VkPhysicalDeviceFeatures2 features = new() 
-            { 
-                sType = VkStructureType.PhysicalDeviceFeatures2, 
+            VkPhysicalDeviceFeatures2 features = new()
+            {
+                sType = VkStructureType.PhysicalDeviceFeatures2,
             };
 
             storage_8bit_features = new() { sType = VkStructureType.PhysicalDevice8bitStorageFeatures, };
@@ -299,6 +301,10 @@ namespace Zeckoxe.Graphics
 
             bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
 
+            OptionalDeviceExtensions OptDeviceExt = NativeAdapter.Parameters.Settings.OptionalDeviceExtensions;
+
+            bool OptRayTracing = (OptDeviceExt & OptionalDeviceExtensions.RayTracing) != 0;
+            bool OptMultiview = (OptDeviceExt & OptionalDeviceExtensions.Multiview) != 0;
 
             void** ppNext = &features.pNext;
 
@@ -314,10 +320,10 @@ namespace Zeckoxe.Graphics
                         ppNext = &feature->pNext;
                     }
                 }
-                
 
 
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && NativeAdapter.SupportsMaintenance_3)
+
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && OptRayTracing)
                 {
                     DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
                     fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
@@ -338,7 +344,7 @@ namespace Zeckoxe.Graphics
                     }
                 }
 
-                
+
 
 
 
@@ -346,9 +352,9 @@ namespace Zeckoxe.Graphics
             }
 
             if (NativeAdapter.device_extensions_names.Contains("VK_KHR_swapchain"))
+            {
                 DeviceExtensionsNames.Add("VK_KHR_swapchain");
-            
-
+            }
 
             VkDeviceCreateInfo deviceCreateInfo = new()
             {
@@ -360,20 +366,26 @@ namespace Zeckoxe.Graphics
 
 
             if (NativeAdapter.SupportsVulkan11Device && NativeAdapter.SupportsVulkan11Instance)
+            {
                 vkGetPhysicalDeviceFeatures2(NativeAdapter.handle, out features);
-
+            }
             else if (NativeAdapter.SupportsPhysicalDeviceProperties2)
+            {
                 vkGetPhysicalDeviceFeatures2KHR(NativeAdapter.handle, out features);
-
+            }
             else
+            {
                 vkGetPhysicalDeviceFeatures(NativeAdapter.handle, out features.features);
-
+            }
 
             if (NativeAdapter.SupportsPhysicalDeviceProperties2)
+            {
                 deviceCreateInfo.pNext = &features;
-
+            }
             else
+            {
                 deviceCreateInfo.pEnabledFeatures = &features.features;
+            }
 
 
 
@@ -424,7 +436,9 @@ namespace Zeckoxe.Graphics
 
 
             if (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device)
+            {
                 vkGetPhysicalDeviceProperties2(NativeAdapter.handle, out props);
+            }
 
             if (DeviceExtensionsNames.Any())
             {
@@ -434,7 +448,7 @@ namespace Zeckoxe.Graphics
 
 
 
-            vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out handle).CheckResult();            
+            vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out handle).CheckResult();
 
         }
 
@@ -674,11 +688,13 @@ namespace Zeckoxe.Graphics
             foreach (VkPresentModeKHR availablePresentMode in presentModes)
             {
                 if (availablePresentMode is VkPresentModeKHR.Mailbox)
+                {
                     return availablePresentMode; // MailboxKHR
-
+                }
                 else if (availablePresentMode is VkPresentModeKHR.Immediate)
+                {
                     return availablePresentMode; // ImmediateKHR;
-                
+                }
             }
 
             return VkPresentModeKHR.Immediate;

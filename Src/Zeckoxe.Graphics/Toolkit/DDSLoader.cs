@@ -15,9 +15,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Zeckoxe.Core;
-using Zeckoxe.Graphics;
+using Zeckoxe.Vulkan;
 
-namespace Zeckoxe.Graphics.Toolkit
+namespace Zeckoxe.Vulkan.Toolkit
 {
 
     public class DDSLoader
@@ -257,13 +257,13 @@ namespace Zeckoxe.Graphics.Toolkit
             private static bool ValidateTexture(DdsHeader header, out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap)
             {
                 depth = 0x0;
-                format = Graphics.PixelFormat.Undefined;
+                format = Vulkan.PixelFormat.Undefined;
                 resDim = ResourceDimension.Unknown;
                 arraySize = 1;
                 isCubeMap = false;
 
                 format = header.PixelFormat.GetDXGIFormat();
-                if (format ==  Graphics.PixelFormat.Undefined)
+                if (format ==  Vulkan.PixelFormat.Undefined)
                     return false;
                 
 
@@ -293,7 +293,7 @@ namespace Zeckoxe.Graphics.Toolkit
             private static bool ValidateTexture(HeaderDXT10 header, HeaderFlags flags, out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap)
             {
                 depth = 0;
-                format = Graphics.PixelFormat.Undefined;
+                format = Vulkan.PixelFormat.Undefined;
                 resDim = ResourceDimension.Unknown;
                 arraySize = 0x1;
                 isCubeMap = false;

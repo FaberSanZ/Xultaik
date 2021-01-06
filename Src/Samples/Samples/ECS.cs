@@ -14,8 +14,8 @@ using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.GLTF;
-using Zeckoxe.Graphics;
-using Buffer = Zeckoxe.Graphics.Buffer;
+using Zeckoxe.Vulkan;
+using Buffer = Zeckoxe.Vulkan.Buffer;
 
 namespace Samples.Samples
 {

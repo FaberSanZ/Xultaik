@@ -3,17 +3,19 @@
 
 
 /*=============================================================================
-	ValidationType.cs
+	CommandList.cs
 =============================================================================*/
 
 namespace Zeckoxe.Vulkan
 {
-    public enum ValidationType
+    public enum OptionalDeviceExtensions
     {
-        None = 1 << 0,
-        Default = 1 << 1,
-        Console = 1 << 2,
-        ImGui = 1 << 3,
-        Debug = 1 << 4,
+        RayTracing = 1 << 0,
+        ConservativeRasterization = 1 << 1,
+        CopyCommands2 = 1 << 2,
+        BindMemory2 = 1 << 3,
+        Multiview = 1 << 4,
+        ConditionalRendering = 1 << 5,
+        ShadingRate = 1 << 6,
     }
 }

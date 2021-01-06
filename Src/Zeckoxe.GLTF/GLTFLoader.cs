@@ -17,7 +17,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 using Zeckoxe.GLTF.Schema;
-using Zeckoxe.Graphics;
+using Zeckoxe.Vulkan;
 
 
 namespace Zeckoxe.GLTF
@@ -117,10 +117,10 @@ namespace Zeckoxe.GLTF
 
         public TextureData TextureData { get; set; }
 
-        public Graphics.Buffer VertexBuffer { get; private set; }
+        public Vulkan.Buffer VertexBuffer { get; private set; }
         public int VertexCount { get; private set; }
 
-        public Graphics.Buffer IndexBuffer { get; private set; }
+        public Vulkan.Buffer IndexBuffer { get; private set; }
         public int IndexCount { get; private set; }
 
         public List<Mesh> Meshes { get; set; }

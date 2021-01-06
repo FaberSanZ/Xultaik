@@ -7,9 +7,8 @@
 
 using System;
 using Vortice.Vulkan;
-using Zeckoxe.Graphics;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public class TextureDescription
     {

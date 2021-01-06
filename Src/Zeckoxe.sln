@@ -9,13 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Desktop", "Zeckoxe.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.GLTF", "Zeckoxe.GLTF\Zeckoxe.GLTF.csproj", "{74DCF63A-4D13-4DAF-9FC9-BEE43385D94D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Graphics", "Zeckoxe.Graphics\Zeckoxe.Graphics.csproj", "{5B2D9D0F-C52A-4C0D-809A-343E82975851}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Vulkan", "Zeckoxe.Graphics\Zeckoxe.Vulkan.csproj", "{5B2D9D0F-C52A-4C0D-809A-343E82975851}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Physics", "Zeckoxe.Physics\Zeckoxe.Physics.csproj", "{CAC36C68-C47D-473E-8778-E79008A77DB4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples", "Samples\Samples.csproj", "{15E38A64-357C-4350-ABAF-C73A3C8CD123}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeckoxe.Core", "Zeckoxe.Core\Zeckoxe.Core.csproj", "{A6D29D4B-F0E7-4A35-95F4-8E733C797968}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Core", "Zeckoxe.Core\Zeckoxe.Core.csproj", "{A6D29D4B-F0E7-4A35-95F4-8E733C797968}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

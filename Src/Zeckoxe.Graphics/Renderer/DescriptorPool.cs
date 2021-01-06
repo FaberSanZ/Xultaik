@@ -10,7 +10,7 @@ using System.Linq;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
 
     public unsafe class DescriptorPool : GraphicsResource

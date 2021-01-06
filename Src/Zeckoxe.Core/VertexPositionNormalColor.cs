@@ -10,7 +10,7 @@ using System;
 using System.Numerics;
 using Zeckoxe.Core;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Core
 {
 
     public struct VertexPositionNormalColor : IEquatable<VertexPositionNormalColor>

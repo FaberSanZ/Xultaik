@@ -11,7 +11,7 @@ using System;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     // TODO: Use the new VK_EXT_debug_utils extension 
     public class DebugReport : GraphicsResource

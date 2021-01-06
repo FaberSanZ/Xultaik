@@ -9,7 +9,7 @@
 
 using System;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public enum MultisampleCount
     {

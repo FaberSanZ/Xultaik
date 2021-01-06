@@ -6,9 +6,9 @@
 =============================================================================*/
 
 using Vortice.Vulkan;
-using Zeckoxe.Graphics.Toolkit;
+using Zeckoxe.Vulkan.Toolkit;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public unsafe class Texture2D : Texture
     {

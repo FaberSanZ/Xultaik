@@ -15,7 +15,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Zeckoxe.Graphics.Toolkit
+namespace Zeckoxe.Vulkan.Toolkit
 {
     public class KTXLoader
     {

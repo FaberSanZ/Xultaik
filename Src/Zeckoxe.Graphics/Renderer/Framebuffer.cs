@@ -10,7 +10,7 @@
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     // TODO: Framebuffer
 

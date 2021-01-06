@@ -5,7 +5,7 @@ using System.Text;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public unsafe class Sampler : GraphicsResource
     {

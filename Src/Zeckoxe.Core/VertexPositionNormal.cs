@@ -9,7 +9,7 @@
 using System.Numerics;
 using Zeckoxe.Core;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Core
 {
     public struct VertexPositionNormal
     {
@@ -20,11 +20,11 @@ namespace Zeckoxe.Graphics
         }
 
 
-        [VertexAttribute(VertexAttributeType.Position, PixelFormat.R32G32B32SFloat)]
+        [VertexAttribute(VertexAttributeType.Position)]
         public Vector3 Position { get; set; }
 
 
-        [VertexAttribute(VertexAttributeType.Normal, PixelFormat.R32G32B32SFloat)]
+        [VertexAttribute(VertexAttributeType.Normal)]
         public Vector3 Normal { get; set; }
 
 

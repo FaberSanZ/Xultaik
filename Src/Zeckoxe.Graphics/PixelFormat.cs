@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     /// <summary>
     /// Available pixel formats.

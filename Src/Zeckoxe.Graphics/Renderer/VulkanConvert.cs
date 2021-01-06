@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vortice.Vulkan;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public static class VulkanConvert
     {

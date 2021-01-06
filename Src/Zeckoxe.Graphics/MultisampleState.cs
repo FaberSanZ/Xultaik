@@ -5,7 +5,7 @@
 	InputAssemblyState.cs
 =============================================================================*/
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public class MultisampleState
     {

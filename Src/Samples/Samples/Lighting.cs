@@ -7,9 +7,9 @@ using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.GLTF;
-using Zeckoxe.Graphics;
-using Zeckoxe.Graphics.Toolkit;
-using Buffer = Zeckoxe.Graphics.Buffer;
+using Zeckoxe.Vulkan;
+using Zeckoxe.Vulkan.Toolkit;
+using Buffer = Zeckoxe.Vulkan.Buffer;
 
 
 namespace Samples.Samples

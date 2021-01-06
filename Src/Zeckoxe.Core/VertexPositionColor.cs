@@ -10,7 +10,7 @@ using System;
 using System.Numerics;
 using Zeckoxe.Core;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Core
 {
 
 
@@ -50,11 +50,11 @@ namespace Zeckoxe.Graphics
             Color = color;
         }
 
-        [VertexAttribute(VertexAttributeType.Position, PixelFormat.R32G32B32SFloat)]
+        [VertexAttribute(VertexAttributeType.Position)]
         public Vector3 Position { get; set; }
 
 
-        [VertexAttribute(VertexAttributeType.Color, PixelFormat.R32G32B32SFloat)]
+        [VertexAttribute(VertexAttributeType.Color)]
         public Vector3 Color { get; set; }
 
 
@@ -123,11 +123,11 @@ namespace Zeckoxe.Graphics
             Color = color;
         }
 
-        [VertexAttribute(VertexAttributeType.Position, PixelFormat.R32G32B32SFloat)]
+        [VertexAttribute(VertexAttributeType.Position)]
         public Vector3 Position { get; set; }
 
 
-        [VertexAttribute(VertexAttributeType.Color, PixelFormat.R32G32B32A32SFloat)]
+        [VertexAttribute(VertexAttributeType.Color)]
         public Vector4 Color { get; set; }
 
 

@@ -6,7 +6,7 @@
 =============================================================================*/
 
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Core
 {
     public enum VertexAttributeType
     {

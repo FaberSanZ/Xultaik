@@ -12,7 +12,7 @@ using System.IO;
 using System.Text;
 using Shaderc;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     // TODO: ShaderStage
     public enum ShaderStage

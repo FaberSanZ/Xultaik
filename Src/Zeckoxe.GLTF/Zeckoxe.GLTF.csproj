@@ -7,7 +7,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Graphics.csproj" />
+    <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Vulkan.csproj" />
     <ProjectReference Include="..\Zeckoxe.Physics\Zeckoxe.Physics.csproj" />
   </ItemGroup>
 

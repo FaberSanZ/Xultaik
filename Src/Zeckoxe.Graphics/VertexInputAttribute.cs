@@ -5,7 +5,7 @@
 	VertexInputAttribute.cs
 =============================================================================*/
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
 
     public class VertexInputAttribute

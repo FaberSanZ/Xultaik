@@ -11,7 +11,7 @@ using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     [Flags]
     public enum TextureFlags

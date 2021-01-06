@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public class PipelineVertexInput
     {

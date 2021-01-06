@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using Vortice.Vulkan;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
 	public static class PixelFormatExtensions
 	{

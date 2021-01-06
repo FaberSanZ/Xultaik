@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public enum FrontFace
     {

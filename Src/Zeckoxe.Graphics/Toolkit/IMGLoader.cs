@@ -16,7 +16,7 @@ using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 
 
-namespace Zeckoxe.Graphics.Toolkit
+namespace Zeckoxe.Vulkan.Toolkit
 {
 
     public unsafe class IMGLoader : IDisposable

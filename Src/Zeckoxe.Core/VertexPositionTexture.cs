@@ -10,7 +10,7 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Core
 {
     public interface IVertex
     {

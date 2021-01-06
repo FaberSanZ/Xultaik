@@ -1,5 +1,5 @@
 ﻿
-namespace Zeckoxe.Graphics.Memory
+namespace Zeckoxe.Vulkan.Memory
 {
 
     public class MemoryStats

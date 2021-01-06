@@ -11,7 +11,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Zeckoxe.Core;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Core
 {
 
     [StructLayout(LayoutKind.Sequential)]
@@ -25,17 +25,17 @@ namespace Zeckoxe.Graphics
             TextureCoordinate = textureCoordinate;
         }
 
-        [VertexAttribute(VertexAttributeType.Position, PixelFormat.Undefined)]
+        [VertexAttribute(VertexAttributeType.Position)]
         public Vector3 Position { get; set; }
 
 
 
-        [VertexAttribute(VertexAttributeType.Normal, PixelFormat.Undefined)]
+        [VertexAttribute(VertexAttributeType.Normal)]
         public Vector3 Normal { get; set; }
 
 
 
-        [VertexAttribute(VertexAttributeType.TextureCoordinate, PixelFormat.Undefined)]
+        [VertexAttribute(VertexAttributeType.TextureCoordinate)]
         public Vector2 TextureCoordinate { get; set; }
 
 

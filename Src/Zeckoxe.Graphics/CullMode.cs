@@ -6,7 +6,7 @@
 	CullMode.cs
 =============================================================================*/
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Vulkan
 {
     public enum CullMode
     {

@@ -8,16 +8,14 @@
 
 using System;
 
-namespace Zeckoxe.Graphics
+namespace Zeckoxe.Core
 {
     public class VertexAttribute : Attribute
     {
-        public PixelFormat Format;
         public VertexAttributeType Type;
 
-        public VertexAttribute(VertexAttributeType type, PixelFormat format)
+        public VertexAttribute(VertexAttributeType type)
         {
-            Format = format;
             Type = type;
         }
     }

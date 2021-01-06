@@ -15,7 +15,7 @@
     <ProjectReference Include="..\Zeckoxe.Desktop\Zeckoxe.Desktop.csproj" />
     <ProjectReference Include="..\Zeckoxe.Engine\Zeckoxe.Engine.csproj" />
     <ProjectReference Include="..\Zeckoxe.GLTF\Zeckoxe.GLTF.csproj" />
-    <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Graphics.csproj" />
+    <ProjectReference Include="..\Zeckoxe.Graphics\Zeckoxe.Vulkan.csproj" />
     <ProjectReference Include="..\Zeckoxe.Physics\Zeckoxe.Physics.csproj" />
   </ItemGroup>
 
