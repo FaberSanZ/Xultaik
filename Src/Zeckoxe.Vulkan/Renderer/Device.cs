@@ -305,6 +305,8 @@ namespace Zeckoxe.Vulkan
 
             bool OptRayTracing = (OptDeviceExt & OptionalDeviceExtensions.RayTracing) != 0;
             bool OptMultiview = (OptDeviceExt & OptionalDeviceExtensions.Multiview) != 0;
+            bool OptShadingRate = (OptDeviceExt & OptionalDeviceExtensions.ShadingRate) != 0;
+            bool OptConsRaster= (OptDeviceExt & OptionalDeviceExtensions.ConservativeRasterization) != 0;
 
             void** ppNext = &features.pNext;
 

@@ -21,12 +21,12 @@ namespace Samples.Samples
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                //SwapchainSource = Window.GetSwapchainSource(),
                 Settings = new()
                 {
                     Validation = ValidationType.Console | ValidationType.Debug,
                     Fullscreen = false,
                     VSync = false,
+                    OptionalDeviceExtensions = OptionalDeviceExtensions.BindMemory2 | OptionalDeviceExtensions.CopyCommands2,
                 },
             };
         }
