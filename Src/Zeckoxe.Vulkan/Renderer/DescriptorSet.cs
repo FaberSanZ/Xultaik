@@ -14,7 +14,7 @@ namespace Zeckoxe.Vulkan
 
     internal class ImageSamplerInfo
     {
-        public Texture _texture { get; set; }
+        public Image _texture { get; set; }
         public Sampler _sampler { get; set; }
 
 
@@ -22,7 +22,7 @@ namespace Zeckoxe.Vulkan
         internal int _binding { get; set; }
 
 
-        public ImageSamplerInfo(Texture texture, Sampler sampler, int offset, int binding)
+        public ImageSamplerInfo(Image texture, Sampler sampler, int offset, int binding)
         {
             _texture = texture;
             _sampler = sampler;
@@ -40,7 +40,7 @@ namespace Zeckoxe.Vulkan
 
 
         internal bool is_texture { get; set; }
-        internal Texture _texture { get; set; }
+        internal Image _texture { get; set; }
         
         
         internal Sampler _sampler { get; set; }
@@ -107,7 +107,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public void SetTexture2DSampler(int offset, Texture2D texture, Sampler sampler)
+        public void SetTexture2DSampler(int offset, Image2D texture, Sampler sampler)
         {
 
             resourceInfos.Add(new ResourceInfo
@@ -125,7 +125,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public void SetImageSampler(int offset, Texture texture, Sampler sampler)
+        public void SetImageSampler(int offset, Image texture, Sampler sampler)
         {
 
             resourceInfos.Add(new ResourceInfo

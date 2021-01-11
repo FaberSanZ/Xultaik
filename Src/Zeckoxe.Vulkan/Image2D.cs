@@ -10,15 +10,15 @@ using Zeckoxe.Vulkan.Toolkit;
 
 namespace Zeckoxe.Vulkan
 {
-    public unsafe class Texture2D : Texture
+    public unsafe class Image2D : Image
     {
-        public Texture2D(Device device, TextureDescription description) : base(device, description)
+        public Image2D(Device device, ImageDescription description) : base(device, description)
         {
         }
 
-        public static Texture2D LoadFromData(Device device, TextureData tex2D)
+        public static Image2D LoadFromData(Device device, ImageData tex2D)
         {
-            Texture2D text2d = new Texture2D(device, new TextureDescription
+            Image2D text2d = new Image2D(device, new ImageDescription
             {
                 Flags = TextureFlags.ShaderResource,
                 Usage = GraphicsResourceUsage.Staging,
@@ -28,7 +28,7 @@ namespace Zeckoxe.Vulkan
                 Data = tex2D.Data,
                 format = (VkFormat)tex2D.Format,
                 Format = tex2D.Format,
-                Dimension = ImageDimension.Texture2D,
+                Dimension = ImageDimension.Image2D,
             });
 
             text2d.LoadTexture2D();
@@ -37,11 +37,11 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public static Texture2D LoadFromData(Device device, byte[] data)
+        public static Image2D LoadFromData(Device device, byte[] data)
         {
             var tex2D = IMGLoader.LoadFromData(data);
 
-            Texture2D text2d = new Texture2D(device, new TextureDescription
+            Image2D text2d = new Image2D(device, new ImageDescription
             {
                 Flags = TextureFlags.ShaderResource,
                 Usage = GraphicsResourceUsage.Staging,
@@ -51,7 +51,7 @@ namespace Zeckoxe.Vulkan
                 Data = tex2D.Data,
                 format = (VkFormat)tex2D.Format,
                 Format = tex2D.Format,
-                Dimension = ImageDimension.Texture2D,
+                Dimension = ImageDimension.Image2D,
             });
 
             text2d.LoadTexture2D();
@@ -59,32 +59,18 @@ namespace Zeckoxe.Vulkan
             return text2d;
         }
 
-        public static Texture2D LoadFromFile(Device device, string path)
+        public static Image2D LoadFromFile(Device device, string path)
         {
-            TextureData tex2D = new TextureData();
+            ImageData tex2D = new ImageData();
 
-            if (path.EndsWith(".ktx"))
-            {
+            if (path.EndsWith(".ktx") )
                 tex2D = KTXLoader.LoadFromFile(path);
-            }
 
-            if (path.EndsWith(".png"))
-            {
+            else if (path.EndsWith(".png") || path.EndsWith(".bmp") || path.EndsWith(".jpg"))
                 tex2D = IMGLoader.LoadFromFile(path);
-            }
-
-            if (path.EndsWith(".bmp"))
-            {
-                tex2D = IMGLoader.LoadFromFile(path);
-            }
-
-            if (path.EndsWith(".jpg"))
-            {
-                tex2D = IMGLoader.LoadFromFile(path);
-            }
 
 
-            Texture2D text2d = new Texture2D(device, new TextureDescription
+            Image2D text2d = new Image2D(device, new ImageDescription
             {
                 Flags = TextureFlags.ShaderResource,
                 Usage = GraphicsResourceUsage.Staging,
@@ -94,7 +80,7 @@ namespace Zeckoxe.Vulkan
                 Data = tex2D.Data,
                 format = (VkFormat)tex2D.Format,
                 Format = tex2D.Format,
-                Dimension = ImageDimension.Texture2D,
+                Dimension = ImageDimension.Image2D,
             });
 
             text2d.LoadTexture2D();

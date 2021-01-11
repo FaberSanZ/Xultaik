@@ -268,9 +268,9 @@ namespace Samples.Samples
             CreatePipelineState();
 
 
-            Texture2D text1 = Texture2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
-            Texture2D text2 = Texture2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
-            Texture2D text3 = Texture2D.LoadFromFile(Device, "floor_tiles.bmp");
+            Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
+            Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
+            Image2D text3 = Image2D.LoadFromFile(Device, "floor_tiles.bmp");
 
             Sampler sampler = new Sampler(Device);
 

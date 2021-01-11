@@ -46,7 +46,7 @@ namespace Zeckoxe.Vulkan.Toolkit
                 }
             }
 
-            TextureData _data = new TextureData()
+            ImageData _data = new ImageData()
             {
                 Width = _image.Width,
                 Height = _image.Height,
@@ -86,7 +86,7 @@ namespace Zeckoxe.Vulkan.Toolkit
                 }
             }
 
-            TextureData data = new TextureData()
+            ImageData data = new ImageData()
             {
                 Width = _image.Width,
                 Height = _image.Height,
@@ -104,7 +104,7 @@ namespace Zeckoxe.Vulkan.Toolkit
         }
 
 
-        public TextureData TextureData { get; private set; }
+        public ImageData TextureData { get; private set; }
 
         public int Width => _image.Width;
 
@@ -119,12 +119,12 @@ namespace Zeckoxe.Vulkan.Toolkit
         public bool IsCubeMap => false;
 
 
-        public static TextureData LoadFromData(byte[] data)
+        public static ImageData LoadFromData(byte[] data)
         {
             return new IMGLoader(data).TextureData;
         }
 
-        public static TextureData LoadFromFile(string filename)
+        public static ImageData LoadFromFile(string filename)
         {
             return new IMGLoader(filename).TextureData;
         }

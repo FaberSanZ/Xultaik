@@ -835,7 +835,7 @@ namespace Zeckoxe.Vulkan.Toolkit
         }
 
 
-        public TextureData TextureData { get; private set; }
+        public ImageData TextureData { get; private set; }
 
 
 
@@ -853,18 +853,18 @@ namespace Zeckoxe.Vulkan.Toolkit
 
 
 
-        public static TextureData LoadFromFile(string filename) => new DDSLoader(filename).TextureData;
+        public static ImageData LoadFromFile(string filename) => new DDSLoader(filename).TextureData;
         
 
         
 
-        internal TextureData LoadTexture(DdsHeader header, HeaderDXT10? header10, byte[] bitData, int offset, int maxsize)
+        internal ImageData LoadTexture(DdsHeader header, HeaderDXT10? header10, byte[] bitData, int offset, int maxsize)
         {
             bool validFile = DdsHeader.ValidateTexture(
             header, header10,
             out int depth, out PixelFormat format, out ResourceDimension resDim, out int arraySize, out bool isCubeMap);
 
-            TextureData textureData = new TextureData()
+            ImageData textureData = new ImageData()
             {
                 Width = header.Width,
                 Height = header.Height,

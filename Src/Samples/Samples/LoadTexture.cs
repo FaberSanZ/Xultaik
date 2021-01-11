@@ -142,8 +142,8 @@ namespace Samples.Samples
 
             //var img = new TextureData(GenerateTextureData(), TextureWidth, TextureWidth, 1, 1, TextureWidth * TextureWidth * 4, false, PixelFormat.R8G8B8A8UNorm);
 
-            Texture2D text1 = Texture2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
-            Texture2D text2 = Texture2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
+            Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
+            Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
             Sampler sampler = new Sampler(Device);
 
             DescriptorSets["Descriptor1"] = new(PipelineStates["Texture"]);

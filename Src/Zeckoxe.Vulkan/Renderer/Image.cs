@@ -79,7 +79,7 @@ namespace Zeckoxe.Vulkan
 
 
     // TODO: Vulkan Memory Allocator
-    public unsafe class Texture : GraphicsResource, IDisposable
+    public unsafe class Image : GraphicsResource, IDisposable
     {
         internal enum ImageViewMiscFlagBits
         {
@@ -111,7 +111,7 @@ namespace Zeckoxe.Vulkan
         internal VkImageView depth_stencil_view;
 
 
-        public Texture(Device device, TextureDescription description) : base(device)
+        public Image(Device device, ImageDescription description) : base(device)
         {
             Description = description;
 
@@ -120,7 +120,7 @@ namespace Zeckoxe.Vulkan
 
 
 
-        public TextureDescription Description { get; set; }
+        public ImageDescription Description { get; set; }
         public ImageDimension Dimension => Description.Dimension;
         public PixelFormat Format => Description.Format;
         public byte[] Data => Description.Data;
@@ -215,16 +215,16 @@ namespace Zeckoxe.Vulkan
 
             switch (Dimension)
             {
-                case ImageDimension.Texture1D:
+                case ImageDimension.Image1D:
                     image_create_info.imageType = VkImageType.Image1D;
                     break;
-                case ImageDimension.Texture2D:
+                case ImageDimension.Image2D:
                     image_create_info.imageType = VkImageType.Image2D;
                     break;
-                case ImageDimension.Texture3D:
+                case ImageDimension.Image3D:
                     image_create_info.imageType = VkImageType.Image3D;
                     break;
-                case ImageDimension.TextureCube:
+                case ImageDimension.ImageCube:
                     image_create_info.imageType = VkImageType.Image2D;
                     image_create_info.flags |= VkImageCreateFlags.CubeCompatible;
                     break;

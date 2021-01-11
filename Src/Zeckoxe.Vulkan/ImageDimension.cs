@@ -9,12 +9,12 @@ namespace Zeckoxe.Vulkan
 {
     public enum ImageDimension
     {
-        Texture1D,
+        Image1D,
 
-        Texture2D,
+        Image2D,
 
-        Texture3D,
+        Image3D,
 
-        TextureCube
+        ImageCube
     }
 }

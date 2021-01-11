@@ -2,7 +2,7 @@
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 /*=============================================================================
-	Texture3D.cs
+	Texture1D.cs
 =============================================================================*/
 
 
@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Zeckoxe.Vulkan
 {
-    class Texture3D
+    class Image1D
     {
     }
 }

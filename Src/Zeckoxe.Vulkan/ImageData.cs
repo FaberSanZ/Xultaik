@@ -32,7 +32,7 @@ namespace Zeckoxe.Vulkan
         public PixelFormat Format { get; set; }
     }
 
-    public class TextureData //: ITextureData
+    public class ImageData //: ITextureData
     {
         public byte[] Data { get; internal set; } = Array.Empty<Byte>();
 
@@ -51,7 +51,7 @@ namespace Zeckoxe.Vulkan
         public PixelFormat   Format { get; set; }
         //byte[] ITextureData.Data { get => Data; set => Data = value; }
 
-        public TextureData(byte[] data, int width, int height, int depth, int mipMaps, int size, bool isCubeMap, PixelFormat format)
+        public ImageData(byte[] data, int width, int height, int depth, int mipMaps, int size, bool isCubeMap, PixelFormat format)
         {
             Data = data;
             Width = width;
@@ -67,7 +67,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public TextureData()
+        public ImageData()
         {
             Data = Array.Empty<byte>();
             Width = 0;

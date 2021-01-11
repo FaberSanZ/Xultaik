@@ -121,7 +121,7 @@ namespace Zeckoxe.Vulkan.Toolkit
 
 
 
-            TextureData data = new TextureData()
+            ImageData data = new ImageData()
             {
                 Width = (int)Header.PixelWidth,
                 Height = (int)Header.PixelHeight,
@@ -137,7 +137,7 @@ namespace Zeckoxe.Vulkan.Toolkit
             TextureData = data;
         }
 
-        public TextureData TextureData { get; private set; }
+        public ImageData TextureData { get; private set; }
 
         public int Width => (int)Header.PixelWidth;
 
@@ -169,7 +169,7 @@ namespace Zeckoxe.Vulkan.Toolkit
 
 
 
-        public static TextureData LoadFromFile(string filename)
+        public static ImageData LoadFromFile(string filename)
         {
             return new KTXLoader(filename).TextureData;
         }

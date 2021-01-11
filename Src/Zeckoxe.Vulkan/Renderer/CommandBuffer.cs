@@ -229,7 +229,7 @@ namespace Zeckoxe.Vulkan
 
         }
 
-        private void copy_image(Texture dst, Texture src, VkOffset3D dst_offset,
+        private void copy_image(Image dst, Image src, VkOffset3D dst_offset,
                         VkOffset3D src_offset, VkExtent3D extent,
                         VkImageSubresourceLayers dst_subresource,
                         VkImageSubresourceLayers src_subresource)
@@ -249,7 +249,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        internal void copy_image(Texture dst, Texture src)
+        internal void copy_image(Image dst, Image src)
         {
             VkImageCopy* regions = stackalloc VkImageCopy[32];
 
@@ -287,19 +287,19 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public void CopyTexture(Texture dst, Texture src)
+        public void CopyTexture(Image dst, Image src)
         {
             copy_image(dst, src);
         }
 
 
 
-        internal void copy_buffer_to_image(Texture image, Buffer buffer, uint num_blits, VkBufferImageCopy* blits)
+        internal void copy_buffer_to_image(Image image, Buffer buffer, uint num_blits, VkBufferImageCopy* blits)
         {
             vkCmdCopyBufferToImage(handle, buffer.handle, image.handle, image.get_layout(VkImageLayout.TransferDstOptimal), num_blits, blits);
         }
 
-        internal void copy_image_to_buffer(Buffer buffer, Texture image, uint num_blits, VkBufferImageCopy* blits)
+        internal void copy_image_to_buffer(Buffer buffer, Image image, uint num_blits, VkBufferImageCopy* blits)
         {
 
             vkCmdCopyImageToBuffer(handle, image.handle, image.get_layout(VkImageLayout.TransferSrcOptimal), buffer.handle, num_blits, blits);
@@ -307,7 +307,7 @@ namespace Zeckoxe.Vulkan
 
 
 
-        internal void copy_buffer_to_image(Texture image, Buffer src, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
+        internal void copy_buffer_to_image(Image image, Buffer src, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
         {
             VkBufferImageCopy region = new()
             {
@@ -322,7 +322,7 @@ namespace Zeckoxe.Vulkan
             vkCmdCopyBufferToImage(handle, src.handle, image.handle, image.get_layout(VkImageLayout.TransferDstOptimal), 1, &region);
         }
 
-        internal void copy_buffer_to_image(Buffer src, Texture image, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
+        internal void copy_buffer_to_image(Buffer src, Image image, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
         {
             VkBufferImageCopy region = new()
             {

@@ -71,7 +71,7 @@ namespace Zeckoxe.Vulkan
             CreateBackBuffers();
 
 
-            DepthStencil = new Texture(device, new TextureDescription
+            DepthStencil = new Image(device, new ImageDescription
             {
                 Flags = TextureFlags.DepthStencil,
                 Usage = GraphicsResourceUsage.Default,
@@ -82,7 +82,7 @@ namespace Zeckoxe.Vulkan
 
         public PresentationParameters Parameters { get; set; }
         public PixelFormat ColorFormat { get; private set; }
-        public Texture DepthStencil { get; private set; }
+        public Image DepthStencil { get; private set; }
         public SwapchainSource SwapchainSource { get; set; }
 
 

@@ -115,7 +115,7 @@ namespace Zeckoxe.GLTF
 
         public ColorType ColorType { get; set; }
 
-        public TextureData TextureData { get; set; }
+        public ImageData TextureData { get; set; }
 
         public Vulkan.Buffer VertexBuffer { get; private set; }
         public int VertexCount { get; private set; }
@@ -143,16 +143,16 @@ namespace Zeckoxe.GLTF
 
 
 
-        public List<Texture2D> LoadTexture()
+        public List<Image2D> LoadTexture()
         {
             if (gltf.Images == null)
                 return null;
 
-            List<Texture2D> textures = new List<Texture2D>();
+            List<Image2D> textures = new List<Image2D>();
 
             foreach (Schema.Image img in gltf.Images)
             {
-                Texture2D texture = null;
+                Image2D texture = null;
 
                 string imgName = img.Name;
 
@@ -165,11 +165,11 @@ namespace Zeckoxe.GLTF
                 else if (img.Uri.StartsWith("data:", StringComparison.Ordinal))
                 {
                     //load base64 encoded image
-                    texture = Texture2D.LoadFromData(_device, load_data_uri(img));
+                    texture = Image2D.LoadFromData(_device, load_data_uri(img));
                 }
                 else
                 {
-                    texture = Texture2D.LoadFromFile(_device, Path.Combine(baseDirectory, img.Uri));
+                    texture = Image2D.LoadFromFile(_device, Path.Combine(baseDirectory, img.Uri));
                     imgName += ";" + img.Uri;
                 }
 

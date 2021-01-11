@@ -10,7 +10,7 @@ using Vortice.Vulkan;
 
 namespace Zeckoxe.Vulkan
 {
-    public class TextureDescription
+    public class ImageDescription
     {
         public ImageDimension Dimension { get; set; }
 

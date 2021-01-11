@@ -2,17 +2,17 @@
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 /*=============================================================================
-	Image.cs
+	Texture3D.cs
 =============================================================================*/
 
 
 using System;
-using Vortice.Vulkan;
-using static Vortice.Vulkan.Vulkan;
-
+using System.Collections.Generic;
+using System.Text;
 
 namespace Zeckoxe.Vulkan
 {
-
-
+    class Image3D
+    {
+    }
 }

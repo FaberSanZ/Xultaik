@@ -415,11 +415,11 @@ namespace Samples.Samples
             uniform = new(camera.camera.Projection, Matrix4x4.Identity, camera.camera.View);
             CreatePipelineState();
 
-            Texture2D text1 = Texture2D.LoadFromFile(deviceInfo.Device, "UVCheckerMap08-512.png");
-            Texture2D text2 = Texture2D.LoadFromFile(deviceInfo.Device, "IndustryForgedDark512.ktx");
-            Texture2D text3 = Texture2D.LoadFromFile(deviceInfo.Device, "floor_tiles.bmp");
+            Image2D text1 = Image2D.LoadFromFile(deviceInfo.Device, "UVCheckerMap08-512.png");
+            Image2D text2 = Image2D.LoadFromFile(deviceInfo.Device, "IndustryForgedDark512.ktx");
+            Image2D text3 = Image2D.LoadFromFile(deviceInfo.Device, "floor_tiles.bmp");
 
-            List<Texture2D> textures = new List<Texture2D>()
+            List<Image2D> textures = new List<Image2D>()
             {
                 text1,
                 text2,
