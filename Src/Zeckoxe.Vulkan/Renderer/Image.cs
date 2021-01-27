@@ -77,17 +77,14 @@ namespace Zeckoxe.Vulkan
         MipBand = 3,
     }
 
+    public enum ImageViewMiscFlagBits
+    {
+        ForceArray = 1 << 0
+    }
 
-    // TODO: Vulkan Memory Allocator
+
     public unsafe class Image : GraphicsResource, IDisposable
     {
-        internal enum ImageViewMiscFlagBits
-        {
-            IMAGE_VIEW_MISC_FORCE_ARRAY_BIT = 1 << 0
-        };
-
-
-
         internal Buffer buffer;
 
         internal VkPointerSize row_pitch;
