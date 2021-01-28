@@ -75,7 +75,7 @@ namespace Zeckoxe.GLTF
         internal bool buffersBound = false;
 
         private readonly int defaultSceneIndex = -1;
-        private readonly List<Scene> Scenes;
+        public List<Scene> Scenes;
         private readonly string _path;
 
 

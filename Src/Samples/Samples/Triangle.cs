@@ -49,8 +49,6 @@ namespace Samples.Samples
         public Buffer IndexBuffer { get; set; }
         public Buffer ConstBuffer { get; set; }
 
-        public DescriptorSet Descriptor { get; set; }
-
         public TransformUniform Uniform;
 
 
@@ -86,12 +84,6 @@ namespace Samples.Samples
             CreateBuffers();
 
             CreatePipelineState();
-
-
-
-            Descriptor = new(PipelineState);
-            Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)Descriptor
-            Descriptor.Build();
         }
 
 
@@ -149,17 +141,6 @@ namespace Samples.Samples
             {
                 Framebuffer = Framebuffer,
 
-                Layouts =
-                {
-                    // Binding 0: Uniform buffer (Vertex shader)
-                    new()
-                    {
-                        Stage = ShaderStage.Vertex,
-                        Type = DescriptorType.UniformBuffer,
-                        Binding = 0,
-                    }
-                },
-
                 InputAssemblyState = new()
                 {
                     PrimitiveType = PrimitiveType.TriangleList,
@@ -206,6 +187,8 @@ namespace Samples.Samples
                 },
             };
 
+            Pipelinedescription.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer);
+
             PipelineState = new(Pipelinedescription);
         }
 
@@ -237,7 +220,6 @@ namespace Samples.Samples
             commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
             commandBuffer.SetIndexBuffer(IndexBuffer);
-            commandBuffer.BindDescriptorSets(Descriptor);
             commandBuffer.DrawIndexed(3, 1, 0, 0, 0);
         }
 

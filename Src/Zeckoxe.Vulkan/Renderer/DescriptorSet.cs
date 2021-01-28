@@ -50,6 +50,11 @@ namespace Zeckoxe.Vulkan
         internal int _offset { get; set; }
         internal int _binding { get; set; }
 
+
+
+        internal VkDescriptorType descriptor_type { get; set; }
+        internal VkShaderStageFlags shader_descriptor_type { get; set; }
+
     }
 
 
@@ -83,6 +88,7 @@ namespace Zeckoxe.Vulkan
         internal List<BufferInfo> buffers = new();
         internal List<ImageSamplerInfo> images = new();
         internal List<ResourceInfo> resourceInfos = new();
+
 
 
         public DescriptorSet(GraphicsPipelineState pipelineState) : base(pipelineState.NativeDevice)

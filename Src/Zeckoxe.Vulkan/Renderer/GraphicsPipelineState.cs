@@ -7,10 +7,8 @@
 
 
 
-using SixLabors.ImageSharp.Formats;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -29,10 +27,20 @@ namespace Zeckoxe.Vulkan
         {
             PipelineStateDescription = description;
             Recreate();
+
+            DescriptorSet = new DescriptorSet(this)
+            {
+                resourceInfos = description.resourceInfos
+            };
+
+            if (DescriptorSet.resourceInfos.Any())
+            {
+                DescriptorSet.Build();
+            }
         }
 
         public PipelineStateDescription PipelineStateDescription { get; set; }
-
+        public DescriptorSet DescriptorSet { get; set; }
         private void Recreate()
         {
             SetupDescriptorSetLayout();
@@ -51,58 +59,31 @@ namespace Zeckoxe.Vulkan
             // Setup layout of descriptors used in this example
             // Basically connects the different shader stages to descriptors for binding uniform buffers, image samplers, etc.
             // So every shader binding should map to one descriptor set layout binding
-            List<DescriptorSetLayout> Layouts = PipelineStateDescription.Layouts;
 
-            VkDescriptorSetLayoutBinding* layoutBinding = stackalloc VkDescriptorSetLayoutBinding[Layouts.Count];
-
-            uint uniformBufferCount = 0;
-            uint sampledImageCount = 0;
-            uint samplerCount = 0;
-            uint storageBufferCount = 0;
-            uint storageImageCount = 0;
+            VkDescriptorSetLayoutBinding* layoutBinding = stackalloc VkDescriptorSetLayoutBinding[PipelineStateDescription.resourceInfos.Count];
 
 
-            for (int i = 0; i < Layouts.Count; i++)
+            for (int i = 0; i < PipelineStateDescription.resourceInfos.Count; i++)
             {
+                ResourceInfo res = PipelineStateDescription.resourceInfos[i];
+
                 layoutBinding[i] = new VkDescriptorSetLayoutBinding
                 {
-                    binding = (uint)Layouts[i].Binding,
-                    descriptorCount = (uint)1, // TODO: descriptorCount
-                    descriptorType = (VkDescriptorType)Layouts[i].Type, // TODO: TOVkDescriptorType
-                    stageFlags = (VkShaderStageFlags)Layouts[i].Stage, // TODO: TOVkVkShaderStageFlags
+                    binding = (uint)res._binding,
+                    descriptorCount = 1, // TODO: descriptorCount
+                    descriptorType = res.descriptor_type,
+                    stageFlags = res.shader_descriptor_type,
                     pImmutableSamplers = null,
                 };
-
-
-
-
-                switch (layoutBinding[i].descriptorType)
-                {
-                    case VkDescriptorType.Sampler:
-                        samplerCount += 1;
-                        break;
-                    case VkDescriptorType.SampledImage:
-                        sampledImageCount += 1;
-                        break;
-                    case VkDescriptorType.StorageImage:
-                        storageImageCount += 1;
-                        break;
-                    case VkDescriptorType.UniformBuffer:
-                        uniformBufferCount += 1;
-                        break;
-                    case VkDescriptorType.StorageBuffer:
-                        storageBufferCount += 1;
-                        break;
-                }
-
             }
-
 
 
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
             {
                 sType = VkStructureType.DescriptorSetLayoutCreateInfo,
-                bindingCount = (uint)Layouts.Count,
+                flags = VkDescriptorSetLayoutCreateFlags.None,
+                pNext = null,
+                bindingCount = (uint)PipelineStateDescription.resourceInfos.Count,
                 pBindings = layoutBinding
             };
 
@@ -119,7 +100,7 @@ namespace Zeckoxe.Vulkan
                 _descriptorSetLayout
             };
 
-            var push_constants = PipelineStateDescription.PushConstants;
+            List<PushConstantRange> push_constants = PipelineStateDescription.PushConstants;
 
             VkPushConstantRange* push_constant = stackalloc VkPushConstantRange[push_constants.Count];
 

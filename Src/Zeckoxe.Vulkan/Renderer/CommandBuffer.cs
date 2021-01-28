@@ -7,6 +7,7 @@
 =============================================================================*/
 
 
+using System.Linq;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -375,6 +376,9 @@ namespace Zeckoxe.Vulkan
         public void SetGraphicPipeline(GraphicsPipelineState pipelineState)
         {
             vkCmdBindPipeline(handle, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
+
+            if (pipelineState.DescriptorSet.resourceInfos.Any())
+                BindDescriptorSets(pipelineState.DescriptorSet);
         }
 
 
@@ -453,7 +457,7 @@ namespace Zeckoxe.Vulkan
 
         public void PushConstant<T>(GraphicsPipelineState pipelineLayout, ShaderStage stageFlags, T data, uint offset = 0) where T : unmanaged
         {
-            vkCmdPushConstants(handle, pipelineLayout._pipelineLayout, (VkShaderStageFlags)stageFlags, offset, (uint)Interop.SizeOf<T>(), (void*)&data /*Interop.AllocToPointer<T>(ref data)*/);
+            vkCmdPushConstants(handle, pipelineLayout._pipelineLayout, stageFlags.StageToVkShaderStageFlags(), offset, (uint)Interop.SizeOf<T>(), (void*)&data /*Interop.AllocToPointer<T>(ref data)*/);
         }
 
 

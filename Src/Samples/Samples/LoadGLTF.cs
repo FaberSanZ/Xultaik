@@ -224,7 +224,6 @@ namespace Samples.Samples
         //public List<Mesh> Meshes { get; private set; }
 
 
-        public DescriptorSet Descriptor;
         public Buffer ConstBuffer;
         public GraphicsPipelineState PipelineState;
         public Dictionary<string, ShaderBytecode> Shaders = new();
@@ -266,7 +265,6 @@ namespace Samples.Samples
 
 
 
-            CreatePipelineState();
 
 
             ConstBuffer = new(Device, new()
@@ -277,10 +275,8 @@ namespace Samples.Samples
             });
 
 
+            CreatePipelineState();
 
-            Descriptor = new(PipelineState);
-            Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor.Build();
 
             GLTFModel = new(Device, "Models/DamagedHelmet.gltf");
 
@@ -331,8 +327,7 @@ namespace Samples.Samples
                 }
             };
 
-
-            PipelineState = new(new() 
+            PipelineStateDescription pipelineStateDescription = new()
             {
                 Framebuffer = Framebuffer,
 
@@ -371,24 +366,22 @@ namespace Samples.Samples
                     Shaders["Vertex"],
                 },
 
-            });
+            };
+            pipelineStateDescription.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
+
+            PipelineState = new(pipelineStateDescription);
         }
 
 
 
         public override void Update(ApplicationTime game)
         {
-            //camera.Update(game);
-
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, .0f, 0.0f);
             uniform.Update(camera, Model);
             ConstBuffer.SetData(ref uniform);
 
-
-
             yaw += 0.0006f * MathF.PI;
-
         }
 
 
@@ -405,9 +398,38 @@ namespace Samples.Samples
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
 
             commandBuffer.SetGraphicPipeline(PipelineState);
-            commandBuffer.BindDescriptorSets(Descriptor);
 
-            GLTFModel.Draw(commandBuffer, PipelineState);
+
+            commandBuffer.SetVertexBuffers(new[] { GLTFModel.VertexBuffer });
+            commandBuffer.SetIndexBuffer(GLTFModel.IndexBuffer, 0, GLTFModel.IndexType);
+
+
+            foreach (Scene sc in GLTFModel.Scenes)
+            {
+                foreach (Node node in sc.Root.Children)
+                {
+                    RenderNode(commandBuffer, node, sc.Root.LocalMatrix);
+                }
+            }
+
+        }
+
+        public void RenderNode(CommandBuffer cmd, Node node, Matrix4x4 currentTransform)
+        {
+            Matrix4x4 localMat = node.LocalMatrix * currentTransform;
+
+            cmd.PushConstant<Matrix4x4>(PipelineState, ShaderStage.Vertex, localMat);
+
+            if (node.Mesh is not null)
+                foreach (Primitive p in node.Mesh.Primitives)
+                    cmd.DrawIndexed(p.IndexCount, 1, p.FirstIndex, p.FirstVertex, 0);
+
+
+            if (node.Children is null)
+                return;
+
+            foreach (Node child in node.Children)
+                RenderNode(cmd, child, localMat);
         }
 
 

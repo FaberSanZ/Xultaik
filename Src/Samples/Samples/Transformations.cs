@@ -116,15 +116,15 @@ namespace Samples.Samples
 
 
         
-        public GraphicsPipelineState PipelineState { get; set; }
+        public GraphicsPipelineState PipelineState_0 { get; set; }
+        public GraphicsPipelineState PipelineState_1 { get; set; }
+
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
         public Buffer ConstBuffer { get; set; }
         public Buffer ConstBuffer2 { get; set; }
         public Camera Camera { get; set; }
         public ApplicationTime GameTime { get; set; }
-        public DescriptorSet Descriptor1 { get; set; }
-        public DescriptorSet Descriptor2 { get; set; }
 
         // Transform Uniform 
         public TransformUniform uniform;
@@ -169,16 +169,6 @@ namespace Samples.Samples
 
             CreatePipelineState();
 
-
-            // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor1 = new(PipelineState);
-            Descriptor1.SetUniformBuffer(0, ConstBuffer);
-            Descriptor1.Build();
-
-            // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor2 = new(PipelineState);
-            Descriptor2.SetUniformBuffer(0, ConstBuffer2);
-            Descriptor2.Build();
 
             yaw = 0;
             pitch = 0;
@@ -226,29 +216,12 @@ namespace Samples.Samples
 
         public void CreatePipelineState()
         {
-            PipelineStateDescription Pipelinedescription = new()
+            PipelineStateDescription Pipelinedescription0 = new()
             {
                 Framebuffer = Framebuffer,
+                InputAssemblyState = InputAssemblyState.Default(),
+                RasterizationState =  RasterizationState.Default(),
 
-                Layouts =
-                {
-                    // Binding 0: Uniform buffer (Vertex shader)
-                    new()
-                    {
-                        Stage = ShaderStage.Vertex,
-                        Type = DescriptorType.UniformBuffer,
-                        Binding = 0,
-                    }
-                },
-
-                InputAssemblyState = new(PrimitiveType.TriangleList),
-
-                RasterizationState = new()
-                {
-                    FillMode = FillMode.Solid,
-                    CullMode = CullMode.None,
-                    FrontFace = FrontFace.Clockwise,
-                },
                 PipelineVertexInput = new()
                 {
                     VertexAttributeDescriptions =
@@ -284,8 +257,57 @@ namespace Samples.Samples
                     ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex),
                 },
             };
+            Pipelinedescription0.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer);
 
-            PipelineState = new(Pipelinedescription);
+            PipelineState_0 = new(Pipelinedescription0);
+
+
+            PipelineStateDescription Pipelinedescription1 = new()
+            {
+                Framebuffer = Framebuffer,
+                InputAssemblyState = InputAssemblyState.Default(),
+                RasterizationState = RasterizationState.Default(),
+
+                PipelineVertexInput = new()
+                {
+                    VertexAttributeDescriptions =
+                    {
+                        new()
+                        {
+                            Binding = 0,
+                            Location = 0,
+                            Format = PixelFormat.R32G32B32SFloat,
+                            Offset = 0,
+                        },
+                        new()
+                        {
+                            Binding = 0,
+                            Location = 1,
+                            Format = PixelFormat.R32G32B32SFloat,
+                            Offset = 12,
+                        }
+                    },
+                    VertexBindingDescriptions =
+                    {
+                        new()
+                        {
+                            Binding = 0,
+                            InputRate = VertexInputRate.Vertex,
+                            Stride = VertexPositionColor.Size,
+                        }
+                    },
+                },
+                Shaders =
+                {
+                    ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment),
+                    ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex),
+                },
+            };
+            Pipelinedescription1.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer2);
+
+            PipelineState_1 = new(Pipelinedescription1);
+
+
         }
 
 
@@ -305,9 +327,9 @@ namespace Samples.Samples
             ConstBuffer2.SetData(ref uniform);
 
 
-            yaw += 0.0006f * MathF.PI;
-            pitch += 0.0006f * MathF.PI;
-            roll += 0.0006f * MathF.PI;
+            yaw += 0.0005f * MathF.PI;
+            pitch += 0.0005f * MathF.PI;
+            roll += 0.0005f * MathF.PI;
         }
 
 
@@ -321,17 +343,16 @@ namespace Samples.Samples
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 
-            commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
             commandBuffer.SetIndexBuffer(IndexBuffer);
 
 
             // Draw Cube 1
-            commandBuffer.BindDescriptorSets(Descriptor1);
+            commandBuffer.SetGraphicPipeline(PipelineState_0);
             commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);
 
             // Draw Cube 2
-            commandBuffer.BindDescriptorSets(Descriptor2);
+            commandBuffer.SetGraphicPipeline(PipelineState_1);
             commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);
         }
 

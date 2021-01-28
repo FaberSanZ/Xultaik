@@ -24,5 +24,13 @@ namespace Zeckoxe.Vulkan
         public float DepthBiasClamp { get; set; }
         public float DepthBiasSlopeFactor { get; set; }
         public float LineWidth { get; set; } = 1.0F;
+
+
+        public static RasterizationState Default() => new RasterizationState()
+        {
+            FillMode = FillMode.Solid,
+            CullMode = CullMode.None,
+            FrontFace = FrontFace.Clockwise,
+        };
     }
 }

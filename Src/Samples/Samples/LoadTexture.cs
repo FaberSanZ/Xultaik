@@ -87,7 +87,6 @@ namespace Samples.Samples
         };
 
 
-        public Dictionary<string, DescriptorSet> DescriptorSets = new();
         public Dictionary<string, Buffer> Buffers = new();
         public Dictionary<string, GraphicsPipelineState> PipelineStates = new();
         public Dictionary<string, ShaderBytecode> Shaders = new();
@@ -142,20 +141,6 @@ namespace Samples.Samples
 
             //var img = new TextureData(GenerateTextureData(), TextureWidth, TextureWidth, 1, 1, TextureWidth * TextureWidth * 4, false, PixelFormat.R8G8B8A8UNorm);
 
-            Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
-            Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
-            Sampler sampler = new Sampler(Device);
-
-            DescriptorSets["Descriptor1"] = new(PipelineStates["Texture"]);
-            DescriptorSets["Descriptor1"].SetUniformBuffer(0, Buffers["ConstBuffer1"]);
-            DescriptorSets["Descriptor1"].SetTexture2DSampler(1, text1, sampler);
-            DescriptorSets["Descriptor1"].Build();
-
-
-            DescriptorSets["Descriptor2"] = new(PipelineStates["Texture"]);
-            DescriptorSets["Descriptor2"].SetUniformBuffer(0, Buffers["ConstBuffer2"]);
-            DescriptorSets["Descriptor2"].SetTexture2DSampler(1, text2, sampler);
-            DescriptorSets["Descriptor2"].Build();
 
 
 
@@ -208,6 +193,11 @@ namespace Samples.Samples
             Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Texture/shader.vert", ShaderStage.Vertex);
 
 
+            Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
+            Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
+            Sampler sampler = new Sampler(Device);
+
+
             List<VertexInputAttribute> VertexAttributeDescriptions = new()
             {
 
@@ -245,36 +235,12 @@ namespace Samples.Samples
                 }
             };
 
-
-            PipelineStates["Texture"] = new(new()
+            PipelineStateDescription Pipelinedescription1 = new()
             {
                 Framebuffer = Framebuffer,
-
-                Layouts =
-                {
-                    // Binding 0: Uniform buffer (Vertex shader)
-                    new()
-                    {
-                        Stage = ShaderStage.Vertex,
-                        Type = DescriptorType.UniformBuffer,
-                        Binding = 0,
-                    },
-                    new()
-                    {
-                        Stage = ShaderStage.Fragment,
-                        Type = DescriptorType.CombinedImageSampler,
-                        Binding = 1,
-                    }
-                },
-
                 InputAssemblyState = InputAssemblyState.Default(),
+                RasterizationState = RasterizationState.Default(),
 
-                RasterizationState = new()
-                {
-                    FillMode = FillMode.Solid,
-                    CullMode = CullMode.None,
-                    FrontFace = FrontFace.Clockwise,
-                },
                 PipelineVertexInput = new()
                 {
                     VertexAttributeDescriptions = VertexAttributeDescriptions,
@@ -285,9 +251,36 @@ namespace Samples.Samples
                     Shaders["Fragment"],
                     Shaders["Vertex"],
                 },
+            };
+            Pipelinedescription1.SetUniformBuffer(0, ShaderStage.Vertex, Buffers["ConstBuffer1"]);
+            Pipelinedescription1.SetImageSampler(1, ShaderStage.Fragment, text1, sampler);
 
 
-            });
+
+            PipelineStateDescription Pipelinedescription2 = new()
+            {
+                Framebuffer = Framebuffer,
+                InputAssemblyState = InputAssemblyState.Default(),
+                RasterizationState = RasterizationState.Default(),
+
+                PipelineVertexInput = new()
+                {
+                    VertexAttributeDescriptions = VertexAttributeDescriptions,
+                    VertexBindingDescriptions = VertexBindingDescriptions,
+                },
+                Shaders =
+                {
+                    Shaders["Fragment"],
+                    Shaders["Vertex"],
+                },
+            };
+            Pipelinedescription2.SetUniformBuffer(0, ShaderStage.Vertex, Buffers["ConstBuffer2"]);
+            Pipelinedescription2.SetImageSampler(1, ShaderStage.Fragment, text2, sampler);
+
+
+
+            PipelineStates["Texture1"] = new(Pipelinedescription1);
+            PipelineStates["Texture2"] = new(Pipelinedescription2);
 
         }
 
@@ -334,13 +327,11 @@ namespace Samples.Samples
             commandBuffer.SetIndexBuffer(Buffers["IndexBuffer"]);
 
 
-            commandBuffer.SetGraphicPipeline(PipelineStates["Texture"]);
-            commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor1"]);
+            commandBuffer.SetGraphicPipeline(PipelineStates["Texture1"]);
             commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
 
 
-            commandBuffer.SetGraphicPipeline(PipelineStates["Texture"]);
-            commandBuffer.BindDescriptorSets(DescriptorSets["Descriptor2"]);
+            commandBuffer.SetGraphicPipeline(PipelineStates["Texture2"]);
             commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
         }
 

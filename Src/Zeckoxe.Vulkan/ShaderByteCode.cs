@@ -68,7 +68,7 @@ namespace Zeckoxe.Vulkan
 
             using Compiler compiler = new(_options);
 
-            Result result = compiler.Compile(path, StageToShaderKind(stage));
+            Result result = compiler.Compile(path, stage.StageToShaderKind());
 
             Data = result.GetData();
 
@@ -88,57 +88,7 @@ namespace Zeckoxe.Vulkan
         public ShaderStage Stage { get; set; }
 
         // TODO: ToStage
-        private static ShaderKind StageToShaderKind(ShaderStage stage)
-        {
-            switch (stage)
-            {
-                case ShaderStage.Vertex:
-                    return ShaderKind.VertexShader;
-
-                case ShaderStage.Fragment:
-                    return ShaderKind.FragmentShader;
-
-                case ShaderStage.Compute:
-                    return ShaderKind.ComputeShader;
-
-                case ShaderStage.Geometry:
-                    return ShaderKind.GeometryShader;
-
-                case ShaderStage.TessellationControl:
-                    return ShaderKind.TessControlShader;
-
-                case ShaderStage.TessellationEvaluation:
-                    return ShaderKind.TessEvaluationShader;
-
-                case ShaderStage.RaygenKHR:
-                    return ShaderKind.RaygenShader;
-
-                case ShaderStage.AnyHitKHR:
-                    return ShaderKind.AnyhitShader;
-
-                case ShaderStage.ClosestHitKHR:
-                    return ShaderKind.ClosesthitShader;
-
-                case ShaderStage.MissKHR:
-                    return ShaderKind.MissShader;
-
-                case ShaderStage.IntersectionKHR:
-                    return ShaderKind.IntersectionShader;
-
-                case ShaderStage.CallableKHR:
-                    return ShaderKind.CallableShader;
-
-                case ShaderStage.TaskNV:
-                    return ShaderKind.TaskShader;
-
-                case ShaderStage.MeshNV:
-                    return ShaderKind.MeshShader;
-
-                default:
-                    return 0;
-
-            }
-        }
+        
 
 
         public static ShaderBytecode LoadFromFile(string path, ShaderStage stage) => new ShaderBytecode(path, stage);

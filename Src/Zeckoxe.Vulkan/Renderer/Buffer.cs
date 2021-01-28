@@ -19,14 +19,11 @@ namespace Zeckoxe.Vulkan
     {
 
         internal VkBuffer handle;
-        internal VkBufferView NativeBufferView;
-        internal VkAccessFlags NativeAccessMask;
+        internal VkBufferView buffer_biew;
+        internal VkAccessFlags access;
         internal VkDeviceMemory memory;
         internal ulong size;
-
-
-
-        internal IntPtr mappedData;
+        internal IntPtr mapped_data;
 
 
         public Buffer(Device graphicsDevice, BufferDescription description) : base(graphicsDevice)
@@ -37,7 +34,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public IntPtr MappedData => mappedData;
+        public IntPtr MappedData => mapped_data;
 
         public BufferDescription BufferDescription { get; set; }
         public int SizeInBytes => BufferDescription.SizeInBytes;
@@ -65,38 +62,38 @@ namespace Zeckoxe.Vulkan
 
             if (Usage == GraphicsResourceUsage.Staging)
             {
-                NativeAccessMask = VkAccessFlags.HostRead | VkAccessFlags.HostWrite;
+                access = VkAccessFlags.HostRead | VkAccessFlags.HostWrite;
             }
             else
             {
                 if ((Flags/*.HasFlag()*/& BufferFlags.VertexBuffer) != 0)
                 {
                     buffer_info.usage |= VkBufferUsageFlags.VertexBuffer;
-                    NativeAccessMask |= VkAccessFlags.VertexAttributeRead;
+                    access |= VkAccessFlags.VertexAttributeRead;
                 }
 
                 if ((Flags & BufferFlags.IndexBuffer) is not 0)
                 {
                     buffer_info.usage |= VkBufferUsageFlags.IndexBuffer;
-                    NativeAccessMask |= VkAccessFlags.IndexRead;
+                    access |= VkAccessFlags.IndexRead;
                 }
 
                 if ((Flags & BufferFlags.ConstantBuffer) is not 0)
                 {
                     buffer_info.usage |= VkBufferUsageFlags.UniformBuffer;
-                    NativeAccessMask |= VkAccessFlags.UniformRead;
+                    access |= VkAccessFlags.UniformRead;
                 }
 
                 if ((Flags & BufferFlags.ShaderResource) is not 0)
                 {
                     buffer_info.usage |= VkBufferUsageFlags.UniformTexelBuffer;
-                    NativeAccessMask |= VkAccessFlags.ShaderRead;
+                    access |= VkAccessFlags.ShaderRead;
                 }
 
                 if ((Flags & BufferFlags.UnorderedAccess) is not 0)
                 {
                     buffer_info.usage |= VkBufferUsageFlags.StorageTexelBuffer;
-                    NativeAccessMask |= VkAccessFlags.ShaderWrite;
+                    access |= VkAccessFlags.ShaderWrite;
                 }
             }
 
@@ -156,13 +153,13 @@ namespace Zeckoxe.Vulkan
         {
             void* ppData;
             vkMapMemory(NativeDevice.handle, memory, offset, (ulong)BufferDescription.SizeInBytes, 0, &ppData);
-            mappedData = (IntPtr)ppData;
+            mapped_data = (IntPtr)ppData;
         }
         public void Unmap()
         {
 
             vkUnmapMemory(NativeDevice.handle, memory);
-            mappedData = IntPtr.Zero;
+            mapped_data = IntPtr.Zero;
         }
 
 
@@ -234,11 +231,11 @@ namespace Zeckoxe.Vulkan
             vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, &ppData);
 
             //Copy Data
-            {
+            //{
                 //int stride = Interop.SizeOf<T>();
                 //uint size = (uint)(stride * Data.Length);
                 //void* srcPtr = Unsafe.AsPointer(ref Data[0]);
-            }
+            //}
 
             Interop.MemoryHelper.CopyBlocks<T>(ppData, Data);
 
@@ -258,9 +255,8 @@ namespace Zeckoxe.Vulkan
 
 
 
-        public void GetData<T>() where T : struct
+        public void GetData<T>() where T : unmanaged
         {
-
         }
 
 

@@ -216,14 +216,12 @@ namespace Samples.Samples
         public GLTFLoader<VertexPositionNormalTexture> GLTFModel { get; set; }
         //public List<Mesh> Meshes { get; private set; }
 
-
-        public DescriptorSet Descriptor;
-        public DescriptorSet Descriptor2;
-        public DescriptorSet Descriptor3;
         public Buffer ConstBuffer;
         public Buffer ConstBuffer2;
         public Buffer ConstBuffer3;
-        public GraphicsPipelineState PipelineState;
+        public GraphicsPipelineState PipelineState_0;
+        public GraphicsPipelineState PipelineState_1;
+        public GraphicsPipelineState PipelineState_2;
         public Dictionary<string, ShaderBytecode> Shaders = new();
 
         // TransformUniform 
@@ -265,56 +263,19 @@ namespace Samples.Samples
             uniform = new(camera.Projection, Model, camera.View);
 
 
+
+            BufferDescription bufferDescription = new BufferDescription()
+            {
+                BufferFlags = BufferFlags.ConstantBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf<TransformUniform>(),
+            };
+
+            ConstBuffer = new(Device, bufferDescription);
+            ConstBuffer2 = new(Device, bufferDescription);
+            ConstBuffer3 = new(Device, bufferDescription);
+
             CreatePipelineState();
-
-
-            Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
-            Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
-            Image2D text3 = Image2D.LoadFromFile(Device, "floor_tiles.bmp");
-
-            Sampler sampler = new Sampler(Device);
-
-
-            ConstBuffer = new(Device, new()
-            {
-                BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<TransformUniform>(),
-            });
-
-            
-            Descriptor = new(PipelineState);
-            Descriptor.SetUniformBuffer(0, ConstBuffer);
-            Descriptor.SetTexture2DSampler(1, text1, sampler);
-            Descriptor.Build();
-
-
-
-            ConstBuffer2 = new(Device, new()
-            {
-                BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<TransformUniform>(),
-            });
-            Descriptor2 = new(PipelineState);
-            Descriptor2.SetUniformBuffer(0, ConstBuffer2);
-            Descriptor2.SetTexture2DSampler(1, text2, sampler);
-            Descriptor2.Build();
-
-
-
-            ConstBuffer3 = new(Device, new()
-            {
-                BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
-                SizeInBytes = Interop.SizeOf<TransformUniform>(),
-            });
-
-
-            Descriptor3 = new(PipelineState);
-            Descriptor3.SetUniformBuffer(0, ConstBuffer3);
-            Descriptor3.SetTexture2DSampler(1, text3, sampler);
-            Descriptor3.Build();
 
 
             GLTFModel = new(Device, "Models/mesh_mat.gltf");
@@ -336,6 +297,13 @@ namespace Samples.Samples
             Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.frag", ShaderStage.Fragment);
             Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.vert", ShaderStage.Vertex);
 
+            Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
+            Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
+            Image2D text3 = Image2D.LoadFromFile(Device, "floor_tiles.bmp");
+
+
+
+            Sampler sampler = new Sampler(Device);
 
             List<VertexInputAttribute> VertexAttributeDescriptions = new()
             {
@@ -373,41 +341,15 @@ namespace Samples.Samples
                 },
             };
 
-
-            PipelineState = new(new()
+            PipelineStateDescription pipelineStateDescription0 = new()
             {
                 Framebuffer = Framebuffer,
 
-                Layouts =
-                {
-                    new()
-                    {
-                        Stage = ShaderStage.Vertex,
-                        Type = DescriptorType.UniformBuffer,
-                        Binding = 0,
-                    },
-
-                    new()
-                    {
-                        Stage = ShaderStage.Fragment,
-                        Type = DescriptorType.CombinedImageSampler,
-                        Binding = 1,
-                    },
-                },
-
-                PushConstants =
-                {
-                    new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>())
-                },
+                PushConstants = { new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>()) },
 
                 InputAssemblyState = InputAssemblyState.Default(),
+                RasterizationState = RasterizationState.Default(),
 
-                RasterizationState = new()
-                {
-                    FillMode = FillMode.Solid,
-                    CullMode = CullMode.None,
-                    FrontFace = FrontFace.CounterClockwise,
-                },
                 PipelineVertexInput = new()
                 {
                     VertexAttributeDescriptions = VertexAttributeDescriptions,
@@ -419,7 +361,64 @@ namespace Samples.Samples
                     Shaders["Vertex"],
                 },
 
-            });
+            };
+            pipelineStateDescription0.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer);
+            pipelineStateDescription0.SetImageSampler(1, ShaderStage.Fragment, text1, sampler);
+            PipelineState_0 = new(pipelineStateDescription0);
+
+
+
+            PipelineStateDescription pipelineStateDescription1 = new()
+            {
+                Framebuffer = Framebuffer,
+
+                PushConstants = { new(ShaderStage.Vertex, 0, Interop.SizeOf<Matrix4x4>()) },
+
+                InputAssemblyState = InputAssemblyState.Default(),
+                RasterizationState = RasterizationState.Default(),
+
+                PipelineVertexInput = new()
+                {
+                    VertexAttributeDescriptions = VertexAttributeDescriptions,
+                    VertexBindingDescriptions = VertexBindingDescriptions,
+                },
+                Shaders =
+                {
+                    Shaders["Fragment"],
+                    Shaders["Vertex"],
+                },
+
+            };
+            pipelineStateDescription1.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer2);
+            pipelineStateDescription1.SetImageSampler(1, ShaderStage.Fragment, text2, sampler);
+            PipelineState_1 = new(pipelineStateDescription1);
+
+
+            PipelineStateDescription pipelineStateDescription2 = new()
+            {
+                Framebuffer = Framebuffer,
+
+                PushConstants = { new(ShaderStage.Vertex, 0, Interop.SizeOf<Matrix4x4>()) },
+
+                InputAssemblyState = InputAssemblyState.Default(),
+                RasterizationState = RasterizationState.Default(),
+
+                PipelineVertexInput = new()
+                {
+                    VertexAttributeDescriptions = VertexAttributeDescriptions,
+                    VertexBindingDescriptions = VertexBindingDescriptions,
+                },
+                Shaders =
+                {
+                    Shaders["Fragment"],
+                    Shaders["Vertex"],
+                },
+
+            };
+            pipelineStateDescription2.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer3);
+            pipelineStateDescription2.SetImageSampler(1, ShaderStage.Fragment, text3, sampler);
+            PipelineState_2 = new(pipelineStateDescription2);
+
         }
 
 
@@ -460,19 +459,16 @@ namespace Samples.Samples
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
 
 
-            commandBuffer.SetGraphicPipeline(PipelineState);
-            commandBuffer.BindDescriptorSets(Descriptor);
-            GLTFModel.Draw(commandBuffer, PipelineState);
+            commandBuffer.SetGraphicPipeline(PipelineState_0);
+            GLTFModel.Draw(commandBuffer, PipelineState_0);
 
 
-            commandBuffer.SetGraphicPipeline(PipelineState);
-            commandBuffer.BindDescriptorSets(Descriptor2);
-            GLTFModel.Draw(commandBuffer, PipelineState);
+            commandBuffer.SetGraphicPipeline(PipelineState_1);
+            GLTFModel.Draw(commandBuffer, PipelineState_1);
 
 
-            commandBuffer.SetGraphicPipeline(PipelineState);
-            commandBuffer.BindDescriptorSets(Descriptor3);
-            GLTFModel.Draw(commandBuffer, PipelineState);
+            commandBuffer.SetGraphicPipeline(PipelineState_2);
+            GLTFModel.Draw(commandBuffer, PipelineState_2);
         }
 
 

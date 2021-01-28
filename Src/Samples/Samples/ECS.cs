@@ -415,30 +415,6 @@ namespace Samples.Samples
             uniform = new(camera.camera.Projection, Matrix4x4.Identity, camera.camera.View);
             CreatePipelineState();
 
-            Image2D text1 = Image2D.LoadFromFile(deviceInfo.Device, "UVCheckerMap08-512.png");
-            Image2D text2 = Image2D.LoadFromFile(deviceInfo.Device, "IndustryForgedDark512.ktx");
-            Image2D text3 = Image2D.LoadFromFile(deviceInfo.Device, "floor_tiles.bmp");
-
-            List<Image2D> textures = new List<Image2D>()
-            {
-                text1,
-                text2,
-                text3,
-            };
-
-            Sampler sampler = new Sampler(deviceInfo.Device);
-
-
-            Random random = new Random();
-
-            int index = random.Next(0, textures.Count);
-
-            //Console.WriteLine(index);
-
-            Descriptor = new(PipelineState);
-            Descriptor.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
-            Descriptor.SetTexture2DSampler(1, textures[index], sampler);
-            Descriptor.Build();
             Camera = camera;
         }
 
@@ -446,7 +422,6 @@ namespace Samples.Samples
         public Transform Transform { get; set; }
 
 
-        public DescriptorSet Descriptor;
         public Buffer ConstBuffer;
         public GraphicsPipelineState PipelineState;
         public Dictionary<string, ShaderBytecode> Shaders = new();
@@ -501,40 +476,40 @@ namespace Samples.Samples
             };
 
 
-            PipelineState = new(new()
+
+
+            Image2D text1 = Image2D.LoadFromFile(DeviceInfo.Device, "UVCheckerMap08-512.png");
+            Image2D text2 = Image2D.LoadFromFile(DeviceInfo.Device, "IndustryForgedDark512.ktx");
+            Image2D text3 = Image2D.LoadFromFile(DeviceInfo.Device, "floor_tiles.bmp");
+
+            List<Image2D> textures = new List<Image2D>()
+            {
+                text1,
+                text2,
+                text3,
+            };
+
+            Sampler sampler = new Sampler(DeviceInfo.Device);
+
+
+            Random random = new Random();
+
+            int index = random.Next(0, textures.Count);
+
+            //Console.WriteLine(index);
+
+            PipelineStateDescription pipelineStateDescription = new()
             {
                 Framebuffer = DeviceInfo.Framebuffer,
 
-                Layouts =
-                {
-                    new()
-                    {
-                        Stage = ShaderStage.Vertex,
-                        Type = DescriptorType.UniformBuffer,
-                        Binding = 0,
-                    },
-
-                    new()
-                    {
-                        Stage = ShaderStage.Fragment,
-                        Type = DescriptorType.CombinedImageSampler,
-                        Binding = 1,
-                    },
-                },
-
                 PushConstants =
                 {
-                    new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>())
+                    new(ShaderStage.Vertex, 0, Interop.SizeOf<Matrix4x4>())
                 },
 
                 InputAssemblyState = InputAssemblyState.Default(),
+                RasterizationState = RasterizationState.Default(),
 
-                RasterizationState = new()
-                {
-                    FillMode = FillMode.Solid,
-                    CullMode = CullMode.None,
-                    FrontFace = FrontFace.CounterClockwise,
-                },
                 PipelineVertexInput = new()
                 {
                     VertexAttributeDescriptions = VertexAttributeDescriptions,
@@ -546,7 +521,12 @@ namespace Samples.Samples
                     Shaders["Vertex"],
                 },
 
-            });
+            };
+
+            pipelineStateDescription.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
+            pipelineStateDescription.SetImageSampler(1, ShaderStage.Fragment, textures[index], sampler);
+
+            PipelineState = new(pipelineStateDescription);
         }
 
 
@@ -558,7 +538,6 @@ namespace Samples.Samples
         public void Draw(CommandBuffer command)
         {
             command.SetGraphicPipeline(PipelineState);
-            command.BindDescriptorSets(Descriptor);
             GLTFModel.Draw(command, PipelineState);
         }
 

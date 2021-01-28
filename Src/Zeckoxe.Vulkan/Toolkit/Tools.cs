@@ -8,6 +8,7 @@
 
 
 
+using Shaderc;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +29,114 @@ namespace Zeckoxe.Vulkan
             uint patch = _value & 0x0FFF;
 
             return $"{major}.{minor}.{patch}";
+        }
+
+
+
+        internal static VkShaderStageFlags StageToVkShaderStageFlags(this ShaderStage stage)
+        {
+            switch (stage)
+            {
+                case ShaderStage.Vertex:
+                    return VkShaderStageFlags.Vertex;
+
+                case ShaderStage.Fragment:
+                    return VkShaderStageFlags.Fragment;
+
+                case ShaderStage.Compute:
+                    return VkShaderStageFlags.Compute;
+
+                case ShaderStage.Geometry:
+                    return VkShaderStageFlags.Geometry;
+
+                case ShaderStage.TessellationControl:
+                    return VkShaderStageFlags.TessellationControl;
+
+                case ShaderStage.TessellationEvaluation:
+                    return VkShaderStageFlags.TessellationEvaluation;
+
+                case ShaderStage.RaygenKHR:
+                    return VkShaderStageFlags.RaygenKHR;
+
+                case ShaderStage.AnyHitKHR:
+                    return VkShaderStageFlags.AnyHitKHR;
+
+                case ShaderStage.ClosestHitKHR:
+                    return VkShaderStageFlags.ClosestHitKHR;
+
+                case ShaderStage.MissKHR:
+                    return VkShaderStageFlags.MissKHR;
+
+                case ShaderStage.IntersectionKHR:
+                    return VkShaderStageFlags.IntersectionKHR;
+
+                case ShaderStage.CallableKHR:
+                    return VkShaderStageFlags.CallableKHR;
+
+                case ShaderStage.TaskNV:
+                    return VkShaderStageFlags.TaskNV;
+
+                case ShaderStage.MeshNV:
+                    return VkShaderStageFlags.MeshNV;
+
+                default:
+                    return 0;
+
+            }
+        }
+
+
+
+        internal static ShaderKind StageToShaderKind(this ShaderStage stage)
+        {
+            switch (stage)
+            {
+                case ShaderStage.Vertex:
+                    return ShaderKind.VertexShader;
+
+                case ShaderStage.Fragment:
+                    return ShaderKind.FragmentShader;
+
+                case ShaderStage.Compute:
+                    return ShaderKind.ComputeShader;
+
+                case ShaderStage.Geometry:
+                    return ShaderKind.GeometryShader;
+
+                case ShaderStage.TessellationControl:
+                    return ShaderKind.TessControlShader;
+
+                case ShaderStage.TessellationEvaluation:
+                    return ShaderKind.TessEvaluationShader;
+
+                case ShaderStage.RaygenKHR:
+                    return ShaderKind.RaygenShader;
+
+                case ShaderStage.AnyHitKHR:
+                    return ShaderKind.AnyhitShader;
+
+                case ShaderStage.ClosestHitKHR:
+                    return ShaderKind.ClosesthitShader;
+
+                case ShaderStage.MissKHR:
+                    return ShaderKind.MissShader;
+
+                case ShaderStage.IntersectionKHR:
+                    return ShaderKind.IntersectionShader;
+
+                case ShaderStage.CallableKHR:
+                    return ShaderKind.CallableShader;
+
+                case ShaderStage.TaskNV:
+                    return ShaderKind.TaskShader;
+
+                case ShaderStage.MeshNV:
+                    return ShaderKind.MeshShader;
+
+                default:
+                    return 0;
+
+            }
         }
 
         internal static VkSampleCountFlags ExtractMaxSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties)
