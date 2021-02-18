@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vortice.Mathematics;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -701,20 +702,6 @@ namespace Zeckoxe.Vulkan
 
             return VkPresentModeKHR.Immediate;
         }
-
-        public VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR capabilities, uint width, uint height)
-        {
-            if (capabilities.currentExtent.width is not int.MaxValue)
-            {
-                return capabilities.currentExtent;
-            }
-
-            return new(
-                Math.Max(capabilities.minImageExtent.width, Math.Min(capabilities.maxImageExtent.width, width)),
-                Math.Max(capabilities.minImageExtent.height, Math.Min(capabilities.maxImageExtent.height, height))
-            );
-        }
-
 
 
 

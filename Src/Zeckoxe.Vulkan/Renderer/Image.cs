@@ -196,7 +196,7 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.ImageCreateInfo,
                 arrayLayers = (uint)1, // TODO: arrayLayers
-                extent = new VkExtent3D(Width, Height, Depth),
+                extent = new(Width, Height, Depth),
                 mipLevels = (uint)1,
                 samples = VkSampleCountFlags.Count1,
                 format = (VkFormat)Format,
@@ -277,7 +277,7 @@ namespace Zeckoxe.Vulkan
             };
 
             VkDeviceMemory _memory = default;
-            vkAllocateMemory(NativeDevice.handle, &allocInfo, null, &_memory).CheckResult();
+            vkAllocateMemory(NativeDevice.handle, &allocInfo, null, out _memory).CheckResult();
             memory = _memory;
 
 
@@ -354,7 +354,7 @@ namespace Zeckoxe.Vulkan
                     new VkBufferImageCopy
                     {
                         imageSubresource = new VkImageSubresourceLayers(VkImageAspectFlags.Color, (uint)i, 0, 1),
-                        imageExtent = new VkExtent3D(Width, Height,1),
+                        imageExtent = new(Width, Height,1),
                         bufferOffset = (ulong)offset
                     }
                 };

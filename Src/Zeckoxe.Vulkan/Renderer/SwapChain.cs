@@ -14,6 +14,7 @@ using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using static Vortice.Vulkan.VkUtils;
 using Zeckoxe.Core;
+using Vortice.Mathematics;
 
 namespace Zeckoxe.Vulkan
 {
@@ -338,21 +339,21 @@ namespace Zeckoxe.Vulkan
             vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, presentModes);
 
 
-            VkExtent2D swapchainExtent = default;
+            Size swapchainExtent = default;
             // If width (and height) equals the special value 0xFFFFFFFF, the size of the Surface will be set by the swapchain
-            if (surfCaps.currentExtent.width == unchecked(-1))
+            if (surfCaps.currentExtent.Width == unchecked(-1))
             {
                 // If the Surface size is undefined, the size is set to
                 // the size of the Images requested.
 
-                swapchainExtent = new((uint)width, (uint)height);
+                swapchainExtent = new(width, height);
             }
             else
             {
                 // If the Surface size is defined, the swap chain size must match
                 swapchainExtent = surfCaps.currentExtent;
-                width = (int)surfCaps.currentExtent.width;
-                height = (int)surfCaps.currentExtent.height;
+                width = (int)surfCaps.currentExtent.Width;
+                height = (int)surfCaps.currentExtent.Height;
             }
 
 
@@ -424,11 +425,11 @@ namespace Zeckoxe.Vulkan
             }
 
 
-            uint* extent = stackalloc uint[2];
-            extent[0] = swapchainExtent.width + 1;
-            extent[1] = swapchainExtent.height + 1;
+            //uint* extent = stackalloc uint[2];
+            //extent[0] = swapchainExtent.Width + 1;
+            //extent[1] = swapchainExtent.Height + 1;
 
-            VkExtent2D imageExtent = *(VkExtent2D*)&extent;
+            //VkExtent2D imageExtent = *(VkExtent2D*)&extent;
 
 
 
@@ -443,7 +444,7 @@ namespace Zeckoxe.Vulkan
                 minImageCount = desiredNumberOfSwapchainImages,
                 imageFormat = color_format,
                 imageColorSpace = color_space,
-                imageExtent = new(swapchainExtent.width, swapchainExtent.height)  /*imageExtent*/,
+                imageExtent = new(swapchainExtent.Width, swapchainExtent.Height)  /*imageExtent*/,
 
                 imageUsage = VkImageUsageFlags.ColorAttachment,
                 preTransform = preTransform,

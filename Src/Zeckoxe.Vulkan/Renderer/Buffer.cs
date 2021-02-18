@@ -121,7 +121,7 @@ namespace Zeckoxe.Vulkan
 
 
             VkDeviceMemory _memory;
-            vkAllocateMemory(NativeDevice.handle, &MemoryAlloc_info, null, &_memory);
+            vkAllocateMemory(NativeDevice.handle, &MemoryAlloc_info, null, out _memory);
             memory = _memory;
 
             size = memReqs.size;

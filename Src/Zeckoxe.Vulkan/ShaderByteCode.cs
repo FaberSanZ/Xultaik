@@ -71,9 +71,6 @@ namespace Zeckoxe.Vulkan
             Result result = compiler.Compile(path, stage.StageToShaderKind());
 
             Data = result.GetData();
-
-
-
         }
 
         public ShaderBytecode(byte[] buffer, ShaderStage stage)

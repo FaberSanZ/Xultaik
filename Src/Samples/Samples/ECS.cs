@@ -434,8 +434,8 @@ namespace Samples.Samples
 
         public void CreatePipelineState()
         {
-            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.frag", ShaderStage.Fragment);
-            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.vert", ShaderStage.Vertex);
+            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/ECS/shader.frag", ShaderStage.Fragment);
+            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/ECS/shader.vert", ShaderStage.Vertex);
 
 
 
@@ -572,9 +572,9 @@ namespace Samples.Samples
             Entity = new Entity(this);
             cameraComponent = new CameraComponent(Window);
 
-            for (int x = -2; x < 3; x++)
+            for (int x = -2; x < 2; x++)
             {
-                for (int y = -2; y < 3; y++)
+                for (int y = -2; y < 2; y++)
                 {
                     Entity.AddComponent(new Model("Models/mesh_mat.gltf", cameraComponent, new DeviceInfo() { Device = Device, Framebuffer = Framebuffer })
                     {

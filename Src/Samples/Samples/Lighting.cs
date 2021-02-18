@@ -345,7 +345,7 @@ namespace Samples.Samples
             {
                 Framebuffer = Framebuffer,
 
-                PushConstants = { new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>()) },
+                PushConstants = { new(ShaderStage.Vertex, 0, Interop.SizeOf<Matrix4x4>()) },
 
                 InputAssemblyState = InputAssemblyState.Default(),
                 RasterizationState = RasterizationState.Default(),
