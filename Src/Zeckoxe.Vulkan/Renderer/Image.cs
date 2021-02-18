@@ -354,7 +354,7 @@ namespace Zeckoxe.Vulkan
                     new VkBufferImageCopy
                     {
                         imageSubresource = new VkImageSubresourceLayers(VkImageAspectFlags.Color, (uint)i, 0, 1),
-                        imageExtent = new(Width, Height,1),
+                        imageExtent = new(Width, Height, 1),
                         bufferOffset = (ulong)offset
                     }
                 };
@@ -365,14 +365,6 @@ namespace Zeckoxe.Vulkan
             {
                 vkCmdCopyBufferToImage(cmdBuffer, buffer.handle, handle, VkImageLayout.TransferDstOptimal, (uint)bufferCopyRegions.Length, regionsPtr);
             }
-
-
-
-
-
-
-
-
 
 
             VkImageMemoryBarrier imageMemoryBarrier2 = new VkImageMemoryBarrier

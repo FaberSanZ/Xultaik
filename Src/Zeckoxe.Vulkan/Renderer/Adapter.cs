@@ -59,7 +59,7 @@ namespace Zeckoxe.Vulkan
 
         public List<ILog> Log { get; set; }
 
-        public DeviceType DeviceType => (DeviceType)device_properties.deviceType;
+        public VkPhysicalDeviceType DeviceType => device_properties.deviceType;
 
         public uint VendorId => device_properties.vendorID;
 
@@ -71,12 +71,11 @@ namespace Zeckoxe.Vulkan
 
         public uint MaxDrawIndirectCount => device_properties.limits.maxDrawIndirectCount;
 
-        public MultisampleCount MultisampleCount => (MultisampleCount)Tools.ExtractMaxSampleCount(device_properties); // TODO: MultisampleCount.ToVkSampleCountFlags
+        public VkSampleCountFlags MultisampleCount => Tools.ExtractMaxSampleCount(device_properties);
 
         public bool SupportsPhysicalDeviceProperties2 { get; private set; }
 
         public bool SupportsSurface { get; private set; }
-
         public bool SupportsWin32Surface { get; private set; }
         public bool SupportsWaylandSurface { get; private set; }
         public bool SupportsMacOSSurface { get; private set; }
@@ -85,54 +84,10 @@ namespace Zeckoxe.Vulkan
         
 
         public bool SupportsExternal { get; private set; }
-
-        public bool SupportsDedicated { get; private set; }
-
-        public bool SupportsImageFormatList { get; private set; }
-
-        public bool SupportsDebugMarker { get; private set; }
-
-        public bool SupportsDebugUtils { get; private set; }
-
-        public bool SupportsMirrorClampToEdge { get; private set; }
-
-        public bool SupportsGoogleDisplay_timing { get; private set; }
-
-        public bool SupportsNV_DeviceDiagnosticCheckPoints { get; private set; }
-
         public bool SupportsVulkan11Instance { get; private set; }
-
         public bool SupportsVulkan11Device { get; private set; }
 
-        public bool SupportsExternalMemoryHost { get; private set; }
-
-        public bool SupportsSurfaceCapabilities2 { get; private set; }
-
-        public bool SupportsFullScreenExclusive { get; private set; }
-
-        public bool SupportsUpdateTemplate { get; private set; }
-
-        public bool SupportsMaintenance_1 { get; private set; }
-
-        public bool SupportsMaintenance_2 { get; private set; }
-
-        public bool SupportsMaintenance_3 { get; private set; }
-
-        public bool SupportsDescriptorIndexing { get; private set; }
-
-        public bool SupportsConservativeRasterization { get; private set; }
-
-        public bool SupportsBindMemory2 { get; private set; }
-
-        public bool SupportsGetMemoryRequirements2 { get; private set; }
-
-        public bool SupportsDrawIndirectCount { get; private set; }
-
-        public bool SupportsDrawParameters { get; private set; }
-
-        public bool SupportsDriverProperties { get; private set; }
-
-        public bool SupportsCalibratedTimestamps { get; private set; }
+      
 
 
         public string DeviceName
