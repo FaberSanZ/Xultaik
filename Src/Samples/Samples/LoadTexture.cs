@@ -198,82 +198,27 @@ namespace Samples.Samples
             Sampler sampler = new Sampler(Device);
 
 
-            List<VertexInputAttribute> VertexAttributeDescriptions = new()
-            {
-
-                new()
-                {
-                    Binding = 0,
-                    Location = 0,
-                    Format = PixelFormat.R32G32B32SFloat,
-                    Offset = 0,
-                },
-                new()
-                {
-                    Binding = 0,
-                    Location = 1,
-                    Format = PixelFormat.R32G32B32SFloat,
-                    Offset = Interop.SizeOf<Vector3>(),
-                },
-
-                new()
-                {
-                    Binding = 0,
-                    Location = 2,
-                    Format = PixelFormat.R32G32SFloat,
-                    Offset = Interop.SizeOf<Vector2>() + Interop.SizeOf<Vector3>(),
-                }
-            };
-
-            List<VertexInputBinding> VertexBindingDescriptions = new()
-            {
-                new()
-                {
-                    Binding = 0,
-                    InputRate = VertexInputRate.Vertex,
-                    Stride = Vertex.Size,
-                }
-            };
-
-            PipelineStateDescription Pipelinedescription1 = new()
-            {
-                Framebuffer = Framebuffer,
-                InputAssemblyState = InputAssemblyState.Default(),
-                RasterizationState = RasterizationState.Default(),
-
-                PipelineVertexInput = new()
-                {
-                    VertexAttributeDescriptions = VertexAttributeDescriptions,
-                    VertexBindingDescriptions = VertexBindingDescriptions,
-                },
-                Shaders =
-                {
-                    Shaders["Fragment"],
-                    Shaders["Vertex"],
-                },
-            };
+            PipelineStateDescription Pipelinedescription1 = new();
+            Pipelinedescription1.SetFramebuffer(Framebuffer);
+            Pipelinedescription1.AddShader(Shaders["Fragment"]);
+            Pipelinedescription1.AddShader(Shaders["Vertex"]);
+            Pipelinedescription1.AddVertexBinding(VertexInputRate.Vertex, Vertex.Size);
+            Pipelinedescription1.AddVertexAttribute(VertexType.Position);
+            Pipelinedescription1.AddVertexAttribute(VertexType.Color);
+            Pipelinedescription1.AddVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription1.SetUniformBuffer(0, ShaderStage.Vertex, Buffers["ConstBuffer1"]);
             Pipelinedescription1.SetImageSampler(1, ShaderStage.Fragment, text1, sampler);
 
 
 
-            PipelineStateDescription Pipelinedescription2 = new()
-            {
-                Framebuffer = Framebuffer,
-                InputAssemblyState = InputAssemblyState.Default(),
-                RasterizationState = RasterizationState.Default(),
-
-                PipelineVertexInput = new()
-                {
-                    VertexAttributeDescriptions = VertexAttributeDescriptions,
-                    VertexBindingDescriptions = VertexBindingDescriptions,
-                },
-                Shaders =
-                {
-                    Shaders["Fragment"],
-                    Shaders["Vertex"],
-                },
-            };
+            PipelineStateDescription Pipelinedescription2 = new();
+            Pipelinedescription2.SetFramebuffer(Framebuffer);
+            Pipelinedescription2.AddShader(Shaders["Fragment"]);
+            Pipelinedescription2.AddShader(Shaders["Vertex"]);
+            Pipelinedescription2.AddVertexBinding(VertexInputRate.Vertex, Vertex.Size);
+            Pipelinedescription2.AddVertexAttribute(VertexType.Position);
+            Pipelinedescription2.AddVertexAttribute(VertexType.Color);
+            Pipelinedescription2.AddVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription2.SetUniformBuffer(0, ShaderStage.Vertex, Buffers["ConstBuffer2"]);
             Pipelinedescription2.SetImageSampler(1, ShaderStage.Fragment, text2, sampler);
 

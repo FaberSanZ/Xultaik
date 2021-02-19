@@ -25,17 +25,17 @@ namespace Zeckoxe.Core
             TextureCoordinate = textureCoordinate;
         }
 
-        [VertexAttribute(VertexAttributeType.Position)]
+        [VertexAttribute(VertexType.Position)]
         public Vector3 Position { get; set; }
 
 
 
-        [VertexAttribute(VertexAttributeType.Normal)]
+        [VertexAttribute(VertexType.Normal)]
         public Vector3 Normal { get; set; }
 
 
 
-        [VertexAttribute(VertexAttributeType.TextureCoordinate)]
+        [VertexAttribute(VertexType.TextureCoordinate)]
         public Vector2 TextureCoordinate { get; set; }
 
 

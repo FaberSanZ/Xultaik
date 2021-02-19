@@ -8,7 +8,7 @@
 
 namespace Zeckoxe.Core
 {
-    public enum VertexAttributeType
+    public enum VertexType
     {
         Position,
 

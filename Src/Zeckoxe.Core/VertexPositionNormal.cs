@@ -20,11 +20,11 @@ namespace Zeckoxe.Core
         }
 
 
-        [VertexAttribute(VertexAttributeType.Position)]
+        [VertexAttribute(VertexType.Position)]
         public Vector3 Position { get; set; }
 
 
-        [VertexAttribute(VertexAttributeType.Normal)]
+        [VertexAttribute(VertexType.Normal)]
         public Vector3 Normal { get; set; }
 
 

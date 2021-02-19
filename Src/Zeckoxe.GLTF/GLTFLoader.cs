@@ -597,7 +597,7 @@ namespace Zeckoxe.GLTF
                             if (attribute is not null)
                             {
 
-                                if (inPosPtr is not null && attribute.Type is VertexAttributeType.Position)
+                                if (inPosPtr is not null && attribute.Type is VertexType.Position)
                                 {
                                     //if (propertyInfos.First().GetCustomAttribute<VertexAttribute>().Type is attribute.Type)
                                     //    pad = 0;
@@ -612,7 +612,7 @@ namespace Zeckoxe.GLTF
 
 
 
-                                if (inTanPtr is not null && attribute.Type is VertexAttributeType.Tangent)
+                                if (inTanPtr is not null && attribute.Type is VertexType.Tangent)
                                 {
                                     //if (propertyInfos.First().GetCustomAttribute<VertexAttribute>().Type is attribute.Type)
                                     //    pad += 0;
@@ -626,7 +626,7 @@ namespace Zeckoxe.GLTF
                                 }
 
 
-                                if (inColorPtr is not null && attribute.Type is VertexAttributeType.Color)
+                                if (inColorPtr is not null && attribute.Type is VertexType.Color)
                                 {
                                     if (ColorType is ColorType.Vec4)
                                     {
@@ -643,14 +643,14 @@ namespace Zeckoxe.GLTF
 
                                 }
 
-                                if (inNormPtr is not null && attribute.Type is VertexAttributeType.Normal)
+                                if (inNormPtr is not null && attribute.Type is VertexType.Normal)
                                 {
                                     pad += 12;
                                     System.Buffer.MemoryCopy(inNormPtr, stagVertPtr + pad, 12, 12);
                                     inNormPtr += 12;
                                 }
 
-                                if (inUvPtr is not null && attribute.Type is VertexAttributeType.TextureCoordinate)
+                                if (inUvPtr is not null && attribute.Type is VertexType.TextureCoordinate)
                                 {
                                     pad += 8;
                                     System.Buffer.MemoryCopy(inUvPtr, stagVertPtr + pad, 8, 8);
@@ -658,7 +658,7 @@ namespace Zeckoxe.GLTF
 
                                 }
 
-                                if (inUv1Ptr is not null && attribute.Type is VertexAttributeType.TextureCoordinate1)
+                                if (inUv1Ptr is not null && attribute.Type is VertexType.TextureCoordinate1)
                                 {
                                     pad += 8;
                                     System.Buffer.MemoryCopy(inUv1Ptr, stagVertPtr + pad, 8, 8);

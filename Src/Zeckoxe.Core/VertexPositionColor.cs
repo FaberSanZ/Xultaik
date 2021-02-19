@@ -7,6 +7,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Zeckoxe.Core;
 
@@ -41,6 +42,7 @@ namespace Zeckoxe.Core
     }
 
 
+
     public struct VertexPositionColor
     {
 
@@ -50,11 +52,11 @@ namespace Zeckoxe.Core
             Color = color;
         }
 
-        [VertexAttribute(VertexAttributeType.Position)]
+        [VertexAttribute(VertexType.Position)]
         public Vector3 Position { get; set; }
 
 
-        [VertexAttribute(VertexAttributeType.Color)]
+        [VertexAttribute(VertexType.Color)]
         public Vector3 Color { get; set; }
 
 
@@ -123,11 +125,11 @@ namespace Zeckoxe.Core
             Color = color;
         }
 
-        [VertexAttribute(VertexAttributeType.Position)]
+        [VertexAttribute(VertexType.Position)]
         public Vector3 Position { get; set; }
 
 
-        [VertexAttribute(VertexAttributeType.Color)]
+        [VertexAttribute(VertexType.Color)]
         public Vector4 Color { get; set; }
 
 

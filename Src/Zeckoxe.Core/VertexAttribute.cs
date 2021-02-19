@@ -12,9 +12,9 @@ namespace Zeckoxe.Core
 {
     public class VertexAttribute : Attribute
     {
-        public VertexAttributeType Type;
+        public VertexType Type;
 
-        public VertexAttribute(VertexAttributeType type)
+        public VertexAttribute(VertexType type)
         {
             Type = type;
         }

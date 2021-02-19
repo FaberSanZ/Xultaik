@@ -137,56 +137,16 @@ namespace Samples.Samples
 
         public void CreatePipelineState()
         {
-            PipelineStateDescription Pipelinedescription = new()
-            {
-                Framebuffer = Framebuffer,
-
-                InputAssemblyState = new()
-                {
-                    PrimitiveType = PrimitiveType.TriangleList,
-                },
-                RasterizationState = new()
-                {
-                    FillMode = FillMode.Solid,
-                    CullMode = CullMode.Front,
-                    FrontFace = FrontFace.Clockwise
-                },
-                PipelineVertexInput = new()
-                {
-                    VertexAttributeDescriptions =
-                    {
-                        new()
-                        {
-                            Binding = 0,
-                            Location = 0,
-                            Format = PixelFormat.R32G32B32SFloat,
-                            Offset = 0,
-                        },
-                        new()
-                        {
-                            Binding = 0,
-                            Location = 1,
-                            Format = PixelFormat.R32G32B32SFloat,
-                            Offset = 12,
-                        }
-                    },
-                    VertexBindingDescriptions =
-                    {
-                        new()
-                        {
-                            Binding = 0,
-                            InputRate = VertexInputRate.Vertex,
-                            Stride = VertexPositionColor.Size,
-                        }
-                    },
-                },
-                Shaders = 
-                {
-                    ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment),
-                    ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex),
-                },
-            };
-
+            PipelineStateDescription Pipelinedescription = new();
+            Pipelinedescription.SetFramebuffer(Framebuffer);
+            Pipelinedescription.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
+            Pipelinedescription.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
+            Pipelinedescription.AddVertexBinding(VertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription.AddVertexAttribute(VertexType.Position);
+            Pipelinedescription.AddVertexAttribute(VertexType.Color);
+            Pipelinedescription.SetFillMode(FillMode.Solid);
+            Pipelinedescription.SetCullMode(CullMode.Back);
+            Pipelinedescription.SetPrimitiveType(PrimitiveType.TriangleList);
             Pipelinedescription.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer);
 
             PipelineState = new(Pipelinedescription);
