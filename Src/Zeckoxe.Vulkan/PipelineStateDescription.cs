@@ -30,6 +30,7 @@ namespace Zeckoxe.Vulkan
 
                 case VertexType.Color :return 12;
 
+
                 default: return 0;
             }
         }
@@ -66,7 +67,7 @@ namespace Zeckoxe.Vulkan
         {
             SetPrimitiveType(PrimitiveType.TriangleList);
             SetFillMode(FillMode.Solid);
-            SetCullMode(CullMode.Front);
+            SetCullMode(CullMode.None);
         }
 
 
@@ -105,6 +106,10 @@ namespace Zeckoxe.Vulkan
 
                 if (attribute.Type is VertexType.TextureCoordinate)
                     AddVertexAttribute(VertexType.TextureCoordinate);
+
+
+                if (attribute.Type is VertexType.Normal)
+                    AddVertexAttribute(VertexType.Normal);
             }
         }
 
