@@ -87,8 +87,8 @@ namespace Zeckoxe.Vulkan
     {
         internal Buffer buffer;
 
-        internal VkPointerSize row_pitch;
-        internal VkPointerSize row_offset;
+        internal ulong row_pitch;
+        internal ulong row_offset;
 
         internal VkImage handle;
         internal Layout layout_type = Layout.Optimal;

@@ -15,6 +15,14 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Vulkan
 {
+    internal static class BoolExt
+    {
+        internal static uint ToUint(this bool value)
+        {
+            return value ? 1 : 0;
+        }
+    }
+
     public unsafe class GraphicsPipelineState : GraphicsResource
     {
 
@@ -239,12 +247,12 @@ namespace Zeckoxe.Vulkan
 
             if (PipelineStateDescription.InputAssemblyState != null)
             {
-                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable;
+                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable.ToUint();
                 pipelineInputAssemblyStateCreateInfo.topology = VulkanConvert.ToPrimitiveType(PipelineStateDescription.InputAssemblyState.PrimitiveType);
             }
             else
             {
-                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = true;
+                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = VK_TRUE;
                 pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology.PointList;
             }
 
@@ -265,8 +273,8 @@ namespace Zeckoxe.Vulkan
                 rasterizerState.cullMode = VulkanConvert.ToCullMode(PipelineStateDescription.RasterizationState.CullMode);
                 rasterizerState.frontFace = VulkanConvert.ToFrontFace(PipelineStateDescription.RasterizationState.FrontFace);
                 rasterizerState.lineWidth = PipelineStateDescription.RasterizationState.LineWidth;
-                rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable;
-                rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable;
+                rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable.ToUint();
+                rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable.ToUint();
 
                 if (PipelineStateDescription.RasterizationState.DepthBiasClamp != 0)
                 {
@@ -302,7 +310,7 @@ namespace Zeckoxe.Vulkan
             VkPipelineColorBlendAttachmentState colorBlendAttachementState = new VkPipelineColorBlendAttachmentState
             {
                 colorWriteMask = VkColorComponentFlags.R | VkColorComponentFlags.G | VkColorComponentFlags.B | VkColorComponentFlags.A,
-                blendEnable = false
+                blendEnable = VK_FALSE
             };
 
             VkPipelineColorBlendStateCreateInfo colorBlendState = new VkPipelineColorBlendStateCreateInfo()
@@ -320,14 +328,14 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.PipelineDepthStencilStateCreateInfo
             };
-            depthStencilState.depthTestEnable = true;
-            depthStencilState.depthWriteEnable = true;
+            depthStencilState.depthTestEnable = VK_TRUE;
+            depthStencilState.depthWriteEnable = VK_TRUE;
             depthStencilState.depthCompareOp = VkCompareOp.LessOrEqual;
-            depthStencilState.depthBoundsTestEnable = false;
+            depthStencilState.depthBoundsTestEnable = VK_FALSE;
             depthStencilState.back.failOp = VkStencilOp.Keep;
             depthStencilState.back.passOp = VkStencilOp.Keep;
             depthStencilState.back.compareOp = VkCompareOp.Always;
-            depthStencilState.stencilTestEnable = false;
+            depthStencilState.stencilTestEnable = VK_FALSE;
             depthStencilState.front = depthStencilState.back;
 
 

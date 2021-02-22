@@ -27,7 +27,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        internal VkBool32 debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, ulong obj, UIntPtr location, int messageCode, IntPtr pLayerPrefix, IntPtr pMessage, IntPtr pUserData)
+        internal bool debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, ulong obj, UIntPtr location, int messageCode, IntPtr pLayerPrefix, IntPtr pMessage, IntPtr pUserData)
         {
             string prefix = "";
             switch (flags)
@@ -67,7 +67,9 @@ namespace Zeckoxe.Vulkan
                 Console.WriteLine("error parsing debug message: " + ex);
             }
             Console.ForegroundColor = ConsoleColor.White;
-            return VkBool32.False;
+
+
+            return true;
         }
 
 

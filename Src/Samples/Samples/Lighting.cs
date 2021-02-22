@@ -234,7 +234,7 @@ namespace Samples.Samples
         public override void InitializeSettings()
         {
             base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.None;
+            Parameters.Settings.Validation = ValidationType.Console;
             Window.Title += " - (Lighting) ";
         }
 

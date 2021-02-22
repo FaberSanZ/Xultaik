@@ -23,7 +23,8 @@ namespace Zeckoxe.Vulkan
         internal bool? _supportInitializad;
         internal VkInstance instance;
 
-        internal vkDebugUtilsMessengerCallbackEXT _debugMessengerCallbackFunc;
+        //internal VkDebugUtilsMessengerCallbackDataEXT _debugMessengerCallbackFunc;
+        internal VkDebugUtilsMessengerEXT _debugMessengerCallbackFunc;
         internal VkDebugUtilsMessengerEXT _debugMessenger = VkDebugUtilsMessengerEXT.Null;
 
         internal uint instance_extensions_count;
@@ -57,7 +58,7 @@ namespace Zeckoxe.Vulkan
 
         public List<string> ValidationLayer { get; private set; } = new();
 
-        public List<ILog> Log { get; set; }
+        public static ConsoleLog Log { get; set; }
 
         public VkPhysicalDeviceType DeviceType => device_properties.deviceType;
 
@@ -166,19 +167,6 @@ namespace Zeckoxe.Vulkan
 
 
             Log = new();
-
-
-            if ((Parameters.Settings.Validation & ValidationType.Default) != 0)
-                Log.Add(new ConsoleLog());
-
-            if ((Parameters.Settings.Validation & ValidationType.Console) != 0)
-                Log.Add(new ConsoleLog());
-
-            if ((Parameters.Settings.Validation & ValidationType.Debug) != 0)
-                Log.Add(new ConsoleLog()); // TODO: DebugLog
-
-            if ((Parameters.Settings.Validation & ValidationType.ImGui) != 0)
-                Log.Add(new ConsoleLog()); // TODO:ImGuiLog
 
         }
 
@@ -304,22 +292,27 @@ namespace Zeckoxe.Vulkan
                 enabledExtensionCount = (uint)extensions.Length,
             };
 
+
             VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = new()
             {
                 sType = VkStructureType.DebugUtilsMessengerCreateInfoEXT,
                 pNext = null,
                 flags = VkDebugUtilsMessengerCreateFlagsEXT.None,
                 pUserData = null,
-                messageSeverity = VkDebugUtilsMessageSeverityFlagsEXT.Error | VkDebugUtilsMessageSeverityFlagsEXT.Warning | VkDebugUtilsMessageSeverityFlagsEXT.Info,
-                messageType = VkDebugUtilsMessageTypeFlagsEXT.Validation | VkDebugUtilsMessageTypeFlagsEXT.Performance,
-                pfnUserCallback = Interop.GetFunctionPointerForDelegate(_debugMessengerCallbackFunc = DebugMessengerCallback),
+
             };
 
-            if (Validation)
+            if (Validation && layers.Length > 0)
             {
-                inst_info.pNext = &debugUtilsCreateInfo;
+
+                debugUtilsCreateInfo.messageSeverity = VkDebugUtilsMessageSeverityFlagsEXT.Error | VkDebugUtilsMessageSeverityFlagsEXT.Warning | VkDebugUtilsMessageSeverityFlagsEXT.Info;
+                debugUtilsCreateInfo.messageType = VkDebugUtilsMessageTypeFlagsEXT.Validation | VkDebugUtilsMessageTypeFlagsEXT.Performance;
+                debugUtilsCreateInfo.pfnUserCallback = &DebugMessengerCallback;
+
                 inst_info.ppEnabledLayerNames = Interop.String.AllocToPointers(layers);
                 inst_info.enabledLayerCount = (uint)layers.Length;
+                inst_info.pNext = &debugUtilsCreateInfo;
+
 
             }
 
@@ -430,50 +423,86 @@ namespace Zeckoxe.Vulkan
         }
 
 
-
-        internal VkBool32 DebugMessengerCallback(VkDebugUtilsMessageSeverityFlagsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, IntPtr userData)
+        [UnmanagedCallersOnly]
+        private static uint DebugMessengerCallback(VkDebugUtilsMessageSeverityFlagsEXT messageSeverity,
+    VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+    VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+    void* userData)
         {
-            string message = Interop.String.FromPointer(pCallbackData->pMessage);
-
-            if (messageTypes is VkDebugUtilsMessageTypeFlagsEXT.Validation)
+            string? message = Interop.String.FromPointer(pCallbackData->pMessage);
+            if (messageTypes == VkDebugUtilsMessageTypeFlagsEXT.Validation)
             {
-                if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Error)
+                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
                 {
-                    
-                    if (Validation)
-                        foreach (var l in Log)
-                            l.Error("Vulkan", $"Validation: {messageSeverity} - {message}");
-
+                    Log.Error($"[Vulkan]:", $"Validation: {messageSeverity} - {message}");
                 }
-                else if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Warning)
+                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
-                    if (Validation)
-                        foreach (var l in Log)
-                            l.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
+                    Log.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
                 }
 
             }
             else
             {
-                if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Error)
+                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
                 {
-                    if (Validation)
-                        foreach (var l in Log)
-                            l.Error("Vulkan", $"[Vulkan]: {messageSeverity} - {message}");
+                    //Log.Error($"[Vulkan]: {messageSeverity} - {message}");
                 }
-                else if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Warning)
+                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
                 {
-                    if (Validation)
-                        foreach (var l in Log)
-                            l.Warn($"[Vulkan]: {messageSeverity} - {message}");
+                    Log.Warn($"[Vulkan]: {messageSeverity} - {message}");
                 }
 
-                //foreach (var l in Log)
-                //    l.WriteLine($"[Vulkan]: {messageSeverity} - {message}");
             }
 
-            return VkBool32.False;
+            return VK_FALSE;
         }
+
+
+
+        //internal uint DebugMessengerCallback(VkDebugUtilsMessageSeverityFlagsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, IntPtr userData)
+        //{
+        //    string message = Interop.String.FromPointer(pCallbackData->pMessage);
+
+        //    if (messageTypes is VkDebugUtilsMessageTypeFlagsEXT.Validation)
+        //    {
+        //        if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Error)
+        //        {
+                    
+        //            if (Validation)
+        //                foreach (var l in Log)
+        //                    l.Error("Vulkan", $"Validation: {messageSeverity} - {message}");
+
+        //        }
+        //        else if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Warning)
+        //        {
+        //            if (Validation)
+        //                foreach (var l in Log)
+        //                    l.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
+        //        }
+
+        //    }
+        //    else
+        //    {
+        //        if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Error)
+        //        {
+        //            if (Validation)
+        //                foreach (var l in Log)
+        //                    l.Error("Vulkan", $"[Vulkan]: {messageSeverity} - {message}");
+        //        }
+        //        else if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Warning)
+        //        {
+        //            if (Validation)
+        //                foreach (var l in Log)
+        //                    l.Warn($"[Vulkan]: {messageSeverity} - {message}");
+        //        }
+
+        //        //foreach (var l in Log)
+        //        //    l.WriteLine($"[Vulkan]: {messageSeverity} - {message}");
+        //    }
+
+        //    return 0;
+        //}
 
 
 

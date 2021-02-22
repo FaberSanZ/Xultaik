@@ -8,7 +8,6 @@
 
 
 using System.Linq;
-using Vortice.Mathematics;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
@@ -108,7 +107,7 @@ namespace Zeckoxe.Vulkan
             // Use a fence to wait until the command buffer has finished execution before using it again
             fixed (VkFence* ptrfence = &waitFences)
             {
-                vkWaitForFences(NativeDevice.handle, 1, ptrfence, true, ulong.MaxValue);
+                vkWaitForFences(NativeDevice.handle, 1, ptrfence, 1, ulong.MaxValue);
                 vkResetFences(NativeDevice.handle, 1, ptrfence);
             }
 
@@ -231,8 +230,8 @@ namespace Zeckoxe.Vulkan
 
         }
 
-        private void copy_image(Image dst, Image src, Point3 dst_offset,
-                        Point3 src_offset, Size3 extent,
+        private void copy_image(Image dst, Image src, VkOffset3D dst_offset,
+                        VkOffset3D src_offset, VkExtent3D extent,
                         VkImageSubresourceLayers dst_subresource,
                         VkImageSubresourceLayers src_subresource)
         {
@@ -309,7 +308,7 @@ namespace Zeckoxe.Vulkan
 
 
 
-        internal void copy_buffer_to_image(Image image, Buffer src, ulong buffer_offset, Point3 offset, Size3 extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
+        internal void copy_buffer_to_image(Image image, Buffer src, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
         {
             VkBufferImageCopy region = new()
             {
@@ -324,7 +323,7 @@ namespace Zeckoxe.Vulkan
             vkCmdCopyBufferToImage(handle, src.handle, image.handle, image.get_layout(VkImageLayout.TransferDstOptimal), 1, &region);
         }
 
-        internal void copy_buffer_to_image(Buffer src, Image image, ulong buffer_offset, Point3 offset, Size3 extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
+        internal void copy_buffer_to_image(Buffer src, Image image, ulong buffer_offset, VkOffset3D offset, VkExtent3D extent, uint row_length, uint slice_height, VkImageSubresourceLayers subresource)
         {
             VkBufferImageCopy region = new()
             {
@@ -397,7 +396,7 @@ namespace Zeckoxe.Vulkan
         public void SetScissor(int width, int height, int x, int y)
         {
             // Update dynamic scissor state
-            Rectangle scissor = new(x, y, width, height);
+            VkRect2D scissor = new(x, y, width, height);
 
             vkCmdSetScissor(handle, 0, 1, &scissor);
         }
@@ -408,8 +407,7 @@ namespace Zeckoxe.Vulkan
             float vpHeight = -Height;
 
 
-            Viewport Viewport = new(X, Y, Width, Height, MinDepth, MaxDepth);
-
+            VkViewport Viewport = new(X, Y, Width, Height, MinDepth, MaxDepth);
             vkCmdSetViewport(handle, 0, 1, &Viewport);
         }
 

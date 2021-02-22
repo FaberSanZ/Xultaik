@@ -39,7 +39,7 @@ namespace Zeckoxe.Vulkan
         {
             fixed (VkFence* ptr = &handle)
             {
-                vkWaitForFences(NativeDevice.handle, 1, ptr, true, ulong.MaxValue).CheckResult();
+                vkWaitForFences(NativeDevice.handle, 1, ptr, VK_TRUE, ulong.MaxValue).CheckResult();
             }
         }
 

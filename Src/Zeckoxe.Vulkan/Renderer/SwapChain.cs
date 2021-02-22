@@ -14,7 +14,6 @@ using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using static Vortice.Vulkan.VkUtils;
 using Zeckoxe.Core;
-using Vortice.Mathematics;
 
 namespace Zeckoxe.Vulkan
 {
@@ -214,7 +213,7 @@ namespace Zeckoxe.Vulkan
             // Iterate over each queue to learn whether it supports presenting:
             // Find a queue with present support
             // Will be used to present the swap chain Images to the windowing system
-            VkBool32* supportsPresent = stackalloc VkBool32[(int)queueCount];
+            uint* supportsPresent = stackalloc uint[(int)queueCount];
             for (uint i = 0; i < queueCount; i++)
             {
                 vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, i, surface, out supportsPresent[i]);
@@ -237,7 +236,7 @@ namespace Zeckoxe.Vulkan
                         graphicsQueueNodeIndex = i;
                     }
 
-                    if (supportsPresent[i] == true)
+                    if (supportsPresent[i] == 1)
                     {
                         graphicsQueueNodeIndex = i;
                         presentQueueNodeIndex = i;
@@ -252,7 +251,7 @@ namespace Zeckoxe.Vulkan
                 // try to find a separate present queue
                 for (uint i = 0; i < queueCount; ++i)
                 {
-                    if (supportsPresent[i] == true)
+                    if (supportsPresent[i] == 1)
                     {
                         presentQueueNodeIndex = i;
                         break;
@@ -339,9 +338,9 @@ namespace Zeckoxe.Vulkan
             vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, presentModes);
 
 
-            Size swapchainExtent = default;
+            VkExtent2D swapchainExtent = default;
             // If width (and height) equals the special value 0xFFFFFFFF, the size of the Surface will be set by the swapchain
-            if (surfCaps.currentExtent.Width == unchecked(-1))
+            if (surfCaps.currentExtent.width == unchecked(-1))
             {
                 // If the Surface size is undefined, the size is set to
                 // the size of the Images requested.
@@ -352,8 +351,8 @@ namespace Zeckoxe.Vulkan
             {
                 // If the Surface size is defined, the swap chain size must match
                 swapchainExtent = surfCaps.currentExtent;
-                width = (int)surfCaps.currentExtent.Width;
-                height = (int)surfCaps.currentExtent.Height;
+                width = (int)surfCaps.currentExtent.width;
+                height = (int)surfCaps.currentExtent.height;
             }
 
 
@@ -444,7 +443,7 @@ namespace Zeckoxe.Vulkan
                 minImageCount = desiredNumberOfSwapchainImages,
                 imageFormat = color_format,
                 imageColorSpace = color_space,
-                imageExtent = new(swapchainExtent.Width, swapchainExtent.Height)  /*imageExtent*/,
+                imageExtent = swapchainExtent,
 
                 imageUsage = VkImageUsageFlags.ColorAttachment,
                 preTransform = preTransform,
@@ -455,8 +454,8 @@ namespace Zeckoxe.Vulkan
                 presentMode = swapchainPresentMode,
                 oldSwapchain = oldSwapchain,
 
-                // Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
-                clipped = true,
+                // TODO: Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
+                clipped = 1,
                 compositeAlpha = compositeAlpha,
             };
 

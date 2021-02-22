@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0007" />
     <PackageReference Include="Vortice.ShaderCompiler" Version="1.0.0" />
-    <PackageReference Include="Vortice.Vulkan" Version="1.2.170" />
+    <PackageReference Include="Vortice.Vulkan" Version="1.2.170.2" />
   </ItemGroup>
 
   <ItemGroup>
