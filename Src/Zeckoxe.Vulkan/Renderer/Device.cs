@@ -474,10 +474,10 @@ namespace Zeckoxe.Vulkan
 
 
 
-        internal VkShaderModule LoadSpir_V_Shader(byte[] bytes)
+        internal VkShaderModule LoadSpir_V_Shader(Span<byte> bytes)
         {
 
-            fixed (byte* scPtr = bytes)
+            fixed (byte* ptr = bytes)
             {
                 // Create a new shader module that will be used for Pipeline creation
                 VkShaderModuleCreateInfo moduleCreateInfo = new()
@@ -485,7 +485,7 @@ namespace Zeckoxe.Vulkan
                     sType = VkStructureType.ShaderModuleCreateInfo,
                     pNext = null,
                     codeSize = new UIntPtr((ulong)bytes.Length),
-                    pCode = (uint*)scPtr,
+                    pCode = (uint*)ptr,
                 };
 
                 vkCreateShaderModule(handle, &moduleCreateInfo, null, out VkShaderModule shaderModule);

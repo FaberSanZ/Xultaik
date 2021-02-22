@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Shaderc;
+using Vortice.ShaderCompiler;
 
 namespace Zeckoxe.Vulkan
 {
@@ -58,19 +58,23 @@ namespace Zeckoxe.Vulkan
             if (options == default)
                 options = new() { InvertY = false, };
 
-            Options _options = new(false)
+            Options _options = new()
             {
-                SourceLanguage = Shaderc.SourceLanguage.Glsl,
-                InvertY = options.InvertY,
-                //Optimization = OptimizationLevel.Performance,
+                
+                //SourceLanguage = Shaderc.SourceLanguage.Glsl,
+                //InvertY = options.InvertY,
+                ////Optimization = OptimizationLevel.Performance,
             };
+
+            _options.SetSourceLanguage(SourceLanguage.GLSL);
+            //_options.SetInvertY(true);
 
 
             using Compiler compiler = new(_options);
 
-            Result result = compiler.Compile(path, stage.StageToShaderKind());
+            result = compiler.Compile(File.ReadAllText(path), string.Empty, stage.StageToShaderKind());
 
-            Data = result.GetData();
+            Data = result.GetBytecode().ToArray();
         }
 
         public ShaderBytecode(byte[] buffer, ShaderStage stage)
@@ -80,8 +84,26 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public byte[] Data { get; set; }
+        public ShaderBytecode(Span<byte> buffer, ShaderStage stage)
+        {
+            Data = buffer.ToArray();
+            Stage = stage;
+        }
 
+
+        public unsafe byte* GetBytes()
+        {
+            return result.GetBytes();
+        }
+
+        public Span<byte> GetBytecode()
+        {
+            return result.GetBytecode();
+        }
+
+        private Result result;
+
+        public byte[] Data { get; set; }
         public ShaderStage Stage { get; set; }
 
         // TODO: ToStage

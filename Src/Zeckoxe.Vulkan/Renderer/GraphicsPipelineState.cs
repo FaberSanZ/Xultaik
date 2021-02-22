@@ -176,7 +176,7 @@ namespace Zeckoxe.Vulkan
                     sType = VkStructureType.PipelineShaderStageCreateInfo,
                     pNext = null,
                     stage = (VkShaderStageFlags)shaders[i].Stage,
-                    module = NativeDevice.LoadSpir_V_Shader(shaders[i].Data),
+                    module = NativeDevice.LoadSpir_V_Shader(shaders[i].GetBytecode()),
                     pName = Interop.String.ToPointer("main"),
                 };
             }
