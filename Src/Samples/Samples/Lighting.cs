@@ -234,7 +234,7 @@ namespace Samples.Samples
         public override void InitializeSettings()
         {
             base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.Console;
+            Parameters.Settings.Validation = ValidationType.None;
             Window.Title += " - (Lighting) ";
         }
 
@@ -304,10 +304,7 @@ namespace Samples.Samples
             Sampler sampler = new Sampler(Device);
 
 
-            PipelineStateDescription Pipelinedescription0 = new()
-            {
-                PushConstants = { new(ShaderStage.Vertex, 0, Interop.SizeOf<Matrix4x4>()) },
-            };
+            PipelineStateDescription Pipelinedescription0 = new();
 
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.AddShader(Shaders["Fragment"]);
@@ -322,10 +319,7 @@ namespace Samples.Samples
 
 
 
-            PipelineStateDescription Pipelinedescription1 = new()
-            {
-                PushConstants = { new(ShaderStage.Vertex, 0, Interop.SizeOf<Matrix4x4>()) },
-            };
+            PipelineStateDescription Pipelinedescription1 = new();
             Pipelinedescription1.SetFramebuffer(Framebuffer);
             Pipelinedescription1.AddShader(Shaders["Fragment"]);
             Pipelinedescription1.AddShader(Shaders["Vertex"]);
@@ -338,10 +332,7 @@ namespace Samples.Samples
             PipelineState_1 = new(Pipelinedescription1);
 
 
-            PipelineStateDescription Pipelinedescription2 = new()
-            {
-                PushConstants = { new(ShaderStage.Vertex, 0, Interop.SizeOf<Matrix4x4>()) },
-            };
+            PipelineStateDescription Pipelinedescription2 = new();
             Pipelinedescription2.SetFramebuffer(Framebuffer);
             Pipelinedescription2.AddShader(Shaders["Fragment"]);
             Pipelinedescription2.AddShader(Shaders["Vertex"]);

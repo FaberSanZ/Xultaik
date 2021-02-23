@@ -41,16 +41,20 @@ namespace Zeckoxe.Vulkan
                 resourceInfos = description.resourceInfos
             };
 
-            if (DescriptorSet.resourceInfos.Any())
-            {
-                DescriptorSet.Build();
-            }
+
+            DescriptorSet.Build();
+            
         }
 
         public PipelineStateDescription PipelineStateDescription { get; set; }
         public DescriptorSet DescriptorSet { get; set; }
         private void Recreate()
         {
+            foreach (ShaderBytecode item in PipelineStateDescription.Shaders)
+            {
+                Resources.AddRange(item.Resources);
+            }
+
             SetupDescriptorSetLayout();
             CreatePipelineLayout();
 
@@ -67,20 +71,20 @@ namespace Zeckoxe.Vulkan
             // Setup layout of descriptors used in this example
             // Basically connects the different shader stages to descriptors for binding uniform buffers, image samplers, etc.
             // So every shader binding should map to one descriptor set layout binding
+            ShaderResource[] resources = Resources.Where(x => x.resource_type != SharpSPIRVCross.ResourceType.PushConstant).ToArray();
 
-            VkDescriptorSetLayoutBinding* layoutBinding = stackalloc VkDescriptorSetLayoutBinding[PipelineStateDescription.resourceInfos.Count];
 
 
-            for (int i = 0; i < PipelineStateDescription.resourceInfos.Count; i++)
+            VkDescriptorSetLayoutBinding* layoutBinding = stackalloc VkDescriptorSetLayoutBinding[resources.Length];
+
+            for (int i = 0; i < resources.Length; i++)
             {
-                ResourceInfo res = PipelineStateDescription.resourceInfos[i];
-
                 layoutBinding[i] = new VkDescriptorSetLayoutBinding
                 {
-                    binding = (uint)res._binding,
+                    binding = resources[i].binding,
                     descriptorCount = 1, // TODO: descriptorCount
-                    descriptorType = res.descriptor_type,
-                    stageFlags = res.shader_descriptor_type,
+                    descriptorType = resources[i].resource_type.StageTVkDescriptorType(),
+                    stageFlags = resources[i].stage.StageToVkShaderStageFlags(),
                     pImmutableSamplers = null,
                 };
             }
@@ -91,7 +95,7 @@ namespace Zeckoxe.Vulkan
                 sType = VkStructureType.DescriptorSetLayoutCreateInfo,
                 flags = VkDescriptorSetLayoutCreateFlags.None,
                 pNext = null,
-                bindingCount = (uint)PipelineStateDescription.resourceInfos.Count,
+                bindingCount = (uint)resources.Length,
                 pBindings = layoutBinding
             };
 
@@ -100,6 +104,7 @@ namespace Zeckoxe.Vulkan
 
         }
 
+        internal List<ShaderResource> Resources { get; set; } = new();
 
         internal void CreatePipelineLayout()
         {
@@ -108,19 +113,19 @@ namespace Zeckoxe.Vulkan
                 _descriptorSetLayout
             };
 
-            List<PushConstantRange> push_constants = PipelineStateDescription.PushConstants;
 
-            VkPushConstantRange* push_constant = stackalloc VkPushConstantRange[push_constants.Count];
+            ShaderResource[] push_constants = Resources.Where(x => x.resource_type == SharpSPIRVCross.ResourceType.PushConstant).ToArray();
+
+            VkPushConstantRange* push_constant = stackalloc VkPushConstantRange[push_constants.Length];
 
 
-
-            for (int i = 0; i < push_constants.Count; i++)
+            for (int i = 0; i < push_constants.Length; i++)
             {
                 push_constant[i] = new()
                 {
-                    offset = (uint)push_constants[i].Offset,
-                    size = (uint)push_constants[i].Size,
-                    stageFlags = (VkShaderStageFlags)push_constants[i].Stage, //TODO: push_constants VkShaderStageFlags
+                    offset = push_constants[i].offset,
+                    size = push_constants[i].size,
+                    stageFlags = (VkShaderStageFlags)push_constants[i].stage, //TODO: push_constants VkShaderStageFlags
                 };
             }
 
@@ -136,7 +141,7 @@ namespace Zeckoxe.Vulkan
             if (push_constants.Any())
             {
                 layout_create_info.pPushConstantRanges = push_constant;
-                layout_create_info.pushConstantRangeCount = (uint)push_constants.Count;
+                layout_create_info.pushConstantRangeCount = (uint)push_constants.Length;
             }
 
             if (descriptor_set_layout is not null)

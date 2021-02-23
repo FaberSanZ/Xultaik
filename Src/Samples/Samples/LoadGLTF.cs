@@ -342,11 +342,6 @@ namespace Samples.Samples
                     }
                 },
 
-                PushConstants =
-                {
-                    new(ShaderStage.Vertex, 0 , Interop.SizeOf<Matrix4x4>())
-                },
-
                 InputAssemblyState = InputAssemblyState.Default(),
 
                 RasterizationState = new()

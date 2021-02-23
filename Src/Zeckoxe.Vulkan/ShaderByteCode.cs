@@ -6,6 +6,7 @@
 =============================================================================*/
 
 
+using SharpSPIRVCross;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,6 +43,17 @@ namespace Zeckoxe.Vulkan
         All = int.MaxValue
     }
 
+    internal class ShaderResource
+    {
+        internal uint offset { get; set; }
+
+        internal uint set { get; set; }
+        internal uint binding { get; set; }
+        internal uint size { get; set; }
+        internal uint location { get; set; }
+        internal ResourceType resource_type { get; set; }
+        public ShaderStage stage { get; set; }
+    }
 
     public class ShaderBytecodeOptions
     {
@@ -50,6 +62,9 @@ namespace Zeckoxe.Vulkan
 
     public class ShaderBytecode
     {
+
+        private Vortice.ShaderCompiler.Result result;
+
         public ShaderBytecode(string path, ShaderStage stage, ShaderBytecodeOptions options = default)
         {
             Stage = stage;
@@ -58,29 +73,27 @@ namespace Zeckoxe.Vulkan
             if (options == default)
                 options = new() { InvertY = false, };
 
-            Options _options = new()
-            {
-                
-                //SourceLanguage = Shaderc.SourceLanguage.Glsl,
-                //InvertY = options.InvertY,
-                ////Optimization = OptimizationLevel.Performance,
-            };
+            Options _options = new();
 
             _options.SetSourceLanguage(SourceLanguage.GLSL);
             //_options.SetInvertY(true);
 
 
-            using Compiler compiler = new(_options);
+            using Vortice.ShaderCompiler.Compiler compiler = new(_options);
 
             result = compiler.Compile(File.ReadAllText(path), string.Empty, stage.StageToShaderKind());
 
             Data = result.GetBytecode().ToArray();
+
+            AddShaderResource(Data);
         }
 
         public ShaderBytecode(byte[] buffer, ShaderStage stage)
         {
             Data = buffer;
             Stage = stage;
+            AddShaderResource(buffer);
+
         }
 
 
@@ -88,8 +101,124 @@ namespace Zeckoxe.Vulkan
         {
             Data = buffer.ToArray();
             Stage = stage;
+            AddShaderResource(buffer.ToArray());
+
         }
 
+
+
+
+        internal List<ShaderResource> Resources { get; set; } = new();
+
+        public byte[] Data { get; set; }
+        public ShaderStage Stage { get; set; }
+
+        // TODO: ToStage
+
+        public void AddShaderResource(byte[] data)
+        {
+            using (Context context = new Context())
+            {
+                ParseIr ir = context.ParseIr(data);
+                SharpSPIRVCross.Compiler compiler = context.CreateCompiler(Backend.GLSL, ir);
+
+                ShaderResources resources = compiler.CreateShaderResources();
+
+                foreach (ReflectedResource uniformBuffer in resources.GetResources(ResourceType.PushConstant))
+                {
+                    uint set = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.DescriptorSet);
+                    uint binding = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.Binding);
+                    uint offset = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.Offset);
+                    int size = 0;
+                    SpirvType type = compiler.GetSpirvType(uniformBuffer.TypeId);
+                    compiler.GetDeclaredStructSize(type, out size);
+
+                    Resources.Add(new()
+                    {
+                        size = (uint)size,
+                        set = set,
+                        binding = binding,
+                        resource_type = ResourceType.PushConstant,
+                        offset = offset,
+                        stage = Stage,
+                    });
+                }
+
+                foreach (ReflectedResource uniformBuffer in resources.GetResources(ResourceType.SubpassInput))
+                {
+                    uint set = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.DescriptorSet);
+                    uint binding = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.Binding);
+
+                    Resources.Add(new()
+                    {
+                        set = set,
+                        binding = binding,
+                        resource_type = ResourceType.SubpassInput,
+                        stage = Stage,
+                    });
+                }
+
+
+                foreach (ReflectedResource uniformBuffer in resources.GetResources(ResourceType.UniformBuffer))
+                {
+                    uint set = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.DescriptorSet);
+                    uint binding = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.Binding);
+
+                    Resources.Add(new()
+                    {
+                        set = set,
+                        binding = binding,
+                        resource_type = ResourceType.UniformBuffer,
+                        stage = Stage,
+                    });
+                }
+
+                //foreach (ReflectedResource input in resources.GetResources(ResourceType.StageInput))
+                //{
+                //    uint location = compiler.GetDecoration(input.Id, SpvDecoration.Location);
+
+                //    Resources.Add(new()
+                //    {
+                //        location = location,
+                //        resource_type = ResourceType.StageInput,
+                //        stage = Stage,
+                //    });
+                //}
+
+
+                foreach (ReflectedResource separateImage in resources.GetResources(ResourceType.SeparateImage))
+                {
+                    uint set = compiler.GetDecoration(separateImage.Id, SpvDecoration.DescriptorSet);
+                    uint binding = compiler.GetDecoration(separateImage.Id, SpvDecoration.Binding);
+                    //uint binding = compiler.GetDecoration(sampledImage.Id, SpvDecoration.);
+
+                    Resources.Add(new()
+                    {
+                        set = set,
+                        binding = binding,
+                        resource_type = ResourceType.SeparateImage,
+                        stage = Stage,
+                    });
+                }
+
+
+                foreach (ReflectedResource sampledImage in resources.GetResources(ResourceType.SampledImage))
+                {
+                    uint set = compiler.GetDecoration(sampledImage.Id, SpvDecoration.DescriptorSet);
+                    uint binding = compiler.GetDecoration(sampledImage.Id, SpvDecoration.Binding);
+                    //uint binding = compiler.GetDecoration(sampledImage.Id, SpvDecoration.);
+
+                    Resources.Add(new()
+                    {
+                        set = set,
+                        binding = binding,
+                        resource_type = ResourceType.SampledImage,
+                        stage = Stage,
+                    });
+                }
+
+            }
+        }
 
         public unsafe byte* GetBytes()
         {
@@ -100,16 +229,6 @@ namespace Zeckoxe.Vulkan
         {
             return result.GetBytecode();
         }
-
-        private Result result;
-
-        public byte[] Data { get; set; }
-        public ShaderStage Stage { get; set; }
-
-        // TODO: ToStage
-        
-
-
         public static ShaderBytecode LoadFromFile(string path, ShaderStage stage) => new ShaderBytecode(path, stage);
         public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage) => new ShaderBytecode(bytes, stage);
 

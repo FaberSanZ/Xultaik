@@ -16,6 +16,7 @@ using Vortice.Vulkan;
 using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
+using SharpSPIRVCross;
 
 namespace Zeckoxe.Vulkan
 {
@@ -32,6 +33,44 @@ namespace Zeckoxe.Vulkan
         }
 
 
+
+        
+
+        internal static VkDescriptorType StageTVkDescriptorType(this ResourceType stage)
+        {
+            switch (stage)
+            {
+                case ResourceType.UniformBuffer:
+                    return VkDescriptorType.UniformBuffer;
+
+                case ResourceType.StorageBuffer:
+                    return VkDescriptorType.StorageBuffer;
+
+
+                case ResourceType.StorageImage:
+                    return VkDescriptorType.StorageImage;
+
+                case ResourceType.SampledImage:
+                    return VkDescriptorType.CombinedImageSampler;
+
+                case ResourceType.SeparateImage:
+                    return VkDescriptorType.SampledImage;
+
+                case ResourceType.SeparateSamplers:
+                    return VkDescriptorType.Sampler;
+
+                case ResourceType.SubpassInput:
+                    return VkDescriptorType.InputAttachment;
+
+                case ResourceType.AccelerationStructure:
+                    return VkDescriptorType.AccelerationStructureKHR;
+
+
+                default:
+                    return 0;
+
+            }
+        }
 
         internal static VkShaderStageFlags StageToVkShaderStageFlags(this ShaderStage stage)
         {
