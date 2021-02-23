@@ -56,10 +56,10 @@ The rendering backend is completely focused on Vulkan, however the Engine greatl
 - [ ] Memory allocator (VMA)
 - [ ] Compute Shader
 - [ ] Geometry Shader
+- [ ] Tessellation Shader (Phong, PN Triangles, and Displacement Mapping)
 - [ ] G-Buffer
 - [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
-- [ ] Tessellation (Phong, PN Triangles, and Displacement Mapping)
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [ ] Multithreaded rendering
 - [x] Automatic descriptor set management
