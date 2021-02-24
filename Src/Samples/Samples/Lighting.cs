@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Vortice.Vulkan;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
@@ -10,7 +11,7 @@ using Zeckoxe.GLTF;
 using Zeckoxe.Vulkan;
 using Zeckoxe.Vulkan.Toolkit;
 using Buffer = Zeckoxe.Vulkan.Buffer;
-
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Samples.Samples
 {
@@ -309,7 +310,7 @@ namespace Samples.Samples
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.AddShader(Shaders["Fragment"]);
             Pipelinedescription0.AddShader(Shaders["Vertex"]);
-            Pipelinedescription0.AddVertexBinding(VertexInputRate.Vertex, VertexPositionNormalTexture.Size);
+            Pipelinedescription0.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription0.AddVertexAttribute(VertexType.Position);
             Pipelinedescription0.AddVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription0.AddVertexAttribute(VertexType.Normal);
@@ -323,7 +324,7 @@ namespace Samples.Samples
             Pipelinedescription1.SetFramebuffer(Framebuffer);
             Pipelinedescription1.AddShader(Shaders["Fragment"]);
             Pipelinedescription1.AddShader(Shaders["Vertex"]);
-            Pipelinedescription1.AddVertexBinding(VertexInputRate.Vertex, VertexPositionNormalTexture.Size);
+            Pipelinedescription1.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription1.AddVertexAttribute(VertexType.Position);
             Pipelinedescription1.AddVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription1.AddVertexAttribute(VertexType.Normal);
@@ -336,7 +337,7 @@ namespace Samples.Samples
             Pipelinedescription2.SetFramebuffer(Framebuffer);
             Pipelinedescription2.AddShader(Shaders["Fragment"]);
             Pipelinedescription2.AddShader(Shaders["Vertex"]);
-            Pipelinedescription2.AddVertexBinding(VertexInputRate.Vertex, VertexPositionNormalTexture.Size);
+            Pipelinedescription2.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription2.AddVertexAttribute(VertexType.Position);
             Pipelinedescription2.AddVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription2.AddVertexAttribute(VertexType.Normal); 

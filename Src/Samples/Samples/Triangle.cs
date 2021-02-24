@@ -9,6 +9,8 @@ using Zeckoxe.Vulkan;
 using Zeckoxe.Vulkan.Toolkit;
 using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Vulkan.Buffer;
+using Vortice.Vulkan;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Samples.Samples
 {
@@ -141,12 +143,12 @@ namespace Samples.Samples
             Pipelinedescription.SetFramebuffer(Framebuffer);
             Pipelinedescription.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
             Pipelinedescription.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
-            Pipelinedescription.AddVertexBinding(VertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription.AddVertexAttribute(VertexType.Position);
             Pipelinedescription.AddVertexAttribute(VertexType.Color);
-            Pipelinedescription.SetFillMode(FillMode.Solid);
-            Pipelinedescription.SetCullMode(CullMode.Back);
-            Pipelinedescription.SetPrimitiveType(PrimitiveType.TriangleList);
+            Pipelinedescription.SetFillMode(VkPolygonMode.Fill);
+            Pipelinedescription.SetCullMode(VkCullModeFlags.None);
+            Pipelinedescription.SetPrimitiveType(VkPrimitiveTopology.TriangleList);
             Pipelinedescription.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer);
 
             PipelineState = new(Pipelinedescription);

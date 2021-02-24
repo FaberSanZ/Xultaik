@@ -220,7 +220,7 @@ namespace Zeckoxe.Vulkan
                 vertexBindingDesc[i] = new VkVertexInputBindingDescription
                 {
                     binding = (uint)vertexBinding[i].Binding,
-                    inputRate = vertexBinding[i].InputRate is VertexInputRate.Vertex ? VkVertexInputRate.Vertex : VkVertexInputRate.Instance,
+                    inputRate = vertexBinding[i].InputRate,
                     stride = (uint)vertexBinding[i].Stride
                 };
             }
@@ -253,7 +253,7 @@ namespace Zeckoxe.Vulkan
             if (PipelineStateDescription.InputAssemblyState != null)
             {
                 pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable.ToUint();
-                pipelineInputAssemblyStateCreateInfo.topology = VulkanConvert.ToPrimitiveType(PipelineStateDescription.InputAssemblyState.PrimitiveType);
+                pipelineInputAssemblyStateCreateInfo.topology = PipelineStateDescription.InputAssemblyState.PrimitiveType;
             }
             else
             {
@@ -274,9 +274,9 @@ namespace Zeckoxe.Vulkan
 
             if (PipelineStateDescription.RasterizationState != null)
             {
-                rasterizerState.polygonMode = VulkanConvert.ToFillMode(PipelineStateDescription.RasterizationState.FillMode);
-                rasterizerState.cullMode = VulkanConvert.ToCullMode(PipelineStateDescription.RasterizationState.CullMode);
-                rasterizerState.frontFace = VulkanConvert.ToFrontFace(PipelineStateDescription.RasterizationState.FrontFace);
+                rasterizerState.polygonMode = PipelineStateDescription.RasterizationState.FillMode;
+                rasterizerState.cullMode = PipelineStateDescription.RasterizationState.CullMode;
+                rasterizerState.frontFace = PipelineStateDescription.RasterizationState.FrontFace;
                 rasterizerState.lineWidth = PipelineStateDescription.RasterizationState.LineWidth;
                 rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable.ToUint();
                 rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable.ToUint();

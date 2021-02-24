@@ -15,10 +15,11 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Vortice.Vulkan;
 using Zeckoxe.Core;
 using Zeckoxe.GLTF.Schema;
 using Zeckoxe.Vulkan;
-
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.GLTF
 {
@@ -125,7 +126,7 @@ namespace Zeckoxe.GLTF
 
         public List<Mesh> Meshes { get; set; }
 
-        public IndexType IndexType { get; set; }
+        public VkIndexType IndexType { get; set; }
 
 
         internal byte[] load_data_uri(Schema.Image img)
@@ -403,11 +404,11 @@ namespace Zeckoxe.GLTF
         }
 
 
-        public void GetVertexCount(out ulong vertexCount, out ulong indexCount, out IndexType largestIndexType)
+        public void GetVertexCount(out ulong vertexCount, out ulong indexCount, out VkIndexType largestIndexType)
         {
             vertexCount = 0;
             indexCount = 0;
-            largestIndexType = IndexType.Uint16;
+            largestIndexType = VkIndexType.Uint16;
             //compute size of stagging buf
             foreach (Schema.Mesh mesh in gltf.Meshes)
             {
@@ -420,7 +421,7 @@ namespace Zeckoxe.GLTF
                     {
                         indexCount += (ulong)gltf.Accessors[(int)p.Indices].Count;
                         if (gltf.Accessors[(int)p.Indices].ComponentType == GltfComponentType.UnsignedInt)
-                            largestIndexType = IndexType.Uint32;
+                            largestIndexType = VkIndexType.Uint32;
                     }
                 }
             }
@@ -434,7 +435,7 @@ namespace Zeckoxe.GLTF
             IndexType = idxType;
             int vertexByteSize = Marshal.SizeOf<TVertex>();
             ulong vertSize = (ulong)((int)vCount * vertexByteSize);
-            ulong idxSize = (ulong)iCount * (idxType is IndexType.Uint16 ? 2ul : 4ul);
+            ulong idxSize = (ulong)iCount * (idxType is VkIndexType.Uint16 ? 2ul : 4ul);
             ulong size = vertSize + idxSize;
 
             //int vertexCount = 0, indexCount = 0;
@@ -683,7 +684,7 @@ namespace Zeckoxe.GLTF
                         //TODO:double check this, I dont seems to increment stag pointer
                         if (acc.ComponentType == GltfComponentType.UnsignedShort)
                         {
-                            if (IndexType == IndexType.Uint16)
+                            if (IndexType == VkIndexType.Uint16)
                             {
                                 System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 2, (long)acc.Count * 2);
                                 stagIdxPtr += (long)acc.Count * 2;
@@ -699,7 +700,7 @@ namespace Zeckoxe.GLTF
                         }
                         else if (acc.ComponentType == GltfComponentType.UnsignedInt)
                         {
-                            if (IndexType == IndexType.Uint32)
+                            if (IndexType == VkIndexType.Uint32)
                             {
                                 System.Buffer.MemoryCopy(inIdxPtr, stagIdxPtr, (long)acc.Count * 4, (long)acc.Count * 4);
                                 stagIdxPtr += (long)acc.Count * 4;
@@ -716,7 +717,7 @@ namespace Zeckoxe.GLTF
                         else if (acc.ComponentType == GltfComponentType.UnsignedByte)
                         {
                             //convert
-                            if (IndexType == IndexType.Uint16)
+                            if (IndexType == VkIndexType.Uint16)
                             {
                                 ushort* usPtr = (ushort*)stagIdxPtr;
                                 for (int i = 0; i < acc.Count; i++)

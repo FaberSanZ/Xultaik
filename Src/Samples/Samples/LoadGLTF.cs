@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Vortice.Vulkan;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
@@ -18,6 +19,7 @@ using Zeckoxe.Vulkan;
 using Zeckoxe.Vulkan.Toolkit;
 //using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Vulkan.Buffer;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Samples.Samples
 {
@@ -305,26 +307,26 @@ namespace Samples.Samples
                 {
                     Binding = 0,
                     Location = 0,
-                    Format = PixelFormat.R32G32B32SFloat,
+                    Format = VkFormat.R32G32B32SFloat,
                     Offset = 0,
                 },
                 new()
                 {
                     Binding = 0,
                     Location = 1,
-                    Format = PixelFormat.R32G32B32SFloat,
+                    Format = VkFormat.R32G32B32SFloat,
                     Offset = 12,
                 }
             };
 
             List<VertexInputBinding> VertexBindingDescriptions = new()
             {
-                new()
-                {
-                    Binding = 0,
-                    InputRate = VertexInputRate.Vertex,
-                    Stride = VertexPositionNormal.Size,
-                }
+                //new()
+                //{
+                //    Binding = 0,
+                //    InputRate = VertexInputRate.Vertex,
+                //    Stride = VertexPositionNormal.Size,
+                //}
             };
 
             PipelineStateDescription pipelineStateDescription = new()
@@ -337,7 +339,7 @@ namespace Samples.Samples
                     new()
                     {
                         Stage = ShaderStage.Vertex,
-                        Type = DescriptorType.UniformBuffer,
+                        //Type = DescriptorType.UniformBuffer,
                         Binding = 0,
                     }
                 },
@@ -346,9 +348,9 @@ namespace Samples.Samples
 
                 RasterizationState = new()
                 {
-                    FillMode = FillMode.Solid,
-                    CullMode = CullMode.None,
-                    FrontFace = FrontFace.CounterClockwise,
+                    //FillMode =  ,
+                    //CullMode = VkCullModeFlags.None,
+                    //FrontFace = FrontFace.CounterClockwise,
                 },
                 PipelineVertexInput = new()
                 {

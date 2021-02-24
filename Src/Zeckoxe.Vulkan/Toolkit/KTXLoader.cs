@@ -126,7 +126,7 @@ namespace Zeckoxe.Vulkan.Toolkit
                 Width = (int)Header.PixelWidth,
                 Height = (int)Header.PixelHeight,
                 Depth = (int)Header.PixelDepth,
-                Format = PixelFormatExtensions.GetFormatFromOpenGLFormat(Header.GlInternalFormat),
+                Format = FormatExtensions.GetFormatFromOpenGLFormat(Header.GlInternalFormat),
                 Size = (int)GetTotalSize(),
                 IsCubeMap = Header.NumberOfFaces is 6,
                 MipMaps = (int)Header.NumberOfMipmapLevels,

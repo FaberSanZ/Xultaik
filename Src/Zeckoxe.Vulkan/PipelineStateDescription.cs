@@ -36,17 +36,17 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public static PixelFormat ToPixelFormat(this VertexType element)
+        public static VkFormat ToPixelFormat(this VertexType element)
         {
             switch (element)
             {
-                case VertexType.Position: return PixelFormat.R32G32B32SFloat;
+                case VertexType.Position: return VkFormat.R32G32B32SFloat;
 
-                case VertexType.Normal: return PixelFormat.R32G32B32SFloat;
+                case VertexType.Normal: return VkFormat.R32G32B32SFloat;
 
-                case VertexType.TextureCoordinate: return PixelFormat.R32G32SFloat;
+                case VertexType.TextureCoordinate: return VkFormat.R32G32SFloat;
 
-                case VertexType.Color: return PixelFormat.R32G32B32SFloat;
+                case VertexType.Color: return VkFormat.R32G32B32SFloat;
 
                 default: return 0;
             }
@@ -54,6 +54,70 @@ namespace Zeckoxe.Vulkan
 
 
         
+    }
+    public class InputAssemblyState
+    {
+        public VkPrimitiveTopology PrimitiveType { get; set; }
+        public bool PrimitiveRestartEnable { get; set; }
+
+        public InputAssemblyState(VkPrimitiveTopology Type, bool RestartEnable = false)
+        {
+            PrimitiveType = Type;
+            PrimitiveRestartEnable = RestartEnable;
+        }
+
+        public InputAssemblyState()
+        {
+            PrimitiveType = VkPrimitiveTopology.TriangleList;
+            PrimitiveRestartEnable = false;
+        }
+
+
+        public static InputAssemblyState Default() => new InputAssemblyState()
+        {
+            PrimitiveRestartEnable = false,
+            PrimitiveType = VkPrimitiveTopology.TriangleList
+        };
+
+    }
+
+    public class MultisampleState
+    {
+        public VkSampleCountFlags MultisampleCount { get; set; }
+        public bool SampleShadingEnable { get; set; }
+        public float MinSampleShading { get; set; }
+        public bool AlphaToCoverageEnable { get; set; }
+        public bool AlphaToOneEnable { get; set; }
+
+
+        public MultisampleState()
+        {
+            MultisampleCount = VkSampleCountFlags.Count1;
+        }
+
+    }
+
+
+    public class RasterizationState
+    {
+        public bool DepthClampEnable { get; set; }
+        public bool RasterizerDiscardEnable { get; set; }
+        public VkPolygonMode FillMode { get; set; }
+        public VkCullModeFlags CullMode { get; set; }
+        public VkFrontFace FrontFace { get; set; }
+        public bool DepthBiasEnable { get; set; }
+        public float DepthBiasConstantFactor { get; set; }
+        public float DepthBiasClamp { get; set; }
+        public float DepthBiasSlopeFactor { get; set; }
+        public float LineWidth { get; set; } = 1.0F;
+
+
+        public static RasterizationState Default() => new RasterizationState()
+        {
+            FillMode = VkPolygonMode.Fill,
+            CullMode = VkCullModeFlags.None,
+            FrontFace = VkFrontFace.Clockwise,
+        };
     }
 
 
@@ -65,9 +129,9 @@ namespace Zeckoxe.Vulkan
 
         public PipelineStateDescription()
         {
-            SetPrimitiveType(PrimitiveType.TriangleList);
-            SetFillMode(FillMode.Solid);
-            SetCullMode(CullMode.None);
+            SetPrimitiveType(VkPrimitiveTopology.TriangleList);
+            SetFillMode(VkPolygonMode.Fill);
+            SetCullMode(VkCullModeFlags.None);
         }
 
 
@@ -84,8 +148,6 @@ namespace Zeckoxe.Vulkan
         public List<ShaderBytecode> Shaders { get; set; } = new();
 
         public List<DescriptorSetLayout> Layouts { get; set; } = new();
-
-        public List<PushConstantRange> PushConstants { get; set; } = new();
 
 
         public void AddVertexAttribute<TVertex>()
@@ -118,17 +180,17 @@ namespace Zeckoxe.Vulkan
             Framebuffer = framebuffer;
         }
 
-        public void SetCullMode(CullMode mode)
+        public void SetCullMode(VkCullModeFlags mode)
         {
             RasterizationState.CullMode = mode;
         }
 
-        public void SetFillMode(FillMode mode)
+        public void SetFillMode(VkPolygonMode mode)
         {
             RasterizationState.FillMode = mode;
         }
 
-        public void SetPrimitiveType(PrimitiveType type)
+        public void SetPrimitiveType(VkPrimitiveTopology type)
         {
             InputAssemblyState.PrimitiveType = type;
         }
@@ -142,7 +204,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public void AddVertexBinding(VertexInputRate rate, int stride, int binding = 0)
+        public void AddVertexBinding(VkVertexInputRate rate, int stride, int binding = 0)
         {
             PipelineVertexInput.VertexBindingDescriptions.Add(new()
             {

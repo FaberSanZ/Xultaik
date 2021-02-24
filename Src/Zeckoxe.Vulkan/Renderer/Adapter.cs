@@ -399,16 +399,16 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public PixelFormat GetSupportedDepthFormat(IEnumerable<PixelFormat> depthFormats)
+        public VkFormat GetSupportedDepthFormat(IEnumerable<VkFormat> depthFormats)
         {
             // Since all depth formats may be optional, we need to find a suitable depth format to use
             // Start with the highest precision packed format
 
-            PixelFormat depthFormat = PixelFormat.Undefined;
+            VkFormat depthFormat = VkFormat.Undefined;
 
-            foreach (PixelFormat format in depthFormats)
+            foreach (VkFormat format in depthFormats)
             {
-                vkGetPhysicalDeviceFormatProperties(handle, (VkFormat)format, out VkFormatProperties formatProps);
+                vkGetPhysicalDeviceFormatProperties(handle, format, out VkFormatProperties formatProps);
 
                 // Format must support depth stencil attachment for optimal tiling
                 if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) is not 0)

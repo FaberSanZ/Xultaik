@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
-
+using Vortice.Vulkan;
 
 namespace Zeckoxe.Vulkan.Toolkit
 {
@@ -50,7 +50,7 @@ namespace Zeckoxe.Vulkan.Toolkit
             {
                 Width = _image.Width,
                 Height = _image.Height,
-                Format = PixelFormat.R8G8B8A8UNorm,
+                Format = VkFormat.R8G8B8A8UNorm,
                 Size = _image.Width * _image.Height * 4,
                 Depth = 1,
                 IsCubeMap = false,
@@ -90,7 +90,7 @@ namespace Zeckoxe.Vulkan.Toolkit
             {
                 Width = _image.Width,
                 Height = _image.Height,
-                Format = PixelFormat.R8G8B8A8UNorm,
+                Format = VkFormat.R8G8B8A8UNorm,
                 Size = _image.Width * _image.Height * 4,
                 Depth = 1,
                 IsCubeMap = false,

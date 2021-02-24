@@ -81,7 +81,7 @@ namespace Zeckoxe.Vulkan
         }
 
         public PresentationParameters Parameters { get; set; }
-        public PixelFormat ColorFormat { get; private set; }
+        public VkFormat ColorFormat { get; private set; }
         public Image DepthStencil { get; private set; }
         public SwapchainSource SwapchainSource { get; set; }
 

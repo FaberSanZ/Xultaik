@@ -171,11 +171,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Common\" />
-  </ItemGroup>
-
-
-  <ItemGroup>
     <PackageReference Include="Vortice.Dxc" Version="1.9.3-beta" />
   </ItemGroup>
 

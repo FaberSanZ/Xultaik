@@ -8,7 +8,8 @@ using Zeckoxe.Engine;
 using Zeckoxe.Vulkan;
 using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Vulkan.Buffer;
-
+using Vortice.Vulkan;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Samples.Samples
 {
@@ -220,7 +221,7 @@ namespace Samples.Samples
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
             Pipelinedescription0.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
-            Pipelinedescription0.AddVertexBinding(VertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription0.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription0.AddVertexAttribute<VertexPositionColor>();
             Pipelinedescription0.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer);
 
@@ -231,7 +232,7 @@ namespace Samples.Samples
             Pipelinedescription1.SetFramebuffer(Framebuffer);
             Pipelinedescription1.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
             Pipelinedescription1.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
-            Pipelinedescription1.AddVertexBinding(VertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription1.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription1.AddVertexAttribute<VertexPositionColor>();
             Pipelinedescription1.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer2);
 

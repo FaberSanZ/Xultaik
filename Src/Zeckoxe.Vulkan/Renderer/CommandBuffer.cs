@@ -352,9 +352,9 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public void SetCullMode(CullMode mode)
+        public void SetCullMode(VkCullModeFlags mode)
         {
-            vkCmdSetCullModeEXT(handle, mode.ToCullMode());
+            vkCmdSetCullModeEXT(handle, mode);
         }
 
         public void SetLineWidth(float lineWidth)
@@ -362,14 +362,14 @@ namespace Zeckoxe.Vulkan
             vkCmdSetLineWidth(handle, lineWidth);
         }
 
-        public void SetFrontFace(FrontFace frontFace)
+        public void SetFrontFace(VkFrontFace frontFace)
         {
-            vkCmdSetFrontFaceEXT(handle, frontFace.ToFrontFace());
+            vkCmdSetFrontFaceEXT(handle, frontFace);
         }
 
-        public void SetPrimitiveTopology(PrimitiveType type)
+        public void SetPrimitiveTopology(VkPrimitiveTopology type)
         {
-            vkCmdSetPrimitiveTopologyEXT(handle, type.ToPrimitiveType());
+            vkCmdSetPrimitiveTopologyEXT(handle, type);
         }
 
 
@@ -436,11 +436,11 @@ namespace Zeckoxe.Vulkan
             vkCmdBindVertexBuffers(handle, 0, 1, buffer, &offsets);
         }
 
-        public void SetIndexBuffer(Buffer buffer, ulong offsets = 0, IndexType indexType = IndexType.Uint32)
+        public void SetIndexBuffer(Buffer buffer, ulong offsets = 0, VkIndexType indexType = VkIndexType.Uint32)
         {
             if (buffer.handle != VkBuffer.Null)
             {
-                vkCmdBindIndexBuffer(handle, buffer.handle, offsets, (VkIndexType)indexType);
+                vkCmdBindIndexBuffer(handle, buffer.handle, offsets, indexType);
             }
         }
 

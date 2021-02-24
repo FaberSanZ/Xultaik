@@ -119,7 +119,7 @@ namespace Zeckoxe.Vulkan
 
         public ImageDescription Description { get; set; }
         public ImageDimension Dimension => Description.Dimension;
-        public PixelFormat Format => Description.Format;
+        public VkFormat Format => Description.Format;
         public byte[] Data => Description.Data;
         public int Size => Description.Size;
         public int MipLevels => Description.MipLevels;
@@ -128,7 +128,7 @@ namespace Zeckoxe.Vulkan
         public int Height => Description.Height;
         public int Depth => Description.Depth;
         public bool IsCubeMap => Description.IsCubeMap;
-        public PixelFormat Formatt => Description.Format;
+        public VkFormat Formatt => Description.Format;
         public TextureFlags ViewFlags => Description.Flags;
 
         public bool IsRenderTarget => (ViewFlags & TextureFlags.RenderTarget) != 0;
@@ -139,11 +139,11 @@ namespace Zeckoxe.Vulkan
 
         public bool IsUnorderedAccess => (ViewFlags & TextureFlags.UnorderedAccess) != 0;
 
-        public bool IsMultisample => MultisampleCount > MultisampleCount.None;
+        public bool IsMultisample => MultisampleCount > VkSampleCountFlags.None;
 
 
 
-        public MultisampleCount MultisampleCount { get; private set; }
+        public VkSampleCountFlags MultisampleCount { get; private set; }
         public int Levels { get; internal set; }
 
         internal void Initialize()
@@ -157,7 +157,7 @@ namespace Zeckoxe.Vulkan
             if (IsDepthStencil)
             {
                 depth_stencil_view = get_depth_stencil_view();
-                format = NativeDevice.NativeAdapter.get_supported_depth_format(PixelFormatExtensions.depth_formats);
+                format = NativeDevice.NativeAdapter.get_supported_depth_format(FormatExtensions.depth_formats);
             }
 
             if (IsShaderResource)
@@ -239,7 +239,7 @@ namespace Zeckoxe.Vulkan
 
             if (IsDepthStencil)
             {
-                image_create_info.format = NativeDevice.NativeAdapter.get_supported_depth_format(PixelFormatExtensions.depth_formats);
+                image_create_info.format = NativeDevice.NativeAdapter.get_supported_depth_format(FormatExtensions.depth_formats);
                 image_create_info.mipLevels = 1;
                 image_create_info.arrayLayers = 1;
                 image_create_info.usage |= VkImageUsageFlags.DepthStencilAttachment;

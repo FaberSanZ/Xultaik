@@ -9,6 +9,8 @@ using Zeckoxe.Vulkan;
 using Zeckoxe.Vulkan.Toolkit;
 using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Vulkan.Buffer;
+using Vortice.Vulkan;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Samples.Samples
 {
@@ -202,7 +204,7 @@ namespace Samples.Samples
             Pipelinedescription1.SetFramebuffer(Framebuffer);
             Pipelinedescription1.AddShader(Shaders["Fragment"]);
             Pipelinedescription1.AddShader(Shaders["Vertex"]);
-            Pipelinedescription1.AddVertexBinding(VertexInputRate.Vertex, Vertex.Size);
+            Pipelinedescription1.AddVertexBinding(VkVertexInputRate.Vertex, Vertex.Size);
             Pipelinedescription1.AddVertexAttribute(VertexType.Position);
             Pipelinedescription1.AddVertexAttribute(VertexType.Color);
             Pipelinedescription1.AddVertexAttribute(VertexType.TextureCoordinate);
@@ -215,7 +217,7 @@ namespace Samples.Samples
             Pipelinedescription2.SetFramebuffer(Framebuffer);
             Pipelinedescription2.AddShader(Shaders["Fragment"]);
             Pipelinedescription2.AddShader(Shaders["Vertex"]);
-            Pipelinedescription2.AddVertexBinding(VertexInputRate.Vertex, Vertex.Size);
+            Pipelinedescription2.AddVertexBinding(VkVertexInputRate.Vertex, Vertex.Size);
             Pipelinedescription2.AddVertexAttribute(VertexType.Position);
             Pipelinedescription2.AddVertexAttribute(VertexType.Color);
             Pipelinedescription2.AddVertexAttribute(VertexType.TextureCoordinate);

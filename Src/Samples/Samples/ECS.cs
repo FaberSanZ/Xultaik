@@ -10,12 +10,14 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Vortice.Vulkan;
 using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.GLTF;
 using Zeckoxe.Vulkan;
 using Buffer = Zeckoxe.Vulkan.Buffer;
+using Interop = Zeckoxe.Core.Interop;
 
 namespace Samples.Samples
 {
@@ -446,21 +448,21 @@ namespace Samples.Samples
                 {
                     Binding = 0,
                     Location = 0,
-                    Format = PixelFormat.R32G32B32SFloat,
+                    Format = VkFormat.R32G32B32SFloat,
                     Offset = 0,
                 },
                 new()
                 {
                     Binding = 0,
                     Location = 1,
-                    Format = PixelFormat.R32G32B32SFloat,
+                    Format = VkFormat.R32G32B32SFloat,
                     Offset = Interop.SizeOf<Vector3>(),
                 },
                 new()
                 {
                     Binding = 0,
                     Location = 2,
-                    Format = PixelFormat.R32G32SFloat,
+                    Format = VkFormat.R32G32SFloat,
                     Offset = Interop.SizeOf<Vector2>() + Interop.SizeOf<Vector3>(),
                 },
             };
@@ -470,7 +472,7 @@ namespace Samples.Samples
                 new()
                 {
                     Binding = 0,
-                    InputRate = VertexInputRate.Vertex,
+                    InputRate = VkVertexInputRate.Vertex,
                     Stride = VertexPositionNormalTexture.Size,
                 },
             };
@@ -501,11 +503,6 @@ namespace Samples.Samples
             PipelineStateDescription pipelineStateDescription = new()
             {
                 Framebuffer = DeviceInfo.Framebuffer,
-
-                PushConstants =
-                {
-                    new(ShaderStage.Vertex, 0, Interop.SizeOf<Matrix4x4>())
-                },
 
                 InputAssemblyState = InputAssemblyState.Default(),
                 RasterizationState = RasterizationState.Default(),
