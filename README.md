@@ -31,13 +31,8 @@ The rendering backend is completely focused on Vulkan, however the Engine greatl
 
 ## Features:
 
-- [ ] Ray Tracing -><br>
-		- VK_KHR_acceleration_structure <br>
-		- VK_KHR_ray_tracing_pipeline <br>
-		- VK_KHR_ray_query <br>
-		- VK_KHR_pipeline_library <br>
+- [ ] Ray Tracing  VK_KHR_acceleration_structure (VK_KHR_ray_tracing_pipeline, VK_KHR_ray_query, VK_KHR_pipeline_library)
 - [ ] Conservative rasterization (VK_EXT_conservative_rasterization)
-- [ ] Push descriptors (VK_KHR_push_descriptor)
 - [ ] Inline uniform blocks (VK_EXT_inline_uniform_block)
 - [ ] Multiview rendering (VK_KHR_multiview)
 - [ ] Conditional rendering (VK_EXT_conditional_rendering)
@@ -54,7 +49,6 @@ The rendering backend is completely focused on Vulkan, however the Engine greatl
 - [ ] VK_KHR_external_memory 
 - [ ] VK_KHR_external_semaphore 
 - [ ] VK_KHR_sampler_ycbcr_conversion 
-- [ ] VK_KHR_imageless_framebuffer 
 - [ ] VK_EXT_memory_priority 
 - [ ] VK_KHR_draw_indirect_count
 - [ ] VK_EXT_inline_uniform_block 
@@ -62,13 +56,14 @@ The rendering backend is completely focused on Vulkan, however the Engine greatl
 - [ ] Memory allocator (VMA)
 - [ ] Compute Shader
 - [ ] Geometry Shader
+- [ ] Tessellation Shader (Phong, PN Triangles, and Displacement Mapping)
 - [ ] G-Buffer
 - [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
-- [ ] Tessellation (Phong, PN Triangles, and Displacement Mapping)
 - [ ] Post-AA (FXAA, SMAA and TAA)
-- [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [ ] Multithreaded rendering
+- [x] Automatic descriptor set management
+- [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [x] GLTF 2.0
 
 
