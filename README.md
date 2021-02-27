@@ -2,7 +2,7 @@
 <h1 align="center">
    Zeckoxe Engine
   
-  ##               Zeckoxe Engine is a 2D/3D renderer implemented in [Vulkan®](https://www.khronos.org/vulkan/)
+  ##               Zeckoxe is a 2D/3D renderer implemented in [Vulkan®](https://www.khronos.org/vulkan/)
   
 </h1>
 
@@ -22,10 +22,7 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 ## Low-level rendering backend
 
-The engine is designed to test and investigate graphics, physics and GPGPU techniques, including games. 
-Games is not the real motivation behind this project.
-
-The rendering backend is completely focused on Vulkan, however the Engine greatly simplifies the most painful points of writing Vulkan. 
+The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and data structures where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan, it's likely a happy middle ground between "perfect" Vulkan and OpenGL/D3D11 w.r.t. CPU overhead.
 <br>
 
 
