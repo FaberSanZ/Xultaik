@@ -219,23 +219,21 @@ namespace Samples.Samples
         {
             PipelineStateDescription Pipelinedescription0 = new();
             Pipelinedescription0.SetFramebuffer(Framebuffer);
-            Pipelinedescription0.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
-            Pipelinedescription0.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
-            Pipelinedescription0.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription0.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
+            Pipelinedescription0.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
+            Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription0.AddVertexAttribute<VertexPositionColor>();
-            Pipelinedescription0.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer);
-
+            Pipelinedescription0.SetUniformBuffer(0, ConstBuffer);
             PipelineState_0 = new(Pipelinedescription0);
 
 
             PipelineStateDescription Pipelinedescription1 = new();
             Pipelinedescription1.SetFramebuffer(Framebuffer);
-            Pipelinedescription1.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
-            Pipelinedescription1.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
-            Pipelinedescription1.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription1.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
+            Pipelinedescription1.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
+            Pipelinedescription1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription1.AddVertexAttribute<VertexPositionColor>();
-            Pipelinedescription1.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer2);
-
+            Pipelinedescription1.SetUniformBuffer(0, ConstBuffer2);
             PipelineState_1 = new(Pipelinedescription1);
 
 

@@ -364,7 +364,7 @@ namespace Samples.Samples
                 },
 
             };
-            pipelineStateDescription.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
+            pipelineStateDescription.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
 
             PipelineState = new(pipelineStateDescription);
         }

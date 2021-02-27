@@ -141,15 +141,15 @@ namespace Samples.Samples
         {
             PipelineStateDescription Pipelinedescription = new();
             Pipelinedescription.SetFramebuffer(Framebuffer);
-            Pipelinedescription.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
-            Pipelinedescription.AddShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
-            Pipelinedescription.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
-            Pipelinedescription.AddVertexAttribute(VertexType.Position);
-            Pipelinedescription.AddVertexAttribute(VertexType.Color);
+            Pipelinedescription.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
+            Pipelinedescription.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
+            Pipelinedescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription.SetVertexAttribute(VertexType.Position);
+            Pipelinedescription.SetVertexAttribute(VertexType.Color);
             Pipelinedescription.SetFillMode(VkPolygonMode.Fill);
             Pipelinedescription.SetCullMode(VkCullModeFlags.None);
             Pipelinedescription.SetPrimitiveType(VkPrimitiveTopology.TriangleList);
-            Pipelinedescription.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer);
+            Pipelinedescription.SetUniformBuffer(0, ConstBuffer);
 
             PipelineState = new(Pipelinedescription);
         }

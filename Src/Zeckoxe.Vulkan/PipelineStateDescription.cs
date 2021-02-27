@@ -159,19 +159,19 @@ namespace Zeckoxe.Vulkan
                 VertexAttribute attribute = info.GetCustomAttribute<VertexAttribute>();
 
                 if (attribute.Type is VertexType.Position)
-                    AddVertexAttribute(VertexType.Position);
+                    SetVertexAttribute(VertexType.Position);
 
 
                 if (attribute.Type is VertexType.Color)
-                    AddVertexAttribute(VertexType.Color);
+                    SetVertexAttribute(VertexType.Color);
 
 
                 if (attribute.Type is VertexType.TextureCoordinate)
-                    AddVertexAttribute(VertexType.TextureCoordinate);
+                    SetVertexAttribute(VertexType.TextureCoordinate);
 
 
                 if (attribute.Type is VertexType.Normal)
-                    AddVertexAttribute(VertexType.Normal);
+                    SetVertexAttribute(VertexType.Normal);
             }
         }
 
@@ -195,7 +195,7 @@ namespace Zeckoxe.Vulkan
             InputAssemblyState.PrimitiveType = type;
         }
 
-        public void AddShader(ShaderBytecode bytecode)
+        public void SetShader(ShaderBytecode bytecode)
         {
             if (bytecode.Data.Any())
             {
@@ -204,7 +204,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public void AddVertexBinding(VkVertexInputRate rate, int stride, int binding = 0)
+        public void SetVertexBinding(VkVertexInputRate rate, int stride, int binding = 0)
         {
             PipelineVertexInput.VertexBindingDescriptions.Add(new()
             {
@@ -213,7 +213,7 @@ namespace Zeckoxe.Vulkan
                 Stride = stride,
             });
         }
-        public void AddVertexAttribute(VertexType element, int binding = 0)
+        public void SetVertexAttribute(VertexType element, int binding = 0)
         {
             PipelineVertexInput.VertexAttributeDescriptions.Add(new()
             {
@@ -229,24 +229,23 @@ namespace Zeckoxe.Vulkan
 
 
 
-        public void SetImageSampler(int offset, ShaderStage stage, Image texture, Sampler sampler)
+        public void SetImageSampler(int _binding, Image texture, Sampler sampler)
         {
 
             resourceInfos.Add(new ResourceInfo
             {
-                _offset = offset,
-                _binding = offset,
+                _offset = _binding,
+                _binding = _binding,
                 is_sampler = true,
                 is_texture = true,
                 _sampler = sampler,
                 _texture = texture,
                 descriptor_type = Vortice.Vulkan.VkDescriptorType.CombinedImageSampler,
-                shader_descriptor_type = stage.StageToVkShaderStageFlags()
             });
         }
 
 
-        public void SetUniformBuffer(int binding, ShaderStage stage, Buffer buffer, int offset = 0)
+        public void SetUniformBuffer(int binding, Buffer buffer, int offset = 0)
         {
             resourceInfos.Add(new ResourceInfo
             {
@@ -255,7 +254,6 @@ namespace Zeckoxe.Vulkan
                 is_buffer = true,
                 _buffer = buffer,
                 descriptor_type = Vortice.Vulkan.VkDescriptorType.UniformBuffer,
-                shader_descriptor_type = stage.StageToVkShaderStageFlags()
             });
 
         }

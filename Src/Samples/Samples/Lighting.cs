@@ -308,41 +308,41 @@ namespace Samples.Samples
             PipelineStateDescription Pipelinedescription0 = new();
 
             Pipelinedescription0.SetFramebuffer(Framebuffer);
-            Pipelinedescription0.AddShader(Shaders["Fragment"]);
-            Pipelinedescription0.AddShader(Shaders["Vertex"]);
-            Pipelinedescription0.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
-            Pipelinedescription0.AddVertexAttribute(VertexType.Position);
-            Pipelinedescription0.AddVertexAttribute(VertexType.TextureCoordinate);
-            Pipelinedescription0.AddVertexAttribute(VertexType.Normal);
-            Pipelinedescription0.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer);
-            Pipelinedescription0.SetImageSampler(1, ShaderStage.Fragment, text1, sampler);
+            Pipelinedescription0.SetShader(Shaders["Fragment"]);
+            Pipelinedescription0.SetShader(Shaders["Vertex"]);
+            Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
+            Pipelinedescription0.SetVertexAttribute(VertexType.Position);
+            Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
+            Pipelinedescription0.SetVertexAttribute(VertexType.Normal);
+            Pipelinedescription0.SetUniformBuffer(0, ConstBuffer);
+            Pipelinedescription0.SetImageSampler(1, text1, sampler);
             PipelineState_0 = new(Pipelinedescription0);
 
 
 
             PipelineStateDescription Pipelinedescription1 = new();
             Pipelinedescription1.SetFramebuffer(Framebuffer);
-            Pipelinedescription1.AddShader(Shaders["Fragment"]);
-            Pipelinedescription1.AddShader(Shaders["Vertex"]);
-            Pipelinedescription1.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
-            Pipelinedescription1.AddVertexAttribute(VertexType.Position);
-            Pipelinedescription1.AddVertexAttribute(VertexType.TextureCoordinate);
-            Pipelinedescription1.AddVertexAttribute(VertexType.Normal);
-            Pipelinedescription1.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer2);
-            Pipelinedescription1.SetImageSampler(1, ShaderStage.Fragment, text2, sampler);
+            Pipelinedescription1.SetShader(Shaders["Fragment"]);
+            Pipelinedescription1.SetShader(Shaders["Vertex"]);
+            Pipelinedescription1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
+            Pipelinedescription1.SetVertexAttribute(VertexType.Position);
+            Pipelinedescription1.SetVertexAttribute(VertexType.TextureCoordinate);
+            Pipelinedescription1.SetVertexAttribute(VertexType.Normal);
+            Pipelinedescription1.SetUniformBuffer(0, ConstBuffer2);
+            Pipelinedescription1.SetImageSampler(1, text2, sampler);
             PipelineState_1 = new(Pipelinedescription1);
 
 
             PipelineStateDescription Pipelinedescription2 = new();
             Pipelinedescription2.SetFramebuffer(Framebuffer);
-            Pipelinedescription2.AddShader(Shaders["Fragment"]);
-            Pipelinedescription2.AddShader(Shaders["Vertex"]);
-            Pipelinedescription2.AddVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
-            Pipelinedescription2.AddVertexAttribute(VertexType.Position);
-            Pipelinedescription2.AddVertexAttribute(VertexType.TextureCoordinate);
-            Pipelinedescription2.AddVertexAttribute(VertexType.Normal); 
-            Pipelinedescription2.SetUniformBuffer(0, ShaderStage.Vertex, ConstBuffer3);
-            Pipelinedescription2.SetImageSampler(1, ShaderStage.Fragment, text3, sampler);
+            Pipelinedescription2.SetShader(Shaders["Fragment"]);
+            Pipelinedescription2.SetShader(Shaders["Vertex"]);
+            Pipelinedescription2.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
+            Pipelinedescription2.SetVertexAttribute(VertexType.Position);
+            Pipelinedescription2.SetVertexAttribute(VertexType.TextureCoordinate);
+            Pipelinedescription2.SetVertexAttribute(VertexType.Normal); 
+            Pipelinedescription2.SetUniformBuffer(0, ConstBuffer3);
+            Pipelinedescription2.SetImageSampler(1, text3, sampler);
             PipelineState_2 = new(Pipelinedescription2);
 
         }
