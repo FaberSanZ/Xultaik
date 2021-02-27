@@ -117,7 +117,7 @@ namespace Samples.Samples
 
             Device.WaitIdle();
 
-            commandBuffer.Begin(SwapChain);
+            commandBuffer.Begin();
             commandBuffer.BeginFramebuffer(Framebuffer);
 
             commandBuffer.Close();

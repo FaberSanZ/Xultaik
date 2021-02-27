@@ -141,7 +141,7 @@ namespace Zeckoxe.Engine
         public override void BeginDraw()
         {
             Device.WaitIdle();
-            Context.CommandBuffer.Begin(SwapChain);
+            Context.CommandBuffer.Begin();
 
 
             base.BeginDraw();

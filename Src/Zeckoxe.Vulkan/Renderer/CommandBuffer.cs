@@ -7,6 +7,7 @@
 =============================================================================*/
 
 
+using System.Collections.Generic;
 using System.Linq;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
@@ -14,15 +15,11 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Vulkan
 {
-
-
-    //TODO: CommandBufferType
     public unsafe class CommandBuffer : GraphicsResource
     {
 
         internal uint imageIndex;
         internal VkCommandBuffer handle;
-        internal VkFence waitFences; // TODO: VkFence -> Fence(0)
 
 
 
@@ -30,11 +27,13 @@ namespace Zeckoxe.Vulkan
         {
             Type = type;
 
+            WaitFences = new();
+
             Recreate();
         }
 
         public CommandBufferType Type { get; set; }
-
+        public List<Fence> WaitFences { get; set; }
 
         public void Recreate()
         {
@@ -42,7 +41,7 @@ namespace Zeckoxe.Vulkan
             switch (Type)
             {
                 case CommandBufferType.Generic:
-                    handle = NativeDevice.create_command_buffer_primary(NativeDevice.graphics_cmd_pool); // TODO: CommandBufferType.Count
+                    handle = NativeDevice.create_command_buffer_primary(NativeDevice.graphics_cmd_pool);
                     break;
 
                 case CommandBufferType.AsyncGraphics:
@@ -62,73 +61,67 @@ namespace Zeckoxe.Vulkan
                     break;
             }
 
-            // TODO: Fence
-            // Fences (Used to check draw command buffer completion)
-            VkFenceCreateInfo fenceCreateInfo = new()
-            {
-                sType = VkStructureType.FenceCreateInfo
-            };
 
-            // Create in signaled state so we don't wait on first render of each command buffer
-            fenceCreateInfo.flags = VkFenceCreateFlags.Signaled;
-            vkCreateFence(NativeDevice.handle, &fenceCreateInfo, null, out waitFences);
+            WaitFences.Add(new(NativeDevice, true));
 
         }
 
-        //public CommandBufferType GetPhysicalQueueType(CommandBufferType type)
-        //{
-        //    if (type != CommandBufferType.AsyncGraphics)
-        //    {
-        //        return type;
-        //    }
 
-        //    else
-        //    {
-        //        if (NativeDevice.GraphicsFamily == NativeDevice.ComputeFamily && NativeDevice.queueFamilyProperties /*graphics_queue*/ != NativeDevice.queueFamilyProperties /*compute_queue*/)
-        //        {
-        //            return CommandBufferType.AsyncCompute;
-        //        }
-        //        else
-        //        {
-        //            return CommandBufferType.Generic;
-        //        }
-        //    }
-        //}
-
-        public void Begin(SwapChain swapChain)
+        public uint AcquireNextImage(SwapChain swapChain)
         {
             // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
             // With that we don't have to handle VK_NOT_READY
             vkAcquireNextImageKHR(NativeDevice.handle, swapChain.handle, ulong.MaxValue, NativeDevice.image_available_semaphore, new VkFence(), out uint i);
-            imageIndex = i;
+            return i;
+        }
 
+        public void Begin()
+        {
+            BeginRenderPassContinue();
 
-
-            // Use a fence to wait until the command buffer has finished execution before using it again
-            fixed (VkFence* ptrfence = &waitFences)
-            {
-                vkWaitForFences(NativeDevice.handle, 1, ptrfence, 1, ulong.MaxValue);
-                vkResetFences(NativeDevice.handle, 1, ptrfence);
-            }
-
-
-            VkCommandBufferBeginInfo beginInfo = new()
-            {
-                sType = VkStructureType.CommandBufferBeginInfo,
-                flags = VkCommandBufferUsageFlags.RenderPassContinue,
-            };
-
-            vkBeginCommandBuffer(handle, &beginInfo);
-
-
-
+            WaitFences[0].Wait();
+            WaitFences[0].Reset();
         }
 
 
         public void BeginFramebuffer(Framebuffer framebuffer, float r = 0, float g = .2f, float b = .4f, float a = 1.0f)
         {
+            imageIndex = AcquireNextImage(framebuffer.SwapChain);
+
             // Set clear values for all framebuffer attachments with loadOp set to clear
             // We use two attachments (color and depth) that are cleared at the start of the subpass and as such we need to set clear values for both
+            BeginRenderPassInline(framebuffer, r, g, b, a);
+        }
+
+
+        public void BeginRenderPassSecondaryCommandBuffers(Framebuffer framebuffer, float r, float g, float b, float a)
+        {
+            VkClearValue* clearValues = stackalloc VkClearValue[2];
+            clearValues[0].color = new(r, g, b, a);
+            clearValues[1].depthStencil = new(1, 0);
+
+            int h = NativeDevice.NativeParameters.BackBufferHeight;
+            int w = NativeDevice.NativeParameters.BackBufferWidth;
+            int x = 0;
+            int y = 0;
+
+            VkRenderPassBeginInfo renderPassBeginInfo = new()
+            {
+                sType = VkStructureType.RenderPassBeginInfo,
+                renderArea = new(x, y, w, h),
+
+                renderPass = framebuffer.renderPass,
+                clearValueCount = 2,
+                pClearValues = clearValues,
+                framebuffer = framebuffer.framebuffers[imageIndex], // Set target frame buffer
+            };
+
+            vkCmdBeginRenderPass(handle, &renderPassBeginInfo, VkSubpassContents.SecondaryCommandBuffers);
+        }
+
+
+        public void BeginRenderPassInline(Framebuffer framebuffer, float r, float g, float b, float a)
+        {
             VkClearValue* clearValues = stackalloc VkClearValue[2];
             clearValues[0].color = new(r, g, b, a);
             clearValues[1].depthStencil = new(1, 0);
@@ -506,18 +499,33 @@ namespace Zeckoxe.Vulkan
                 pSignalSemaphores = &signalSemaphore,
             };
 
-            vkQueueSubmit(NativeDevice.command_queue, 1, &submitInfo, waitFences);
+            vkQueueSubmit(NativeDevice.command_queue, 1, &submitInfo, WaitFences[0].handle);
         }
 
-        public void Start()
+        public void BeginRenderPassContinue()
         {
 
-            VkCommandBufferBeginInfo cmdBufInfo = new VkCommandBufferBeginInfo()
+            VkCommandBufferBeginInfo cmd_buffer_info = new VkCommandBufferBeginInfo()
             {
-                flags = VkCommandBufferUsageFlags.OneTimeSubmit,
+                sType = VkStructureType.CommandBufferBeginInfo,
+                flags = VkCommandBufferUsageFlags.RenderPassContinue,
+                pNext = null,
             };
-            vkBeginCommandBuffer(handle, &cmdBufInfo);
 
+            vkBeginCommandBuffer(handle, &cmd_buffer_info);
+        }
+
+        public void BeginOneTimeSubmit()
+        {
+
+            VkCommandBufferBeginInfo cmd_buffer_info = new VkCommandBufferBeginInfo()
+            {
+                sType = VkStructureType.CommandBufferBeginInfo,
+                flags = VkCommandBufferUsageFlags.OneTimeSubmit,
+                pNext = null,
+            };
+
+            vkBeginCommandBuffer(handle, &cmd_buffer_info);
         }
 
         public void End()
