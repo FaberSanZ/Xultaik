@@ -300,12 +300,13 @@ namespace Samples.Samples
             Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/LoadGLTF/shader.vert", ShaderStage.Vertex);
 
 
-            
+
 
             PipelineStateDescription pipelineStateDescription = new();
             pipelineStateDescription.SetFramebuffer(Framebuffer);
-            pipelineStateDescription.SetShader(Shaders["Fragment"]);
-            pipelineStateDescription.SetShader(Shaders["Vertex"]);
+            pipelineStateDescription.SetProgram(new[] { "Shaders/LoadGLTF/shader.frag", "Shaders/LoadGLTF/shader.vert" });
+            //pipelineStateDescription.SetShader(Shaders["Fragment"]);
+            //pipelineStateDescription.SetShader(Shaders["Vertex"]);
             pipelineStateDescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormal.Size);
             pipelineStateDescription.SetVertexAttribute(VertexType.Position);
             pipelineStateDescription.SetVertexAttribute(VertexType.Color);
@@ -335,7 +336,7 @@ namespace Samples.Samples
 
             CommandBuffer commandBuffer = Context.CommandBuffer;
 
-            commandBuffer.BeginFramebuffer(Framebuffer, .5f, .5f, .5f);
+            commandBuffer.BeginFramebuffer(Framebuffer);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
 

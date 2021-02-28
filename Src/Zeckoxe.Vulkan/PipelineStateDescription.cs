@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -149,6 +150,45 @@ namespace Zeckoxe.Vulkan
 
         public List<DescriptorSetLayout> Layouts { get; set; } = new();
 
+
+
+        internal ShaderStage stage_from_path(string path)
+        {
+            string ext = Path.GetExtension(path);
+
+            if (path.EndsWith("vert"))
+                return ShaderStage.Vertex;
+
+            else if (ext == ".frag")
+                return ShaderStage.Fragment;
+
+            if (ext == ".vert")
+                return ShaderStage.Vertex;
+
+            else if (ext == ".tesc")
+                return ShaderStage.TessellationControl;
+
+            else if (ext == ".tese")
+                return ShaderStage.TessellationEvaluation;
+
+            else if (ext == ".geom")
+                return ShaderStage.Geometry;
+
+            else if (ext == ".comp")
+                return ShaderStage.Compute;
+
+
+            return ShaderStage.All;
+        }
+
+        public void SetProgram(string[] paths)
+        {
+            for (int i = 0; i < paths.Length; i++)
+            {
+                string path = paths[i];
+                SetShader(new(path, stage_from_path(path)));
+            }
+        }
 
         public void AddVertexAttribute<TVertex>()
         {

@@ -380,7 +380,7 @@ namespace Samples.Samples
 
             CommandBuffer commandBuffer = Context.CommandBuffer;
 
-            commandBuffer.BeginFramebuffer(Framebuffer, .5f, .5f, .5f);
+            commandBuffer.BeginFramebuffer(Framebuffer);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
 
