@@ -262,7 +262,7 @@ namespace Samples.Samples
 
             CommandBuffer commandBuffer = Context.CommandBuffer;
 
-            commandBuffer.BeginFramebuffer(Framebuffer, 0.6f, 0.8f, 0.4f, 1.0f);
+            commandBuffer.BeginFramebuffer(Framebuffer);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 

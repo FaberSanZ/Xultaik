@@ -300,70 +300,15 @@ namespace Samples.Samples
             Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/LoadGLTF/shader.vert", ShaderStage.Vertex);
 
 
-            List<VertexInputAttribute> VertexAttributeDescriptions = new()
-            {
+            
 
-                new()
-                {
-                    Binding = 0,
-                    Location = 0,
-                    Format = VkFormat.R32G32B32SFloat,
-                    Offset = 0,
-                },
-                new()
-                {
-                    Binding = 0,
-                    Location = 1,
-                    Format = VkFormat.R32G32B32SFloat,
-                    Offset = 12,
-                }
-            };
-
-            List<VertexInputBinding> VertexBindingDescriptions = new()
-            {
-                //new()
-                //{
-                //    Binding = 0,
-                //    InputRate = VertexInputRate.Vertex,
-                //    Stride = VertexPositionNormal.Size,
-                //}
-            };
-
-            PipelineStateDescription pipelineStateDescription = new()
-            {
-                Framebuffer = Framebuffer,
-
-                Layouts =
-                {
-                    // Binding 0: Uniform buffer (Vertex shader)
-                    new()
-                    {
-                        Stage = ShaderStage.Vertex,
-                        //Type = DescriptorType.UniformBuffer,
-                        Binding = 0,
-                    }
-                },
-
-                InputAssemblyState = InputAssemblyState.Default(),
-
-                RasterizationState = new()
-                {
-                    //FillMode =  ,
-                    //CullMode = VkCullModeFlags.None,
-                    //FrontFace = FrontFace.CounterClockwise,
-                },
-                PipelineVertexInput = new()
-                {
-                    VertexAttributeDescriptions = VertexAttributeDescriptions,
-                    VertexBindingDescriptions = VertexBindingDescriptions,
-                },
-                Shaders =
-                {
-                    Shaders["Fragment"],
-                    Shaders["Vertex"],
-                },
-
-            };
+            PipelineStateDescription pipelineStateDescription = new();
+            pipelineStateDescription.SetFramebuffer(Framebuffer);
+            pipelineStateDescription.SetShader(Shaders["Fragment"]);
+            pipelineStateDescription.SetShader(Shaders["Vertex"]);
+            pipelineStateDescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormal.Size);
+            pipelineStateDescription.SetVertexAttribute(VertexType.Position);
+            pipelineStateDescription.SetVertexAttribute(VertexType.Color);
             pipelineStateDescription.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
 
             PipelineState = new(pipelineStateDescription);
