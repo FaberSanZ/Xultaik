@@ -396,11 +396,11 @@ namespace Zeckoxe.Vulkan
 
         public void SetViewport(float Width, float Height, float X, float Y, float MinDepth = 0.0f, float MaxDepth = 1.0f)
         {
-            float vpY = Height + Y;
+            float vpY = Height - Y;
             float vpHeight = -Height;
 
 
-            VkViewport Viewport = new(X, Y, Width, Height, MinDepth, MaxDepth);
+            VkViewport Viewport = new(X, vpY, Width, vpHeight, MinDepth, MaxDepth);
             vkCmdSetViewport(handle, 0, 1, &Viewport);
         }
 

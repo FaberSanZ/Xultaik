@@ -185,6 +185,7 @@ namespace Samples.Samples
                 P = p;
                 M = m;
                 V = v;
+                lightPos = new Vector4(220.0f, -600.0f, 4.0f, 0);
             }
 
             public Matrix4x4 M;
@@ -193,6 +194,7 @@ namespace Samples.Samples
 
             public Matrix4x4 P;
 
+            public Vector4 lightPos;
 
 
             public void Update(Camera camera, Matrix4x4 m)
@@ -201,6 +203,13 @@ namespace Samples.Samples
                 M = m;
                 V = camera.View;
             }
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Light
+        {
+            public Vector3 lightPos;
         }
 
 
@@ -220,6 +229,7 @@ namespace Samples.Samples
         public Buffer ConstBuffer;
         public Buffer ConstBuffer2;
         public Buffer ConstBuffer3;
+        public Buffer ConstBuffer4;
         public GraphicsPipelineState PipelineState_0;
         public GraphicsPipelineState PipelineState_1;
         public GraphicsPipelineState PipelineState_2;
@@ -276,6 +286,15 @@ namespace Samples.Samples
             ConstBuffer2 = new(Device, bufferDescription);
             ConstBuffer3 = new(Device, bufferDescription);
 
+            ConstBuffer4 = new(Device, new BufferDescription()
+            {
+                BufferFlags = BufferFlags.ConstantBuffer,
+                Usage = GraphicsResourceUsage.Dynamic,
+                SizeInBytes = Interop.SizeOf<Light>(),
+            });
+
+
+
             CreatePipelineState();
 
 
@@ -316,6 +335,8 @@ namespace Samples.Samples
             Pipelinedescription0.SetVertexAttribute(VertexType.Normal);
             Pipelinedescription0.SetUniformBuffer(0, ConstBuffer);
             Pipelinedescription0.SetImageSampler(1, text1, sampler);
+
+
             PipelineState_0 = new(Pipelinedescription0);
 
 
@@ -330,6 +351,7 @@ namespace Samples.Samples
             Pipelinedescription1.SetVertexAttribute(VertexType.Normal);
             Pipelinedescription1.SetUniformBuffer(0, ConstBuffer2);
             Pipelinedescription1.SetImageSampler(1, text2, sampler);
+
             PipelineState_1 = new(Pipelinedescription1);
 
 
@@ -343,6 +365,7 @@ namespace Samples.Samples
             Pipelinedescription2.SetVertexAttribute(VertexType.Normal); 
             Pipelinedescription2.SetUniformBuffer(0, ConstBuffer3);
             Pipelinedescription2.SetImageSampler(1, text3, sampler);
+
             PipelineState_2 = new(Pipelinedescription2);
 
         }
@@ -369,6 +392,18 @@ namespace Samples.Samples
 
 
             yaw += 0.0006f * MathF.PI;
+
+            uniform.lightPos.X += 1;
+            if (uniform.lightPos.X > 2)
+            {
+                uniform.lightPos.X = 0;
+            }
+
+            //Light light = new Light()
+            //{
+            //    lightPos = new(1.2f, -1.0f, 2.0f),
+            //};
+            //ConstBuffer4.SetData<Light>(ref light);
 
         }
 

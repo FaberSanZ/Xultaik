@@ -216,7 +216,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        private static readonly Dictionary<uint, string> VendorNames = new Dictionary<uint, string>
+        internal static readonly Dictionary<uint, string> VendorNames = new Dictionary<uint, string>
         {
             [0x1002] = "AMD",
             [0x1010] = "ImgTec",
