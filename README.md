@@ -52,11 +52,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [x] GLTF 2.0
 
-
 <hr>
-<br>
-
-
 <br>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/LICENSE)
@@ -84,11 +80,9 @@ If you have any commercial use for this project which needs further development 
 <br>
 
 
-## Research or code used:
-- Granite (<https://github.com/Themaister/Granite>)
-- Vulkan examples from Sascha Willems (<https://github.com/SaschaWillems/Vulkan>)
-- Vortice.Vulkan (<https://github.com/amerkoleci/Vortice.Vulkan>)
-- Silk.NET (<https://github.com/Ultz/Silk.NET>)
+## The project is inspired by and based on:
+Granite (<https://github.com/Themaister/Granite>)
+
 
 
 
