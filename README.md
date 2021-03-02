@@ -9,17 +9,6 @@
 <hr>
 
 
-<br>
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/LICENSE)
-
-The code is licensed under MIT. Feel free to use it for whatever purpose.
-
-<hr>
-<br>
-
-
-
 ## Low-level rendering backend
 
 The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and data structures where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan, it's likely a happy middle ground between "perfect" Vulkan and OpenGL/D3D11 w.r.t. CPU overhead.
@@ -63,6 +52,17 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
 - [x] GLTF 2.0
 
+
+<hr>
+<br>
+
+
+<br>
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/LICENSE)
+
+The code is licensed under MIT. Feel free to use it for whatever purpose.
+If you have any commercial use for this project which needs further development to accomplish, I might be available for contracting work. Contact me by e-mail on "post at arntzen-software.no".
 
 <hr>
 <br>
