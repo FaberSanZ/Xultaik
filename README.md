@@ -63,7 +63,7 @@ If you have any commercial use for this project which needs further development 
 <br>
 
 
-## Low Level API Examples
+## Examples
 
 | Example   | Screenshot  | Description          |
 |---------------|-------------|----------------------|
