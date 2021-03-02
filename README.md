@@ -17,7 +17,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 
 ## Features:
 
-- [ ] Ray Tracing  VK_KHR_acceleration_structure (VK_KHR_ray_tracing_pipeline, VK_KHR_ray_query, VK_KHR_pipeline_library)
+- [ ] Ray Tracing (VK_KHR_acceleration_structure, VK_KHR_ray_tracing_pipeline, VK_KHR_ray_query, VK_KHR_pipeline_library)
 - [ ] Conservative rasterization (VK_EXT_conservative_rasterization)
 - [ ] Inline uniform blocks (VK_EXT_inline_uniform_block)
 - [ ] Multiview rendering (VK_KHR_multiview)
