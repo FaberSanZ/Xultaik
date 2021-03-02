@@ -29,8 +29,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 - [ ] VK_KHR_buffer_device_address 
 - [ ] VK_EXT_extended_dynamic_state 
 - [ ] VK_KHR_deferred_host_operations
-- [ ] VK_KHR_device_group 
-- [ ] VK_KHR_device_group_creation 
+- [ ] VK_KHR_device_group - VK_KHR_device_group_creation 
 - [ ] VK_KHR_external_fence 
 - [ ] VK_KHR_external_memory 
 - [ ] VK_KHR_external_semaphore 
@@ -39,7 +38,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 - [ ] VK_KHR_draw_indirect_count
 - [ ] VK_EXT_inline_uniform_block 
 - [ ] VK_KHR_8bit_storage 
-- [ ] Memory allocator (VMA)
+- [ ] Memory allocator
 - [ ] Compute Shader
 - [ ] Geometry Shader
 - [ ] Tessellation Shader (Phong, PN Triangles, and Displacement Mapping)
@@ -55,7 +54,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 <hr>
 <br>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Zeckoxe/Zeckoxe/blob/master/LICENSE)
 
 The code is licensed under MIT. Feel free to use it for whatever purpose.
 If you have any commercial use for this project which needs further development to accomplish, I might be available for contracting work. Contact me by [Twitter](https://twitter.com/FaberSan_Z).
