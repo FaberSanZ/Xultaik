@@ -205,11 +205,17 @@ namespace Samples.Samples
         [StructLayout(LayoutKind.Sequential)]
         public struct Light
         {
-            public Vector4 Pos;
+            public Vector3 Pos;
+            public Vector3 ViewPos;
+            public Vector3 Color;
+            public Vector3 pad;
 
-            public Light(Vector4 p)
+            public Light(Vector3 p, Vector3 v, Vector3 c)
             {
                 Pos = p;
+                ViewPos = v;
+                Color = c;
+                pad = Vector3.One;
             }
         }
 
@@ -275,7 +281,7 @@ namespace Samples.Samples
             Model = Matrix4x4.Identity;
 
             uniform = new(camera.Projection, Model, camera.View);
-            light = new(new(1));
+            light = new(new(1.2f, 1.0f, 2.0f), camera.Position, new(1, 1, 1));
 
 
             BufferDescription bufferDescription = new BufferDescription()

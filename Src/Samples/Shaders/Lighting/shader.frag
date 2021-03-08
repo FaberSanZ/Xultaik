@@ -5,7 +5,10 @@ layout(set = 0, binding = 1) uniform sampler2D texSampler;
 
 layout(set = 0, binding = 2) uniform UBO  
 {
-   vec4 pos;
+   vec3 pos;
+   vec3 viewPos;
+   vec3 lightColor;
+   vec3 pad;
 } light;
 
 
@@ -19,30 +22,28 @@ layout(location = 0) out vec4 outColor;
 
 
 
-const vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
 const float specularStrength  = 0.5;
 const float ambientStrength = 0.1;
 
-const vec3 viewPos =  vec3(1.0, 1.0, 180.0);
-
 
 void main() 
 {
-	vec3 ambient = ambientStrength * lightColor;
+	vec3 ambient = ambientStrength * light.lightColor;
  
 	vec3 norm = normalize(normalInterp);
-	vec3 lightDir = normalize(light.pos.xyz - vertPos);
+	vec3 lightDir = normalize(light.pos - vertPos);
 	float diff = max(dot(norm,lightDir),0.0);
-	vec3 diffuse = diff * lightColor;
+	vec3 diffuse = diff * light.lightColor;
+
 	vec3 specular = vec3(1);
 
 	if(diff > 0)
 	{
-		vec3 viewDir = normalize(viewPos - vertPos);
+		vec3 viewDir = normalize(light.viewPos - vertPos);
 		vec3 reflectDir = reflect(-lightDir, norm) * light.pos.xyz;
 		float spec = pow(max(dot(viewDir,reflectDir),0.0), 128);
-		specular = specularStrength * spec * lightColor ;
+		specular = specularStrength * spec * light.lightColor;
 	}
  
 	vec4 tex = texture(texSampler, fragTexCoord);
