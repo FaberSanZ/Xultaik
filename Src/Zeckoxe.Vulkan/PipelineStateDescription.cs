@@ -274,13 +274,12 @@ namespace Zeckoxe.Vulkan
 
             resourceInfos.Add(new ResourceInfo
             {
-                _offset = _binding,
                 _binding = _binding,
                 is_sampler = true,
                 is_texture = true,
                 _sampler = sampler,
                 _texture = texture,
-                descriptor_type = Vortice.Vulkan.VkDescriptorType.CombinedImageSampler,
+                descriptor_type = VkDescriptorType.CombinedImageSampler,
             });
         }
 
@@ -293,7 +292,7 @@ namespace Zeckoxe.Vulkan
                 _binding = binding,
                 is_buffer = true,
                 _buffer = buffer,
-                descriptor_type = Vortice.Vulkan.VkDescriptorType.UniformBuffer,
+                descriptor_type = VkDescriptorType.StorageBuffer,
             });
 
         }

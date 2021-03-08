@@ -863,16 +863,14 @@ namespace Zeckoxe.GLTF
             foreach (Node child in node.Children)
                 PreTransform(child, localMat);
         }
-
+        float r = 0.1f;
         public void RenderNode(CommandBuffer cmd, Node node, Matrix4x4 currentTransform, GraphicsPipelineState pipelineState)
         {
             Matrix4x4 localMat = node.LocalMatrix * currentTransform;
 
+            cmd.PushConstant<Matrix4x4>(pipelineState, ShaderStage.Vertex, localMat);
 
-            if ((Options.FileLoading & FileLoadingFlags.PreTransformPushConstantVertex) != 0)
-                cmd.PushConstant<Matrix4x4>(pipelineState, ShaderStage.Vertex, localMat);
-
-
+            r += 0.01f;
 
             if (node.Mesh is not null)
                 foreach (Primitive p in node.Mesh.Primitives)

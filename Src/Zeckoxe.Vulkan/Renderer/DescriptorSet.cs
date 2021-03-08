@@ -113,23 +113,6 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public void SetTexture2DSampler(int offset, Image2D texture, Sampler sampler)
-        {
-
-            resourceInfos.Add(new ResourceInfo
-            {
-                _offset = offset,
-                _binding = offset,
-                is_sampler = true,
-                is_texture = true,
-                _sampler = sampler,
-                _texture = texture
-            }); ;
-
-            //images.Add(new ImageSamplerInfo(texture, sampler, offset, 0));
-
-        }
-
 
         public void SetImageSampler(int offset, Image texture, Sampler sampler)
         {
@@ -137,7 +120,6 @@ namespace Zeckoxe.Vulkan
             resourceInfos.Add(new ResourceInfo
             {
                 _offset = offset,
-                _binding = offset,
                 is_sampler = true,
                 is_texture = true,
                 _sampler = sampler,
@@ -166,23 +148,27 @@ namespace Zeckoxe.Vulkan
 
         public void Build()
         {
-            int count = 0;
-            int resources_count = resourceInfos.Count /*+ buffers.Count - 1*/;
+            int resources_count = resourceInfos.Count;
 
             VkWriteDescriptorSet* ptr = stackalloc VkWriteDescriptorSet[resources_count];
+            VkDescriptorBufferInfo* bufferInfos = stackalloc VkDescriptorBufferInfo[resources_count];
+            VkDescriptorImageInfo* imageInfos = stackalloc VkDescriptorImageInfo[resources_count];
+
 
             List<VkWriteDescriptorSet> descriptorSets = new();
 
-
-            foreach (ResourceInfo r in resourceInfos)
+            for (int i = 0; i < resources_count; i++)
             {
+                ResourceInfo r = resourceInfos[i];
+
                 if (r.is_buffer)
                 {
-                    VkDescriptorBufferInfo descriptor = new VkDescriptorBufferInfo
+
+                    bufferInfos[i] = new()
                     {
                         buffer = r._buffer.handle,
                         offset = (ulong)r._offset,
-                        range = (ulong)r._buffer.SizeInBytes
+                        range = (ulong)r._buffer.SizeInBytes,
                     };
 
                     VkWriteDescriptorSet writeDescriptorSet = new VkWriteDescriptorSet()
@@ -192,24 +178,23 @@ namespace Zeckoxe.Vulkan
                         dstSet = _descriptorSet,
                         descriptorCount = 1,
                         descriptorType = VkDescriptorType.UniformBuffer,
-                        pBufferInfo = &descriptor,
+                        pBufferInfo = &bufferInfos[i],
                         dstBinding = (uint)r._binding,
                     };
 
-                    descriptorSets.Add(writeDescriptorSet);
 
-                    ptr[count++] = writeDescriptorSet;
+                    ptr[i] = writeDescriptorSet;
                 }
 
-                if (r.is_sampler && r.is_texture)
+                else if (r.is_sampler && r.is_texture)
                 {
-                    VkDescriptorImageInfo imageInfo = new()
+                    imageInfos[i] = new()
                     {
                         imageLayout = VkImageLayout.ShaderReadOnlyOptimal,
                         imageView = r._texture.image_view,
                         sampler = r._sampler.handle,
-                    };
 
+                    };
 
                     VkWriteDescriptorSet image_sampler_Writes = new()
                     {
@@ -219,22 +204,17 @@ namespace Zeckoxe.Vulkan
                         dstArrayElement = 0,
                         descriptorType = VkDescriptorType.CombinedImageSampler,
                         descriptorCount = 1,
-                        pImageInfo = &imageInfo,
+                        pImageInfo = &imageInfos[i],
+
                     };
 
-                    descriptorSets.Add(image_sampler_Writes);
 
-                    ptr[count++] = image_sampler_Writes;
+                    ptr[i] = image_sampler_Writes;
 
                 }
             }
 
-
-
-            //var arrayptr = descriptorSets.ToArray();
-            //fixed(VkWriteDescriptorSet* ptr = arrayptr)
-
-            vkUpdateDescriptorSets(NativeDevice.handle, (uint)count, ptr, 0, null);
+            vkUpdateDescriptorSets(NativeDevice.handle, (uint)resources_count, ptr, 0, null);
         }
 
 

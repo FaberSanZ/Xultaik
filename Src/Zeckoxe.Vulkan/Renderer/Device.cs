@@ -499,7 +499,6 @@ namespace Zeckoxe.Vulkan
         }
 
 
-
         internal uint GetMemoryTypeIndex(uint typeBits, VkMemoryPropertyFlags properties)
         {
             // Iterate over all memory types available for the Device used in this example

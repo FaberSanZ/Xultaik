@@ -213,7 +213,7 @@ namespace Zeckoxe.Vulkan
             // Iterate over each queue to learn whether it supports presenting:
             // Find a queue with present support
             // Will be used to present the swap chain Images to the windowing system
-            uint* supportsPresent = stackalloc uint[(int)queueCount];
+            VkBool32* supportsPresent = stackalloc VkBool32[(int)queueCount];
             for (uint i = 0; i < queueCount; i++)
             {
                 vkGetPhysicalDeviceSurfaceSupportKHR(PhysicalDevice, i, surface, out supportsPresent[i]);
@@ -236,7 +236,7 @@ namespace Zeckoxe.Vulkan
                         graphicsQueueNodeIndex = i;
                     }
 
-                    if (supportsPresent[i] == 1)
+                    if (supportsPresent[i] == true)
                     {
                         graphicsQueueNodeIndex = i;
                         presentQueueNodeIndex = i;
@@ -251,7 +251,7 @@ namespace Zeckoxe.Vulkan
                 // try to find a separate present queue
                 for (uint i = 0; i < queueCount; ++i)
                 {
-                    if (supportsPresent[i] == 1)
+                    if (supportsPresent[i] == true)
                     {
                         presentQueueNodeIndex = i;
                         break;
@@ -455,7 +455,7 @@ namespace Zeckoxe.Vulkan
                 oldSwapchain = oldSwapchain,
 
                 // TODO: Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
-                clipped = 1,
+                clipped = true,
                 compositeAlpha = compositeAlpha,
             };
 

@@ -185,7 +185,6 @@ namespace Samples.Samples
                 P = p;
                 M = m;
                 V = v;
-                lightPos = new Vector4(220.0f, -600.0f, 4.0f, 0);
             }
 
             public Matrix4x4 M;
@@ -193,9 +192,6 @@ namespace Samples.Samples
             public Matrix4x4 V;
 
             public Matrix4x4 P;
-
-            public Vector4 lightPos;
-
 
             public void Update(Camera camera, Matrix4x4 m)
             {
@@ -209,7 +205,12 @@ namespace Samples.Samples
         [StructLayout(LayoutKind.Sequential)]
         public struct Light
         {
-            public Vector3 lightPos;
+            public Vector4 Diffuse;
+
+            public Light(Vector4 p)
+            {
+                Diffuse = p;
+            }
         }
 
 
@@ -237,6 +238,8 @@ namespace Samples.Samples
 
         // TransformUniform 
         public TransformUniform uniform;
+        public Light light;
+
         public float yaw;
         public float pitch;
         public float roll;
@@ -272,7 +275,7 @@ namespace Samples.Samples
             Model = Matrix4x4.Identity;
 
             uniform = new(camera.Projection, Model, camera.View);
-
+            light = new(new(1));
 
 
             BufferDescription bufferDescription = new BufferDescription()
@@ -314,8 +317,8 @@ namespace Samples.Samples
 
         public void CreatePipelineState()
         {
-            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.frag", ShaderStage.Fragment);
-            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.vert", ShaderStage.Vertex);
+            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/Diffuse/shader.frag", ShaderStage.Fragment);
+            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/Diffuse/shader.vert", ShaderStage.Vertex);
 
             Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
             Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
@@ -327,16 +330,15 @@ namespace Samples.Samples
             PipelineStateDescription Pipelinedescription0 = new();
 
             Pipelinedescription0.SetFramebuffer(Framebuffer);
-            Pipelinedescription0.SetShader(Shaders["Fragment"]);
             Pipelinedescription0.SetShader(Shaders["Vertex"]);
+            Pipelinedescription0.SetShader(Shaders["Fragment"]);
             Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription0.SetVertexAttribute(VertexType.Normal);
             Pipelinedescription0.SetUniformBuffer(0, ConstBuffer);
             Pipelinedescription0.SetImageSampler(1, text1, sampler);
-
-
+            Pipelinedescription0.SetUniformBuffer(2, ConstBuffer4);
             PipelineState_0 = new(Pipelinedescription0);
 
 
@@ -351,7 +353,7 @@ namespace Samples.Samples
             Pipelinedescription1.SetVertexAttribute(VertexType.Normal);
             Pipelinedescription1.SetUniformBuffer(0, ConstBuffer2);
             Pipelinedescription1.SetImageSampler(1, text2, sampler);
-
+            Pipelinedescription1.SetUniformBuffer(2, ConstBuffer4);
             PipelineState_1 = new(Pipelinedescription1);
 
 
@@ -363,28 +365,28 @@ namespace Samples.Samples
             Pipelinedescription2.SetVertexAttribute(VertexType.Position);
             Pipelinedescription2.SetVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription2.SetVertexAttribute(VertexType.Normal); 
-            Pipelinedescription2.SetUniformBuffer(0, ConstBuffer3);
+            Pipelinedescription2.SetUniformBuffer(0, ConstBuffer3); 
             Pipelinedescription2.SetImageSampler(1, text3, sampler);
-
+            Pipelinedescription2.SetUniformBuffer(2, ConstBuffer4, 0);
             PipelineState_2 = new(Pipelinedescription2);
-
         }
 
 
 
         public override void Update(ApplicationTime game)
         {
+            light.Diffuse = new(yaw, -yaw, yaw, 1);
+
+            ConstBuffer4.DynamicData(light);
 
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(11.0f, .3f, 0.0f);
             uniform.Update(camera, Model);
             ConstBuffer.SetData(ref uniform);
 
-
             Model = Matrix4x4.CreateFromYawPitchRoll(-yaw, pitch, roll) * Matrix4x4.CreateTranslation(0, 1.0f, 0.0f);
             uniform.Update(camera, Model);
             ConstBuffer2.SetData(ref uniform);
-
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-11.0f, .3f, 0.0f);
             uniform.Update(camera, Model);
@@ -393,49 +395,45 @@ namespace Samples.Samples
 
             yaw += 0.0006f * MathF.PI;
 
-            uniform.lightPos.X += 1;
-            if (uniform.lightPos.X > 2)
-            {
-                uniform.lightPos.X = 0;
-            }
 
-            //Light light = new Light()
-            //{
-            //    lightPos = new(1.2f, -1.0f, 2.0f),
-            //};
-            //ConstBuffer4.SetData<Light>(ref light);
+
+
+
 
         }
-
 
 
         public override void BeginDraw()
         {
             base.BeginDraw();
 
-            CommandBuffer commandBuffer = Context.CommandBuffer;
 
-            commandBuffer.BeginFramebuffer(Framebuffer);
-            commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
-            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
-
-
-            commandBuffer.SetGraphicPipeline(PipelineState_0);
-            GLTFModel.Draw(commandBuffer, PipelineState_0);
+            CommandBuffer cmd = Context.CommandBuffer;
+            cmd.BeginFramebuffer(Framebuffer);
+            cmd.SetScissor(Window.Width, Window.Height, 0, 0);
+            cmd.SetViewport(Window.Width, Window.Height, 0, 0);
 
 
-            commandBuffer.SetGraphicPipeline(PipelineState_1);
-            GLTFModel.Draw(commandBuffer, PipelineState_1);
+            cmd.SetGraphicPipeline(PipelineState_0);
+            GLTFModel.Draw(cmd, PipelineState_0);
+
+            cmd.SetGraphicPipeline(PipelineState_1);
+            GLTFModel.Draw(cmd, PipelineState_1);
 
 
-            commandBuffer.SetGraphicPipeline(PipelineState_2);
-            GLTFModel.Draw(commandBuffer, PipelineState_2);
+            cmd.SetGraphicPipeline(PipelineState_2);
+            GLTFModel.Draw(cmd, PipelineState_2);
         }
 
 
 
         public void Dispose()
         {
+            ConstBuffer.Dispose();
+            ConstBuffer2.Dispose();
+            ConstBuffer3.Dispose();
+            ConstBuffer4.Dispose();
+            Device.Dispose();
             Adapter.Dispose();
         }
     }

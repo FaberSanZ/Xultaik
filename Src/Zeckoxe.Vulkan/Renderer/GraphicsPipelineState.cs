@@ -41,8 +41,8 @@ namespace Zeckoxe.Vulkan
                 resourceInfos = description.resourceInfos
             };
 
-
-            DescriptorSet.Build();
+            if (DescriptorSet.resourceInfos.Any())
+                DescriptorSet.Build();
             
         }
 
@@ -82,13 +82,44 @@ namespace Zeckoxe.Vulkan
                 layoutBinding[i] = new VkDescriptorSetLayoutBinding
                 {
                     binding = resources[i].binding,
-                    descriptorCount = 1, // TODO: descriptorCount
+                    descriptorCount = 3,
                     descriptorType = resources[i].resource_type.StageTVkDescriptorType(),
                     stageFlags = resources[i].stage.StageToVkShaderStageFlags(),
                     pImmutableSamplers = null,
                 };
+
+                //System.Console.WriteLine(resources[i].binding);
+                //System.Console.WriteLine(resources[i].stage.StageToVkShaderStageFlags());
+                //System.Console.WriteLine(resources[i].resource_type.StageTVkDescriptorType());
             }
 
+            //layoutBinding[1] = new()
+            //{
+            //    binding = 0,
+            //    descriptorCount = 1,
+            //    descriptorType = VkDescriptorType.UniformBuffer,
+            //    stageFlags = VkShaderStageFlags.Fragment,
+            //    pImmutableSamplers = null,
+            //};
+
+
+            //layoutBinding[2] = new()
+            //{
+            //    binding = 0,
+            //    descriptorCount = 1,
+            //    descriptorType = VkDescriptorType.CombinedImageSampler,
+            //    stageFlags = VkShaderStageFlags.Fragment,
+            //    pImmutableSamplers = null,
+            //};
+
+            //layoutBinding[0] = new()
+            //{
+            //    binding = 0,
+            //    descriptorCount = 2,
+            //    descriptorType = VkDescriptorType.UniformBuffer,
+            //    stageFlags = VkShaderStageFlags.Vertex,
+            //    pImmutableSamplers = null,
+            //};
 
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
             {
@@ -128,7 +159,6 @@ namespace Zeckoxe.Vulkan
                     stageFlags = (VkShaderStageFlags)push_constants[i].stage, //TODO: push_constants VkShaderStageFlags
                 };
             }
-
             // Create the Pipeline layout that is used to generate the rendering pipelines that are based on this descriptor set layout
             // In a more complex scenario you would have different Pipeline layouts for different descriptor set layouts that could be reused
             VkPipelineLayoutCreateInfo layout_create_info = new VkPipelineLayoutCreateInfo
@@ -163,11 +193,11 @@ namespace Zeckoxe.Vulkan
 
         private void CreatePipelineCache()
         {
-            VkPipelineCacheCreateInfo pipelineCacheCreateInfo = new VkPipelineCacheCreateInfo
-            {
-                sType = VkStructureType.PipelineCacheCreateInfo,
-            };
-            vkCreatePipelineCache(NativeDevice.handle, &pipelineCacheCreateInfo, null, out _pipelineCache);
+            //VkPipelineCacheCreateInfo pipelineCacheCreateInfo = new VkPipelineCacheCreateInfo
+            //{
+            //    sType = VkStructureType.PipelineCacheCreateInfo,
+            //};
+            //vkCreatePipelineCache(NativeDevice.handle, &pipelineCacheCreateInfo, null, out _pipelineCache);
         }
 
 
@@ -204,7 +234,7 @@ namespace Zeckoxe.Vulkan
                 attributeDescr[i] = new VkVertexInputAttributeDescription
                 {
                     binding = (uint)vertexAttribute[i].Binding,
-                    format = (VkFormat)vertexAttribute[i].Format,
+                    format = vertexAttribute[i].Format,
                     location = (uint)vertexAttribute[i].Location,
                     offset = (uint)vertexAttribute[i].Offset,
                 };
@@ -252,12 +282,12 @@ namespace Zeckoxe.Vulkan
 
             if (PipelineStateDescription.InputAssemblyState != null)
             {
-                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable.ToUint();
+                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable;
                 pipelineInputAssemblyStateCreateInfo.topology = PipelineStateDescription.InputAssemblyState.PrimitiveType;
             }
             else
             {
-                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = VK_TRUE;
+                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = true;
                 pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology.PointList;
             }
 
@@ -278,8 +308,8 @@ namespace Zeckoxe.Vulkan
                 rasterizerState.cullMode = PipelineStateDescription.RasterizationState.CullMode;
                 rasterizerState.frontFace = PipelineStateDescription.RasterizationState.FrontFace;
                 rasterizerState.lineWidth = PipelineStateDescription.RasterizationState.LineWidth;
-                rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable.ToUint();
-                rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable.ToUint();
+                rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable;
+                rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable;
 
                 if (PipelineStateDescription.RasterizationState.DepthBiasClamp != 0)
                 {
@@ -315,7 +345,7 @@ namespace Zeckoxe.Vulkan
             VkPipelineColorBlendAttachmentState colorBlendAttachementState = new VkPipelineColorBlendAttachmentState
             {
                 colorWriteMask = VkColorComponentFlags.R | VkColorComponentFlags.G | VkColorComponentFlags.B | VkColorComponentFlags.A,
-                blendEnable = VK_FALSE
+                blendEnable = false
             };
 
             VkPipelineColorBlendStateCreateInfo colorBlendState = new VkPipelineColorBlendStateCreateInfo()
@@ -333,14 +363,14 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.PipelineDepthStencilStateCreateInfo
             };
-            depthStencilState.depthTestEnable = VK_TRUE;
-            depthStencilState.depthWriteEnable = VK_TRUE;
+            depthStencilState.depthTestEnable = true;
+            depthStencilState.depthWriteEnable = true;
             depthStencilState.depthCompareOp = VkCompareOp.LessOrEqual;
-            depthStencilState.depthBoundsTestEnable = VK_FALSE;
+            depthStencilState.depthBoundsTestEnable = false;
             depthStencilState.back.failOp = VkStencilOp.Keep;
             depthStencilState.back.passOp = VkStencilOp.Keep;
             depthStencilState.back.compareOp = VkCompareOp.Always;
-            depthStencilState.stencilTestEnable = VK_FALSE;
+            depthStencilState.stencilTestEnable = false;
             depthStencilState.front = depthStencilState.back;
 
 

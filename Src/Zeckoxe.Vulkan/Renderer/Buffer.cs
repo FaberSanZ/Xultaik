@@ -103,10 +103,10 @@ namespace Zeckoxe.Vulkan
 
 
             // Allocate memory
-            var memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
-            if (BufferDescription.Usage is GraphicsResourceUsage.Staging || Usage is GraphicsResourceUsage.Dynamic)
+            var memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
+            if (BufferDescription.Usage is GraphicsResourceUsage.Staging || Usage == GraphicsResourceUsage.Dynamic)
             {
-                //memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
+                memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
             }
 
             vkGetBufferMemoryRequirements(NativeDevice.handle, handle, out VkMemoryRequirements memReqs);
@@ -223,24 +223,13 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        private void DynamicData<T>(T[] Data) where T : struct
+        public void DynamicData<T>(params T[] Data) where T : struct
         {
             //vkAllocateMemory(device, &MemoryAlloc_info, null, &_memory);
             //memory = _memory;
             void* ppData;
-            vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, &ppData);
-
-            //Copy Data
-            //{
-                //int stride = Interop.SizeOf<T>();
-                //uint size = (uint)(stride * Data.Length);
-                //void* srcPtr = Unsafe.AsPointer(ref Data[0]);
-            //}
-
+            vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, VkMemoryMapFlags.None, &ppData);
             Interop.MemoryHelper.CopyBlocks<T>(ppData, Data);
-
-
-
             vkUnmapMemory(NativeDevice.handle, memory);
 
         }
@@ -264,7 +253,8 @@ namespace Zeckoxe.Vulkan
 
         public void Dispose()
         {
-
+            vkDestroyBuffer(NativeDevice.handle, handle, null);
+            vkFreeMemory(NativeDevice.handle, memory, null);
         }
 
         public void CopyTo(CommandBuffer cmd, Buffer buff, ulong size = 0, ulong srcOffset = 0, ulong dstOffset = 0)

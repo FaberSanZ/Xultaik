@@ -14,11 +14,16 @@ layout (location = 3) in vec3 inL;
 layout (location = 0) out vec4 outFragColor;
 
 
+layout (binding = 2) uniform UBO 
+{
+    vec4 data;
+} ubo;
+
 
 
 void main() 
 {
-    vec4 color = texture(samplerColor, inUV);
+    vec4 color = texture(samplerColor, inUV) * ubo.data;
     vec3 N = normalize(inN);
     vec3 L = normalize(inL);
     vec3 V = normalize(inV);
