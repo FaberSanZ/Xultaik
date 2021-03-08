@@ -1,34 +1,53 @@
 #version 450
 
-#extension GL_ARB_separate_shader_objects : enable
-#extension GL_ARB_shading_language_420pack : enable
 
+layout(set = 0, binding = 1) uniform sampler2D texSampler;
 
-layout (binding = 1) uniform sampler2D samplerColor;
-
-layout (location = 0) in vec2 inUV;
-layout (location = 1) in vec3 inN;
-layout (location = 2) in vec3 inV;//ViewDir
-layout (location = 3) in vec3 inL;
-
-layout (location = 0) out vec4 outFragColor;
-
-
-layout (binding = 2) uniform UBO 
+layout(set = 0, binding = 2) uniform UBO  
 {
-    vec4 data;
-} ubo;
+   vec4 pos;
+} light;
 
+
+layout(location = 0) in vec2 fragTexCoord;
+layout(location = 1) in vec3 vertPos;
+layout(location = 2) in vec3 normalInterp;
+
+layout(location = 0) out vec4 outColor;
+
+
+
+
+
+const vec3 lightColor = vec3(1.0, 1.0, 1.0);
+
+const float specularStrength  = 0.5;
+const float ambientStrength = 0.1;
+
+const vec3 viewPos =  vec3(1.0, 1.0, 180.0);
 
 
 void main() 
 {
-    vec4 color = texture(samplerColor, inUV) * ubo.data;
-    vec3 N = normalize(inN);
-    vec3 L = normalize(inL);
-    vec3 V = normalize(inV);
-    vec3 R = reflect(-L, N);
-    vec3 diffuse = max(dot(N, L), 0.0) * vec3(0.9);
-    vec3 specular = pow(max(dot(R, V), 0.0), 16.0) * vec3(0.75);
-    outFragColor = vec4(diffuse * color.rgb + specular, 1.0);       
+	vec3 ambient = ambientStrength * lightColor;
+ 
+	vec3 norm = normalize(normalInterp);
+	vec3 lightDir = normalize(light.pos.xyz - vertPos);
+	float diff = max(dot(norm,lightDir),0.0);
+	vec3 diffuse = diff * lightColor;
+	vec3 specular = vec3(1);
+
+	if(diff > 0)
+	{
+		vec3 viewDir = normalize(viewPos - vertPos);
+		vec3 reflectDir = reflect(-lightDir, norm) * light.pos.xyz;
+		float spec = pow(max(dot(viewDir,reflectDir),0.0), 128);
+		specular = specularStrength * spec * lightColor ;
+	}
+ 
+	vec4 tex = texture(texSampler, fragTexCoord);
+	vec4 light = vec4((ambient + diffuse + specular), 1.0);
+ 
+	outColor = light * tex;
+ 
 }

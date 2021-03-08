@@ -205,11 +205,11 @@ namespace Samples.Samples
         [StructLayout(LayoutKind.Sequential)]
         public struct Light
         {
-            public Vector4 Diffuse;
+            public Vector4 Pos;
 
             public Light(Vector4 p)
             {
-                Diffuse = p;
+                Pos = p;
             }
         }
 
@@ -317,8 +317,8 @@ namespace Samples.Samples
 
         public void CreatePipelineState()
         {
-            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/Diffuse/shader.frag", ShaderStage.Fragment);
-            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/Diffuse/shader.vert", ShaderStage.Vertex);
+            Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.frag", ShaderStage.Fragment);
+            Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.vert", ShaderStage.Vertex);
 
             Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
             Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
@@ -375,9 +375,8 @@ namespace Samples.Samples
 
         public override void Update(ApplicationTime game)
         {
-            light.Diffuse = new(yaw, -yaw, yaw, 1);
 
-            ConstBuffer4.DynamicData(light);
+            ConstBuffer4.SetData(ref light);
 
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(11.0f, .3f, 0.0f);

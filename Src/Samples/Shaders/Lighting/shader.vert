@@ -1,54 +1,34 @@
 #version 450
 
-#extension GL_ARB_separate_shader_objects : enable
-#extension GL_ARB_shading_language_420pack : enable
-
-layout (location = 0) in vec3 inPos;
-layout (location = 1) in vec3 inNormal;
-layout (location = 2) in vec2 inUV;
-
-layout (binding = 0) uniform UBO 
-{
-	mat4 modelMatrix;
-    mat4 viewMatrix;
-	mat4 projectionMatrix;
-    vec4 light;
+layout(set = 0, binding = 0) uniform UniformBufferObject {
+	mat4 model;
+    mat4 view;
+    mat4 proj;
 } ubo;
-
-
-
-
-layout (location = 0) out vec2 outUV;
-layout (location = 1) out vec3 outN;
-layout (location = 2) out vec3 outV;
-layout (location = 3) out vec3 outL;
-
-out gl_PerVertex 
-{
-    vec4 gl_Position;   
-};
 
 layout(push_constant) uniform PushConsts 
 {
     mat4 model;
 } pc;
 
+layout(location = 0) in vec3 inPosition;
+layout(location = 1) in vec3 inNormCoord;
+layout(location = 2) in vec2 inTexCoord;
+
+
+layout(location = 0) out vec2 fragTexCoord;
+layout(location = 1) out vec3 vertPos;
+layout(location = 2) out vec3 normalInterp;
 
 void main() 
 {
-    outUV = inUV;
-    
-    mat4 mod = ubo.modelMatrix * pc.model;
-    vec4 pos = mod * vec4(inPos.xyz, 1.0);
-    vec3 lPos = mat3(mod) * ubo.light.xyz;
-    
-    //outN = normalize(transpose(inverse(mat3(mod))) * inNormal);    
-    outN = mat3(mod)* inNormal;    
-    
-    //mat4 viewInv = inverse(ubo.viewMatrix);
-    
-    outV = -pos.xyz;//normalize(vec3(viewInv * vec4(0.0, 0.0, 0.0, 1.0) - pos));
-    outL = lPos - pos.xyz;
-    
-	gl_Position = ubo.projectionMatrix * ubo.viewMatrix * pos;    
+    fragTexCoord = inTexCoord;
+	
+	
+	vertPos =  vec3((ubo.model * pc.model) * vec4(inPosition, 1.0));
+
+    normalInterp = mat3(transpose(inverse(ubo.model * pc.model))) * inNormCoord;
+	
+	
+    gl_Position = ubo.proj * ubo.view * (ubo.model * pc.model) * vec4(inPosition, 1.0);
 }
