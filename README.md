@@ -29,6 +29,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 - [ ] Descriptor indexing (VK_EXT_descriptor_indexing) 
 - [ ] Timeline semaphore (VK_KHR_timeline_semaphore) 
 - [ ] Buffer device address (VK_KHR_buffer_device_address) 
+- [ ] Synchronization2 (VK_KHR_synchronization2)
 - [x] VK_KHR_uniform_buffer_standard_layout  (Note: Not functional-Experimental)
 - [ ] VK_EXT_robustness2 
 - [ ] VK_EXT_extended_dynamic_state 
@@ -43,6 +44,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 - [ ] VK_KHR_draw_indirect_count
 - [ ] VK_EXT_inline_uniform_block 
 - [ ] VK_KHR_8bit_storage 
+- [ ] VK_KHR_16bit_storage 
 - [ ] Memory allocator
 - [ ] Compute Shader
 - [ ] Geometry Shader
