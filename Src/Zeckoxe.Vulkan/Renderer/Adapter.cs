@@ -66,7 +66,6 @@ namespace Zeckoxe.Vulkan
 
         public bool Validation = false;
 
-        public bool RayTracingSupport => false;
 
         public float TimestampPeriod => device_properties.limits.timestampPeriod;
 

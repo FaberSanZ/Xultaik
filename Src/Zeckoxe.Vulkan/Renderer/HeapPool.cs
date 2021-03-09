@@ -41,8 +41,6 @@ namespace Zeckoxe.Vulkan
             [VkDescriptorType.StorageBufferDynamic] = (MaxSets / 64),
 
             [VkDescriptorType.InputAttachment] = (MaxSets / 64),
-
-            [VkDescriptorType.AccelerationStructureKHR] = MaxSets, // TODO: AccelerationStructureKHR
         };
 
 
@@ -52,18 +50,21 @@ namespace Zeckoxe.Vulkan
 
         public HeapPool(Device device) : base(device)
         {
+            Settings settings = NativeDevice.NativeParameters.Settings;
 
+            if ((settings.OptionalDeviceExtensions & OptionalDeviceExtensions.RayTracing) != 0 && NativeDevice.RayTracingSupport) 
+                MaxDescriptorTypeCounts[VkDescriptorType.AccelerationStructureKHR] = (MaxSets / 2);
         }
 
         internal void Create()
         {
 
-            uint PoolSize = (uint)MaxDescriptorTypeCounts.Count;
+            uint pool_size = (uint)MaxDescriptorTypeCounts.Count;
 
-            VkDescriptorPoolSize* sizes = stackalloc VkDescriptorPoolSize[(int)PoolSize];
+            VkDescriptorPoolSize* sizes = stackalloc VkDescriptorPoolSize[(int)pool_size];
 
 
-            for (int index = 0; index < PoolSize; index++)
+            for (int index = 0; index < pool_size; index++)
             {
                 KeyValuePair<VkDescriptorType, uint> item = MaxDescriptorTypeCounts.ElementAt(index);
 
@@ -82,7 +83,7 @@ namespace Zeckoxe.Vulkan
                 sType = VkStructureType.DescriptorPoolCreateInfo,
                 pNext = null,
                 flags = VkDescriptorPoolCreateFlags.None,
-                poolSizeCount = PoolSize,
+                poolSizeCount = pool_size,
                 pPoolSizes = sizes,
                 maxSets = MaxSets,
             };

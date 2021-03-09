@@ -171,7 +171,7 @@ namespace Zeckoxe.Vulkan
                         range = (ulong)r._buffer.SizeInBytes,
                     };
 
-                    VkWriteDescriptorSet writeDescriptorSet = new VkWriteDescriptorSet()
+                    VkWriteDescriptorSet write_descriptor = new()
                     {
                         sType = VkStructureType.WriteDescriptorSet,
                         pNext = null,
@@ -183,7 +183,7 @@ namespace Zeckoxe.Vulkan
                     };
 
 
-                    ptr[i] = writeDescriptorSet;
+                    ptr[i] = write_descriptor;
                 }
 
                 else if (r.is_sampler && r.is_texture)
@@ -193,10 +193,9 @@ namespace Zeckoxe.Vulkan
                         imageLayout = VkImageLayout.ShaderReadOnlyOptimal,
                         imageView = r._texture.image_view,
                         sampler = r._sampler.handle,
-
                     };
 
-                    VkWriteDescriptorSet image_sampler_Writes = new()
+                    VkWriteDescriptorSet write_descriptor = new()
                     {
                         sType = VkStructureType.WriteDescriptorSet,
                         dstSet = _descriptorSet,
@@ -209,7 +208,7 @@ namespace Zeckoxe.Vulkan
                     };
 
 
-                    ptr[i] = image_sampler_Writes;
+                    ptr[i] = write_descriptor;
 
                 }
             }

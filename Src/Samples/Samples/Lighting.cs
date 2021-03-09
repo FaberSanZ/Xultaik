@@ -281,7 +281,7 @@ namespace Samples.Samples
             Model = Matrix4x4.Identity;
 
             uniform = new(camera.Projection, Model, camera.View);
-            light = new(new(1.2f, 1.0f, 2.0f), camera.Position, new(1, 1, 1));
+            light = new(new(1.2f, 1.0f, 1.0f), camera.Position, new(1, 1, 1));
 
 
             BufferDescription bufferDescription = new BufferDescription()

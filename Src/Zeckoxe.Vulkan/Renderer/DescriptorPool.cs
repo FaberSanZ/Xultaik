@@ -17,8 +17,6 @@ namespace Zeckoxe.Vulkan
     {
 
         internal VkDescriptorSet handle;
-
-
         internal VkDescriptorPool pool;
 
 
@@ -28,12 +26,23 @@ namespace Zeckoxe.Vulkan
             HeapPool.Create();
 
             pool = HeapPool.handle;
+
+            if(HeapPool.MaxDescriptorTypeCounts.ContainsKey(VkDescriptorType.UniformTexelBuffer))
+            {
+                if (pool.IsNull && HeapPool.handle.Handle < HeapPool.MaxSets)
+                {
+                    HeapPool.Reset();
+                    Free();
+                    HeapPool.MaxDescriptorTypeCounts[VkDescriptorType.UniformTexelBuffer] = 255;
+                    pool = HeapPool.handle;
+                }
+            }
         }
 
 
         public HeapPool HeapPool { get; internal set; }
 
-        internal void Allocate(VkDescriptorSetLayout setLayout)
+        public void Allocate(VkDescriptorSetLayout setLayout)
         {
 
             VkDescriptorSetAllocateInfo descriptor_set_allocate_info = new()
@@ -53,7 +62,7 @@ namespace Zeckoxe.Vulkan
 
         public void Free()
         {
-
+            
         }
 
 

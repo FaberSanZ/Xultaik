@@ -95,6 +95,8 @@ namespace Zeckoxe.Vulkan
         public uint TransferFamily { get; private set; }
         public List<string> DeviceExtensionsNames { get; private set; } = new();
 
+        public bool RayTracingSupport { get; private set; }
+
 
         public void Recreate()
         {
@@ -333,6 +335,7 @@ namespace Zeckoxe.Vulkan
                         *ppNext = feature;
                         ppNext = &feature->pNext;
                     }
+                    RayTracingSupport = true;
                 }
 
 
