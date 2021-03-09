@@ -15,21 +15,26 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 <br>
 
 
-## Features:
+## Features and extensions:
 
-- [ ] Ray Tracing (VK_KHR_acceleration_structure, VK_KHR_ray_tracing_pipeline, VK_KHR_ray_query, VK_KHR_pipeline_library)
+- [ ] Ray Tracing (VK_KHR_acceleration_structure)
+- [ ] Ray Tracing (VK_KHR_ray_tracing_pipeline)
+- [ ] Ray Tracing (VK_KHR_ray_query)
+- [ ] Ray Tracing (VK_KHR_pipeline_library
 - [ ] Conservative rasterization (VK_EXT_conservative_rasterization)
 - [ ] Inline uniform blocks (VK_EXT_inline_uniform_block)
 - [ ] Multiview rendering (VK_KHR_multiview)
 - [ ] Conditional rendering (VK_EXT_conditional_rendering)
 - [ ] Shading rate (VK_KHR_fragment_shading_rate) 
-- [ ] VK_EXT_descriptor_indexing 
-- [ ] VK_KHR_timeline_semaphore 
+- [ ] Descriptor indexing (VK_EXT_descriptor_indexing) 
+- [ ] Timeline semaphore (VK_KHR_timeline_semaphore) 
+- [ ] Buffer device address (VK_KHR_buffer_device_address) 
+- [x] VK_KHR_uniform_buffer_standard_layout  (Note: Not functional-Experimental)
 - [ ] VK_EXT_robustness2 
-- [ ] VK_KHR_buffer_device_address 
 - [ ] VK_EXT_extended_dynamic_state 
 - [ ] VK_KHR_deferred_host_operations
-- [ ] VK_KHR_device_group - VK_KHR_device_group_creation 
+- [ ] VK_KHR_device_group_creation 
+- [ ] VK_KHR_device_group 
 - [ ] VK_KHR_external_fence 
 - [ ] VK_KHR_external_memory 
 - [ ] VK_KHR_external_semaphore 
