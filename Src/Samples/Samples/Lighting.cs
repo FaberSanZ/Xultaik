@@ -208,14 +208,14 @@ namespace Samples.Samples
             public Vector3 Pos;
             public Vector3 ViewPos;
             public Vector3 Color;
-            public Vector3 pad;
+            public Vector3 Pad;
 
             public Light(Vector3 p, Vector3 v, Vector3 c)
             {
                 Pos = p;
                 ViewPos = v;
                 Color = c;
-                pad = Vector3.One;
+                Pad = Vector3.One;
             }
         }
 
@@ -284,7 +284,7 @@ namespace Samples.Samples
             light = new(new(1.2f, 1.0f, 1.0f), camera.Position, new(1, 1, 1));
 
 
-            BufferDescription bufferDescription = new BufferDescription()
+            BufferDescription bufferDescription = new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -295,7 +295,7 @@ namespace Samples.Samples
             ConstBuffer2 = new(Device, bufferDescription);
             ConstBuffer3 = new(Device, bufferDescription);
 
-            ConstBuffer4 = new(Device, new BufferDescription()
+            ConstBuffer4 = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = GraphicsResourceUsage.Dynamic,
@@ -438,6 +438,7 @@ namespace Samples.Samples
             ConstBuffer2.Dispose();
             ConstBuffer3.Dispose();
             ConstBuffer4.Dispose();
+            SwapChain.Dispose();
             Device.Dispose();
             Adapter.Dispose();
         }

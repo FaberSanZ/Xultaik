@@ -299,7 +299,7 @@ namespace Zeckoxe.Vulkan
             storage_8bit_features = new() { sType = VkStructureType.PhysicalDevice8bitStorageFeatures, };
             acceleration_structure_features = new() { sType = VkStructureType.PhysicalDeviceAccelerationStructureFeaturesKHR, };
             descriptor_indexing_features = new() { sType = VkStructureType.PhysicalDeviceDescriptorIndexingFeatures, };
-
+            ubo_std430_features = new() { sType = VkStructureType.PhysicalDeviceUniformBufferStandardLayoutFeatures, };
 
             bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
 
@@ -311,6 +311,11 @@ namespace Zeckoxe.Vulkan
             bool OptConsRaster= (OptDeviceExt & OptionalDeviceExtensions.ConservativeRasterization) != 0;
 
             void** ppNext = &features.pNext;
+
+            //foreach (var item in NativeAdapter.device_extensions_names) Console.WriteLine(item);
+
+
+            
 
             if (has_pdf2)
             {
@@ -327,6 +332,8 @@ namespace Zeckoxe.Vulkan
 
 
 
+
+
                 if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && OptRayTracing)
                 {
                     DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
@@ -338,7 +345,6 @@ namespace Zeckoxe.Vulkan
                     RayTracingSupport = true;
                 }
 
-
                 if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing"))
                 {
                     DeviceExtensionsNames.Add("VK_EXT_descriptor_indexing");
@@ -347,10 +353,25 @@ namespace Zeckoxe.Vulkan
                         *ppNext = feature;
                         ppNext = &feature->pNext;
                     }
+
                 }
 
 
 
+
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_uniform_buffer_standard_layout"))
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_uniform_buffer_standard_layout");
+
+                    fixed (VkPhysicalDeviceUniformBufferStandardLayoutFeatures* feature = &ubo_std430_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                        feature->uniformBufferStandardLayout = true;
+                    }
+
+
+                }
 
 
 
@@ -359,7 +380,6 @@ namespace Zeckoxe.Vulkan
 
 
             //DeviceExtensionsNames.Add("VK_KHR_maintenance1");
-
 
             if (NativeAdapter.device_extensions_names.Contains("VK_KHR_swapchain"))
             {
@@ -373,6 +393,7 @@ namespace Zeckoxe.Vulkan
                 queueCreateInfoCount = 3,
                 pQueueCreateInfos = queue_create_infos,
             };
+
 
 
             if (NativeAdapter.SupportsVulkan11Device && NativeAdapter.SupportsVulkan11Instance)
@@ -419,7 +440,6 @@ namespace Zeckoxe.Vulkan
 
             ppNext = &props.pNext;
 
-
             if (has_pdf2)
             {
                 if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing_pipeline"))
@@ -455,7 +475,6 @@ namespace Zeckoxe.Vulkan
                 deviceCreateInfo.enabledExtensionCount = (uint)DeviceExtensionsNames.Count;
                 deviceCreateInfo.ppEnabledExtensionNames = Interop.String.AllocToPointers(DeviceExtensionsNames.ToArray());
             }
-
 
 
             vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out handle).CheckResult();

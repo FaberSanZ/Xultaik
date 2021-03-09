@@ -1,9 +1,12 @@
 #version 450
 
+#extension GL_EXT_scalar_block_layout : require
+
+
 
 layout(set = 0, binding = 1) uniform sampler2D texSampler;
 
-layout(set = 0, binding = 2) uniform UBO  
+layout(set = 0, binding = 2, std430) uniform UBO  
 {
    vec3 pos;
    vec3 viewPos;

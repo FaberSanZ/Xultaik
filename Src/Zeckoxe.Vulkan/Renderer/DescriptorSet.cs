@@ -114,37 +114,6 @@ namespace Zeckoxe.Vulkan
 
 
 
-        public void SetImageSampler(int offset, Image texture, Sampler sampler)
-        {
-
-            resourceInfos.Add(new ResourceInfo
-            {
-                _offset = offset,
-                is_sampler = true,
-                is_texture = true,
-                _sampler = sampler,
-                _texture = texture
-            }); ;
-
-            //images.Add(new ImageSamplerInfo(texture, sampler, offset, 0));
-
-        }
-
-
-        public void SetUniformBuffer(int offset, Buffer buffer, int binding = 0)
-        {
-            buffers.Add(new BufferInfo(buffer, offset, binding));
-
-
-            resourceInfos.Add(new ResourceInfo
-            {
-                _offset = offset,
-                _binding = binding,
-                is_buffer = true,
-                _buffer = buffer
-            });
-
-        }
 
         public void Build()
         {

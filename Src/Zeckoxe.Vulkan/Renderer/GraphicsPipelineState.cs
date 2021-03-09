@@ -276,7 +276,7 @@ namespace Zeckoxe.Vulkan
             VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo = new VkPipelineInputAssemblyStateCreateInfo()
             {
                 sType = VkStructureType.PipelineInputAssemblyStateCreateInfo,
-                flags = 0,
+                flags = VkPipelineInputAssemblyStateCreateFlags.None,
                 pNext = null,
             };
 
@@ -300,6 +300,7 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.PipelineRasterizationStateCreateInfo,
                 pNext = null,
+                flags = VkPipelineRasterizationStateCreateFlags.None
             };
 
             if (PipelineStateDescription.RasterizationState != null)
@@ -407,7 +408,8 @@ namespace Zeckoxe.Vulkan
                 renderPass = description.Framebuffer.renderPass,
                 subpass = 0,
                 pDepthStencilState = &depthStencilState,
-                pDynamicState = &dynamicState
+                pDynamicState = &dynamicState,
+                flags = VkPipelineCreateFlags.None
             };
 
 
