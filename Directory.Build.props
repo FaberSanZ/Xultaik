@@ -16,6 +16,7 @@
     <PackageProjectUrl>https://github.com/FakzSoft/Zeckoxe-Engine</PackageProjectUrl>
 
     <IncludeSymbols>false</IncludeSymbols>
+    
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
     <RepositoryType>git</RepositoryType>
