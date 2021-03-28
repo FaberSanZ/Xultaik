@@ -66,14 +66,6 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 <hr>
 <br>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Zeckoxe/Zeckoxe/blob/master/LICENSE)
-
-The code is licensed under MIT. Feel free to use it for whatever purpose.
-If you have any commercial use for this project which needs further development to accomplish, I might be available for contracting work. Contact me by [Twitter](https://twitter.com/FaberSan_Z).
-
-<hr>
-<br>
-
 
 ## Examples
 
@@ -96,5 +88,12 @@ Granite (<https://github.com/Themaister/Granite>)
 
 
 
+<br>
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Zeckoxe/Zeckoxe/blob/master/LICENSE)
+
+The code is licensed under MIT. Feel free to use it for whatever purpose.
+If you have any commercial use for this project which needs further development to accomplish, I might be available for contracting work. Contact me by [Twitter](https://twitter.com/FaberSan_Z).
+
+<hr>
 
