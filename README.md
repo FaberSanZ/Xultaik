@@ -1,13 +1,18 @@
 
 <h1 align="center">
-   Zeckoxe Engine
+   Zeckoxe
   
-  ##               Zeckoxe is a 2D/3D Game Engine implemented in [Vulkan®](https://www.khronos.org/vulkan/)
+  ##               Zeckoxe is a 2D/3D rendering implemented in [Vulkan®](https://www.khronos.org/vulkan/)
   
 </h1>
 
 <hr>
 
+
+
+### Zecoxe can be used to produce render layers for next-gen custom game engines and provides building blocks for writing your own game engine quickly
+
+<br>
 
 ## Low-level rendering backend
 
