@@ -15,7 +15,6 @@ namespace Zeckoxe.Vulkan
     {
         public CommandBuffer CommandBuffer { get; set; }
 
-
         public GraphicsContext(Device graphicsDevice, CommandBuffer? commandBuffer = null)
         {
             CommandBuffer = commandBuffer is null ? graphicsDevice.NativeCommand : new CommandBuffer(graphicsDevice, CommandBufferType.AsyncGraphics);
