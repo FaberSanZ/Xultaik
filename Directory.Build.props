@@ -1,9 +1,13 @@
 ﻿<Project>
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-    <RepositoryRootDirectory>$(MSBuildThisFileDirectory)</RepositoryRootDirectory>
+    <RepositoryRootDirectory>$(MSBuildThisFileDirectory)../</RepositoryRootDirectory>
     <BinDir>$(RepositoryRootDirectory)bin</BinDir>
     <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(BinDir)\$(MSBuildProjectName)\</BaseOutputPath>
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>CS1591;CS1701</NoWarn>
@@ -19,11 +23,10 @@
     <IncludeSymbols>false</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Packages versions -->
     <NerdbankGitVersioningVersion>3.3.37</NerdbankGitVersioningVersion>
-    
-
-
-    
   </PropertyGroup>
 
   <ItemGroup>
