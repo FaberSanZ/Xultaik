@@ -15,14 +15,6 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Vulkan
 {
-    internal static class BoolExt
-    {
-        internal static uint ToUint(this bool value)
-        {
-            return value ? 1 : 0;
-        }
-    }
-
     public unsafe class GraphicsPipelineState : GraphicsResource
     {
 
@@ -88,38 +80,7 @@ namespace Zeckoxe.Vulkan
                     pImmutableSamplers = null,
                 };
 
-                //System.Console.WriteLine(resources[i].binding);
-                //System.Console.WriteLine(resources[i].stage.StageToVkShaderStageFlags());
-                //System.Console.WriteLine(resources[i].resource_type.StageTVkDescriptorType());
             }
-
-            //layoutBinding[1] = new()
-            //{
-            //    binding = 0,
-            //    descriptorCount = 1,
-            //    descriptorType = VkDescriptorType.UniformBuffer,
-            //    stageFlags = VkShaderStageFlags.Fragment,
-            //    pImmutableSamplers = null,
-            //};
-
-
-            //layoutBinding[2] = new()
-            //{
-            //    binding = 0,
-            //    descriptorCount = 1,
-            //    descriptorType = VkDescriptorType.CombinedImageSampler,
-            //    stageFlags = VkShaderStageFlags.Fragment,
-            //    pImmutableSamplers = null,
-            //};
-
-            //layoutBinding[0] = new()
-            //{
-            //    binding = 0,
-            //    descriptorCount = 2,
-            //    descriptorType = VkDescriptorType.UniformBuffer,
-            //    stageFlags = VkShaderStageFlags.Vertex,
-            //    pImmutableSamplers = null,
-            //};
 
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
             {
