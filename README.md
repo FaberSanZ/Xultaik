@@ -10,7 +10,7 @@
 
 
 
-### Zecoxe can be used to produce render layers for next-gen custom game engines and provides building blocks for writing your own game engine quickly
+### Zecoxe can be used to produce render layers for custom engines or next-gen games and provides building blocks for writing your own engine or game quickly
 
 <br>
 
