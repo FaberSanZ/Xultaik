@@ -20,6 +20,8 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and 
 <br>
 
 
+> :warning: The Zeckoxe.Audio and Zeckoxe.Input ibraries are optional and only work on Windows 10 as they use  [XInput](https://docs.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput), [XAudio2](https://docs.microsoft.com/en-us/windows/win32/xaudio2/xaudio2-introduction) and [X3DAudio](https://docs.microsoft.com/it-it/windows/win32/xaudio2/x3daudio).
+
 ## Features and extensions:
 
 - [ ] Ray Tracing (VK_KHR_acceleration_structure)
