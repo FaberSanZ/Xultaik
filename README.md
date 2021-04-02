@@ -17,10 +17,6 @@
 ## Low-level rendering backend
 
 The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums and data structures where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan extensions and features are aggressively made use of to improve performance
-<br>
-<br>
-
-> :warning: The Zeckoxe.Audio librarie are optional and you will need to download the FMOD native binaries from https://www.fmod.com/download
 
 <br>
 <br>
