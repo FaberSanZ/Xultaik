@@ -151,9 +151,14 @@ namespace Zeckoxe.Core
                 Buffer.MemoryCopy(srcPointer.ToPointer(), dstPtr, size, size);
             }
 
-            public static void CopyMemory(object uploadMemory, IntPtr dataPointer, object sizeInBytes)
+            public static void CopyMemory(void* source, void* destination, long destinationSizeInBytes, long sourceBytesToCopy)
             {
-                throw new NotImplementedException();
+                System.Buffer.MemoryCopy(source, destination, destinationSizeInBytes, sourceBytesToCopy);
+            }
+
+            public static void CopyMemory(void* source, void* destination, int destinationSizeInBytes, int sourceBytesToCopy)
+            {
+                System.Buffer.MemoryCopy(source, destination, destinationSizeInBytes, sourceBytesToCopy);
             }
         }
 

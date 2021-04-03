@@ -230,7 +230,7 @@ namespace Samples.Samples
 
         public Camera camera { get; set; }
         public ApplicationTime GameTime { get; set; }
-        public GLTFLoader<VertexPositionNormalTexture> GLTFModel { get; set; }
+        public ModelAssetImporter<VertexPositionNormalTexture> GLTFModel { get; set; }
         //public List<Mesh> Meshes { get; private set; }
 
         public Buffer ConstBuffer;
