@@ -997,12 +997,12 @@ namespace Zeckoxe.GLTF
                 FromFloatArray(ref translation, gltfNode.Translation);
             }
 
-            if (gltfNode.Translation is not null)
+            if (gltfNode.Rotation is not null)
             {
                 FromFloatArray(ref rotation, gltfNode.Rotation);
             }
 
-            if (gltfNode.Translation is not null)
+            if (gltfNode.Scale is not null)
             {
                 FromFloatArray(ref scale, gltfNode.Scale);
             }
