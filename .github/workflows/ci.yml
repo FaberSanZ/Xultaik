@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+    - 'README.md'    
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Version
+      uses: aarnott/nbgv@v0.4.0
+      with:
+        setAllVars: true
+
+    - name: Pack
+      run: dotnet pack src --configuration Release --output build/packages
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: Packages
+        path: build/packages
+
+    - name: Publish to NuGet
+      shell: bash
+      if: github.event_name == 'push'
+      run: dotnet nuget push build/packages/**/*.nupkg -s nuget.org -k ${{secrets.NUGET_TOKEN}} --no-symbols true

@@ -16,15 +16,11 @@ namespace Zeckoxe.Vulkan
 
         public int SizeInBytes;
 
-
         public int ByteStride;
-
 
         public BufferFlags BufferFlags;
 
-
         public GraphicsResourceUsage Usage;
-
 
 
 
