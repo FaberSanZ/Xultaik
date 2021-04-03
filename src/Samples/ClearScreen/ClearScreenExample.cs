@@ -6,16 +6,13 @@ using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Vulkan;
 
-namespace Samples.Samples
+namespace Samples.ClearScreen
 {
-    public class ClearScreen : IDisposable
+    public class ClearScreenExample : IDisposable
     {
-        public ClearScreen()
+        public ClearScreenExample()
         {
-            Window = new("Zeckoxe Engine", 1200, 800)
-            {
-            };
-
+            Window = new("Zeckoxe Engine", 1200, 800);
 
             Parameters = new()
             {
@@ -23,7 +20,7 @@ namespace Samples.Samples
                 BackBufferHeight = Window.Height,
                 Settings = new()
                 {
-                    Validation = ValidationType.Console | ValidationType.Debug,
+                    Validation = ValidationType.Console,
                     Fullscreen = false,
                     VSync = false,
                     OptionalDeviceExtensions = OptionalDeviceExtensions.BindMemory2 | OptionalDeviceExtensions.CopyCommands2,
@@ -39,7 +36,7 @@ namespace Samples.Samples
         public Framebuffer Framebuffer { get; set; }
         public SwapChain SwapChain { get; set; }
 
-        public GraphicsContext Context { get; set; }
+        public CommandBuffer CommandBuffer { get; set; }
 
 
 
@@ -54,7 +51,7 @@ namespace Samples.Samples
 
             Framebuffer = new(SwapChain);
 
-            Context = new(Device);
+            CommandBuffer = new(Device, CommandBufferType.AsyncGraphics);
         }
 
         public SwapchainSource GetSwapchainSource()
@@ -113,15 +110,14 @@ namespace Samples.Samples
 
         public void Draw()
         {
-            CommandBuffer commandBuffer = Context.CommandBuffer;
 
             Device.WaitIdle();
 
-            commandBuffer.Begin();
-            commandBuffer.BeginFramebuffer(Framebuffer);
+            CommandBuffer.Begin();
+            CommandBuffer.BeginFramebuffer(Framebuffer);
 
-            commandBuffer.Close();
-            commandBuffer.Submit();
+            CommandBuffer.Close();
+            CommandBuffer.Submit();
 
             SwapChain.Present();
         }
