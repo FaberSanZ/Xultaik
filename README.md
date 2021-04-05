@@ -92,7 +92,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 
 
 ## The project is inspired by and based on:
-Granite (<https://github.com/Themaister/Granite>)
+The-Forge (<https://github.com/ConfettiFX/The-Forge>)
 
 
 
