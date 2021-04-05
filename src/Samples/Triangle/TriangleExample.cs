@@ -12,9 +12,9 @@ using Buffer = Zeckoxe.Vulkan.Buffer;
 using Vortice.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
-namespace Samples.Samples
+namespace Samples.Triangle
 {
-    public class Triangle : Application, IDisposable
+    public class TriangleExample : Application, IDisposable
     {
         [StructLayout(LayoutKind.Sequential)]
         public struct TransformUniform
@@ -40,7 +40,7 @@ namespace Samples.Samples
             }
         }
 
-        public Triangle() : base()
+        public TriangleExample() : base()
         {
 
         }

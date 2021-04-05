@@ -12,7 +12,7 @@ using Buffer = Zeckoxe.Vulkan.Buffer;
 using Vortice.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
-namespace Samples.Samples.LoadTexture
+namespace Samples.LoadTexture
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct TransformUniform
@@ -60,10 +60,10 @@ namespace Samples.Samples.LoadTexture
 
         public VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[]
         {
-            new(new Vector3(-0.5f, -0.5f, -0.5f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f)) ,
-            new(new Vector3( 0.5f, -0.5f, -0.5f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 0.0f)) ,
-            new(new Vector3(0.5f, 0.5f, -0.5f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(0.0f, 1.0f)) ,
-            new(new Vector3(-0.5f,  0.5f, -0.5f), new Vector3(1.0f, 1.0f, 1.0f), new Vector2(1.0f, 1.0f)) ,
+            new(new(-0.5f, -0.5f, -0.5f), new(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f)) ,
+            new(new( 0.5f, -0.5f, -0.5f), new(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 0.0f)) ,
+            new(new(0.5f, 0.5f, -0.5f), new(0.0f, 0.0f, 1.0f), new Vector2(0.0f, 1.0f)) ,
+            new(new(-0.5f,  0.5f, -0.5f), new(1.0f, 1.0f, 1.0f), new Vector2(1.0f, 1.0f)) ,
         };
 
 
