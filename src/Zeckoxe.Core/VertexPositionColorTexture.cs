@@ -34,7 +34,7 @@ namespace Zeckoxe.Core
         public Vector2 TextureCoordinate;
 
 
-        public static readonly int Size = 24;
+        public static readonly int Size = Interop.SizeOf<VertexPositionColorTexture>();
 
 
 

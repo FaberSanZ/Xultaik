@@ -12,61 +12,39 @@ using Buffer = Zeckoxe.Vulkan.Buffer;
 using Vortice.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
-namespace Samples.Samples
+namespace Samples.Samples.LoadTexture
 {
-    public class LoadTexture : Application, IDisposable
+    [StructLayout(LayoutKind.Sequential)]
+    public struct TransformUniform
+    {
+        public TransformUniform(Matrix4x4 p, Matrix4x4 m, Matrix4x4 v)
+        {
+            P = p;
+            M = m;
+            V = v;
+        }
+
+        public Matrix4x4 P;
+
+        public Matrix4x4 M;
+
+        public Matrix4x4 V;
+
+        public void Update(Camera camera, Matrix4x4 m)
+        {
+            P = camera.Projection;
+            M = m;
+            V = camera.View;
+        }
+    }
+
+    public class LoadTextureExample : Application, IDisposable
     {
         internal int TextureWidth = 256; //Texture Data
         internal int TextureHeight = 256; //Texture Data
         internal int TexturePixelSize = 4;  // The number of bytes used to represent a pixel in the texture. RGBA
 
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct TransformUniform
-        {
-            public TransformUniform(Matrix4x4 p, Matrix4x4 m, Matrix4x4 v)
-            {
-                P = p;
-                M = m;
-                V = v;
-            }
-
-            public Matrix4x4 P;
-
-            public Matrix4x4 M;
-
-            public Matrix4x4 V;
-
-            public void Update(Camera camera, Matrix4x4 m)
-            {
-                P = camera.Projection;
-                M = m;
-                V = camera.View;
-            }
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Vertex
-        {
-            public Vertex(Vector3 position, Vector3 color, Vector2 texCoord)
-            {
-                Position = position;
-                Color = color;
-                TexCoord = texCoord;
-            }
-
-            public Vector3 Position;
-
-            public Vector3 Color;
-            public Vector2 TexCoord;
-
-
-
-
-
-            public static readonly int Size = Interop.SizeOf<Vertex>();
-        }
 
 
 
@@ -80,17 +58,23 @@ namespace Samples.Samples
             2, 3, 0
         };
 
-        public Vertex[] Vertices = new[]
+        public VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[]
         {
-            new Vertex(new Vector3(-0.5f, -0.5f, -0.5f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f)) ,
-            new Vertex(new Vector3( 0.5f, -0.5f, -0.5f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 0.0f)) ,
-            new Vertex(new Vector3(0.5f, 0.5f, -0.5f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(0.0f, 1.0f)) ,
-            new Vertex(new Vector3(-0.5f,  0.5f, -0.5f), new Vector3(1.0f, 1.0f, 1.0f), new Vector2(1.0f, 1.0f)) ,
+            new(new Vector3(-0.5f, -0.5f, -0.5f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f)) ,
+            new(new Vector3( 0.5f, -0.5f, -0.5f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 0.0f)) ,
+            new(new Vector3(0.5f, 0.5f, -0.5f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(0.0f, 1.0f)) ,
+            new(new Vector3(-0.5f,  0.5f, -0.5f), new Vector3(1.0f, 1.0f, 1.0f), new Vector2(1.0f, 1.0f)) ,
         };
 
 
+
+        public GraphicsPipeline PipelineState_0;
+        public GraphicsPipeline PipelineState_1;
+
+        public DescriptorSet DescriptorSet_0;
+        public DescriptorSet DescriptorSet_1;
+
         public Dictionary<string, Buffer> Buffers = new();
-        public Dictionary<string, GraphicsPipelineState> PipelineStates = new();
         public Dictionary<string, ShaderBytecode> Shaders = new();
 
         // TransformUniform 
@@ -100,7 +84,7 @@ namespace Samples.Samples
         public float roll;
 
 
-        public LoadTexture() : base()
+        public LoadTextureExample() : base()
         {
 
         }
@@ -200,35 +184,37 @@ namespace Samples.Samples
             Sampler sampler = new Sampler(Device);
 
 
-            PipelineStateDescription Pipelinedescription1 = new();
-            Pipelinedescription1.SetFramebuffer(Framebuffer);
-            Pipelinedescription1.SetShader(Shaders["Fragment"]);
-            Pipelinedescription1.SetShader(Shaders["Vertex"]);
-            Pipelinedescription1.SetVertexBinding(VkVertexInputRate.Vertex, Vertex.Size);
-            Pipelinedescription1.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription1.SetVertexAttribute(VertexType.Color);
-            Pipelinedescription1.SetVertexAttribute(VertexType.TextureCoordinate);
-            Pipelinedescription1.SetUniformBuffer(0, Buffers["ConstBuffer1"]);
-            Pipelinedescription1.SetImageSampler(1, text1, sampler);
+            PipelineStateDescription Pipelinedescription_0 = new();
+            Pipelinedescription_0.SetFramebuffer(Framebuffer);
+            Pipelinedescription_0.SetShader(Shaders["Fragment"]);
+            Pipelinedescription_0.SetShader(Shaders["Vertex"]);
+            Pipelinedescription_0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColorTexture.Size);
+            Pipelinedescription_0.SetVertexAttribute(VertexType.Position);
+            Pipelinedescription_0.SetVertexAttribute(VertexType.Color);
+            Pipelinedescription_0.SetVertexAttribute(VertexType.TextureCoordinate);
+            PipelineState_0 = new(Pipelinedescription_0);
+
+            DescriptorData descriptorData_0 = new();
+            descriptorData_0.SetUniformBuffer(0, Buffers["ConstBuffer1"]);
+            descriptorData_0.SetImageSampler(1, text1, sampler);
+            DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
 
 
 
-            PipelineStateDescription Pipelinedescription2 = new();
-            Pipelinedescription2.SetFramebuffer(Framebuffer);
-            Pipelinedescription2.SetShader(Shaders["Fragment"]);
-            Pipelinedescription2.SetShader(Shaders["Vertex"]);
-            Pipelinedescription2.SetVertexBinding(VkVertexInputRate.Vertex, Vertex.Size);
-            Pipelinedescription2.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription2.SetVertexAttribute(VertexType.Color);
-            Pipelinedescription2.SetVertexAttribute(VertexType.TextureCoordinate);
-            Pipelinedescription2.SetUniformBuffer(0, Buffers["ConstBuffer2"]);
-            Pipelinedescription2.SetImageSampler(1, text2, sampler);
+            PipelineStateDescription Pipelinedescription_1 = new();
+            Pipelinedescription_1.SetFramebuffer(Framebuffer);
+            Pipelinedescription_1.SetShader(Shaders["Fragment"]);
+            Pipelinedescription_1.SetShader(Shaders["Vertex"]);
+            Pipelinedescription_1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColorTexture.Size);
+            Pipelinedescription_1.SetVertexAttribute(VertexType.Position);
+            Pipelinedescription_1.SetVertexAttribute(VertexType.Color);
+            Pipelinedescription_1.SetVertexAttribute(VertexType.TextureCoordinate);
+            PipelineState_1 = new(Pipelinedescription_1);
 
-
-
-            PipelineStates["Texture1"] = new(Pipelinedescription1);
-            PipelineStates["Texture2"] = new(Pipelinedescription2);
-
+            DescriptorData descriptorData_1 = new();
+            descriptorData_1.SetUniformBuffer(0, Buffers["ConstBuffer2"]);
+            descriptorData_1.SetImageSampler(1, text2, sampler);
+            DescriptorSet_1 = new(PipelineState_1, descriptorData_1);
         }
 
 
@@ -274,11 +260,12 @@ namespace Samples.Samples
             commandBuffer.SetIndexBuffer(Buffers["IndexBuffer"]);
 
 
-            commandBuffer.SetGraphicPipeline(PipelineStates["Texture1"]);
+            commandBuffer.SetGraphicPipeline(PipelineState_0);
+            commandBuffer.BindDescriptorSets(DescriptorSet_0);
             commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
 
-
-            commandBuffer.SetGraphicPipeline(PipelineStates["Texture2"]);
+            commandBuffer.SetGraphicPipeline(PipelineState_1);
+            commandBuffer.BindDescriptorSets(DescriptorSet_1);
             commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
         }
 

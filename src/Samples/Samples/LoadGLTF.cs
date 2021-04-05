@@ -227,7 +227,8 @@ namespace Samples.Samples
 
 
         public Buffer ConstBuffer;
-        public GraphicsPipelineState PipelineState;
+        public DescriptorSet DescriptorSet { get; set; }
+        public GraphicsPipeline PipelineState;
         public Dictionary<string, ShaderBytecode> Shaders = new();
 
         // TransformUniform 
@@ -305,14 +306,14 @@ namespace Samples.Samples
             PipelineStateDescription pipelineStateDescription = new();
             pipelineStateDescription.SetFramebuffer(Framebuffer);
             pipelineStateDescription.SetProgram(new[] { "Shaders/LoadGLTF/shader.frag", "Shaders/LoadGLTF/shader.vert" });
-            //pipelineStateDescription.SetShader(Shaders["Fragment"]);
-            //pipelineStateDescription.SetShader(Shaders["Vertex"]);
             pipelineStateDescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormal.Size);
             pipelineStateDescription.SetVertexAttribute(VertexType.Position);
             pipelineStateDescription.SetVertexAttribute(VertexType.Color);
-            pipelineStateDescription.SetUniformBuffer(0, ConstBuffer); // Binding 0: Uniform buffer (Vertex shader)
-
             PipelineState = new(pipelineStateDescription);
+
+            DescriptorData descriptorData = new();
+            descriptorData.SetUniformBuffer(0, ConstBuffer);
+            DescriptorSet = new DescriptorSet(PipelineState, descriptorData);
         }
 
 
@@ -341,7 +342,7 @@ namespace Samples.Samples
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
 
             commandBuffer.SetGraphicPipeline(PipelineState);
-
+            commandBuffer.BindDescriptorSets(DescriptorSet);
 
             commandBuffer.SetVertexBuffers(new[] { GLTFModel.VertexBuffer });
             commandBuffer.SetIndexBuffer(GLTFModel.IndexBuffer, 0, GLTFModel.IndexType);

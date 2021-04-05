@@ -366,21 +366,18 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public void SetGraphicPipeline(GraphicsPipelineState pipelineState)
+        public void SetGraphicPipeline(GraphicsPipeline pipelineState)
         {
             vkCmdBindPipeline(handle, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
-
-            if (pipelineState.DescriptorSet.resourceInfos.Any())
-                BindDescriptorSets(pipelineState.DescriptorSet);
         }
 
 
-        public void SetComputePipeline(GraphicsPipelineState pipelineState)
+        public void SetComputePipeline(GraphicsPipeline pipelineState)
         {
             //vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Compute, pipelineState.computesPipeline);
         }
 
-        public void SetRayTracinPipeline(GraphicsPipelineState pipelineState)
+        public void SetRayTracinPipeline(GraphicsPipeline pipelineState)
         {
             //vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.RayTracingNV, pipelineState.rayTracinPipeline);
         }
@@ -447,7 +444,7 @@ namespace Zeckoxe.Vulkan
             vkCmdDrawIndexed(handle, (uint)indexCount, (uint)instanceCount, (uint)firstIndex, vertexOffset, (uint)firstInstance);
         }
 
-        public void PushConstant<T>(GraphicsPipelineState pipelineLayout, ShaderStage stageFlags, T data, uint offset = 0) where T : unmanaged
+        public void PushConstant<T>(GraphicsPipeline pipelineLayout, ShaderStage stageFlags, T data, uint offset = 0) where T : unmanaged
         {
             vkCmdPushConstants(handle, pipelineLayout._pipelineLayout, stageFlags.StageToVkShaderStageFlags(), offset, (uint)Interop.SizeOf<T>(), (void*)&data /*Interop.AllocToPointer<T>(ref data)*/);
         }

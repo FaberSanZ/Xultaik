@@ -46,7 +46,9 @@ namespace Samples.Samples
         }
 
         public Camera Camera { get; set; }
-        public GraphicsPipelineState PipelineState { get; set; }
+        public GraphicsPipeline PipelineState { get; set; }
+        public DescriptorSet DescriptorSet { get; set; }
+
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
         public Buffer ConstBuffer { get; set; }
@@ -86,6 +88,8 @@ namespace Samples.Samples
             CreateBuffers();
 
             CreatePipelineState();
+
+
         }
 
 
@@ -149,9 +153,14 @@ namespace Samples.Samples
             Pipelinedescription.SetFillMode(VkPolygonMode.Fill);
             Pipelinedescription.SetCullMode(VkCullModeFlags.None);
             Pipelinedescription.SetPrimitiveType(VkPrimitiveTopology.TriangleList);
-            Pipelinedescription.SetUniformBuffer(0, ConstBuffer);
 
             PipelineState = new(Pipelinedescription);
+
+
+            DescriptorData descriptorData = new();
+            descriptorData.SetUniformBuffer(0, ConstBuffer);
+
+            DescriptorSet = new(PipelineState, descriptorData);
         }
 
 
@@ -180,6 +189,7 @@ namespace Samples.Samples
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 
             commandBuffer.SetGraphicPipeline(PipelineState);
+            commandBuffer.BindDescriptorSets(DescriptorSet);
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
             commandBuffer.SetIndexBuffer(IndexBuffer);
             commandBuffer.DrawIndexed(3, 1, 0, 0, 0);

@@ -59,6 +59,7 @@ namespace Zeckoxe.GLTF
     public class GLTFOptions
     {
         public FileLoadingFlags FileLoading { get; set; }
+        public bool Skinning { get; set; }
     }
     public class ModelAssetImporter<TVertex>
     {
@@ -90,6 +91,7 @@ namespace Zeckoxe.GLTF
                 options = new()
                 {
                     FileLoading = FileLoadingFlags.PreTransformPushConstantVertex,
+                    Skinning = false,
                 };
             }
 
@@ -102,9 +104,19 @@ namespace Zeckoxe.GLTF
             bufferHandles = new GCHandle[gltf.Buffers.Length];
 
 
+            if (gltf.Skins is not null && gltf.Skins.Length > 0)
+            {
+                LoadSkins(gltf);
+
+            }
+
+
+
             Meshes = LoadMeshes();
 
             Scenes = LoadScenes();
+
+
         }
 
 
@@ -291,7 +303,7 @@ namespace Zeckoxe.GLTF
                 {
 
 
-                    Schema.Accessor AccPos = null, AccNorm = null, AccUv = null, AccUv1 = null, AccColor = null, AccTan = null;
+                    Schema.Accessor AccPos = null, AccNorm = null, AccUv = null, AccUv1 = null, AccColor = null, AccTan = null, Accjoint = null, Accweights = null;
 
                     if (p.Attributes.TryGetValue("POSITION", out int accessorIdx))
                     {
@@ -328,6 +340,26 @@ namespace Zeckoxe.GLTF
                         ColorType = AccColor.Type is GltfType.Vec3 ? ColorType.Vec3 : ColorType.Vec4;
                     }
 
+                    if (Options.Skinning)
+                    {
+                        if (p.Attributes.TryGetValue("JOINTS_0", out accessorIdx))
+                        {
+                            Accjoint = gltf.Accessors[accessorIdx];
+                            EnsureBufferIsLoaded(gltf.BufferViews[(int)Accjoint.BufferView].Buffer);
+                        }
+
+                        if (p.Attributes.TryGetValue("WEIGHTS_0", out accessorIdx))
+                        {
+                            Accweights = gltf.Accessors[accessorIdx];
+                            EnsureBufferIsLoaded(gltf.BufferViews[(int)Accweights.BufferView].Buffer);
+                        }
+
+                        
+                    }
+
+
+                    
+
 
                     Primitive prim = new()
                     {
@@ -348,6 +380,8 @@ namespace Zeckoxe.GLTF
                     byte* inUv1Ptr = null;
                     byte* inColorPtr = null;
                     byte* inTanPtr = null;
+                    byte* inJointPtr = null;
+                    byte* inWeightsPtr = null;
 
 
                     Schema.BufferView bv = gltf.BufferViews[(int)AccPos.BufferView!];
@@ -387,6 +421,24 @@ namespace Zeckoxe.GLTF
                         bv = gltf.BufferViews[(int)AccTan.BufferView];
                         inTanPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
                         inTanPtr += AccTan.ByteOffset + bv.ByteOffset;
+                    }
+
+
+
+                    if (Accjoint is not null)
+                    {
+                        bv = gltf.BufferViews[(int)Accjoint.BufferView];
+                        inJointPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                        inJointPtr += Accjoint.ByteOffset + bv.ByteOffset;
+                    }
+
+
+
+                    if (Accweights is not null)
+                    {
+                        bv = gltf.BufferViews[(int)Accweights.BufferView];
+                        inWeightsPtr = (byte*)bufferHandles[bv.Buffer].AddrOfPinnedObject().ToPointer();
+                        inWeightsPtr += Accweights.ByteOffset + bv.ByteOffset;
                     }
 
                     for (int j = 0; j < AccPos.Count; j++)
@@ -486,6 +538,31 @@ namespace Zeckoxe.GLTF
 
                                     System.Buffer.MemoryCopy(inUv1Ptr, stagVertPtr + pad, 8, 8);
                                     inUv1Ptr += 8;
+                                }
+
+
+
+                                if (inJointPtr is not null && attribute.Type is VertexType.Joint0)
+                                {
+                                    if (propertyInfos.First().GetCustomAttribute<VertexAttribute>()!.Type == attribute.Type)
+                                        pad += 0;
+                                    else
+                                        pad += 16;
+
+                                    System.Buffer.MemoryCopy(inJointPtr, stagVertPtr + pad, 16, 16);
+                                    inUv1Ptr += 16;
+                                }
+
+
+                                if (inWeightsPtr is not null && attribute.Type is VertexType.Weight0)
+                                {
+                                    if (propertyInfos.First().GetCustomAttribute<VertexAttribute>()!.Type == attribute.Type)
+                                        pad += 0;
+                                    else
+                                        pad += 16;
+
+                                    System.Buffer.MemoryCopy(inWeightsPtr, stagVertPtr + pad, 16, 16);
+                                    inUv1Ptr += 16;
                                 }
                             }
                         }
@@ -686,7 +763,7 @@ namespace Zeckoxe.GLTF
                 PreTransform(child, localMat);
         }
 
-        public void RenderNode(CommandBuffer cmd, Node node, Matrix4x4 currentTransform, GraphicsPipelineState pipelineState)
+        public void RenderNode(CommandBuffer cmd, Node node, Matrix4x4 currentTransform, GraphicsPipeline pipelineState)
         {
             Matrix4x4 localMat = node.LocalMatrix * currentTransform;
 
@@ -726,7 +803,7 @@ namespace Zeckoxe.GLTF
         }
 
 
-        public void Draw(CommandBuffer commandBuffer, GraphicsPipelineState pipelineState)
+        public void Draw(CommandBuffer commandBuffer, GraphicsPipeline pipelineState)
         {
             commandBuffer.SetVertexBuffers(new[] { VertexBuffer });
             commandBuffer.SetIndexBuffer(IndexBuffer, 0, IndexType);
@@ -788,6 +865,43 @@ namespace Zeckoxe.GLTF
         }
 
 
+        public void LoadSkins(Gltf input)
+        {
+            for (int i = 0; i < input.Skins.Length ; i++)
+            {
+                var skin = input.Skins[i];
+
+                Console.WriteLine(skin.Name);
+                Console.WriteLine(skin.Joints.Length);
+            }
+        }
+
+
+        public void UpdateJoints(Schema.Node node)
+        {
+            if (node.Skin > -1)
+            {
+                //// Update the joint matrices
+                //glm::mat4 inverseTransform = glm::inverse(getNodeMatrix(node));
+                //Skin skin = skins[node->skin];
+                //size_t numJoints = (uint32_t)skin.joints.size();
+                //std::vector<glm::mat4> jointMatrices(numJoints);
+                //for (size_t i = 0; i < numJoints; i++)
+                //{
+                //    jointMatrices[i] = getNodeMatrix(skin.joints[i]) * skin.inverseBindMatrices[i];
+                //    jointMatrices[i] = inverseTransform * jointMatrices[i];
+                //}
+                //// Update ssbo
+                //skin.ssbo.copyTo(jointMatrices.data(), jointMatrices.size() * sizeof(glm::mat4));
+            }
+
+
+            foreach (var child in node.Children)
+            {
+                //UpdateJoints(child);
+            }
+        }
+
 
 
         public unsafe void LoadNode(Node parentNode, Schema.Node gltfNode)
@@ -812,6 +926,7 @@ namespace Zeckoxe.GLTF
                     M[8], M[9], M[10], M[11],
                     M[12], M[13], M[14], M[15]);
             }
+
 
             if (gltfNode.Translation is not null)
             {
@@ -841,16 +956,17 @@ namespace Zeckoxe.GLTF
 
             parentNode.Children.Add(node);
 
-            if (gltfNode.Children != null)
+            if (gltfNode.Children is not null)
             {
                 node.Children = new();
+
                 for (int i = 0; i < gltfNode.Children.Length; i++)
                 {
                     LoadNode(node, gltf.Nodes[gltfNode.Children[i]]);
                 }
             }
 
-            if (gltfNode.Mesh != null)
+            if (gltfNode.Mesh is not null)
             {
                 node.Mesh = Meshes[(int)gltfNode.Mesh];
             }

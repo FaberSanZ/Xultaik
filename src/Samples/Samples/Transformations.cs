@@ -40,49 +40,49 @@ namespace Samples.Samples
             }
         }
 
-        public VertexPositionColor[] vertices = new[]
+        public VertexPositionColor[] vertices = new VertexPositionColor[]
         {
             // front face
-            new VertexPositionColor( new Vector3(-0.5f,  0.5f, -0.5f), new Vector3(1.0f, 0.0f, 0.0f)),
-            new VertexPositionColor(new Vector3(0.5f, -0.5f, -0.5f), new Vector3(1.0f, 0.0f, 1.0f)),
+            new(new(-0.5f,  0.5f, -0.5f), new(1.0f, 0.0f, 0.0f)),
+            new(new( 0.5f, -0.5f, -0.5f), new(1.0f, 0.0f, 1.0f)),
+            new(new(-0.5f, -0.5f, -0.5f), new(0.0f, 0.0f, 1.0f)),
+            new(new( 0.5f,  0.5f, -0.5f), new(0.0f, 1.0f, 0.0f)),
 
-            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
 
             // right side face
-            new VertexPositionColor { Position = new Vector3(0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3(0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new(new(0.5f, -0.5f, -0.5f), new(1.0f, 0.0f, 0.0f)),
+            new(new(0.5f,  0.5f,  0.5f), new(1.0f, 0.0f, 1.0f)),
+            new(new(0.5f, -0.5f,  0.5f), new(0.0f, 0.0f, 1.0f)),
+            new(new(0.5f,  0.5f, -0.5f), new(0.0f, 1.0f, 0.0f)),
 
 
             // left side face
-            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new(new(-0.5f,  0.5f,  0.5f), new(1.0f, 0.0f, 0.0f)),
+            new(new(-0.5f, -0.5f, -0.5f), new(1.0f, 0.0f, 1.0f)),
+            new(new(-0.5f, -0.5f,  0.5f), new(0.0f, 0.0f, 1.0f)),
+            new(new(-0.5f,  0.5f, -0.5f), new(0.0f, 1.0f, 0.0f)),
 
 
             // back face
-            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new(new( 0.5f,  0.5f,  0.5f), new(1.0f, 0.0f, 0.0f)),
+            new(new(-0.5f, -0.5f,  0.5f), new(1.0f, 0.0f, 1.0f)),
+            new(new( 0.5f, -0.5f,  0.5f), new(0.0f, 0.0f, 1.0f)),
+            new(new(-0.5f,  0.5f,  0.5f), new(0.0f, 1.0f, 0.0f)),
 
 
 
             // top face
-            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new VertexPositionColor { Position = new Vector3(0.5f,  0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3( 0.5f,  0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3(-0.5f,  0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new(new(-0.5f, 0.5f, -0.5f), new(1.0f, 0.0f, 0.0f)),
+            new(new( 0.5f, 0.5f,  0.5f), new(1.0f, 0.0f, 1.0f)),
+            new(new( 0.5f, 0.5f, -0.5f), new(0.0f, 0.0f, 1.0f)),
+            new(new(-0.5f, 0.5f,  0.5f), new(0.0f, 1.0f, 0.0f)),
 
 
             // bottom face
-            new VertexPositionColor { Position = new Vector3( 0.5f, -0.5f,  0.5f), Color = new Vector3(1.0f, 0.0f, 0.0f) },
-            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = new Vector3(1.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3( 0.5f, -0.5f, -0.5f), Color = new Vector3(0.0f, 0.0f, 1.0f) },
-            new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f,  0.5f), Color = new Vector3(0.0f, 1.0f, 0.0f) },
+            new(new( 0.5f, -0.5f,  0.5f), new(1.0f, 0.0f, 0.0f) ),
+            new(new(-0.5f, -0.5f, -0.5f), new(1.0f, 0.0f, 1.0f) ),
+            new(new( 0.5f, -0.5f, -0.5f), new(0.0f, 0.0f, 1.0f) ),
+            new(new(-0.5f, -0.5f,  0.5f), new(0.0f, 1.0f, 0.0f) ),
 
         };
 
@@ -117,8 +117,12 @@ namespace Samples.Samples
 
 
         
-        public GraphicsPipelineState PipelineState_0 { get; set; }
-        public GraphicsPipelineState PipelineState_1 { get; set; }
+        public GraphicsPipeline PipelineState_0 { get; set; }
+        public GraphicsPipeline PipelineState_1 { get; set; }
+
+        public DescriptorSet DescriptorSet_0 { get; set; }
+        public DescriptorSet DescriptorSet_1 { get; set; }
+
 
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
@@ -223,8 +227,13 @@ namespace Samples.Samples
             Pipelinedescription0.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
             Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription0.AddVertexAttribute<VertexPositionColor>();
-            Pipelinedescription0.SetUniformBuffer(0, ConstBuffer);
             PipelineState_0 = new(Pipelinedescription0);
+
+            DescriptorData descriptorData_0 = new();
+            descriptorData_0.SetUniformBuffer(0, ConstBuffer);
+            DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
+
+
 
 
             PipelineStateDescription Pipelinedescription1 = new();
@@ -233,10 +242,12 @@ namespace Samples.Samples
             Pipelinedescription1.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
             Pipelinedescription1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription1.AddVertexAttribute<VertexPositionColor>();
-            Pipelinedescription1.SetUniformBuffer(0, ConstBuffer2);
             PipelineState_1 = new(Pipelinedescription1);
 
 
+            DescriptorData descriptorData_1 = new();
+            descriptorData_1.SetUniformBuffer(0, ConstBuffer2);
+            DescriptorSet_1 = new(PipelineState_1, descriptorData_1);
         }
 
 
@@ -278,10 +289,12 @@ namespace Samples.Samples
 
             // Draw Cube 1
             commandBuffer.SetGraphicPipeline(PipelineState_0);
+            commandBuffer.BindDescriptorSets(DescriptorSet_0);
             commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);
 
             // Draw Cube 2
             commandBuffer.SetGraphicPipeline(PipelineState_1);
+            commandBuffer.BindDescriptorSets(DescriptorSet_1);
             commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);
         }
 

@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples", "Samples\Samples.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Core", "Zeckoxe.Core\Zeckoxe.Core.csproj", "{A6D29D4B-F0E7-4A35-95F4-8E733C797968}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeckoxe.Vulkan", "Zeckoxe.Vulkan\Zeckoxe.Vulkan.csproj", "{819CB4A9-4B37-4A16-9374-7B880BDF269A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeckoxe.Vulkan", "Zeckoxe.Vulkan\Zeckoxe.Vulkan.csproj", "{819CB4A9-4B37-4A16-9374-7B880BDF269A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeckoxe.Audio", "Zeckoxe.Audio\Zeckoxe.Audio.csproj", "{0FF1CA35-259E-479E-8B3A-782CF4455310}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{819CB4A9-4B37-4A16-9374-7B880BDF269A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{819CB4A9-4B37-4A16-9374-7B880BDF269A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{819CB4A9-4B37-4A16-9374-7B880BDF269A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FF1CA35-259E-479E-8B3A-782CF4455310}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FF1CA35-259E-479E-8B3A-782CF4455310}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FF1CA35-259E-479E-8B3A-782CF4455310}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FF1CA35-259E-479E-8B3A-782CF4455310}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

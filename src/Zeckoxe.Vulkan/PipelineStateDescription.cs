@@ -124,7 +124,6 @@ namespace Zeckoxe.Vulkan
 
     public class PipelineStateDescription
     {
-        internal List<ResourceInfo> resourceInfos = new();
         internal int VertexAttributeLocation = 0;
         internal int VertexAttributeOffset = 0;
 
@@ -267,35 +266,6 @@ namespace Zeckoxe.Vulkan
             VertexAttributeOffset += element.Size();
         }
 
-
-
-        public void SetImageSampler(int _binding, Image texture, Sampler sampler)
-        {
-
-            resourceInfos.Add(new ResourceInfo
-            {
-                _binding = _binding,
-                is_sampler = true,
-                is_texture = true,
-                _sampler = sampler,
-                _texture = texture,
-                descriptor_type = VkDescriptorType.CombinedImageSampler,
-            });
-        }
-
-
-        public void SetUniformBuffer(int binding, Buffer buffer, int offset = 0)
-        {
-            resourceInfos.Add(new ResourceInfo
-            {
-                _offset = offset,
-                _binding = binding,
-                is_buffer = true,
-                _buffer = buffer,
-                descriptor_type = VkDescriptorType.StorageBuffer,
-            });
-
-        }
 
     }
 }

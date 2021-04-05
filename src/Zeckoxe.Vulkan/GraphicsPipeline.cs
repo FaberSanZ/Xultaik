@@ -15,7 +15,7 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Vulkan
 {
-    public unsafe class GraphicsPipelineState : GraphicsResource
+    public unsafe class GraphicsPipeline : GraphicsResource
     {
 
         internal VkPipeline graphicsPipeline;
@@ -23,23 +23,14 @@ namespace Zeckoxe.Vulkan
         internal VkPipelineCache _pipelineCache;
         internal VkPipelineLayout _pipelineLayout;
 
-        public GraphicsPipelineState(PipelineStateDescription description) : base(description.Framebuffer.NativeDevice)
+        public GraphicsPipeline(PipelineStateDescription description) : base(description.Framebuffer.NativeDevice)
         {
             PipelineStateDescription = description;
             Recreate();
-
-            DescriptorSet = new DescriptorSet(this)
-            {
-                resourceInfos = description.resourceInfos
-            };
-
-            if (DescriptorSet.resourceInfos.Any())
-                DescriptorSet.Build();
-            
         }
 
         public PipelineStateDescription PipelineStateDescription { get; set; }
-        public DescriptorSet DescriptorSet { get; set; }
+
         private void Recreate()
         {
             foreach (ShaderBytecode item in PipelineStateDescription.Shaders)
