@@ -16,7 +16,7 @@
 
 ## Low-level rendering backend
 
-The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan extensions and features are aggressively made use of to improve performance
+The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Zeckoxe/wiki/Extension) and features are aggressively made use of to improve performance
 
 
 <br>
@@ -31,18 +31,14 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 ## Features and extensions:
 
 - [ ] KHR Ray Tracing
-- [ ] Conservative rasterization (VK_EXT_conservative_rasterization)
-- [ ] Multiview rendering (VK_KHR_multiview)
-- [ ] Conditional rendering (VK_EXT_conditional_rendering)
-- [ ] Shading rate (VK_KHR_fragment_shading_rate) 
-- [ ] Descriptor indexing (VK_EXT_descriptor_indexing) 
-- [ ] Timeline semaphore (VK_KHR_timeline_semaphore) 
-- [ ] Buffer device address (VK_KHR_buffer_device_address) 
-- [ ] Synchronization2 (VK_KHR_synchronization2)
-- [x] VK_KHR_uniform_buffer_standard_layout  (Note: Not functional-Experimental)
-- [ ] VK_KHR_sampler_ycbcr_conversion 
-- [ ] VK_KHR_draw_indirect_count
-- [ ] VK_KHR_8bit_storage | VK_KHR_16bit_storage 
+- [ ] Conservative rasterization
+- [ ] Multiview rendering
+- [ ] Conditional rendering 
+- [ ] Shading rate
+- [ ] Descriptor indexing
+- [ ] Timeline semaphore
+- [ ] Buffer device address 
+- [ ] Synchronization
 - [x] Memory allocator
 - [ ] Compute Shader
 - [ ] Geometry Shader
