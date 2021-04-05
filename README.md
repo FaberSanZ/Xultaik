@@ -16,7 +16,7 @@
 
 ## Low-level rendering backend
 
-The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Zeckoxe/wiki/Extension) and features are aggressively made use of to improve performance
+The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan extensions and features are aggressively made use of to improve performance
 
 
 <br>
@@ -29,7 +29,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 <br>
 
 ## Features and extensions:
-
+- [Extensions](https://github.com/FaberSanZ/Zeckoxe/wiki/Extension)
 - [ ] KHR Ray Tracing
 - [ ] Conservative rasterization
 - [ ] Multiview rendering
