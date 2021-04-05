@@ -111,7 +111,10 @@ namespace Zeckoxe.Vulkan
         }
 
 
-
+        public void Free()
+        {
+            //vkFreeDescriptorSets()
+        }
 
     }
 

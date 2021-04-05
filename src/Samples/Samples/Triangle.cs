@@ -69,14 +69,9 @@ namespace Samples.Samples
             base.Initialize();
 
 
-            Camera = new()
-            {
-                Mode = CameraType.Free,
-                Position = new(0, 0, -2.5f),
-            };
-
-            Camera.SetLens(Window.Width, Window.Height);
-
+            Camera = new Camera(45f, 1f, 0.1f, 64f);
+            Camera.SetPosition(0, 0, -2.5f);
+            Camera.AspectRatio = (float)Window.Width / Window.Height;
 
             // Reset Model
             Model = Matrix4x4.Identity;
@@ -98,11 +93,11 @@ namespace Samples.Samples
         public void CreateBuffers()
         {
 
-            VertexPositionColor[] vertices = new[]
+            VertexPositionColor[] vertices = new VertexPositionColor[]
             {
-                new VertexPositionColor(new Vector3(0.0f, -0.65f, -0.5f), new Vector3(1.6f, 0.0f, 0.0f)),
-                new VertexPositionColor(new Vector3(0.65f, 0.65f, -0.5f), new Vector3(0.0f, 1.6f, 0.0f)),
-                new VertexPositionColor(new Vector3(-0.65f, 0.65f, -0.5f), new Vector3(0.0f, 0.0f, 1.6f)),
+                new(new(0.0f, -0.65f, -0.5f), new(1.6f, 0.0f, 0.0f)),
+                new(new(0.65f, 0.65f, -0.5f), new(0.0f, 1.6f, 0.0f)),
+                new(new(-0.65f, 0.65f, -0.5f), new(0.0f, 0.0f, 1.6f)),
             };
 
 
@@ -166,7 +161,7 @@ namespace Samples.Samples
 
         public override void Update(ApplicationTime game)
         {
-            Camera.Update(game);
+            Camera.Update();
 
 
 

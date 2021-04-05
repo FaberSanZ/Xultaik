@@ -10,10 +10,10 @@ namespace Samples
         {
             //using var App = new ClearScreen.ClearScreenExample();
             //using var App = new Triangle();
-            using var App = new Transformations();
+            //using var App = new Transformations();
             //using var App = new LoadGLTF();
             //using var App = new LoadTextureExample();
-            //using var App = new Lighting();
+            using var App = new Lighting();
             //using var App = new Skinning.SkinningExample();
             
 

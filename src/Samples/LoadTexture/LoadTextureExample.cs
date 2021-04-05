@@ -54,8 +54,8 @@ namespace Samples.Samples.LoadTexture
 
         public int[] Indices = new[]
         {
+            2, 3, 0,
             0, 1, 2,
-            2, 3, 0
         };
 
         public VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[]
@@ -101,14 +101,10 @@ namespace Samples.Samples.LoadTexture
         {
             base.Initialize();
 
-            Camera = new()
-            {
-                Mode = CameraType.Free,
-                Position = new(0, -0.0f, -2.1f),
-            };
+            Camera = new(45f, 1f, 0.1f, 64f);
+            Camera.SetPosition(0, -0.0f, -3.5f);
+            Camera.AspectRatio = (float)Window.Width / Window.Height;
 
-            Camera.InvertY = true;
-            Camera.SetLens(Window.Width, Window.Height);
 
             // Reset Model
             Model = Matrix4x4.Identity;
@@ -179,8 +175,8 @@ namespace Samples.Samples.LoadTexture
             Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Texture/shader.vert", ShaderStage.Vertex);
 
 
-            Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
-            Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
+            Image2D text1 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
+            Image2D text2 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
             Sampler sampler = new Sampler(Device);
 
 
@@ -221,7 +217,7 @@ namespace Samples.Samples.LoadTexture
 
         public override void Update(ApplicationTime game)
         {
-            Camera.Update(game);
+            Camera.Update();
 
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-0.8f, -0.4f, 0.0f);

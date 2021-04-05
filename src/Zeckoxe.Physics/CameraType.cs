@@ -10,6 +10,8 @@ namespace Zeckoxe.Physics
     public enum CameraType
     {
         FirstPerson,
+        
+        LookAt,
 
         ThirdPerson,
 

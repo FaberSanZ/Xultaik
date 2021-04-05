@@ -152,13 +152,11 @@ namespace Samples.Samples
         {
             base.Initialize();
 
-            Camera = new()
-            {
-                Mode = CameraType.Free,
-                Position = new(0, 0, -3.5f),
-            };
 
-            Camera.SetLens(Window.Width, Window.Height);
+            Camera = new(45f, 1f, 0.1f, 64f);
+            Camera.SetPosition(0, 0, -3.5f);
+            Camera.AspectRatio = (float)Window.Width / Window.Height;
+            Camera.Update();
 
 
             // Reset Model
@@ -254,7 +252,7 @@ namespace Samples.Samples
 
         public override void Update(ApplicationTime game)
         {
-            Camera.Update(GameTime);
+            Camera.Update();
 
 
             Model = Matrix4x4.CreateFromYawPitchRoll(-yaw, -pitch, -roll) * Matrix4x4.CreateTranslation(-0.45f, 0.0f, 0.0f);
