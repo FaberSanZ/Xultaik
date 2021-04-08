@@ -63,7 +63,7 @@ Example | Details
 ---------|--------
 
 
-![small](src/Samples/Samples/ClearScreen.cs) | This example shows how to configure the device and clear the color.
+![small](https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/ClearScreen.PNG) | [ClearScreen](ray_tracing_anyhit)<br> This example shows how to configure the device and clear the color.
 
 
 
