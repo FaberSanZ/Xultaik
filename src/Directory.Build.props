@@ -5,8 +5,9 @@
     <RepositoryRootDirectory>$(MSBuildThisFileDirectory)../</RepositoryRootDirectory>
     <BinDir>$(RepositoryRootDirectory)bin</BinDir>
     <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(BinDir)\$(MSBuildProjectName)\</BaseOutputPath>
-    
-    
+
+
+
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
 
@@ -16,7 +17,7 @@
     <PackageTags>gamedev Vulkan</PackageTags>
     <Company>Faber Leonardo</Company>
     <Authors>Faber Leonardo</Authors>
-    <Copyright>Copyright © 2020-2021 FakzSoft and contributors.</Copyright>
+    <Copyright>Copyright © 2020-2021 Faber Leonardo and contributors.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/FaberSanZ/Zeckoxe</PackageProjectUrl>
