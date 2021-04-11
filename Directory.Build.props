@@ -26,6 +26,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
     <RepositoryType>git</RepositoryType>
+    
 
     <!-- Packages versions -->
     <NerdbankGitVersioningVersion>3.3.37</NerdbankGitVersioningVersion>
