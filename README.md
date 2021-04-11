@@ -40,6 +40,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 - [ ] Buffer device address 
 - [ ] Synchronization
 - [x] Memory allocator
+- [x] GPU-Assisted Validation
 - [ ] Compute Shader
 - [ ] Geometry Shader
 - [ ] Tessellation Shader (Phong, PN Triangles, and Displacement Mapping)
