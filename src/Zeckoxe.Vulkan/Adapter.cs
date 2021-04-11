@@ -1,9 +1,5 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-
-/*=============================================================================
-	GraphicsAdapter.cs
-=============================================================================*/
 
 
 
@@ -23,9 +19,7 @@ namespace Zeckoxe.Vulkan
         internal bool? _supportInitializad;
         internal VkInstance instance;
 
-        //internal VkDebugUtilsMessengerCallbackDataEXT _debugMessengerCallbackFunc;
-        internal VkDebugUtilsMessengerEXT _debugMessengerCallbackFunc;
-        private VkDebugUtilsMessengerEXT _debugMessenger = VkDebugUtilsMessengerEXT.Null;
+        internal VkDebugUtilsMessengerEXT _debugMessenger = VkDebugUtilsMessengerEXT.Null;
 
         internal uint instance_extensions_count;
         internal uint device_count; // number of GPUs we're rendering to --- if DG is disabled, this is 1
