@@ -8,6 +8,9 @@
 
 <hr>
 
+[![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Zeckoxe/actions)
+[![NuGet](https://img.shields.io/nuget/v/Zeckoxe.Vulkan.svg)](https://www.nuget.org/profiles/FaberSanZ)
+
 
 
 ### Zecoxe can be used to produce render layers for custom engines or next-gen games and provides building blocks for writing your own engine or game quickly
