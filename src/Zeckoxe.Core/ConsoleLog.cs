@@ -9,27 +9,28 @@ using System;
 
 namespace Zeckoxe.Core
 {
-    public class ConsoleLog : ILog
+    public static class ConsoleLog
     {
-        public void Info(string message)
+        public static void Info(string type, string message)
         {
-            WriteColored(ConsoleColor.Green, "[INFO]");
-            Console.WriteLine(" " + message);
+            WriteColored(ConsoleColor.Green, $"[INFO] [{type}]");
+            Console.WriteLine(" " + message + "\n \n \n");
         }
 
-        public void Warn(string message)
+        public static void Warn(string type, string message)
         {
-            WriteColored(ConsoleColor.Yellow, "[WARN]");
-            Console.WriteLine(" " + message);
+            WriteColored(ConsoleColor.Yellow, $"[WARN] [{type}]");
+            Console.WriteLine(" " + message + "\n \n \n");
         }
 
-        public void Error(string type, string message)
+        public static void Error(string type, string message)
         {
             WriteColored(ConsoleColor.Red, $"[ERROR] [{type}]");
-            Console.WriteLine(" " + message);
+            Console.WriteLine(" " + message + "\n \n \n");
+
         }
 
-        internal void WriteColored(ConsoleColor color, string message)
+        internal static void WriteColored(ConsoleColor color, string message)
         {
             ConsoleColor currentColor = Console.ForegroundColor;
             Console.ForegroundColor = color;

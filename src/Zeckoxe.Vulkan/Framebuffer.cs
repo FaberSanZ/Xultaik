@@ -7,6 +7,7 @@
 
 
 
+using System;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
@@ -14,7 +15,7 @@ namespace Zeckoxe.Vulkan
 {
     // TODO: Framebuffer
 
-    public unsafe class Framebuffer : GraphicsResource
+    public unsafe class Framebuffer : GraphicsResource, IDisposable
     {
 
 
@@ -30,6 +31,7 @@ namespace Zeckoxe.Vulkan
         }
 
         public SwapChain SwapChain { get; }
+
 
         public void Recreate()
         {
@@ -203,5 +205,12 @@ namespace Zeckoxe.Vulkan
 
             vkCreateRenderPass(NativeDevice.handle, &render_pass_info, null, out renderPass).CheckResult();
         }
+
+
+        public void Dispose()
+        {
+
+        }
+
     }
 }

@@ -8,11 +8,7 @@ namespace Zeckoxe.Core
 {
     public interface ILog
     {
-        void Info(string message);
 
-        void Warn(string message);
-
-        void Error(string type, string message);
     }
 }
 

@@ -14,31 +14,32 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Samples.Triangle
 {
+    [StructLayout(LayoutKind.Sequential)]
+    public struct TransformUniform
+    {
+        public TransformUniform(Matrix4x4 m, Matrix4x4 v, Matrix4x4 p)
+        {
+            P = p;
+            M = m;
+            V = v;
+        }
+
+        public Matrix4x4 M;
+
+        public Matrix4x4 V;
+
+        public Matrix4x4 P;
+
+        public void Update(Camera camera, Matrix4x4 m)
+        {
+            P = camera.Projection;
+            M = m;
+            V = camera.View;
+        }
+    }
+
     public class TriangleExample : Application, IDisposable
     {
-        [StructLayout(LayoutKind.Sequential)]
-        public struct TransformUniform
-        {
-            public TransformUniform(Matrix4x4 m, Matrix4x4 v, Matrix4x4 p)
-            {
-                P = p;
-                M = m;
-                V = v;
-            }
-
-            public Matrix4x4 M;
-
-            public Matrix4x4 V;
-
-            public Matrix4x4 P;
-
-            public void Update(Camera camera, Matrix4x4 m)
-            {
-                P = camera.Projection;
-                M = m;
-                V = camera.View;
-            }
-        }
 
         public TriangleExample() : base()
         {
@@ -46,6 +47,7 @@ namespace Samples.Triangle
         }
 
         public Camera Camera { get; set; }
+
         public GraphicsPipeline PipelineState { get; set; }
         public DescriptorSet DescriptorSet { get; set; }
 
@@ -69,7 +71,7 @@ namespace Samples.Triangle
             base.Initialize();
 
 
-            Camera = new Camera(45f, 1f, 0.1f, 64f);
+            Camera = new Camera(45f, 0.1f, 64f);
             Camera.SetPosition(0, 0, -2.5f);
             Camera.AspectRatio = (float)Window.Width / Window.Height;
 

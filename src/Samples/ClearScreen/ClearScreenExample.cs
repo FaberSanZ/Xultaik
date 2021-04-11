@@ -20,7 +20,7 @@ namespace Samples.ClearScreen
                 BackBufferHeight = Window.Height,
                 Settings = new()
                 {
-                    Validation = ValidationType.Console,
+                    Validation = ValidationType.None,
                     Fullscreen = false,
                     VSync = false,
                     OptionalDeviceExtensions = OptionalDeviceExtensions.BindMemory2 | OptionalDeviceExtensions.CopyCommands2,

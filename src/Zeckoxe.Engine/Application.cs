@@ -28,7 +28,7 @@ namespace Zeckoxe.Engine
 
         public Adapter Adapter { get; set; }
 
-        public Device? Device { get; set; }
+        public Device Device { get; set; }
 
         public Framebuffer Framebuffer { get; set; }
 
@@ -175,6 +175,15 @@ namespace Zeckoxe.Engine
         public override void ConfigureServices()
         {
 
+        }
+
+
+        public virtual void Destroy()
+        {
+            Framebuffer.Dispose();
+            SwapChain.Dispose();
+            Device.Dispose();
+            Adapter.Dispose();
         }
 
         public void OnTickRequested()

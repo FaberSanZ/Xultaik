@@ -101,7 +101,7 @@ namespace Samples.Samples
         public override void InitializeSettings()
         {
             base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.None;
+            Parameters.Settings.Validation = ValidationType.Info;
             Window.Title += " - (Lighting) ";
         }
 
@@ -284,16 +284,19 @@ namespace Samples.Samples
         }
 
 
-
-        public void Dispose()
+        public override void Destroy()
         {
             ConstBuffer.Dispose();
             ConstBuffer2.Dispose();
             ConstBuffer3.Dispose();
             ConstBuffer4.Dispose();
-            SwapChain.Dispose();
-            Device.Dispose();
-            Adapter.Dispose();
+            base.Destroy();
+        }
+
+
+        public void Dispose()
+        {
+            Destroy();
         }
     }
 }
