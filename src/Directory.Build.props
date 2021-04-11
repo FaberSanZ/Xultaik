@@ -29,6 +29,7 @@
 
     <!-- Packages versions -->
     <NerdbankGitVersioningVersion>3.3.37</NerdbankGitVersioningVersion>
+    <GitHubSourceLinkVersion>1.1.0-beta-20204-02</GitHubSourceLinkVersion>
   </PropertyGroup>
 
   <ItemGroup>
