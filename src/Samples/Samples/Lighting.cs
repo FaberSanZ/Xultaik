@@ -101,7 +101,7 @@ namespace Samples.Samples
         public override void InitializeSettings()
         {
             base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.Info;
+            Parameters.Settings.Validation = ValidationType.Error | ValidationType.Warning;
             Window.Title += " - (Lighting) ";
         }
 

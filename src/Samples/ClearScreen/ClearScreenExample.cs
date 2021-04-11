@@ -20,7 +20,7 @@ namespace Samples.ClearScreen
                 BackBufferHeight = Window.Height,
                 Settings = new()
                 {
-                    Validation = ValidationType.None,
+                    Validation = ValidationType.Error,
                     Fullscreen = false,
                     VSync = false,
                     OptionalDeviceExtensions = OptionalDeviceExtensions.BindMemory2 | OptionalDeviceExtensions.CopyCommands2,
@@ -124,7 +124,10 @@ namespace Samples.ClearScreen
 
         public void Dispose()
         {
-            //Device.Dispose();
+            Framebuffer.Dispose();
+            SwapChain.Dispose();
+            Device.Dispose();
+            Adapter.Dispose();
         }
     }
 }

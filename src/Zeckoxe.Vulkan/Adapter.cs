@@ -558,6 +558,7 @@ namespace Zeckoxe.Vulkan
 
         public void Dispose()
         {
+
             if (_debugMessenger != VkDebugUtilsMessengerEXT.Null)
                 vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
 

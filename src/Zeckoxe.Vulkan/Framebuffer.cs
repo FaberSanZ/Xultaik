@@ -209,8 +209,13 @@ namespace Zeckoxe.Vulkan
 
         public void Dispose()
         {
+            for (int i = 0; i < SwapChain.swapChain_image_views.Length; i++)
+            {
+                vkDestroyImageView(NativeDevice.handle, SwapChain.swapChain_image_views[i], null);
+                vkDestroyFramebuffer(NativeDevice.handle, framebuffers[i], null);
+            }
 
+            vkDestroyRenderPass(NativeDevice.handle, renderPass, null);
         }
-
     }
 }
