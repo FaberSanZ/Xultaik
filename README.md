@@ -12,7 +12,7 @@
 [![NuGet](https://img.shields.io/nuget/v/Zeckoxe.Vulkan.svg)](https://www.nuget.org/profiles/FaberSanZ)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FakzSoft/Zeckoxe/blob/master/LICENSE) 
 
-<hr>
+<br>
 The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 <hr>
