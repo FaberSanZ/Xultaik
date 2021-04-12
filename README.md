@@ -10,9 +10,10 @@
 
 [![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Zeckoxe/actions)
 [![NuGet](https://img.shields.io/nuget/v/Zeckoxe.Vulkan.svg)](https://www.nuget.org/profiles/FaberSanZ)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FakzSoft/Zeckoxe/blob/master/LICENSE)
-The code is licensed under MIT. Feel free to use it for whatever purpose.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FakzSoft/Zeckoxe/blob/master/LICENSE) 
 
+<hr>
+The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 <hr>
 
