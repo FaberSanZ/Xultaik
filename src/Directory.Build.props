@@ -14,7 +14,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>CS1591;CS1701</NoWarn>
 
-    <PackageTags>gamedev Vulkan</PackageTags>
+    <PackageTags>gamedev Vulkan Zeckoxe</PackageTags>
     <Company>Faber Leonardo</Company>
     <Authors>Faber Leonardo</Authors>
     <Copyright>Copyright © 2020-2021 Faber Leonardo and contributors.</Copyright>

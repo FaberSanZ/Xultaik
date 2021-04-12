@@ -46,7 +46,7 @@ namespace Zeckoxe.Vulkan
 
                 VkImageView* attachments = stackalloc VkImageView[2]
                 {
-                    SwapChainImageViews[i],                                 // Color attachment is the view of the swapchain image			
+                    SwapChainImageViews[i],                          	
                     SwapChain.DepthStencil.depth_stencil_view,
                 };
 

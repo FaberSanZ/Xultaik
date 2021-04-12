@@ -611,7 +611,7 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.CommandPoolCreateInfo,
                 queueFamilyIndex = index,
-                flags = VkCommandPoolCreateFlags.None,
+                flags = VkCommandPoolCreateFlags.ResetCommandBuffer,
                 pNext = null,
             };
 
@@ -628,7 +628,7 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.CommandBufferAllocateInfo,
                 commandPool = pool,
-
+                pNext = null,
                 level = VkCommandBufferLevel.Primary,
                 commandBufferCount = 1,
             };
