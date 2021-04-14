@@ -324,7 +324,7 @@ namespace Samples.Skinning
             Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.frag", ShaderStage.Fragment);
             Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.vert", ShaderStage.Vertex);
 
-            Image2D text1 = Image2D.LoadFromFile(Device, "CesiumMan_img0.jpg");
+            Image text1 = Image.Load2DFromFile(Device, "CesiumMan_img0.jpg");
 
 
             Sampler sampler = new Sampler(Device);

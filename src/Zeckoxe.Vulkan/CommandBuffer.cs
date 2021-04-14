@@ -247,7 +247,7 @@ namespace Zeckoxe.Vulkan
         {
             VkImageCopy* regions = stackalloc VkImageCopy[32];
 
-            int levels = src.Levels;
+            int levels = src.Description.MipLevels;
 
 
             for (uint i = 0; i < levels; i++)

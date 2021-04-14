@@ -121,7 +121,7 @@ namespace Zeckoxe.Vulkan.Toolkit
 
 
 
-            ImageData data = new ImageData()
+            ImageDescription data = new()
             {
                 Width = (int)Header.PixelWidth,
                 Height = (int)Header.PixelHeight,
@@ -129,15 +129,16 @@ namespace Zeckoxe.Vulkan.Toolkit
                 Format = FormatExtensions.GetFormatFromOpenGLFormat(Header.GlInternalFormat),
                 Size = (int)GetTotalSize(),
                 IsCubeMap = Header.NumberOfFaces is 6,
-                MipMaps = (int)Header.NumberOfMipmapLevels,
+                MipLevels = (int)Header.NumberOfMipmapLevels,
                 Data = GetAllTextureData(),
+                
             };
 
 
-            TextureData = data;
+            ImageDescription = data;
         }
 
-        public ImageData TextureData { get; private set; }
+        public ImageDescription ImageDescription { get; private set; }
 
         public int Width => (int)Header.PixelWidth;
 
@@ -169,9 +170,9 @@ namespace Zeckoxe.Vulkan.Toolkit
 
 
 
-        public static ImageData LoadFromFile(string filename)
+        public static ImageDescription LoadFromFile(string filename)
         {
-            return new KTXLoader(filename).TextureData;
+            return new KTXLoader(filename).ImageDescription;
         }
 
         private static unsafe KtxKeyValuePair ReadNextKeyValuePair(BinaryReader br, out int bytesRead)

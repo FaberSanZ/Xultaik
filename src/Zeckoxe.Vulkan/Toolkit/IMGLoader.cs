@@ -46,7 +46,7 @@ namespace Zeckoxe.Vulkan.Toolkit
                 }
             }
 
-            ImageData _data = new ImageData()
+            ImageDescription _data = new ImageDescription()
             {
                 Width = _image.Width,
                 Height = _image.Height,
@@ -54,7 +54,7 @@ namespace Zeckoxe.Vulkan.Toolkit
                 Size = _image.Width * _image.Height * 4,
                 Depth = 1,
                 IsCubeMap = false,
-                MipMaps = (int)Math.Floor(Math.Log(Math.Max(_image.Width, _image.Height))) + 1, // TODO: MipMaps 
+                MipLevels = 1, // (int)Math.Floor(Math.Log(Math.Max(_image.Width, _image.Height))) + 1, // TODO: MipMaps 
                 Data = MemoryMarshal.AsBytes(pixels).ToArray(),
             };
 
@@ -86,7 +86,7 @@ namespace Zeckoxe.Vulkan.Toolkit
                 }
             }
 
-            ImageData data = new ImageData()
+            ImageDescription data = new ImageDescription()
             {
                 Width = _image.Width,
                 Height = _image.Height,
@@ -94,8 +94,10 @@ namespace Zeckoxe.Vulkan.Toolkit
                 Size = _image.Width * _image.Height * 4,
                 Depth = 1,
                 IsCubeMap = false,
-                MipMaps = (int)Math.Floor(Math.Log(Math.Max(_image.Width, _image.Height))) + 1, // TODO: MipMaps 
+                MipLevels = 1, //(int)Math.Floor(Math.Log(Math.Max(_image.Width, _image.Height))) + 1, // TODO: MipMaps 
                 Data = MemoryMarshal.AsBytes(pixels).ToArray(),
+                //ArraySize = 1,
+                
             };
 
 
@@ -104,7 +106,7 @@ namespace Zeckoxe.Vulkan.Toolkit
         }
 
 
-        public ImageData TextureData { get; private set; }
+        public ImageDescription TextureData { get; private set; }
 
         public int Width => _image.Width;
 
@@ -119,12 +121,12 @@ namespace Zeckoxe.Vulkan.Toolkit
         public bool IsCubeMap => false;
 
 
-        public static ImageData LoadFromData(byte[] data)
+        public static ImageDescription LoadFromData(byte[] data)
         {
             return new IMGLoader(data).TextureData;
         }
 
-        public static ImageData LoadFromFile(string filename)
+        public static ImageDescription LoadFromFile(string filename)
         {
             return new IMGLoader(filename).TextureData;
         }

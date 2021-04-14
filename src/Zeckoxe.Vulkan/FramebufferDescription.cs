@@ -21,7 +21,7 @@ namespace Zeckoxe.Vulkan
 
 
 
-        public FramebufferDescription(Image depthTarget, params Image[] colorTargets)
+        public FramebufferDescription(Image? depthTarget, params Image[] colorTargets)
         {
             if (depthTarget is not null)
                 DepthTarget = new FramebufferAttachmentDescription(depthTarget, 0);

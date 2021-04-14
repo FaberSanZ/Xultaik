@@ -168,9 +168,9 @@ namespace Samples.Samples
             Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.frag", ShaderStage.Fragment);
             Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.vert", ShaderStage.Vertex);
 
-            Image2D text1 = Image2D.LoadFromFile(Device, "UVCheckerMap08-512.png");
-            Image2D text2 = Image2D.LoadFromFile(Device, "IndustryForgedDark512.ktx");
-            Image2D text3 = Image2D.LoadFromFile(Device, "floor_tiles.bmp");
+            Image text1 = Image.Load2DFromFile(Device, "UVCheckerMap08-512.png");
+            Image text2 = Image.Load2DFromFile(Device, "IndustryForgedDark512.ktx");
+            Image text3 = Image.Load2DFromFile(Device, "floor_tiles.bmp");
 
             Sampler sampler = new Sampler(Device);
 

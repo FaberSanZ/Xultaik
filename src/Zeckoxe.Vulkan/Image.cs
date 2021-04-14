@@ -8,6 +8,7 @@
 
 using System;
 using Vortice.Vulkan;
+using Zeckoxe.Vulkan.Toolkit;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
@@ -118,9 +119,9 @@ namespace Zeckoxe.Vulkan
 
 
         public ImageDescription Description { get; set; }
-        public ImageDimension Dimension => Description.Dimension;
+        public VkImageType ImageType => Description.ImageType;
         public VkFormat Format => Description.Format;
-        public byte[] Data => Description.Data;
+        public byte[]? Data => Description.Data;
         public int Size => Description.Size;
         public int MipLevels => Description.MipLevels;
         public int ArraySize => Description.ArraySize;
@@ -128,7 +129,6 @@ namespace Zeckoxe.Vulkan
         public int Height => Description.Height;
         public int Depth => Description.Depth;
         public bool IsCubeMap => Description.IsCubeMap;
-        public VkFormat Formatt => Description.Format;
         public TextureFlags ViewFlags => Description.Flags;
 
         public bool IsRenderTarget => (ViewFlags & TextureFlags.RenderTarget) != 0;
@@ -144,7 +144,6 @@ namespace Zeckoxe.Vulkan
 
 
         public VkSampleCountFlags MultisampleCount { get; private set; }
-        public int Levels { get; internal set; }
 
         internal void Initialize()
         {
@@ -202,30 +201,13 @@ namespace Zeckoxe.Vulkan
                 format = (VkFormat)Format,
                 flags = VkImageCreateFlags.None,
                 tiling = VkImageTiling.Optimal,
-                initialLayout = VkImageLayout.Undefined
+                initialLayout = VkImageLayout.Undefined,
+
+                // TODO: CubeCompatible
+                imageType = ImageType,
             };
 
 
-
-
-
-
-            switch (Dimension)
-            {
-                case ImageDimension.Image1D:
-                    image_create_info.imageType = VkImageType.Image1D;
-                    break;
-                case ImageDimension.Image2D:
-                    image_create_info.imageType = VkImageType.Image2D;
-                    break;
-                case ImageDimension.Image3D:
-                    image_create_info.imageType = VkImageType.Image3D;
-                    break;
-                case ImageDimension.ImageCube:
-                    image_create_info.imageType = VkImageType.Image2D;
-                    image_create_info.flags |= VkImageCreateFlags.CubeCompatible;
-                    break;
-            }
 
 
 
@@ -247,7 +229,7 @@ namespace Zeckoxe.Vulkan
 
             if (IsShaderResource)
             {
-                image_create_info.usage |= VkImageUsageFlags.Sampled; // TODO VULKAN: Input attachments
+                image_create_info.usage |= VkImageUsageFlags.Sampled; // TODO: Input attachments
             }
 
             if (IsUnorderedAccess)
@@ -295,7 +277,7 @@ namespace Zeckoxe.Vulkan
 
 
 
-        public void LoadTexture2D()
+        public void Image2D()
         {
 
 
@@ -454,8 +436,8 @@ namespace Zeckoxe.Vulkan
                 sType = VkStructureType.ImageViewCreateInfo,
                 image = handle,
                 viewType = VkImageViewType.Image2D,
-                format = (VkFormat)Format,
-                subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, (uint)1, 0, 1), // TODO: MipMaps
+                format = Format,
+                subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1), // TODO: MipMaps
             };
 
             vkCreateImageView(NativeDevice.handle, &imageViewCreateInfo, null, out var _view);
@@ -474,6 +456,57 @@ namespace Zeckoxe.Vulkan
 
 
 
+
+        public static Image LoadFromData(Device device, ImageDescription description)
+        {
+            Image text2d = new Image(device, description);
+
+            return text2d;
+        }
+
+
+        public static Image Load2DFromBytes(Device device, byte[] data)
+        {
+            var tex2D = IMGLoader.LoadFromData(data);
+
+            Image text2d = new Image(device, new ImageDescription
+            {
+                Flags = TextureFlags.ShaderResource,
+                Usage = GraphicsResourceUsage.Staging,
+                Width = tex2D.Width,
+                Height = tex2D.Height,
+                Size = tex2D.Size,
+                Data = tex2D.Data,
+                Format = tex2D.Format,
+                ImageType = VkImageType.Image2D,
+            });
+
+            text2d.Image2D();
+
+            return text2d;
+        }
+
+        public static Image Load2DFromFile(Device device, string path)
+        {
+            ImageDescription description = new();
+
+            if (path.EndsWith(".ktx"))
+                description = KTXLoader.LoadFromFile(path);
+
+            else if (path.EndsWith(".png") || path.EndsWith(".bmp") || path.EndsWith(".jpg"))
+                description = IMGLoader.LoadFromFile(path);
+
+            description.ImageType = VkImageType.Image2D;
+            description.Flags = TextureFlags.ShaderResource;
+            description.Usage = GraphicsResourceUsage.Staging;
+
+
+            Image text2d = new Image(device, description);
+
+            text2d.Image2D();
+
+            return text2d;
+        }
 
 
 
