@@ -14,7 +14,7 @@ namespace Zeckoxe.Vulkan
         internal VkDescriptorPool _descriptorPool;
         internal VkDescriptorSet _descriptorSet;
         internal uint _count = 0;
-        internal List<ResourceData> resourceInfos = new();
+        internal List<ResourceData> Resources = new();
 
 
         public DescriptorSet(GraphicsPipeline pipeline, DescriptorData data) : base(pipeline.NativeDevice)
@@ -36,10 +36,10 @@ namespace Zeckoxe.Vulkan
 
         public void Build()
         {
-            resourceInfos = DescriptorData.resourceInfos;
+            Resources = DescriptorData.Data;
 
 
-            int resources_count = resourceInfos.Count;
+            int resources_count = Resources.Count;
 
             VkWriteDescriptorSet* ptr = stackalloc VkWriteDescriptorSet[resources_count];
             VkDescriptorBufferInfo* bufferInfos = stackalloc VkDescriptorBufferInfo[resources_count];
@@ -50,7 +50,7 @@ namespace Zeckoxe.Vulkan
 
             for (int i = 0; i < resources_count; i++)
             {
-                ResourceData r = resourceInfos[i];
+                ResourceData r = Resources[i];
 
                 if (r.DescriptorType == VkDescriptorType.UniformBuffer)
                 {

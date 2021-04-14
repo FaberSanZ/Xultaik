@@ -15,7 +15,6 @@ namespace Zeckoxe.Vulkan
 
         public FramebufferAttachmentDescription? DepthTarget { get; set; }
 
-
         public FramebufferAttachmentDescription[] ColorTargets { get; set; }
 
 

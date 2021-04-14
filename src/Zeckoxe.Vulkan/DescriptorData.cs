@@ -40,7 +40,7 @@ namespace Zeckoxe.Vulkan
 
         }
 
-        public List<ResourceData> resourceInfos = new();
+        public List<ResourceData> Data = new();
 
 
 
@@ -52,7 +52,7 @@ namespace Zeckoxe.Vulkan
         public void SetImageSampler(int _binding, Image image, Sampler sampler)
         {
 
-            resourceInfos.Add(new()
+            Data.Add(new()
             {
                 Binding = _binding,
                 Sampler = sampler,
@@ -64,7 +64,7 @@ namespace Zeckoxe.Vulkan
 
         public void SetUniformBuffer(int binding, Buffer buffer, int offset = 0)
         {
-            resourceInfos.Add(new()
+            Data.Add(new()
             {
                 Offset = offset,
                 Binding = binding,
