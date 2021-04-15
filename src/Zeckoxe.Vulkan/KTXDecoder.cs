@@ -1,10 +1,7 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 
-/*===================================================================================
-	KTXLoader.cs
-====================================================================================*/
 
 
 using System;
@@ -15,9 +12,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Zeckoxe.Vulkan.Toolkit
+namespace Zeckoxe.Vulkan
 {
-    public class KTXLoader
+    public class KTXDecoder
     {
         internal KtxHeader Header { get; private set; }
         internal KtxKeyValuePair[] KeyValuePairs { get; private set; }
@@ -29,7 +26,7 @@ namespace Zeckoxe.Vulkan.Toolkit
         };
 
 
-        public KTXLoader(string fileName, bool readKeyValuePairs = false)
+        public KTXDecoder(string fileName, bool readKeyValuePairs = false)
         {
             using FileStream fs = File.OpenRead(fileName);
 
@@ -172,7 +169,7 @@ namespace Zeckoxe.Vulkan.Toolkit
 
         public static ImageDescription LoadFromFile(string filename)
         {
-            return new KTXLoader(filename).ImageDescription;
+            return new KTXDecoder(filename).ImageDescription;
         }
 
         private static unsafe KtxKeyValuePair ReadNextKeyValuePair(BinaryReader br, out int bytesRead)

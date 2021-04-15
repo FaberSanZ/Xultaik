@@ -6,7 +6,6 @@ using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.Vulkan;
-using Zeckoxe.Vulkan.Toolkit;
 using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Vulkan.Buffer;
 using Vortice.Vulkan;
@@ -175,8 +174,8 @@ namespace Samples.LoadTexture
             Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Texture/shader.vert", ShaderStage.Vertex);
 
 
-            Image text1 = Image.Load2DFromFile(Device, "IndustryForgedDark512.ktx");
-            Image text2 = Image.Load2DFromFile(Device, "UVCheckerMap08-512.png");
+            Image text1 = ImageFile.Load2DFromFile(Device, "IndustryForgedDark512.ktx");
+            Image text2 = ImageFile.Load2DFromFile(Device, "UVCheckerMap08-512.png");
             Sampler sampler = new Sampler(Device);
 
 

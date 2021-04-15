@@ -16,10 +16,10 @@ using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using Vortice.Vulkan;
 
-namespace Zeckoxe.Vulkan.Toolkit
+namespace Zeckoxe.Vulkan
 {
 
-    public unsafe class IMGLoader : IDisposable
+    internal unsafe class IMGLoader : IDisposable
     {
         private Image<Rgba32> _image;
 

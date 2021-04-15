@@ -8,7 +8,6 @@
 
 using System;
 using Vortice.Vulkan;
-using Zeckoxe.Vulkan.Toolkit;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
@@ -454,59 +453,6 @@ namespace Zeckoxe.Vulkan
         {
         }
 
-
-
-
-        public static Image LoadFromData(Device device, ImageDescription description)
-        {
-            Image text2d = new Image(device, description);
-
-            return text2d;
-        }
-
-
-        public static Image Load2DFromBytes(Device device, byte[] data)
-        {
-            var tex2D = IMGLoader.LoadFromData(data);
-
-            Image text2d = new Image(device, new ImageDescription
-            {
-                Flags = TextureFlags.ShaderResource,
-                Usage = GraphicsResourceUsage.Staging,
-                Width = tex2D.Width,
-                Height = tex2D.Height,
-                Size = tex2D.Size,
-                Data = tex2D.Data,
-                Format = tex2D.Format,
-                ImageType = VkImageType.Image2D,
-            });
-
-            text2d.Image2D();
-
-            return text2d;
-        }
-
-        public static Image Load2DFromFile(Device device, string path)
-        {
-            ImageDescription description = new();
-
-            if (path.EndsWith(".ktx"))
-                description = KTXLoader.LoadFromFile(path);
-
-            else
-                description = IMGLoader.LoadFromFile(path);
-
-            description.ImageType = VkImageType.Image2D;
-            description.Flags = TextureFlags.ShaderResource;
-            description.Usage = GraphicsResourceUsage.Staging;
-
-
-            Image text2d = new Image(device, description);
-
-            text2d.Image2D();
-
-            return text2d;
-        }
 
 
 

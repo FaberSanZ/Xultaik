@@ -178,11 +178,11 @@ namespace Zeckoxe.GLTF
                 else if (img.Uri.StartsWith("data:", StringComparison.Ordinal))
                 {
                     //load base64 encoded image
-                    texture = Vulkan.Image.Load2DFromBytes(_device, LoadDataUri(img));
+                    texture = ImageFile.Load2DFromBytes(_device, LoadDataUri(img));
                 }
                 else
                 {
-                    texture = Vulkan.Image.Load2DFromFile(_device, Path.Combine(baseDirectory, img.Uri));
+                    texture = ImageFile.Load2DFromFile(_device, Path.Combine(baseDirectory, img.Uri));
                     imgName += ";" + img.Uri;
                 }
 

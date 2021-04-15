@@ -9,7 +9,6 @@ using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.GLTF;
 using Zeckoxe.Vulkan;
-using Zeckoxe.Vulkan.Toolkit;
 using Buffer = Zeckoxe.Vulkan.Buffer;
 using Interop = Zeckoxe.Core.Interop;
 
@@ -324,7 +323,7 @@ namespace Samples.Skinning
             Shaders["Fragment"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.frag", ShaderStage.Fragment);
             Shaders["Vertex"] = ShaderBytecode.LoadFromFile("Shaders/Lighting/shader.vert", ShaderStage.Vertex);
 
-            Image text1 = Image.Load2DFromFile(Device, "CesiumMan_img0.jpg");
+            Image text1 = ImageFile.Load2DFromFile(Device, "CesiumMan_img0.jpg");
 
 
             Sampler sampler = new Sampler(Device);
