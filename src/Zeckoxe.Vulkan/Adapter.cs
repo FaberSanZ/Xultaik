@@ -14,6 +14,20 @@ using Interop = Zeckoxe.Core.Interop;
 
 namespace Zeckoxe.Vulkan
 {
+    public enum VendorId
+    {
+        AMD = 0x1002,
+
+        NVIDIA = 0x10de,
+
+        INTEL = 0x8086,
+
+        ARM = 0x13b5,
+
+        QCOM = 0x5143
+    }
+
+
     public unsafe class Adapter : IDisposable
     {
         internal bool? _supportInitializad;
@@ -33,9 +47,6 @@ namespace Zeckoxe.Vulkan
         internal VkPhysicalDeviceProperties device_properties;
 
 
-
-
-
         public Adapter(PresentationParameters parameters)
         {
             Parameters = parameters;
@@ -52,12 +63,9 @@ namespace Zeckoxe.Vulkan
 
         public List<string> ValidationLayer { get; private set; } = new();
 
-
         public VkPhysicalDeviceType DeviceType => device_properties.deviceType;
 
-        public uint VendorId => device_properties.vendorID;
-
-
+        public VendorId VendorId => (VendorId)device_properties.vendorID;
 
         public float TimestampPeriod => device_properties.limits.timestampPeriod;
 
@@ -68,18 +76,25 @@ namespace Zeckoxe.Vulkan
         public bool SupportsPhysicalDeviceProperties2 { get; private set; }
 
         public bool SupportsSurface { get; private set; }
+
         public bool SupportsWin32Surface { get; private set; }
+
         public bool SupportsWaylandSurface { get; private set; }
+
         public bool SupportsMacOSSurface { get; private set; }
+
         public bool SupportsX11Surface { get; private set; }
+
         public bool SupportsAndroidSurface { get; private set; }
         
-
         public bool SupportsExternal { get; private set; }
+
         public bool SupportsVulkan11Instance { get; private set; }
+
         public bool SupportsVulkan11Device { get; private set; }
 
         public bool SupportsDebugUtils { get; set; }
+
         public bool SupportsValidationGpuAssisted { get; set; }
 
         
@@ -98,7 +113,7 @@ namespace Zeckoxe.Vulkan
             get
             {
                 VkPhysicalDeviceProperties properties = device_properties;
-                return Interop.String.FromPointer(properties.deviceName) + $" - {VendorNameString(VendorId)}";
+                return Interop.String.FromPointer(properties.deviceName) + $" - {VendorId.ToString()}";
             }
         }
 
@@ -150,6 +165,7 @@ namespace Zeckoxe.Vulkan
 
             if (device_properties.apiVersion >= VkVersion.Version_1_1) 
                 SupportsVulkan11Device = SupportsVulkan11Instance;
+
 
         }
 

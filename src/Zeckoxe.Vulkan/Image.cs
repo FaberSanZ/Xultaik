@@ -493,7 +493,7 @@ namespace Zeckoxe.Vulkan
             if (path.EndsWith(".ktx"))
                 description = KTXLoader.LoadFromFile(path);
 
-            else if (path.EndsWith(".png") || path.EndsWith(".bmp") || path.EndsWith(".jpg"))
+            else
                 description = IMGLoader.LoadFromFile(path);
 
             description.ImageType = VkImageType.Image2D;
