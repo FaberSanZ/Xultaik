@@ -55,7 +55,7 @@ namespace Zeckoxe.Vulkan
                 {
                     sType = VkStructureType.FramebufferCreateInfo,
                     pNext = null,
-                    flags = VkFramebufferCreateFlags.None, // TODO: VkFramebufferCreateFlags
+                    flags = VkFramebufferCreateFlags.None,
                     renderPass = renderPass,
                     attachmentCount = 2,
                     pAttachments = attachments,

@@ -47,7 +47,16 @@ namespace Samples.ClearScreen
 
             Device = new(Adapter);
 
-            SwapChain = new(Device, GetSwapchainSource());
+
+            SwapChain = new(Device, new()
+            {
+                Source = GetSwapchainSource(),
+                ColorSrgb = false,
+                Height = Window.Height,
+                Width = Window.Width,
+                SyncToVerticalBlank = false,
+                DepthFormat = Adapter.DepthFormat is Vortice.Vulkan.VkFormat.Undefined ? null : Adapter.DepthFormat
+            });
 
             Framebuffer = new(SwapChain);
 

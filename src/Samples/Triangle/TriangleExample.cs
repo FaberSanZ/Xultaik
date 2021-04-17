@@ -6,7 +6,6 @@ using Zeckoxe.Core;
 using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.Vulkan;
-using Zeckoxe.Vulkan.Toolkit;
 using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Vulkan.Buffer;
 using Vortice.Vulkan;

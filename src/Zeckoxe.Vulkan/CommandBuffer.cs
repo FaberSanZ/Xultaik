@@ -2,10 +2,6 @@
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 
-/*=============================================================================
-	CommandList.cs
-=============================================================================*/
-
 
 using System.Collections.Generic;
 using System.Linq;
@@ -67,13 +63,7 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public uint AcquireNextImage(SwapChain swapChain)
-        {
-            // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
-            // With that we don't have to handle VK_NOT_READY
-            vkAcquireNextImageKHR(NativeDevice.handle, swapChain.handle, ulong.MaxValue, NativeDevice.image_available_semaphore, new VkFence(), out uint i);
-            return i;
-        }
+
 
         public void Begin()
         {
@@ -86,7 +76,7 @@ namespace Zeckoxe.Vulkan
 
         public void BeginFramebuffer(Framebuffer framebuffer, float r = 0, float g = .2f, float b = .4f, float a = 1.0f)
         {
-            imageIndex = AcquireNextImage(framebuffer.SwapChain);
+            imageIndex = framebuffer.SwapChain.AcquireNextImage();
 
             // Set clear values for all framebuffer attachments with loadOp set to clear
             // We use two attachments (color and depth) that are cleared at the start of the subpass and as such we need to set clear values for both

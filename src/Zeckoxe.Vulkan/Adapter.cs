@@ -54,6 +54,7 @@ namespace Zeckoxe.Vulkan
             Recreate();
         }
 
+        public VkFormat DepthFormat => get_supported_depth_format(FormatExtensions.depth_formats);
 
         public Version EngineVersion { get; internal set; } = new Version(1, 2, 155);
 
@@ -490,7 +491,7 @@ namespace Zeckoxe.Vulkan
                 }
             }
 
-
+             
 
             return depthFormat;
         }

@@ -1,9 +1,6 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
-/*=============================================================================
-	GraphicsSwapChain.cs
-=============================================================================*/
 
 
 using System;
@@ -56,12 +53,11 @@ namespace Zeckoxe.Vulkan
 
 
 
-
-        public SwapChain(Device device, SwapchainSource source) : base(device)
+        public SwapChain(Device device, SwapchainDescription description) : base(device)
         {
             Parameters = NativeDevice.NativeParameters;
 
-            SwapchainSource = source;
+            SwapchainSource = description.Source;
 
             surface = CreateSurface();
 
@@ -84,6 +80,7 @@ namespace Zeckoxe.Vulkan
         public VkFormat ColorFormat { get; private set; }
         public Image DepthStencil { get; private set; }
         public SwapchainSource SwapchainSource { get; set; }
+        public Framebuffer Framebuffer { get; private set; }
 
 
 
@@ -496,6 +493,15 @@ namespace Zeckoxe.Vulkan
             {
                 vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, images_ptr);
             }
+        }
+
+
+        public uint AcquireNextImage()
+        {
+            // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
+            // With that we don't have to handle VK_NOT_READY
+            vkAcquireNextImageKHR(NativeDevice.handle, handle, ulong.MaxValue, NativeDevice.image_available_semaphore, new VkFence(), out uint i);
+            return i;
         }
 
 

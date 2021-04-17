@@ -36,9 +36,7 @@ namespace Zeckoxe.Vulkan
             byte[] identifier = br.ReadBytes(12);
 
             if (!identifier.SequenceEqual(KtxIdentifier))
-            {
                 throw new InvalidOperationException("File is not in Khronos Texture format.");
-            }
 
 
             KtxHeader header = new KtxHeader
@@ -128,7 +126,6 @@ namespace Zeckoxe.Vulkan
                 IsCubeMap = Header.NumberOfFaces is 6,
                 MipLevels = (int)Header.NumberOfMipmapLevels,
                 Data = GetAllTextureData(),
-                
             };
 
 

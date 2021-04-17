@@ -84,7 +84,16 @@ namespace Zeckoxe.Engine
 
             Device = new Device(Adapter);
 
-            SwapChain = new SwapChain(Device, GetSwapchainSource());
+            SwapchainDescription swapchainDescription = new()
+            {
+                Source = GetSwapchainSource(),
+                ColorSrgb = false,
+                Height = Window.Height,
+                Width = Window.Width,
+                SyncToVerticalBlank = false,
+                DepthFormat = Adapter.DepthFormat is Vortice.Vulkan.VkFormat.Undefined ? null : Adapter.DepthFormat
+            };
+            SwapChain = new SwapChain(Device, swapchainDescription);
 
             Framebuffer = new Framebuffer(SwapChain);
 

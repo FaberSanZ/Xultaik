@@ -16,7 +16,6 @@ using Zeckoxe.Desktop;
 using Zeckoxe.Engine;
 using Zeckoxe.GLTF;
 using Zeckoxe.Vulkan;
-using Zeckoxe.Vulkan.Toolkit;
 using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Vulkan.Buffer;
 using Interop = Zeckoxe.Core.Interop;

@@ -197,7 +197,7 @@ namespace Zeckoxe.Vulkan
                 extent = new(Width, Height, Depth),
                 mipLevels = (uint)1,
                 samples = VkSampleCountFlags.Count1,
-                format = (VkFormat)Format,
+                format = Format,
                 flags = VkImageCreateFlags.None,
                 tiling = VkImageTiling.Optimal,
                 initialLayout = VkImageLayout.Undefined,
