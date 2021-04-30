@@ -18,7 +18,7 @@ The code is licensed under MIT. Feel free to use it for whatever purpose.
 
 ## Overview
 Zecoxe can be used to produce render layers for custom engines or next-gen games and provides building blocks for writing your own engine or game quickly.
-Due to the parallel nature of GPUs, Zeckoxe can use [GPGPU](https://en.wikipedia.org/wiki/General-purpose_computing_on_graphics_processing_units) to exploit a GPU for computational tasks. Zeckoxe supports ComputePipeline and more, allowing Zeckoxe to be used for general computations
+Due to the parallel nature of GPUs, Zeckoxe can use [GPGPU](https://en.wikipedia.org/wiki/General-purpose_computing_on_graphics_processing_units) to exploit a GPU for computational tasks. Supports ComputePipeline and more, allowing to be used for general computations
 
 
 <br>
