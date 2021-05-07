@@ -249,13 +249,13 @@ namespace Zeckoxe.Vulkan
                     dstSubresource = new()
                     {
                         mipLevel = i,
-                        aspectMask = VulkanConvert.format_to_aspect_mask(dst.format),
+                        aspectMask = VulkanConvert.format_to_aspect_mask(dst.Format),
                         layerCount = dst.layers,
                     },
                     srcSubresource = new()
                     {
                         mipLevel = i,
-                        aspectMask = VulkanConvert.format_to_aspect_mask(src.format),
+                        aspectMask = VulkanConvert.format_to_aspect_mask(src.Format),
                         layerCount = src.layers,
                     }
                 };

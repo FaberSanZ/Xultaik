@@ -14,29 +14,6 @@ using Zeckoxe.Core;
 
 namespace Zeckoxe.Vulkan
 {
-    // Provided by VK_KHR_xlib_surface
-    internal unsafe struct VkXlibSurfaceCreateInfoKHR
-    {
-        internal VkStructureType sType;
-        internal void* pNext;
-        internal uint flags;
-        internal IntPtr* display;
-        internal IntPtr window;
-    }
-
-
-    internal struct wl_display { }
-    internal struct wl_surface { }
-
-    internal unsafe struct VkWaylandSurfaceCreateInfoKHR
-    {
-        internal VkStructureType sType;
-        internal void* pNext;
-        internal uint flags;
-        internal wl_display* display;
-        internal wl_surface* surface;
-    }
-
     public unsafe class SwapChain : GraphicsResource, IDisposable
     {
         private delegate VkResult PFN_vkCreateWin32SurfaceKHRDelegate(VkInstance instance, VkWin32SurfaceCreateInfoKHR* createInfo, VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
@@ -55,6 +32,7 @@ namespace Zeckoxe.Vulkan
 
         public SwapChain(Device device, SwapchainDescription description) : base(device)
         {
+            Description = description;
             Parameters = NativeDevice.NativeParameters;
 
             SwapchainSource = description.Source;
@@ -66,14 +44,25 @@ namespace Zeckoxe.Vulkan
 
             CreateBackBuffers();
 
-
-            DepthStencil = new Image(device, new ImageDescription
+            if (description.DepthFormat is not null)
             {
-                Flags = TextureFlags.DepthStencil,
-                Usage = GraphicsResourceUsage.Default,
-                Width = Parameters.BackBufferWidth,
-                Height = Parameters.BackBufferHeight,
-            });
+                DepthStencil = new Image(device, new ImageDescription
+                {
+                    Flags = TextureFlags.DepthStencil,
+                    Usage = GraphicsResourceUsage.Default,
+                    ArraySize = 1,
+                    MipLevels = 1,
+                    Data = null,
+                    Depth = 1,
+                    ImageType = VkImageType.Image2D,
+                    IsCubeMap = false,
+                    Size = 0,
+                    Width = Parameters.BackBufferWidth,
+                    Height = Parameters.BackBufferHeight,
+                    Format = description.DepthFormat.Value,
+                });
+            }
+
         }
 
         public PresentationParameters Parameters { get; set; }
@@ -81,8 +70,7 @@ namespace Zeckoxe.Vulkan
         public Image DepthStencil { get; private set; }
         public SwapchainSource SwapchainSource { get; set; }
         public Framebuffer Framebuffer { get; private set; }
-
-
+        public SwapchainDescription Description { get; }
 
         private unsafe void CreateBackBuffers()
         {
@@ -122,9 +110,9 @@ namespace Zeckoxe.Vulkan
             VkInstance instance = NativeDevice.NativeAdapter.instance;
             VkSurfaceKHR surface = 0;
 
-            PFN_vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
-            PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateXlibSurfaceKHR>("vkCreateXlibSurfaceKHR");
-            PFN_vkCreateWaylandSurfaceKHR vkCreateWaylandSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWaylandSurfaceKHR>("vkCreateWaylandSurfaceKHR");
+            //PFN_vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
+            //PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateXlibSurfaceKHR>("vkCreateXlibSurfaceKHR");
+            //PFN_vkCreateWaylandSurfaceKHR vkCreateWaylandSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWaylandSurfaceKHR>("vkCreateWaylandSurfaceKHR");
 
 
             //if (SwapchainSource is WindowSwapchainSource sourcewin)
@@ -144,12 +132,12 @@ namespace Zeckoxe.Vulkan
                     hwnd = sourcewin32.Hwnd,
                 };
 
-                vkCreateWin32SurfaceKHR(instance, &Win32SurfaceCreateInfo, null, &surface);
+                vkCreateWin32SurfaceKHR(instance, &Win32SurfaceCreateInfo, null, out surface);
             }
 
 
 
-            if (SwapchainSource is XlibSwapchainSource xlibsource) // TODO: xlibsource
+            if (SwapchainSource is XlibSwapchainSource xlibsource)
             {
 
                 VkXlibSurfaceCreateInfoKHR XlibSurfaceCreateInfo = new()
@@ -157,14 +145,14 @@ namespace Zeckoxe.Vulkan
                     sType = VkStructureType.XlibSurfaceCreateInfoKHR,
                     pNext = null,
                     flags = 0,
-                    display = (IntPtr*)xlibsource.Display,
+                    display = xlibsource.Display,
                     window = xlibsource.Window
                 };
 
-                vkCreateXlibSurfaceKHR(instance, &XlibSurfaceCreateInfo, null, &surface);
+                vkCreateXlibSurfaceKHR(instance, &XlibSurfaceCreateInfo, null, out surface);
             }
 
-            if (SwapchainSource is WaylandSwapchainSource Waylandsource) // TODO: CreateWayland
+            if (SwapchainSource is WaylandSwapchainSource Waylandsource)
             {
 
                 VkWaylandSurfaceCreateInfoKHR XlibSurfaceCreateInfo = new()
@@ -172,11 +160,11 @@ namespace Zeckoxe.Vulkan
                     sType = VkStructureType.WaylandSurfaceCreateInfoKHR,
                     pNext = null,
                     flags = 0,
-                    display = (wl_display*)Waylandsource.Display, // TODO: wl_display ?
-                    surface = (wl_surface*)Waylandsource.Surface  // TODO: wl_surface ?
+                    display = Waylandsource.Display, 
+                    surface = Waylandsource.Surface 
                 };
 
-                vkCreateWaylandSurfaceKHR(instance, &XlibSurfaceCreateInfo, null, &surface);
+                vkCreateWaylandSurfaceKHR(instance, &XlibSurfaceCreateInfo, null, out surface);
             }
 
 

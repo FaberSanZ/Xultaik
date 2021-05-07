@@ -102,10 +102,8 @@ namespace Zeckoxe.Vulkan
         internal VkDeviceMemory buffer_memory;
         //internal VkBuffer buffer;
         internal uint layers;
-        internal VkFormat format;
 
         internal VkImageView image_view;
-        internal VkImageView depth_stencil_view;
 
 
         public Image(Device device, ImageDescription description) : base(device)
@@ -154,8 +152,7 @@ namespace Zeckoxe.Vulkan
             // For depth-stencil formats, automatically fall back to a supported one
             if (IsDepthStencil)
             {
-                depth_stencil_view = get_depth_stencil_view();
-                format = NativeDevice.NativeAdapter.get_supported_depth_format(FormatExtensions.depth_formats);
+                image_view = get_depth_stencil_view();
             }
 
             if (IsShaderResource)
@@ -193,48 +190,38 @@ namespace Zeckoxe.Vulkan
             VkImageCreateInfo image_create_info = new VkImageCreateInfo
             {
                 sType = VkStructureType.ImageCreateInfo,
-                arrayLayers = (uint)1, // TODO: arrayLayers
+                arrayLayers = 1, // TODO: arrayLayers
                 extent = new(Width, Height, Depth),
-                mipLevels = (uint)1,
+                mipLevels = 1,
                 samples = VkSampleCountFlags.Count1,
                 format = Format,
                 flags = VkImageCreateFlags.None,
                 tiling = VkImageTiling.Optimal,
                 initialLayout = VkImageLayout.Undefined,
 
-                // TODO: CubeCompatible
                 imageType = ImageType,
             };
 
 
 
 
-
-            // TODO VULKAN: Can we restrict more based on GraphicsResourceUsage? 
+            // TODO: Can we restrict more based on GraphicsResourceUsage? 
             image_create_info.usage |= VkImageUsageFlags.TransferSrc | VkImageUsageFlags.TransferDst;
 
+            if (IsCubeMap)
+                image_create_info.flags |= VkImageCreateFlags.CubeCompatible;
+
             if (IsRenderTarget)
-            {
                 image_create_info.usage |= VkImageUsageFlags.ColorAttachment;
-            }
 
             if (IsDepthStencil)
-            {
-                image_create_info.format = NativeDevice.NativeAdapter.get_supported_depth_format(FormatExtensions.depth_formats);
-                image_create_info.mipLevels = 1;
-                image_create_info.arrayLayers = 1;
                 image_create_info.usage |= VkImageUsageFlags.DepthStencilAttachment;
-            }
 
             if (IsShaderResource)
-            {
                 image_create_info.usage |= VkImageUsageFlags.Sampled; // TODO: Input attachments
-            }
 
             if (IsUnorderedAccess)
-            {
                 image_create_info.usage |= VkImageUsageFlags.Storage;
-            }
 
 
 
@@ -411,7 +398,7 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.ImageViewCreateInfo,
                 viewType = VkImageViewType.Image2D,
-                format = format,
+                format = Format,
                 image = handle,
                 components = VkComponentMapping.Identity,
                 subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Depth | VkImageAspectFlags.Stencil, 0, 1, 0, 1)
@@ -458,14 +445,9 @@ namespace Zeckoxe.Vulkan
 
         public void Dispose()
         {
-            if (IsDepthStencil)
-            {
-                vkDestroyImageView(NativeDevice.handle, depth_stencil_view, null);
-            }
-            else
-            {
-                vkDestroyImageView(NativeDevice.handle, image_view, null);
-            }
+
+            vkDestroyImageView(NativeDevice.handle, image_view, null);
+            
 
             if (handle != VkImage.Null)
             {

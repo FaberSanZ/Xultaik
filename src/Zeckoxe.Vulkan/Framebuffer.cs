@@ -10,7 +10,6 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Zeckoxe.Vulkan
 {
-    // TODO: Framebuffer
 
     public unsafe class Framebuffer : GraphicsResource, IDisposable
     {
@@ -20,12 +19,16 @@ namespace Zeckoxe.Vulkan
         internal VkFramebuffer[] framebuffers;
 
 
+
+
+
         public Framebuffer(SwapChain swapChain) : base(swapChain.NativeDevice)
         {
             SwapChain = swapChain;
 
             Recreate();
         }
+        public VkFramebuffer CurrentFramebuffer { get; }
 
         public SwapChain SwapChain { get; }
 
@@ -47,7 +50,7 @@ namespace Zeckoxe.Vulkan
                 VkImageView* attachments = stackalloc VkImageView[2]
                 {
                     SwapChainImageViews[i],                          	
-                    SwapChain.DepthStencil.depth_stencil_view,
+                    SwapChain.DepthStencil.image_view,
                 };
 
 
@@ -73,7 +76,7 @@ namespace Zeckoxe.Vulkan
         internal void CreateRenderPass()
         {
             VkFormat color_format = SwapChain.color_format;
-            VkFormat depth_format = SwapChain.DepthStencil.format;
+            VkFormat depth_format = SwapChain.DepthStencil.Format;
 
 
             // Descriptors for the attachments used by this renderpass

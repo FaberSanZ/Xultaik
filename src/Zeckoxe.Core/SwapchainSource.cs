@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Zeckoxe.Core
 {
- public abstract class SwapchainSource
+    public abstract class SwapchainSource
     {
         internal SwapchainSource() { }
 
