@@ -223,18 +223,20 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.PipelineInputAssemblyStateCreateInfo,
                 pNext = null,
+                topology = VkPrimitiveTopology.TriangleList,
+                primitiveRestartEnable = false,
             };
 
-            if (PipelineStateDescription.InputAssemblyState != null)
-            {
-                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable;
-                pipelineInputAssemblyStateCreateInfo.topology = PipelineStateDescription.InputAssemblyState.PrimitiveType;
-            }
-            else
-            {
-                pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = true;
-                pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology.PointList;
-            }
+            //if (PipelineStateDescription.InputAssemblyState != null)
+            //{
+            //    pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable;
+            //    pipelineInputAssemblyStateCreateInfo.topology = PipelineStateDescription.InputAssemblyState.PrimitiveType;
+            //}
+            //else
+            //{
+            //    pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = true;
+            //    pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology.PointList;
+            //}
 
 
 
@@ -308,6 +310,26 @@ namespace Zeckoxe.Vulkan
                 blendEnable = false
             };
 
+
+            float* blendConstants = stackalloc float[4]
+{
+                0,
+                0,
+                0,
+                0
+            };
+            VkPipelineColorBlendStateCreateInfo colorBlending = new VkPipelineColorBlendStateCreateInfo()
+            {
+                sType = VkStructureType.PipelineColorBlendStateCreateInfo,
+                logicOpEnable = false,
+                logicOp = VkLogicOp.Copy,
+                pAttachments = &colorBlendAttachementState,
+                attachmentCount = 1,
+                //blendConstants = blendConstants
+
+            };
+
+
             VkPipelineColorBlendStateCreateInfo colorBlendState = new VkPipelineColorBlendStateCreateInfo()
             {
                 sType = VkStructureType.PipelineColorBlendStateCreateInfo,
@@ -346,10 +368,11 @@ namespace Zeckoxe.Vulkan
             };
             VkPipelineDynamicStateCreateInfo dynamicState = new VkPipelineDynamicStateCreateInfo()
             {
-                sType = VkStructureType.PipelineDynamicStateCreateInfo
+                sType = VkStructureType.PipelineDynamicStateCreateInfo,
+                pDynamicStates = dynamicStateEnables,
+                dynamicStateCount = 2,
             };
-            dynamicState.pDynamicStates = dynamicStateEnables;
-            dynamicState.dynamicStateCount = 2;
+
 
 
             VkGraphicsPipelineCreateInfo graphicsPipelineCI = new VkGraphicsPipelineCreateInfo()
@@ -374,7 +397,7 @@ namespace Zeckoxe.Vulkan
 
 
             VkPipeline pipeline;
-            vkCreateGraphicsPipelines(NativeDevice.handle, _pipelineCache, 1, &graphicsPipelineCI, null, &pipeline);
+            vkCreateGraphicsPipelines(NativeDevice.handle, null, 1, &graphicsPipelineCI, null, &pipeline);
             graphicsPipeline = pipeline;
 
 
