@@ -397,7 +397,7 @@ namespace Zeckoxe.Vulkan
 
 
             VkPipeline pipeline;
-            vkCreateGraphicsPipelines(NativeDevice.handle, null, 1, &graphicsPipelineCI, null, &pipeline);
+            vkCreateGraphicsPipelines(NativeDevice.handle, VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
             graphicsPipeline = pipeline;
 
 
