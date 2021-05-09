@@ -108,9 +108,6 @@ namespace Zeckoxe.Vulkan
 
         }
 
-
-
-
         public void InitializePlatformDevice()
         {
 
