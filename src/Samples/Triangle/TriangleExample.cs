@@ -64,7 +64,7 @@ namespace Samples.Triangle
         public override void InitializeSettings()
         {
             base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.None;
+            Parameters.Settings.Validation = ValidationType.Error;
             Window.Title += " - (Triangle) ";
         }
 

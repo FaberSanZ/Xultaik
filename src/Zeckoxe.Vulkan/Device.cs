@@ -326,8 +326,6 @@ namespace Zeckoxe.Vulkan
 
 
 
-
-
                 //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && OptRayTracing)
                 //{
                 //    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");

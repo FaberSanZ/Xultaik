@@ -191,9 +191,9 @@ namespace Zeckoxe.Vulkan
 
             foreach(PropertyInfo info in propertyInfos)
             { 
-                VertexAttribute attribute = info.GetCustomAttribute<VertexAttribute>();
+                VertexAttribute? attribute = info.GetCustomAttribute<VertexAttribute>();
 
-                if (attribute.Type is VertexType.Position)
+                if (attribute?.Type is VertexType.Position)
                     SetVertexAttribute(VertexType.Position);
 
 

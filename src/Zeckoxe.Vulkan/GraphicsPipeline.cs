@@ -259,16 +259,16 @@ namespace Zeckoxe.Vulkan
                 rasterizerState.lineWidth = PipelineStateDescription.RasterizationState.LineWidth;
                 rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable;
                 rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable;
+                rasterizerState.rasterizerDiscardEnable = false;
+                //if (PipelineStateDescription.RasterizationState.DepthBiasClamp != 0)
+                //{
+                //    rasterizerState.depthBiasClamp = PipelineStateDescription.RasterizationState.DepthBiasClamp;
+                //}
 
-                if (PipelineStateDescription.RasterizationState.DepthBiasClamp != 0)
-                {
-                    rasterizerState.depthBiasClamp = PipelineStateDescription.RasterizationState.DepthBiasClamp;
-                }
-
-                if (PipelineStateDescription.RasterizationState.DepthBiasConstantFactor != 0)
-                {
-                    rasterizerState.depthBiasConstantFactor = PipelineStateDescription.RasterizationState.DepthBiasConstantFactor;
-                }
+                //if (PipelineStateDescription.RasterizationState.DepthBiasConstantFactor != 0)
+                //{
+                //    rasterizerState.depthBiasConstantFactor = PipelineStateDescription.RasterizationState.DepthBiasConstantFactor;
+                //}
 
 
             }
@@ -278,6 +278,8 @@ namespace Zeckoxe.Vulkan
                 rasterizerState.cullMode = VkCullModeFlags.None;
                 rasterizerState.frontFace = VkFrontFace.CounterClockwise;
                 rasterizerState.lineWidth = 1.0F;
+                rasterizerState.rasterizerDiscardEnable = false;
+
             }
 
 
@@ -354,10 +356,10 @@ namespace Zeckoxe.Vulkan
                 pColorBlendState = &colorBlendState,
                 layout = _pipelineLayout,
                 renderPass = description.Framebuffer.renderPass,
-                subpass = 0,
+                //subpass = 0,
                 pDepthStencilState = &depthStencilState,
                 pDynamicState = &dynamicState,
-                flags = VkPipelineCreateFlags.None
+                //flags = VkPipelineCreateFlags.None
             };
 
 
