@@ -1,9 +1,6 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
-/*=============================================================================
-	GraphicsDevice.cs
-=============================================================================*/
 
 using System;
 using System.Collections.Generic;
@@ -89,7 +86,7 @@ namespace Zeckoxe.Vulkan
 
         public Adapter NativeAdapter { get; set; }
         public PresentationParameters NativeParameters { get; set; }
-        public CommandBuffer NativeCommand { get; set; }
+        public CommandBuffer GraphicsCommandBuffer { get; set; }
         public uint GraphicsFamily { get; private set; }
         public uint ComputeFamily { get; private set; }
         public uint TransferFamily { get; private set; }
@@ -146,7 +143,7 @@ namespace Zeckoxe.Vulkan
             command_buffer_secondary = CreateCommandBufferSecondary();
 
 
-            NativeCommand = new(this, CommandBufferType.AsyncGraphics);
+            GraphicsCommandBuffer = new(this, CommandBufferType.AsyncGraphics);
 
 
 
@@ -316,31 +313,31 @@ namespace Zeckoxe.Vulkan
 
             if (has_pdf2)
             {
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_8bit_storage"))
-                {
-                    DeviceExtensionsNames.Add("VK_KHR_8bit_storage");
+                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_8bit_storage"))
+                //{
+                //    DeviceExtensionsNames.Add("VK_KHR_8bit_storage");
 
-                    fixed (VkPhysicalDevice8BitStorageFeatures* feature = &storage_8bit_features)
-                    {
-                        *ppNext = feature;
-                        ppNext = &feature->pNext;
-                    }
-                }
-
-
+                //    fixed (VkPhysicalDevice8BitStorageFeatures* feature = &storage_8bit_features)
+                //    {
+                //        *ppNext = feature;
+                //        ppNext = &feature->pNext;
+                //    }
+                //}
 
 
 
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && OptRayTracing)
-                {
-                    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
-                    fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
-                    {
-                        *ppNext = feature;
-                        ppNext = &feature->pNext;
-                    }
-                    RayTracingSupport = true;
-                }
+
+
+                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && OptRayTracing)
+                //{
+                //    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
+                //    fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
+                //    {
+                //        *ppNext = feature;
+                //        ppNext = &feature->pNext;
+                //    }
+                //    RayTracingSupport = true;
+                //}
 
                 if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing"))
                 {
@@ -439,15 +436,15 @@ namespace Zeckoxe.Vulkan
 
             if (has_pdf2)
             {
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing_pipeline"))
-                {
-                    DeviceExtensionsNames.Add("VK_KHR_ray_tracing_pipeline");
-                    fixed (VkPhysicalDeviceRayTracingPipelineFeaturesKHR* feature = &ray_tracing_features)
-                    {
-                        *ppNext = feature;
-                        ppNext = &feature->pNext;
-                    }
-                }
+                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing_pipeline"))
+                //{
+                //    DeviceExtensionsNames.Add("VK_KHR_ray_tracing_pipeline");
+                //    fixed (VkPhysicalDeviceRayTracingPipelineFeaturesKHR* feature = &ray_tracing_features)
+                //    {
+                //        *ppNext = feature;
+                //        ppNext = &feature->pNext;
+                //    }
+                //}
             }
 
 

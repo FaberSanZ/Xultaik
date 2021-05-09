@@ -387,7 +387,7 @@ namespace Zeckoxe.Vulkan
             float vpHeight = -Height;
 
 
-            VkViewport Viewport = new(X, vpY, Width, vpHeight, MinDepth, MaxDepth);
+            VkViewport Viewport = new(X, Y, Width, Height, MinDepth, MaxDepth);
             vkCmdSetViewport(handle, 0, 1, &Viewport);
         }
 

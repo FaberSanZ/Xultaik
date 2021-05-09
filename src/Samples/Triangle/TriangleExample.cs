@@ -23,11 +23,14 @@ namespace Samples.Triangle
             V = v;
         }
 
+
         public Matrix4x4 M;
 
         public Matrix4x4 V;
 
         public Matrix4x4 P;
+
+
 
         public void Update(Camera camera, Matrix4x4 m)
         {
@@ -71,9 +74,9 @@ namespace Samples.Triangle
 
 
             Camera = new Camera(45f, 0.1f, 64f);
-            Camera.SetPosition(0, 0, -2.5f);
+            Camera.SetPosition(0, 0, -3.5f);
             Camera.AspectRatio = (float)Window.Width / Window.Height;
-
+            Camera.Update();
             // Reset Model
             Model = Matrix4x4.Identity;
             Models.Add(Model);
@@ -94,11 +97,12 @@ namespace Samples.Triangle
         public void CreateBuffers()
         {
 
-            VertexPositionColor[] vertices = new VertexPositionColor[]
+
+            VertexPositionColor[] vertices = new[]
             {
-                new(new(0.0f, -0.65f, -0.5f), new(1.6f, 0.0f, 0.0f)),
-                new(new(0.65f, 0.65f, -0.5f), new(0.0f, 1.6f, 0.0f)),
-                new(new(-0.65f, 0.65f, -0.5f), new(0.0f, 0.0f, 1.6f)),
+                new VertexPositionColor(new Vector3(0.0f, -0.65f, -0.5f), new Vector3(1.6f, 0.0f, 0.0f)),
+                new VertexPositionColor(new Vector3(0.65f, 0.65f, -0.5f), new Vector3(0.0f, 1.6f, 0.0f)),
+                new VertexPositionColor(new Vector3(-0.65f, 0.65f, -0.5f), new Vector3(0.0f, 0.0f, 1.6f)),
             };
 
 

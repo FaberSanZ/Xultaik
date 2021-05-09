@@ -352,7 +352,7 @@ namespace Zeckoxe.Vulkan
                 pRasterizationState = &rasterizerState,
                 pMultisampleState = &multisampleState_info,
                 pColorBlendState = &colorBlendState,
-                layout = _pipelineLayout, // TODO: _pipelineLayout
+                layout = _pipelineLayout,
                 renderPass = description.Framebuffer.renderPass,
                 subpass = 0,
                 pDepthStencilState = &depthStencilState,

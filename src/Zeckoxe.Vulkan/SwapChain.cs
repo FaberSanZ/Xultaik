@@ -497,9 +497,9 @@ namespace Zeckoxe.Vulkan
 
         public void Present()
         {
-            VkSemaphore Semaphore = NativeDevice.render_finished_semaphore;
+            VkSemaphore semaphore = NativeDevice.render_finished_semaphore;
             VkSwapchainKHR swapchain = handle;
-            CommandBuffer commandBuffer = NativeDevice.NativeCommand;
+            CommandBuffer commandBuffer = NativeDevice.GraphicsCommandBuffer;
             uint imageIndex = commandBuffer.imageIndex;
 
             VkPresentInfoKHR present_info = new()
@@ -508,11 +508,12 @@ namespace Zeckoxe.Vulkan
                 pNext = null,
                 pResults = null,
                 waitSemaphoreCount = 1,
-                pWaitSemaphores = &Semaphore,
+                pWaitSemaphores = &semaphore,
                 swapchainCount = 1,
                 pSwapchains = &swapchain,
                 pImageIndices = &imageIndex /*Interop.AllocToPointer(ref commandBuffer.imageIndex)*/,
             };
+
 
 
             vkQueuePresentKHR(NativeDevice.command_queue, &present_info);
