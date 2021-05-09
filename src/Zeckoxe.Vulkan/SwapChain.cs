@@ -409,9 +409,9 @@ namespace Zeckoxe.Vulkan
             }
 
 
-            //uint* extent = stackalloc uint[2];
-            //extent[0] = swapchainExtent.Width + 1;
-            //extent[1] = swapchainExtent.Height + 1;
+            uint* extent = stackalloc uint[2];
+            extent[0] = swapchainExtent.width + 1;
+            extent[1] = swapchainExtent.height + 1;
 
             //VkExtent2D imageExtent = *(VkExtent2D*)&extent;
 
