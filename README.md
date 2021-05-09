@@ -31,12 +31,6 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 <br>
 <br>
 
-> :warning: The Zeckoxe.Audio librarie are optional and you will need to download the FMOD native binaries from https://www.fmod.com/download
-
-
-<br>
-<br>
-
 ## Features:
 
 - [ ] KHR Ray Tracing
@@ -96,5 +90,6 @@ Additionally, **Zeckoxe** uses NuGet packages from the following repositories:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan)
 - [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows)
+- [Silk.NET](https://github.com/dotnet/Silk.NET)
 
 
