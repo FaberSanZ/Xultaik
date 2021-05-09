@@ -96,5 +96,6 @@ Additionally, **Zeckoxe** uses NuGet packages from the following repositories:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan)
 - [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows)
+- [Silk.NET](https://github.com/dotnet/Silk.NET)
 
 
