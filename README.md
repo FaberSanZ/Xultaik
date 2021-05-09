@@ -31,12 +31,6 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 <br>
 <br>
 
-> :warning: The Zeckoxe.Audio librarie are optional and you will need to download the FMOD native binaries from https://www.fmod.com/download
-
-
-<br>
-<br>
-
 ## Features:
 
 - [ ] KHR Ray Tracing
