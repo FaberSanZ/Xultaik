@@ -210,8 +210,6 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.PipelineVertexInputStateCreateInfo,
                 pNext = null,
-                flags = VkPipelineVertexInputStateCreateFlags.None,
-
                 vertexBindingDescriptionCount = (uint)vertexBinding.Count,
                 pVertexBindingDescriptions = vertexBindingDesc,
 
@@ -224,7 +222,6 @@ namespace Zeckoxe.Vulkan
             VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo = new VkPipelineInputAssemblyStateCreateInfo()
             {
                 sType = VkStructureType.PipelineInputAssemblyStateCreateInfo,
-                flags = VkPipelineInputAssemblyStateCreateFlags.None,
                 pNext = null,
             };
 
@@ -248,7 +245,6 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.PipelineRasterizationStateCreateInfo,
                 pNext = null,
-                flags = VkPipelineRasterizationStateCreateFlags.None
             };
 
             if (PipelineStateDescription.RasterizationState != null)
@@ -287,8 +283,7 @@ namespace Zeckoxe.Vulkan
             {
                 sType = VkStructureType.PipelineMultisampleStateCreateInfo,
                 pNext = null,
-                flags = 0,
-                rasterizationSamples = (VkSampleCountFlags)PipelineStateDescription.MultisampleState.MultisampleCount,
+                rasterizationSamples = PipelineStateDescription.MultisampleState.MultisampleCount,
                 minSampleShading = 1f,
             };
 
