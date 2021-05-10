@@ -53,7 +53,9 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [ ] Multithreaded rendering
 - [x] Automatic descriptor set management
-- [x] Vulkan GLSL for shaders, shaders are compiled in runtime with shaderc
+- [x] SPIRV reflection with [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross)
+- [x] Vulkan GLSL for shaders, shaders are compiled in runtime with [Shaderc](https://github.com/google/shaderc)
+- [x] Vulkan HLSL for shaders, shaders are compiled in runtime with [DirectXShaderCompiler](https://github.com/microsoft/DirectXShaderCompiler)
 - [x] GLTF 2.0
 
 <hr>
