@@ -10,6 +10,7 @@ using Zeckoxe.Physics;
 using Buffer = Zeckoxe.Vulkan.Buffer;
 using Vortice.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
+using Samples.Common;
 
 namespace Samples.Triangle
 {
@@ -145,10 +146,13 @@ namespace Samples.Triangle
 
         public void CreatePipelineState()
         {
+
+            var file = Constants.ShadersFile;
+
             PipelineStateDescription Pipelinedescription = new();
             Pipelinedescription.SetFramebuffer(Framebuffer);
-            Pipelinedescription.SetShader(new ShaderBytecode("Shaders/HLSL/shader.frag", ShaderStage.Fragment, ShaderBackend.Hlsl));
-            Pipelinedescription.SetShader(new ShaderBytecode("Shaders/HLSL/shader.vert", ShaderStage.Vertex, ShaderBackend.Hlsl));
+            Pipelinedescription.SetShader(new ShaderBytecode(file + "PositionColor/Fragment.hlsl", ShaderStage.Fragment, ShaderBackend.Hlsl));
+            Pipelinedescription.SetShader(new ShaderBytecode(file + "PositionColor/Vertex.hlsl", ShaderStage.Vertex, ShaderBackend.Hlsl));
             Pipelinedescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription.SetVertexAttribute(VertexType.Position);
             Pipelinedescription.SetVertexAttribute(VertexType.Color);
