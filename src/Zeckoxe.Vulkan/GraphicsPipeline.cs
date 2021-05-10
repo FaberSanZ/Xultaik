@@ -50,7 +50,7 @@ namespace Zeckoxe.Vulkan
             // Setup layout of descriptors used in this example
             // Basically connects the different shader stages to descriptors for binding uniform buffers, image samplers, etc.
             // So every shader binding should map to one descriptor set layout binding
-            ShaderResource[] resources = Resources.Where(x => x.resource_type != SharpSPIRVCross.ResourceType.PushConstant).ToArray();
+            ShaderResource[] resources = Resources.Where(x => x.resource_type != SPIRVCross.spvc_resource_type.PushConstant).ToArray();
 
 
 
@@ -93,7 +93,7 @@ namespace Zeckoxe.Vulkan
             };
 
 
-            ShaderResource[] push_constants = Resources.Where(x => x.resource_type == SharpSPIRVCross.ResourceType.PushConstant).ToArray();
+            ShaderResource[] push_constants = Resources.Where(x => x.resource_type ==  SPIRVCross.spvc_resource_type.PushConstant).ToArray();
 
             VkPushConstantRange* push_constant = stackalloc VkPushConstantRange[push_constants.Length];
 
@@ -167,7 +167,7 @@ namespace Zeckoxe.Vulkan
                     sType = VkStructureType.PipelineShaderStageCreateInfo,
                     pNext = null,
                     stage = (VkShaderStageFlags)shaders[i].Stage,
-                    module = NativeDevice.LoadSpir_V_Shader(shaders[i].GetBytecode()),
+                    module = NativeDevice.LoadSpir_V_Shader(shaders[i].Data),
                     pName = Interop.String.ToPointer("main"),
                 };
             }

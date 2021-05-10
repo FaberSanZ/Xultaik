@@ -16,7 +16,7 @@ using Vortice.Vulkan;
 using Zeckoxe.Core;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
-using SharpSPIRVCross;
+using SPIRVCross;
 
 namespace Zeckoxe.Vulkan
 {
@@ -36,33 +36,33 @@ namespace Zeckoxe.Vulkan
 
         
 
-        internal static VkDescriptorType StageTVkDescriptorType(this ResourceType stage)
+        internal static VkDescriptorType StageTVkDescriptorType(this spvc_resource_type stage)
         {
             switch (stage)
             {
-                case ResourceType.UniformBuffer:
+                case spvc_resource_type.UniformBuffer:
                     return VkDescriptorType.UniformBuffer;
 
-                case ResourceType.StorageBuffer:
+                case spvc_resource_type.StorageBuffer:
                     return VkDescriptorType.StorageBuffer;
 
 
-                case ResourceType.StorageImage:
+                case spvc_resource_type.StorageImage:
                     return VkDescriptorType.StorageImage;
 
-                case ResourceType.SampledImage:
+                case spvc_resource_type.SampledImage:
                     return VkDescriptorType.CombinedImageSampler;
 
-                case ResourceType.SeparateImage:
+                case spvc_resource_type.SeparateImage:
                     return VkDescriptorType.SampledImage;
 
-                case ResourceType.SeparateSamplers:
+                case spvc_resource_type.SeparateSamplers:
                     return VkDescriptorType.Sampler;
 
-                case ResourceType.SubpassInput:
+                case spvc_resource_type.SubpassInput:
                     return VkDescriptorType.InputAttachment;
 
-                case ResourceType.AccelerationStructure:
+                case spvc_resource_type.AccelerationStructure:
                     return VkDescriptorType.AccelerationStructureKHR;
 
 

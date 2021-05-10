@@ -73,7 +73,7 @@ namespace Samples.Triangle
             base.Initialize();
 
             Camera = new(45f, 1f, 0.1f, 64f);
-            Camera.SetPosition(0, 0, -3.5f);
+            Camera.SetPosition(0, 0, -3.0f);
             Camera.AspectRatio = (float)Window.Width / Window.Height;
             Camera.Update(); 
 
@@ -147,8 +147,8 @@ namespace Samples.Triangle
         {
             PipelineStateDescription Pipelinedescription = new();
             Pipelinedescription.SetFramebuffer(Framebuffer);
-            Pipelinedescription.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.frag", ShaderStage.Fragment));
-            Pipelinedescription.SetShader(ShaderBytecode.LoadFromFile("Shaders/PositionColor/shader.vert", ShaderStage.Vertex));
+            Pipelinedescription.SetShader(new ShaderBytecode("Shaders/HLSL/shader.frag", ShaderStage.Fragment, true));
+            Pipelinedescription.SetShader(new ShaderBytecode("Shaders/HLSL/shader.vert", ShaderStage.Vertex, true));
             Pipelinedescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription.SetVertexAttribute(VertexType.Position);
             Pipelinedescription.SetVertexAttribute(VertexType.Color);
