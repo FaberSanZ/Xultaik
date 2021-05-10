@@ -248,48 +248,38 @@ namespace Zeckoxe.Vulkan
                 sType = VkStructureType.PipelineRasterizationStateCreateInfo,
                 pNext = null,
 
-                depthClampEnable = false,
-                rasterizerDiscardEnable = false,
-                polygonMode = VkPolygonMode.Fill,
-                lineWidth = 1f,
-                cullMode = VkCullModeFlags.Back,
-                frontFace = VkFrontFace.Clockwise,
-                depthBiasEnable = false,
-                depthBiasConstantFactor = 0f,
-                depthBiasClamp = 0f,
-                depthBiasSlopeFactor = 0f,
             };
 
-            //if (PipelineStateDescription.RasterizationState != null)
-            //{
-            //    rasterizerState.polygonMode = PipelineStateDescription.RasterizationState.FillMode;
-            //    rasterizerState.cullMode = PipelineStateDescription.RasterizationState.CullMode;
-            //    rasterizerState.frontFace = PipelineStateDescription.RasterizationState.FrontFace;
-            //    rasterizerState.lineWidth = PipelineStateDescription.RasterizationState.LineWidth;
-            //    rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable;
-            //    rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable;
-            //    rasterizerState.rasterizerDiscardEnable = false;
-            //    //if (PipelineStateDescription.RasterizationState.DepthBiasClamp != 0)
-            //    //{
-            //    //    rasterizerState.depthBiasClamp = PipelineStateDescription.RasterizationState.DepthBiasClamp;
-            //    //}
+            if (PipelineStateDescription.RasterizationState != null)
+            {
+                rasterizerState.polygonMode = PipelineStateDescription.RasterizationState.FillMode;
+                rasterizerState.cullMode = PipelineStateDescription.RasterizationState.CullMode;
+                rasterizerState.frontFace = PipelineStateDescription.RasterizationState.FrontFace;
+                rasterizerState.lineWidth = PipelineStateDescription.RasterizationState.LineWidth;
+                rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable;
+                rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable;
+                rasterizerState.rasterizerDiscardEnable = false;
+                if (PipelineStateDescription.RasterizationState.DepthBiasClamp != 0)
+                {
+                    rasterizerState.depthBiasClamp = PipelineStateDescription.RasterizationState.DepthBiasClamp;
+                }
 
-            //    //if (PipelineStateDescription.RasterizationState.DepthBiasConstantFactor != 0)
-            //    //{
-            //    //    rasterizerState.depthBiasConstantFactor = PipelineStateDescription.RasterizationState.DepthBiasConstantFactor;
-            //    //}
+                if (PipelineStateDescription.RasterizationState.DepthBiasConstantFactor != 0)
+                {
+                    rasterizerState.depthBiasConstantFactor = PipelineStateDescription.RasterizationState.DepthBiasConstantFactor;
+                }
 
 
-            //}
-            //else
-            //{
-            //    rasterizerState.polygonMode = VkPolygonMode.Fill;
-            //    rasterizerState.cullMode = VkCullModeFlags.None;
-            //    rasterizerState.frontFace = VkFrontFace.CounterClockwise;
-            //    rasterizerState.lineWidth = 1.0F;
-            //    rasterizerState.rasterizerDiscardEnable = false;
+            }
+            else
+            {
+                rasterizerState.polygonMode = VkPolygonMode.Fill;
+                rasterizerState.cullMode = VkCullModeFlags.None;
+                rasterizerState.frontFace = VkFrontFace.CounterClockwise;
+                rasterizerState.lineWidth = 1.0F;
+                rasterizerState.rasterizerDiscardEnable = false;
 
-            //}
+            }
 
 
             VkPipelineMultisampleStateCreateInfo multisampleState_info = new VkPipelineMultisampleStateCreateInfo()
@@ -312,7 +302,7 @@ namespace Zeckoxe.Vulkan
 
 
             float* blendConstants = stackalloc float[4]
-{
+            {
                 0,
                 0,
                 0,

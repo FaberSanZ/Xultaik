@@ -313,29 +313,29 @@ namespace Zeckoxe.Vulkan
 
             if (has_pdf2)
             {
-                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_8bit_storage"))
-                //{
-                //    DeviceExtensionsNames.Add("VK_KHR_8bit_storage");
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_8bit_storage"))
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_8bit_storage");
 
-                //    fixed (VkPhysicalDevice8BitStorageFeatures* feature = &storage_8bit_features)
-                //    {
-                //        *ppNext = feature;
-                //        ppNext = &feature->pNext;
-                //    }
-                //}
+                    fixed (VkPhysicalDevice8BitStorageFeatures* feature = &storage_8bit_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                }
 
 
 
-                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && OptRayTracing)
-                //{
-                //    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
-                //    fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
-                //    {
-                //        *ppNext = feature;
-                //        ppNext = &feature->pNext;
-                //    }
-                //    RayTracingSupport = true;
-                //}
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && OptRayTracing)
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
+                    fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                    RayTracingSupport = true;
+                }
 
                 if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing"))
                 {

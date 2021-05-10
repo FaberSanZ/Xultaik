@@ -64,7 +64,7 @@ namespace Samples.Triangle
         public override void InitializeSettings()
         {
             base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.Error;
+            Parameters.Settings.Validation = ValidationType.None;
             Window.Title += " - (Triangle) ";
         }
 
@@ -72,11 +72,13 @@ namespace Samples.Triangle
         {
             base.Initialize();
 
-
-            Camera = new Camera(45f, 0.1f, 64f);
+            Camera = new(45f, 1f, 0.1f, 64f);
             Camera.SetPosition(0, 0, -3.5f);
             Camera.AspectRatio = (float)Window.Width / Window.Height;
-            Camera.Update();
+            Camera.Update(); 
+
+
+
             // Reset Model
             Model = Matrix4x4.Identity;
             Models.Add(Model);
@@ -163,11 +165,9 @@ namespace Samples.Triangle
             DescriptorSet = new(PipelineState, descriptorData);
         }
 
-
         public override void Update(ApplicationTime game)
         {
             Camera.Update();
-
 
 
             Uniform.Update(Camera, Model);
@@ -190,7 +190,7 @@ namespace Samples.Triangle
 
             commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.BindDescriptorSets(DescriptorSet);
-            commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
+            commandBuffer.SetVertexBuffer(VertexBuffer);
             commandBuffer.SetIndexBuffer(IndexBuffer);
             commandBuffer.DrawIndexed(3, 1, 0, 0, 0);
         }

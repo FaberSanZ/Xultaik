@@ -114,7 +114,7 @@ namespace Zeckoxe.Vulkan
         {
             FillMode = VkPolygonMode.Fill,
             CullMode = VkCullModeFlags.None,
-            FrontFace = VkFrontFace.CounterClockwise,
+            FrontFace = VkFrontFace.Clockwise,
         };
     }
 
