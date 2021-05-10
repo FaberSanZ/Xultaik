@@ -349,21 +349,19 @@ namespace Zeckoxe.Vulkan
                 }
 
 
+                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_uniform_buffer_standard_layout"))
+                //{
+                //    DeviceExtensionsNames.Add("VK_KHR_uniform_buffer_standard_layout");
+
+                //    fixed (VkPhysicalDeviceUniformBufferStandardLayoutFeatures* feature = &ubo_std430_features)
+                //    {
+                //        *ppNext = feature;
+                //        ppNext = &feature->pNext;
+                //        feature->uniformBufferStandardLayout = true;
+                //    }
 
 
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_uniform_buffer_standard_layout"))
-                {
-                    DeviceExtensionsNames.Add("VK_KHR_uniform_buffer_standard_layout");
-
-                    fixed (VkPhysicalDeviceUniformBufferStandardLayoutFeatures* feature = &ubo_std430_features)
-                    {
-                        *ppNext = feature;
-                        ppNext = &feature->pNext;
-                        feature->uniformBufferStandardLayout = true;
-                    }
-
-
-                }
+                //}
 
 
 
