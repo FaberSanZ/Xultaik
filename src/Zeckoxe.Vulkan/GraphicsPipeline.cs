@@ -363,7 +363,12 @@ namespace Zeckoxe.Vulkan
                 dynamicStateCount = 2,
             };
 
-
+            VkPipelineViewportStateCreateInfo vkPipelineViewportStateCreateInfo = new()
+            {
+                sType = VkStructureType.PipelineViewportStateCreateInfo,
+                scissorCount = 1,
+                viewportCount = 1,
+            };
 
             VkGraphicsPipelineCreateInfo graphicsPipelineCI = new VkGraphicsPipelineCreateInfo()
             {
@@ -382,6 +387,7 @@ namespace Zeckoxe.Vulkan
                 pDepthStencilState = &depthStencilState,
                 pDynamicState = &dynamicState,
                 //flags = VkPipelineCreateFlags.None
+                pViewportState = &vkPipelineViewportStateCreateInfo
             };
 
 
