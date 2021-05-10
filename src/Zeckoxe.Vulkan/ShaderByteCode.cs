@@ -60,30 +60,18 @@ namespace Zeckoxe.Vulkan
         public ShaderStage stage { get; set; }
     }
 
-    public class ShaderBytecodeOptions
-    {
-        public bool InvertY { get; set; }
-        public ShaderBackend Backend { get; set; }
-    }
 
     public unsafe class ShaderBytecode
     {
 
         private Vortice.ShaderCompiler.Result result;
-        public ShaderBytecode(string path, ShaderStage stage, ShaderBytecodeOptions options = default)
+        public ShaderBytecode(string path, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
         {
             Stage = stage;
-            Options = options;
-            if (options.Backend == ShaderBackend.Glsl)
+            Backend = backend;
+            if (backend == ShaderBackend.Glsl)
             {
-                if (options == default)
-                {
-                    options = new() 
-                    { 
-                        InvertY = false, 
-                        Backend = ShaderBackend.Glsl
-                    };
-                }
+
 
                 Options _options = new();
 
@@ -97,7 +85,7 @@ namespace Zeckoxe.Vulkan
 
                 Data = result.GetBytecode().ToArray();
             }
-            else if(options.Backend == ShaderBackend.Hlsl)
+            else if(Backend == ShaderBackend.Hlsl)
             {
                 string? profile = "";
                 if (stage == ShaderStage.Vertex)
@@ -119,15 +107,12 @@ namespace Zeckoxe.Vulkan
             AddShaderResource(Data);
         }
 
-        public ShaderBytecode(byte[] buffer, ShaderStage stage, ShaderBackend shaderBackend)
+        public ShaderBytecode(byte[] buffer, ShaderStage stage, ShaderBackend backend)
         {
             Data = buffer;
             Stage = stage;
-            Options = new()
-            {
-                InvertY = false,
-                Backend = shaderBackend
-            };
+            Backend = backend;
+
             AddShaderResource(buffer);
 
         }
@@ -148,7 +133,7 @@ namespace Zeckoxe.Vulkan
 
         public byte[] Data { get; set; }
         public ShaderStage Stage { get; set; }
-        public ShaderBytecodeOptions Options { get; set; }
+        public ShaderBackend Backend { get; set; }
 
 
 
@@ -234,7 +219,7 @@ namespace Zeckoxe.Vulkan
             spvc_context_parse_spirv(context, spirv, word_count, &ir);
 
             // Hand it off to a compiler instance and give it ownership of the IR.
-            spvc_backend backend = Options.Backend == ShaderBackend.Hlsl ? spvc_backend.Hlsl : spvc_backend.Glsl;
+            spvc_backend backend = Backend == ShaderBackend.Hlsl ? spvc_backend.Hlsl : spvc_backend.Glsl;
             spvc_context_create_compiler(context, backend, ir, spvc_capture_mode.TakeOwnership, &compiler_glsl);
 
             spvc_compiler_create_shader_resources(compiler_glsl, &resources);
