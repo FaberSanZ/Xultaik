@@ -73,22 +73,12 @@ namespace Zeckoxe.Vulkan
     public unsafe class ShaderBytecode
     {
 
-        private Vortice.ShaderCompiler.Result result;
+        internal List<ShaderResource> Resources { get; set; } = new();
+
         public ShaderBytecode(string path, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
         {
             Stage = stage;
             Backend = backend;
-
-            if (backend == ShaderBackend.Glsl)
-            {
-
-            }
-            if(Backend == ShaderBackend.Hlsl)
-            {
-
-
-            }
-
 
             switch (backend)
             {
@@ -101,11 +91,11 @@ namespace Zeckoxe.Vulkan
                     break;
 
                 case ShaderBackend.Hlsl:
-
-
                     Data = CompileHLSL(path);
                     break;
             }
+
+
             AddShaderResource(Data);
         }
 
@@ -131,7 +121,6 @@ namespace Zeckoxe.Vulkan
 
 
 
-        internal List<ShaderResource> Resources { get; set; } = new();
 
         public byte[] Data { get; set; }
         public ShaderStage Stage { get; set; }
@@ -146,7 +135,7 @@ namespace Zeckoxe.Vulkan
 
             using Vortice.ShaderCompiler.Compiler compiler = new(_options);
 
-            result = compiler.Compile(File.ReadAllText(path), string.Empty, Stage.StageToShaderKind());
+            var result = compiler.Compile(File.ReadAllText(path), string.Empty, Stage.StageToShaderKind());
 
             return result.GetBytecode().ToArray();
 
@@ -387,14 +376,14 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage)
+        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
         {
-            return new ShaderBytecode(path, stage);
+            return new ShaderBytecode(path, stage, backend);
         }
 
-        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage)
+        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
         {
-            return new ShaderBytecode(bytes, stage);
+            return new ShaderBytecode(bytes, stage, backend);
         }
 
         public static implicit operator byte[](ShaderBytecode shaderBytecode)
