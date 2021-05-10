@@ -147,8 +147,8 @@ namespace Samples.Triangle
         {
             PipelineStateDescription Pipelinedescription = new();
             Pipelinedescription.SetFramebuffer(Framebuffer);
-            Pipelinedescription.SetShader(new ShaderBytecode("Shaders/HLSL/shader.frag", ShaderStage.Fragment, true));
-            Pipelinedescription.SetShader(new ShaderBytecode("Shaders/HLSL/shader.vert", ShaderStage.Vertex, true));
+            Pipelinedescription.SetShader(new ShaderBytecode("Shaders/HLSL/shader.frag", ShaderStage.Fragment, new ShaderBytecodeOptions() { Backend = ShaderBackend.Hlsl }));
+            Pipelinedescription.SetShader(new ShaderBytecode("Shaders/HLSL/shader.vert", ShaderStage.Vertex, new ShaderBytecodeOptions() { Backend = ShaderBackend.Hlsl }));
             Pipelinedescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription.SetVertexAttribute(VertexType.Position);
             Pipelinedescription.SetVertexAttribute(VertexType.Color);

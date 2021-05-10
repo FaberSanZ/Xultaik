@@ -4,13 +4,12 @@
 
 
 using SPIRVCross;
-using static SPIRVCross.SPIRV;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Vortice.Dxc;
 using Vortice.ShaderCompiler;
+using static SPIRVCross.SPIRV;
 
 namespace Zeckoxe.Vulkan
 {
@@ -42,6 +41,13 @@ namespace Zeckoxe.Vulkan
         All = int.MaxValue
     }
 
+    public enum ShaderBackend
+    {
+        None = 0,
+        Glsl = 1,
+        Hlsl = 2,
+    }
+
     internal class ShaderResource
     {
         internal uint offset { get; set; }
@@ -57,21 +63,27 @@ namespace Zeckoxe.Vulkan
     public class ShaderBytecodeOptions
     {
         public bool InvertY { get; set; }
+        public ShaderBackend Backend { get; set; }
     }
 
     public unsafe class ShaderBytecode
     {
 
         private Vortice.ShaderCompiler.Result result;
-
-        public ShaderBytecode(string path, ShaderStage stage,  bool ishlsl = false, ShaderBytecodeOptions options = default)
+        public ShaderBytecode(string path, ShaderStage stage, ShaderBytecodeOptions options = default)
         {
             Stage = stage;
-
-            if (!ishlsl)
+            Options = options;
+            if (options.Backend == ShaderBackend.Glsl)
             {
                 if (options == default)
-                    options = new() { InvertY = false, };
+                {
+                    options = new() 
+                    { 
+                        InvertY = false, 
+                        Backend = ShaderBackend.Glsl
+                    };
+                }
 
                 Options _options = new();
 
@@ -85,9 +97,9 @@ namespace Zeckoxe.Vulkan
 
                 Data = result.GetBytecode().ToArray();
             }
-            else
+            else if(options.Backend == ShaderBackend.Hlsl)
             {
-                var profile = "";
+                string? profile = "";
                 if (stage == ShaderStage.Vertex)
                 {
                     profile = "vs_6_0";
@@ -99,16 +111,23 @@ namespace Zeckoxe.Vulkan
                 }
 
                 Data = CompileHLSL(path, profile);
+
             }
+
 
 
             AddShaderResource(Data);
         }
 
-        public ShaderBytecode(byte[] buffer, ShaderStage stage)
+        public ShaderBytecode(byte[] buffer, ShaderStage stage, ShaderBackend shaderBackend)
         {
             Data = buffer;
             Stage = stage;
+            Options = new()
+            {
+                InvertY = false,
+                Backend = shaderBackend
+            };
             AddShaderResource(buffer);
 
         }
@@ -129,8 +148,7 @@ namespace Zeckoxe.Vulkan
 
         public byte[] Data { get; set; }
         public ShaderStage Stage { get; set; }
-
-        // TODO: ToStage
+        public ShaderBytecodeOptions Options { get; set; }
 
 
 
@@ -152,7 +170,7 @@ namespace Zeckoxe.Vulkan
             IDxcUtils? utils = Dxc.CreateDxcUtils();
             IDxcIncludeHandler? handler = utils!.CreateDefaultIncludeHandler();
 
-            var compiler = Dxc.CreateDxcCompiler3();
+            IDxcCompiler3? compiler = Dxc.CreateDxcCompiler3();
 
             IDxcResult? result = compiler?.Compile(source, args, handler);
 
@@ -173,7 +191,9 @@ namespace Zeckoxe.Vulkan
             SpvId* spirv;
 
             fixed (byte* ptr = data)
+            {
                 spirv = (SpvId*)ptr;
+            }
 
             uint word_count = (uint)data.Length / 4;
 
@@ -184,9 +204,23 @@ namespace Zeckoxe.Vulkan
             spvc_compiler compiler_glsl;
             spvc_compiler_options options;
             spvc_resources resources;
-            spvc_reflected_resource* list = default;
+
+
+            spvc_reflected_resource* uniformBufferList = default;
+            nuint uniformBufferCount = default;
+
+            spvc_reflected_resource* separateImageList = default;
+            nuint separateImageCount = default;
+
+            spvc_reflected_resource* sampledImageList = default;
+            nuint sampledImageCount = default;
+
+            spvc_reflected_resource* pushConstantList = default;
+            nuint pushConstantCount = default;
+
+
+
             byte* result_ = null;
-            nuint count = default;
             spvc_error_callback error_callback = default;
 
 
@@ -200,30 +234,17 @@ namespace Zeckoxe.Vulkan
             spvc_context_parse_spirv(context, spirv, word_count, &ir);
 
             // Hand it off to a compiler instance and give it ownership of the IR.
-            spvc_context_create_compiler(context, spvc_backend.Hlsl, ir, spvc_capture_mode.TakeOwnership, &compiler_glsl);
+            spvc_backend backend = Options.Backend == ShaderBackend.Hlsl ? spvc_backend.Hlsl : spvc_backend.Glsl;
+            spvc_context_create_compiler(context, backend, ir, spvc_capture_mode.TakeOwnership, &compiler_glsl);
 
-            // Do some basic reflection.
             spvc_compiler_create_shader_resources(compiler_glsl, &resources);
-            spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.UniformBuffer, (spvc_reflected_resource*)&list, &count);
 
 
-            var model = spvc_compiler_get_execution_model(compiler_glsl);
-
-            Console.WriteLine(model);
-
-            for (uint i = 0; i < count; i++)
+            spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.UniformBuffer, (spvc_reflected_resource*)&uniformBufferList, &uniformBufferCount);
+            for (uint i = 0; i < uniformBufferCount; i++)
             {
-                //Console.WriteLine("ID: {0}, BaseTypeID: {1}, TypeID: {2}, Name: {3}", list[i].id, list[i].base_type_id, list[i].type_id, GetString(list[i].name));
-
-                uint set = spvc_compiler_get_decoration(compiler_glsl, (SpvId)list[i].id, SpvDecoration.SpvDecorationDescriptorSet);
-                Console.WriteLine($"Set: {set}");
-
-                uint binding = spvc_compiler_get_decoration(compiler_glsl, (SpvId)list[i].id, SpvDecoration.SpvDecorationBinding);
-                Console.WriteLine($"Binding: {binding}");
-
-
-                Console.WriteLine("=========");
-
+                uint set = spvc_compiler_get_decoration(compiler_glsl, (SpvId)uniformBufferList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_glsl, (SpvId)uniformBufferList[i].id, SpvDecoration.SpvDecorationBinding);
 
                 Resources.Add(new()
                 {
@@ -233,141 +254,84 @@ namespace Zeckoxe.Vulkan
                     stage = Stage,
                 });
             }
-            Console.WriteLine("\n \n");
-            //spvc_
-
-            // Modify options.
-            //spvc_compiler_create_compiler_options(compiler_glsl, &options);
-            //spvc_compiler_options_set_uint(options, spvc_compiler_option.GlslVersion, 450);
-            //spvc_compiler_options_set_bool(options, spvc_compiler_option.GlslEs, false);
-            //spvc_compiler_install_compiler_options(compiler_glsl, options);
 
 
-            //byte* r = default;
-            //spvc_compiler_compile(compiler_glsl, (byte*)&r);
-            //Console.WriteLine("Cross-compiled source: {0}", GetString(r));
 
-            // Frees all memory we allocated so far.
+            spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SeparateImage, (spvc_reflected_resource*)&separateImageList, &separateImageCount);
+            for (uint i = 0; i < separateImageCount; i++)
+            {
+                uint set = spvc_compiler_get_decoration(compiler_glsl, (SpvId)separateImageList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_glsl, (SpvId)separateImageList[i].id, SpvDecoration.SpvDecorationBinding);
+
+                Resources.Add(new()
+                {
+                    set = set,
+                    binding = binding,
+                    resource_type = spvc_resource_type.SeparateImage,
+                    stage = Stage,
+                });
+            }
+
+
+
+            spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SampledImage, (spvc_reflected_resource*)&sampledImageList, &sampledImageCount);
+            for (uint i = 0; i < sampledImageCount; i++)
+            {
+                uint set = spvc_compiler_get_decoration(compiler_glsl, (SpvId)sampledImageList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_glsl, (SpvId)sampledImageList[i].id, SpvDecoration.SpvDecorationBinding);
+
+                Resources.Add(new()
+                {
+                    set = set,
+                    binding = binding,
+                    resource_type = spvc_resource_type.SampledImage,
+                    stage = Stage,
+                });
+            }
+
+
+
+            spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.PushConstant, (spvc_reflected_resource*)&pushConstantList, &pushConstantCount);
+            for (uint i = 0; i < pushConstantCount; i++)
+            {
+                uint set = spvc_compiler_get_decoration(compiler_glsl, (SpvId)pushConstantList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_glsl, (SpvId)pushConstantList[i].id, SpvDecoration.SpvDecorationBinding);
+                uint offset = spvc_compiler_get_decoration(compiler_glsl, (SpvId)pushConstantList[i].id, SpvDecoration.SpvDecorationOffset);
+                spvc_type type = spvc_compiler_get_type_handle(compiler_glsl, (SpvId)pushConstantList[i].type_id);
+
+                nuint size = 0;
+                spvc_compiler_get_declared_struct_size(compiler_glsl, type, &size);
+
+                Resources.Add(new()
+                {
+                    size = (uint)size,
+                    set = set,
+                    binding = binding,
+                    resource_type = spvc_resource_type.PushConstant,
+                    offset = offset,
+                    stage = Stage,
+                });
+            }
+
+
             spvc_context_destroy(context);
 
-            //using (Context context = new Context())
-            //{
-            //    ParseIr ir = context.ParseIr(data);
-            //    SharpSPIRVCross.Compiler compiler = context.CreateCompiler(Backend.HLSL, ir);
-
-            //    ShaderResources resources = compiler.CreateShaderResources();
-
-            //    foreach (ReflectedResource uniformBuffer in resources.GetResources(ResourceType.PushConstant))
-            //    {
-            //        uint set = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.DescriptorSet);
-            //        uint binding = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.Binding);
-            //        uint offset = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.Offset);
-            //        int size = 0;
-            //        SpirvType type = compiler.GetSpirvType(uniformBuffer.TypeId);
-            //        compiler.GetDeclaredStructSize(type, out size);
-
-            //        Resources.Add(new()
-            //        {
-            //            size = (uint)size,
-            //            set = set,
-            //            binding = binding,
-            //            resource_type = ResourceType.PushConstant,
-            //            offset = offset,
-            //            stage = Stage,
-            //        });
-            //    }
-
-            //    foreach (ReflectedResource uniformBuffer in resources.GetResources(ResourceType.SubpassInput))
-            //    {
-            //        uint set = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.DescriptorSet);
-            //        uint binding = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.Binding);
-
-            //        Resources.Add(new()
-            //        {
-            //            set = set,
-            //            binding = binding,
-            //            resource_type = ResourceType.SubpassInput,
-            //            stage = Stage,
-            //        });
-            //    }
-
-
-            //    foreach (ReflectedResource uniformBuffer in resources.GetResources(ResourceType.UniformBuffer))
-            //    {
-            //        uint set = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.DescriptorSet);
-            //        uint binding = compiler.GetDecoration(uniformBuffer.Id, SpvDecoration.Binding);
-
-            //        Resources.Add(new()
-            //        {
-            //            set = set,
-            //            binding = binding,
-            //            resource_type = ResourceType.UniformBuffer,
-            //            stage = Stage,
-            //        });
-            //    }
-
-            //    //foreach (ReflectedResource input in resources.GetResources(ResourceType.StageInput))
-            //    //{
-            //    //    uint location = compiler.GetDecoration(input.Id, SpvDecoration.Location);
-
-            //    //    Resources.Add(new()
-            //    //    {
-            //    //        location = location,
-            //    //        resource_type = ResourceType.StageInput,
-            //    //        stage = Stage,
-            //    //    });
-            //    //}
-
-
-            //    foreach (ReflectedResource separateImage in resources.GetResources(ResourceType.SeparateImage))
-            //    {
-            //        uint set = compiler.GetDecoration(separateImage.Id, SpvDecoration.DescriptorSet);
-            //        uint binding = compiler.GetDecoration(separateImage.Id, SpvDecoration.Binding);
-            //        //uint binding = compiler.GetDecoration(sampledImage.Id, SpvDecoration.);
-
-            //        Resources.Add(new()
-            //        {
-            //            set = set,
-            //            binding = binding,
-            //            resource_type = ResourceType.SeparateImage,
-            //            stage = Stage,
-            //        });
-            //    }
-
-
-            //    foreach (ReflectedResource sampledImage in resources.GetResources(ResourceType.SampledImage))
-            //    {
-            //        uint set = compiler.GetDecoration(sampledImage.Id, SpvDecoration.DescriptorSet);
-            //        uint binding = compiler.GetDecoration(sampledImage.Id, SpvDecoration.Binding);
-            //        //uint binding = compiler.GetDecoration(sampledImage.Id, SpvDecoration.);
-
-            //        Resources.Add(new()
-            //        {
-            //            set = set,
-            //            binding = binding,
-            //            resource_type = ResourceType.SampledImage,
-            //            stage = Stage,
-            //        });
-            //    }
-
-            //}
         }
 
-        //public byte* GetBytes()
-        //{
-        //    return result.GetBytes();
-        //}
 
-        //public Span<byte> GetBytecode()
-        //{
-        //    return result.GetBytecode();
-        //}
-        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage) => new ShaderBytecode(path, stage);
-        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage) => new ShaderBytecode(bytes, stage);
+        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage)
+        {
+            return new ShaderBytecode(path, stage);
+        }
 
+        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage)
+        {
+            return new ShaderBytecode(bytes, stage);
+        }
 
-
-        public static implicit operator byte[](ShaderBytecode shaderBytecode) => shaderBytecode.Data;
-
+        public static implicit operator byte[](ShaderBytecode shaderBytecode)
+        {
+            return shaderBytecode.Data;
+        }
     }
 }
