@@ -94,22 +94,22 @@ namespace Zeckoxe.Vulkan
                 case ShaderStage.TessellationEvaluation:
                     return VkShaderStageFlags.TessellationEvaluation;
 
-                case ShaderStage.RaygenKHR:
+                case ShaderStage.Raygen:
                     return VkShaderStageFlags.RaygenKHR;
 
-                case ShaderStage.AnyHitKHR:
+                case ShaderStage.AnyHit:
                     return VkShaderStageFlags.AnyHitKHR;
 
-                case ShaderStage.ClosestHitKHR:
+                case ShaderStage.ClosestHit:
                     return VkShaderStageFlags.ClosestHitKHR;
 
-                case ShaderStage.MissKHR:
+                case ShaderStage.Miss:
                     return VkShaderStageFlags.MissKHR;
 
-                case ShaderStage.IntersectionKHR:
+                case ShaderStage.Intersection:
                     return VkShaderStageFlags.IntersectionKHR;
 
-                case ShaderStage.CallableKHR:
+                case ShaderStage.Callable:
                     return VkShaderStageFlags.CallableKHR;
 
                 case ShaderStage.TaskNV:
@@ -148,22 +148,22 @@ namespace Zeckoxe.Vulkan
                 case ShaderStage.TessellationEvaluation:
                     return ShaderKind.TessEvaluationShader;
 
-                case ShaderStage.RaygenKHR:
+                case ShaderStage.Raygen:
                     return ShaderKind.RaygenShader;
 
-                case ShaderStage.AnyHitKHR:
+                case ShaderStage.AnyHit:
                     return ShaderKind.AnyhitShader;
 
-                case ShaderStage.ClosestHitKHR:
+                case ShaderStage.ClosestHit:
                     return ShaderKind.ClosesthitShader;
 
-                case ShaderStage.MissKHR:
+                case ShaderStage.Miss:
                     return ShaderKind.MissShader;
 
-                case ShaderStage.IntersectionKHR:
+                case ShaderStage.Intersection:
                     return ShaderKind.IntersectionShader;
 
-                case ShaderStage.CallableKHR:
+                case ShaderStage.Callable:
                     return ShaderKind.CallableShader;
 
                 case ShaderStage.TaskNV:

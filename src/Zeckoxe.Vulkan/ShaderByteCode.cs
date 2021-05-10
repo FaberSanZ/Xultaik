@@ -13,31 +13,40 @@ using static SPIRVCross.SPIRV;
 
 namespace Zeckoxe.Vulkan
 {
-    // TODO: ShaderStage
     public enum ShaderStage
     {
         None = 0,
+
         Vertex = 1,
+
         TessellationControl = 2,
+
         TessellationEvaluation = 4,
+
         Geometry = 8,
+
         Fragment = 16,
+
         AllGraphics = 31,
+
         Compute = 32,
+
         TaskNV = 64,
+
         MeshNV = 128,
-        RaygenKHR = 256,
-        RaygenNV = 256,
-        AnyHitKHR = 512,
-        AnyHitNV = 512,
-        ClosestHitKHR = 1024,
-        ClosestHitNV = 1024,
-        MissKHR = 2048,
-        MissNV = 2048,
-        IntersectionKHR = 4096,
-        IntersectionNV = 4096,
-        CallableKHR = 8192,
-        CallableNV = 8192,
+
+        Raygen = 256,
+
+        AnyHit = 512,
+
+        ClosestHit = 1024,
+
+        Miss = 2048,
+
+        Intersection = 4096,
+
+        Callable = 8192,
+
         All = int.MaxValue
     }
 
@@ -69,41 +78,34 @@ namespace Zeckoxe.Vulkan
         {
             Stage = stage;
             Backend = backend;
+
             if (backend == ShaderBackend.Glsl)
             {
 
-
-                Options _options = new();
-
-                _options.SetSourceLanguage(SourceLanguage.GLSL);
-                //_options.SetInvertY(true);
-
-
-                using Vortice.ShaderCompiler.Compiler compiler = new(_options);
-
-                result = compiler.Compile(File.ReadAllText(path), string.Empty, stage.StageToShaderKind());
-
-                Data = result.GetBytecode().ToArray();
             }
-            else if(Backend == ShaderBackend.Hlsl)
+            if(Backend == ShaderBackend.Hlsl)
             {
-                string? profile = "";
-                if (stage == ShaderStage.Vertex)
-                {
-                    profile = "vs_6_0";
-                }
 
-                else if (stage == ShaderStage.Fragment)
-                {
-                    profile = "ps_6_0";
-                }
-
-                Data = CompileHLSL(path, profile);
 
             }
 
 
+            switch (backend)
+            {
+                case ShaderBackend.None:
+                    Data = File.ReadAllBytes(path);
+                    break;
 
+                case ShaderBackend.Glsl:
+                    Data = CompileGLSL(path);
+                    break;
+
+                case ShaderBackend.Hlsl:
+
+
+                    Data = CompileHLSL(path);
+                    break;
+            }
             AddShaderResource(Data);
         }
 
@@ -136,10 +138,91 @@ namespace Zeckoxe.Vulkan
         public ShaderBackend Backend { get; set; }
 
 
-
-        private byte[] CompileHLSL(string filePath, string profile = "vs_6_0")
+        private byte[] CompileGLSL(string path)
         {
-            string? source = File.ReadAllText(filePath);
+            Options _options = new();
+
+            _options.SetSourceLanguage(SourceLanguage.GLSL);
+
+            using Vortice.ShaderCompiler.Compiler compiler = new(_options);
+
+            result = compiler.Compile(File.ReadAllText(path), string.Empty, Stage.StageToShaderKind());
+
+            return result.GetBytecode().ToArray();
+
+        }
+        private byte[] CompileHLSL(string path)
+        {
+            string profile = "";
+            string? shadermodel = "_6_0";
+
+
+            switch (Stage)
+            {
+                case ShaderStage.Vertex:
+                    profile = "vs" + shadermodel;
+                    break;
+
+                case ShaderStage.TessellationControl:
+                    profile = "hs" + shadermodel;
+                    break;
+
+                case ShaderStage.TessellationEvaluation:
+                    profile = "ds" + shadermodel;
+                    break;
+
+                case ShaderStage.Geometry:
+                    profile = "gs" + shadermodel;
+                    break;
+
+                case ShaderStage.Fragment:
+                    profile = "ps" + shadermodel;
+                    break;
+
+
+                case ShaderStage.Compute:
+                    profile = "cs" + shadermodel;
+                    break;
+
+                case ShaderStage.TaskNV:
+                    profile = "as_6_5";
+                    break;
+
+                case ShaderStage.MeshNV:
+                    profile = "ms_6_5";
+                    break;
+
+                case ShaderStage.Raygen:
+                    profile = "lib_6_5";
+                    break;
+
+
+                case ShaderStage.AnyHit:
+                    profile = "lib_6_5";
+                    break;
+
+                case ShaderStage.ClosestHit:
+                    profile = "lib_6_5";
+                    break;
+
+                case ShaderStage.Miss:
+                    profile = "lib_6_5";
+                    break;
+
+                case ShaderStage.Intersection:
+                    profile = "lib_6_5";
+                    break;
+
+                case ShaderStage.Callable:
+                    profile = "lib_6_5";
+                    break;
+
+            }
+
+
+
+
+            string? source = File.ReadAllText(path);
             string[] args = new[]
             {
                 "-spirv",
