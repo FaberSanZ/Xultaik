@@ -226,7 +226,7 @@ namespace Zeckoxe.Vulkan
                 {
                     InstanceExtensionsNames.Add("VK_MVK_ios_surface");
                     SupportsMacOSSurface = true;
-                    ZeckoxeLocator.Instance.Bind(RuntimePlatform.MacOS);
+                    ZeckoxeLocator.Instance.Bind(RuntimePlatform.iOS);
                 }
             }
 

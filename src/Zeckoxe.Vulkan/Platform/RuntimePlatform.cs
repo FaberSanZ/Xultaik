@@ -10,6 +10,7 @@ namespace Zeckoxe.Vulkan.Platform
     {
         Windows,
         MacOS,
+        iOS,
         LinuxX11,
         LinuxWayland,
         Android
