@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using Zeckoxe.Core;
+using Zeckoxe.Vulkan.Platform;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Zeckoxe.Core.Interop;
 
@@ -208,6 +209,7 @@ namespace Zeckoxe.Vulkan
                 {
                     InstanceExtensionsNames.Add("VK_KHR_win32_surface");
                     SupportsWin32Surface = true;
+                    ZeckoxeLocator.Instance.Bind(RuntimePlatform.Windows);
                 }
             }
 
@@ -217,12 +219,14 @@ namespace Zeckoxe.Vulkan
                 {
                     InstanceExtensionsNames.Add("VK_MVK_macos_surface");
                     SupportsMacOSSurface = true;
+                    ZeckoxeLocator.Instance.Bind(RuntimePlatform.MacOS);
                 }
 
                 if (instance_extensions_names.Contains("VK_MVK_ios_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_MVK_ios_surface");
                     SupportsMacOSSurface = true;
+                    ZeckoxeLocator.Instance.Bind(RuntimePlatform.MacOS);
                 }
             }
 
@@ -232,18 +236,21 @@ namespace Zeckoxe.Vulkan
                 {
                     InstanceExtensionsNames.Add("VK_KHR_android_surface");
                     SupportsAndroidSurface = true;
+                    ZeckoxeLocator.Instance.Bind(RuntimePlatform.Android);
                 }
 
                 if (instance_extensions_names.Contains("VK_KHR_xlib_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_xlib_surface");
                     SupportsX11Surface = true;
+                    ZeckoxeLocator.Instance.Bind(RuntimePlatform.LinuxX11);
                 }
 
                 if (instance_extensions_names.Contains("VK_KHR_wayland_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_wayland_surface");
                     SupportsWaylandSurface = true;
+                    ZeckoxeLocator.Instance.Bind(RuntimePlatform.LinuxWayland);
                 }
             }
 
