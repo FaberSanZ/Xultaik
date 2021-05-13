@@ -24,11 +24,11 @@ namespace Samples.LoadTexture
             V = v;
         }
 
-        public Matrix4x4 M;
-        public Matrix4x4 V;
         public Matrix4x4 P;
 
+        public Matrix4x4 M;
 
+        public Matrix4x4 V;
 
         public void Update(Camera camera, Matrix4x4 m)
         {
@@ -58,12 +58,12 @@ namespace Samples.LoadTexture
             0, 1, 2,
         };
 
-        public VertexPositionTexture[] Vertices = new VertexPositionTexture[]
+        public VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[]
         {
-            new(new(-0.5f, -0.5f, -0.5f), new(1.0f, 0.0f)) ,
-            new(new( 0.5f, -0.5f, -0.5f), new(0.0f, 1.0f)) ,
-            new(new(0.5f, 0.5f, -0.5f), new(0.0f, 0.0f)) ,
-            new(new(-0.5f,  0.5f, -0.5f), new(1.0f, 1.0f)) ,
+            new(new(-0.5f, -0.5f, -0.5f), new(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f)) ,
+            new(new( 0.5f, -0.5f, -0.5f), new(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 0.0f)) ,
+            new(new(0.5f, 0.5f, -0.5f), new(0.0f, 0.0f, 1.0f), new Vector2(0.0f, 1.0f)) ,
+            new(new(-0.5f,  0.5f, -0.5f), new(1.0f, 1.0f, 1.0f), new Vector2(1.0f, 1.0f)) ,
         };
 
 
@@ -121,6 +121,7 @@ namespace Samples.LoadTexture
 
 
 
+            //var img = new TextureData(GenerateTextureData(), TextureWidth, TextureWidth, 1, 1, TextureWidth * TextureWidth * 4, false, PixelFormat.R8G8B8A8UNorm);
 
 
 
@@ -170,12 +171,20 @@ namespace Samples.LoadTexture
 
         public void CreatePipelineState()
         {
-            var file = Constants.ShadersFile + "LoadTexture/";
 
-            Shaders["Fragment"] = ShaderBytecode.LoadFromFile(file + "Fragment.hlsl", ShaderStage.Fragment, ShaderBackend.Hlsl);
-            Shaders["Vertex"] = ShaderBytecode.LoadFromFile(file + "Vertex.hlsl", ShaderStage.Vertex, ShaderBackend.Hlsl);
 
-            //var img0 = new TextureData(GenerateTextureData(), TextureWidth, TextureWidth, 1, 1, TextureWidth * TextureWidth * 4, false, PixelFormat.R8G8B8A8UNorm);
+            var file = Constants.ShadersFile;
+
+            PipelineStateDescription Pipelinedescription = new();
+            Pipelinedescription.SetFramebuffer(Framebuffer);
+            Pipelinedescription.SetShader(new ShaderBytecode(file + "LoadTexture/shader.frag", ShaderStage.Fragment));
+            Pipelinedescription.SetShader(new ShaderBytecode(file + "LoadTexture/shader.vert", ShaderStage.Vertex));
+
+
+            Shaders["Fragment"] = ShaderBytecode.LoadFromFile(file + "LoadTexture/shader.frag", ShaderStage.Fragment);
+            Shaders["Vertex"] = ShaderBytecode.LoadFromFile(file + "LoadTexture/shader.vert", ShaderStage.Vertex);
+
+
             Image text1 = ImageFile.Load2DFromFile(Device, "IndustryForgedDark512.ktx");
             Image text2 = ImageFile.Load2DFromFile(Device, "UVCheckerMap08-512.png");
             Sampler sampler = new Sampler(Device);
@@ -185,15 +194,15 @@ namespace Samples.LoadTexture
             Pipelinedescription_0.SetFramebuffer(Framebuffer);
             Pipelinedescription_0.SetShader(Shaders["Fragment"]);
             Pipelinedescription_0.SetShader(Shaders["Vertex"]);
-            Pipelinedescription_0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionTexture.Size);
+            Pipelinedescription_0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColorTexture.Size);
             Pipelinedescription_0.SetVertexAttribute(VertexType.Position);
+            Pipelinedescription_0.SetVertexAttribute(VertexType.Color);
             Pipelinedescription_0.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_0 = new(Pipelinedescription_0);
 
             DescriptorData descriptorData_0 = new();
-            descriptorData_0.SetImage(1, text1);
-            descriptorData_0.SetSampler(1, sampler);
             descriptorData_0.SetUniformBuffer(0, Buffers["ConstBuffer1"]);
+            descriptorData_0.SetImageSampler(1, text1, sampler);
             DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
 
 
@@ -202,15 +211,15 @@ namespace Samples.LoadTexture
             Pipelinedescription_1.SetFramebuffer(Framebuffer);
             Pipelinedescription_1.SetShader(Shaders["Fragment"]);
             Pipelinedescription_1.SetShader(Shaders["Vertex"]);
-            Pipelinedescription_1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionTexture.Size);
+            Pipelinedescription_1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColorTexture.Size);
             Pipelinedescription_1.SetVertexAttribute(VertexType.Position);
+            Pipelinedescription_1.SetVertexAttribute(VertexType.Color);
             Pipelinedescription_1.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_1 = new(Pipelinedescription_1);
 
             DescriptorData descriptorData_1 = new();
-            descriptorData_1.SetImage(1, text1);
-            descriptorData_1.SetSampler(1, sampler);
             descriptorData_1.SetUniformBuffer(0, Buffers["ConstBuffer2"]);
+            descriptorData_1.SetImageSampler(1, text2, sampler);
             DescriptorSet_1 = new(PipelineState_1, descriptorData_1);
         }
 

@@ -67,7 +67,6 @@ namespace Zeckoxe.Vulkan
                     stageFlags = resources[i].stage.StageToVkShaderStageFlags(),
                     pImmutableSamplers = null,
                 };
-                System.Console.WriteLine(layoutBinding[i].descriptorType);
             }
 
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo

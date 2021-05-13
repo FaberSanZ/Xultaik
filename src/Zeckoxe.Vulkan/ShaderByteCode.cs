@@ -50,12 +50,6 @@ namespace Zeckoxe.Vulkan
         All = int.MaxValue
     }
 
-    public enum ShaderBackend
-    {
-        None = 0,
-        Glsl = 1,
-        Hlsl = 2,
-    }
 
     internal class ShaderResource
     {
@@ -75,35 +69,22 @@ namespace Zeckoxe.Vulkan
 
         internal List<ShaderResource> Resources { get; set; } = new();
 
-        public ShaderBytecode(string path, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
+        public ShaderBytecode(string path, ShaderStage stage)
         {
             Stage = stage;
-            Backend = backend;
 
-            switch (backend)
-            {
-                case ShaderBackend.None:
-                    Data = File.ReadAllBytes(path);
-                    break;
 
-                case ShaderBackend.Glsl:
-                    Data = CompileGLSL(path);
-                    break;
+            Data = CompileGLSL(path);
 
-                case ShaderBackend.Hlsl:
-                    Data = CompileHLSL(path);
-                    break;
-            }
 
 
             AddShaderResource(Data);
         }
 
-        public ShaderBytecode(byte[] buffer, ShaderStage stage, ShaderBackend backend)
+        public ShaderBytecode(byte[] buffer, ShaderStage stage)
         {
             Data = buffer;
             Stage = stage;
-            Backend = backend;
 
             AddShaderResource(buffer);
 
@@ -124,7 +105,6 @@ namespace Zeckoxe.Vulkan
 
         public byte[] Data { get; set; }
         public ShaderStage Stage { get; set; }
-        public ShaderBackend Backend { get; set; }
 
 
         private byte[] CompileGLSL(string path)
@@ -275,6 +255,10 @@ namespace Zeckoxe.Vulkan
             spvc_reflected_resource* pushConstantList = default;
             nuint pushConstantCount = default;
 
+            spvc_reflected_resource* SeparateSamplersList = default;
+            nuint SeparateSamplersCount = default;
+
+
 
 
             byte* result_ = null;
@@ -291,8 +275,7 @@ namespace Zeckoxe.Vulkan
             spvc_context_parse_spirv(context, spirv, word_count, &ir);
 
             // Hand it off to a compiler instance and give it ownership of the IR.
-            spvc_backend backend = Backend == ShaderBackend.Hlsl ? spvc_backend.Hlsl : spvc_backend.Glsl;
-            spvc_context_create_compiler(context, backend, ir, spvc_capture_mode.TakeOwnership, &compiler_glsl);
+            spvc_context_create_compiler(context, spvc_backend.Glsl, ir, spvc_capture_mode.TakeOwnership, &compiler_glsl);
 
             spvc_compiler_create_shader_resources(compiler_glsl, &resources);
 
@@ -331,9 +314,6 @@ namespace Zeckoxe.Vulkan
             }
 
 
-            spvc_reflected_resource* SeparateSamplersList = default;
-            nuint SeparateSamplersCount = default;
-
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SeparateSamplers, (spvc_reflected_resource*)&SeparateSamplersList, &SeparateSamplersCount);
             for (uint i = 0; i < SeparateSamplersCount; i++)
             {
@@ -366,9 +346,6 @@ namespace Zeckoxe.Vulkan
                     resource_type = spvc_resource_type.SampledImage,
                     stage = Stage,
                 });
-
-                Console.WriteLine(set);
-                Console.WriteLine(binding);
             }
 
 
@@ -400,14 +377,14 @@ namespace Zeckoxe.Vulkan
         }
 
 
-        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
+        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage)
         {
-            return new ShaderBytecode(path, stage, backend);
+            return new ShaderBytecode(path, stage);
         }
 
-        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
+        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage)
         {
-            return new ShaderBytecode(bytes, stage, backend);
+            return new ShaderBytecode(bytes, stage);
         }
 
         public static implicit operator byte[](ShaderBytecode shaderBytecode)

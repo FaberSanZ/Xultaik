@@ -163,12 +163,6 @@
     <None Update="Shaders\PositionColor\shader.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Shaders\Texture\shader.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\Texture\shader.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Stonewall.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
