@@ -1,9 +1,5 @@
 ﻿using System;
 using Samples.Common;
-using Samples.Samples;
-using Samples.LoadTexture;
-using Samples.Triangle;
-using Samples.ClearScreen;
 
 namespace Samples
 {
@@ -11,13 +7,13 @@ namespace Samples
     {
         static void Main(string[] args)
         {
-            //using var App = new ClearScreenExample();
-            //using var App = new TriangleExample();
-            //using var App = new Transformations();
-            //using var App = new LoadGLTF();
-            using var App = new LoadTextureExample();
-            //using var App = new Lighting();
-            //using var App = new SkinningExample();
+            //using var App = new ClearScreen.ClearScreenExample();
+            //using var App = new Triangle.TriangleExample();
+            //using var App = new Transformations.TransformationsExample();
+            //using var App = new LoadGLTF.LoadGLTFExample();
+            //using var App = new LoadTexture.LoadTextureExample();
+            using var App = new Lighting.LightingExample();
+            //using var App = new Skinning.SkinningExample();
 
 
             App.Run();

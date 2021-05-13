@@ -7,7 +7,6 @@ using SPIRVCross;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Vortice.Dxc;
 using Vortice.ShaderCompiler;
 using static SPIRVCross.SPIRV;
 
@@ -120,107 +119,107 @@ namespace Zeckoxe.Vulkan
             return result.GetBytecode().ToArray();
 
         }
-        private byte[] CompileHLSL(string path)
-        {
-            string profile = "";
-            string? shadermodel = "_6_5";
+        //private byte[] CompileHLSL(string path)
+        //{
+        //    string profile = "";
+        //    string? shadermodel = "_6_5";
 
 
-            switch (Stage)
-            {
-                case ShaderStage.Vertex:
-                    profile = "vs" + shadermodel;
-                    break;
+        //    switch (Stage)
+        //    {
+        //        case ShaderStage.Vertex:
+        //            profile = "vs" + shadermodel;
+        //            break;
 
-                case ShaderStage.TessellationControl:
-                    profile = "hs" + shadermodel;
-                    break;
+        //        case ShaderStage.TessellationControl:
+        //            profile = "hs" + shadermodel;
+        //            break;
 
-                case ShaderStage.TessellationEvaluation:
-                    profile = "ds" + shadermodel;
-                    break;
+        //        case ShaderStage.TessellationEvaluation:
+        //            profile = "ds" + shadermodel;
+        //            break;
 
-                case ShaderStage.Geometry:
-                    profile = "gs" + shadermodel;
-                    break;
+        //        case ShaderStage.Geometry:
+        //            profile = "gs" + shadermodel;
+        //            break;
 
-                case ShaderStage.Fragment:
-                    profile = "ps" + shadermodel;
-                    break;
-
-
-                case ShaderStage.Compute:
-                    profile = "cs" + shadermodel;
-                    break;
-
-                case ShaderStage.TaskNV:
-                    profile = "as_6_5";
-                    break;
-
-                case ShaderStage.MeshNV:
-                    profile = "ms_6_5";
-                    break;
-
-                case ShaderStage.Raygen:
-                    profile = "lib_6_5";
-                    break;
+        //        case ShaderStage.Fragment:
+        //            profile = "ps" + shadermodel;
+        //            break;
 
 
-                case ShaderStage.AnyHit:
-                    profile = "lib_6_5";
-                    break;
+        //        case ShaderStage.Compute:
+        //            profile = "cs" + shadermodel;
+        //            break;
 
-                case ShaderStage.ClosestHit:
-                    profile = "lib_6_5";
-                    break;
+        //        case ShaderStage.TaskNV:
+        //            profile = "as_6_5";
+        //            break;
 
-                case ShaderStage.Miss:
-                    profile = "lib_6_5";
-                    break;
+        //        case ShaderStage.MeshNV:
+        //            profile = "ms_6_5";
+        //            break;
 
-                case ShaderStage.Intersection:
-                    profile = "lib_6_5";
-                    break;
-
-                case ShaderStage.Callable:
-                    profile = "lib_6_5";
-                    break;
-
-            }
+        //        case ShaderStage.Raygen:
+        //            profile = "lib_6_5";
+        //            break;
 
 
+        //        case ShaderStage.AnyHit:
+        //            profile = "lib_6_5";
+        //            break;
+
+        //        case ShaderStage.ClosestHit:
+        //            profile = "lib_6_5";
+        //            break;
+
+        //        case ShaderStage.Miss:
+        //            profile = "lib_6_5";
+        //            break;
+
+        //        case ShaderStage.Intersection:
+        //            profile = "lib_6_5";
+        //            break;
+
+        //        case ShaderStage.Callable:
+        //            profile = "lib_6_5";
+        //            break;
+
+        //    }
 
 
-            string? source = File.ReadAllText(path);
-            string[] args = new[]
-            {
-                "-spirv",
-                "-T", profile,
-                "-E", "main",
-                "-fspv-target-env=vulkan1.1",
-                "-fspv-extension=SPV_NV_ray_tracing",
-                "-fspv-extension=SPV_KHR_multiview",
-                "-fspv-extension=SPV_KHR_shader_draw_parameters",
-                "-fspv-extension=SPV_EXT_descriptor_indexing",
 
-            };
-            IDxcUtils? utils = Dxc.CreateDxcUtils();
-            IDxcIncludeHandler? handler = utils!.CreateDefaultIncludeHandler();
 
-            IDxcCompiler3? compiler = Dxc.CreateDxcCompiler3();
+        //    string? source = File.ReadAllText(path);
+        //    string[] args = new[]
+        //    {
+        //        "-spirv",
+        //        "-T", profile,
+        //        "-E", "main",
+        //        "-fspv-target-env=vulkan1.1",
+        //        "-fspv-extension=SPV_NV_ray_tracing",
+        //        "-fspv-extension=SPV_KHR_multiview",
+        //        "-fspv-extension=SPV_KHR_shader_draw_parameters",
+        //        "-fspv-extension=SPV_EXT_descriptor_indexing",
 
-            IDxcResult? result = compiler?.Compile(source, args, handler);
+        //    };
+        //    IDxcUtils? utils = Dxc.CreateDxcUtils();
+        //    IDxcIncludeHandler? handler = utils!.CreateDefaultIncludeHandler();
 
-            if (result == null || result.GetStatus().Failure)
-            {
-                throw new Exception(result!.GetErrors());
-            }
+        //    IDxcCompiler3? compiler = Dxc.CreateDxcCompiler3();
 
-            byte[] data = result.GetObjectBytecodeArray();
+        //    IDxcResult? result = compiler?.Compile(source, args, handler);
 
-            result.Dispose();
-            return data;
-        }
+        //    if (result == null || result.GetStatus().Failure)
+        //    {
+        //        throw new Exception(result!.GetErrors());
+        //    }
+
+        //    byte[] data = result.GetObjectBytecodeArray();
+
+        //    result.Dispose();
+        //    return data;
+        //}
 
         public void AddShaderResource(byte[] data)
         {

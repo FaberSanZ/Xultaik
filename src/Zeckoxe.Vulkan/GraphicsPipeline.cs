@@ -48,9 +48,6 @@ namespace Zeckoxe.Vulkan
         private void SetupDescriptorSetLayout()
         {
 
-            // Setup layout of descriptors used in this example
-            // Basically connects the different shader stages to descriptors for binding uniform buffers, image samplers, etc.
-            // So every shader binding should map to one descriptor set layout binding
             ShaderResource[] resources = Resources.Where(x => x.resource_type != SPIRVCross.spvc_resource_type.PushConstant).ToArray();
 
 

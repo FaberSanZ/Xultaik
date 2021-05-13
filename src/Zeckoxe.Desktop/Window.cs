@@ -220,7 +220,7 @@ namespace Zeckoxe.Desktop
         public IntPtr WaylandDisplayHandle => glfw.Library.LoadFunction<GLFW.glfwGetWaylandDisplay>(nameof(GLFW.glfwGetX11Display))();
 
 
-        public SwapchainSource SwapchainWin32
+        public SwapchainSource? SwapchainWin32
         {
             get
             {
@@ -228,14 +228,14 @@ namespace Zeckoxe.Desktop
                 IntPtr hinstance = Process.GetCurrentProcess().Handle;
 
                 if (hwnd == IntPtr.Zero && hinstance == IntPtr.Zero)
-                    return SwapchainSource.CreateWin32(IntPtr.Zero, IntPtr.Zero);
+                    return null;
 
                 return SwapchainSource.CreateWin32(hwnd, hinstance);
             }
         }
 
 
-        public SwapchainSource SwapchainX11
+        public SwapchainSource? SwapchainX11
         {
             get
             {
@@ -243,14 +243,14 @@ namespace Zeckoxe.Desktop
                 IntPtr Window = X11WindowHandle;
 
                 if (Window == IntPtr.Zero && Display == IntPtr.Zero)
-                    return SwapchainSource.CreateWin32(IntPtr.Zero, IntPtr.Zero);
+                    return null;
 
                 return SwapchainSource.CreateXlib(Display, Window);
             }
         }
 
 
-        public SwapchainSource SwapchainWayland
+        public SwapchainSource? SwapchainWayland
         {
             get
             {
@@ -258,21 +258,21 @@ namespace Zeckoxe.Desktop
                 IntPtr Window = WaylandWindowHandle;
 
                 if (Window == IntPtr.Zero && Display == IntPtr.Zero)
-                    return SwapchainSource.CreateWin32(IntPtr.Zero, IntPtr.Zero);
+                    return null;
 
                 return SwapchainSource.CreateXlib(Display, Window);
             }
         }
 
 
-        public SwapchainSource SwapchainNS
+        public SwapchainSource? SwapchainNS
         {
             get
             {
                 IntPtr Window = CocoaWindowHandle;
 
                 if (Window == IntPtr.Zero)
-                    return SwapchainSource.CreateNSWindow(IntPtr.Zero);
+                    return null;
 
                 return SwapchainSource.CreateNSWindow(Window);
             }
