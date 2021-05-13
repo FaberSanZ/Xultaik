@@ -44,8 +44,28 @@ namespace Zeckoxe.Vulkan
 
 
 
+        public void SetImage(int _binding, Image image)
+        {
+
+            Data.Add(new()
+            {
+                Binding = _binding,
+                Texture = image,
+                DescriptorType = VkDescriptorType.SampledImage,
+            });
+        }
 
 
+        public void SetSampler(int _binding, Sampler sampler)
+        {
+
+            Data.Add(new()
+            {
+                Binding = _binding,
+                Sampler = sampler,
+                DescriptorType = VkDescriptorType.Sampler,
+            });
+        }
 
 
 

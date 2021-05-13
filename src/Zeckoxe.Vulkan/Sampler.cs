@@ -55,7 +55,7 @@ namespace Zeckoxe.Vulkan
 
                 // The Device does not support anisotropic filtering
                 sampler.maxAnisotropy = 1.0f;
-                sampler.anisotropyEnable = true;
+                sampler.anisotropyEnable = false;
             
             sampler.borderColor = VkBorderColor.FloatOpaqueWhite;
             vkCreateSampler(NativeDevice.handle, &sampler, null, out handle);

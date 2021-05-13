@@ -102,6 +102,54 @@ namespace Zeckoxe.Vulkan
                     ptr[i] = write_descriptor;
 
                 }
+
+                else if (r.DescriptorType == VkDescriptorType.SampledImage)
+                {
+                    imageInfos[i] = new()
+                    {
+                        imageLayout = VkImageLayout.ShaderReadOnlyOptimal,
+                        imageView = r.Texture.image_view,
+                    };
+
+                    VkWriteDescriptorSet write_descriptor = new()
+                    {
+                        sType = VkStructureType.WriteDescriptorSet,
+                        dstSet = _descriptorSet,
+                        dstBinding = (uint)r.Binding,
+                        dstArrayElement = 0,
+                        descriptorType = r.DescriptorType,
+                        descriptorCount = 1,
+                        pImageInfo = &imageInfos[i],
+
+                    };
+
+
+                    ptr[i] = write_descriptor;
+
+                }
+
+                else if (r.DescriptorType == VkDescriptorType.Sampler)
+                {
+                    imageInfos[i] = new()
+                    {
+                        sampler = r.Sampler.handle,
+                    };
+
+                    VkWriteDescriptorSet write_descriptor = new()
+                    {
+                        sType = VkStructureType.WriteDescriptorSet,
+                        dstSet = _descriptorSet,
+                        dstBinding = (uint)r.Binding,
+                        descriptorType = r.DescriptorType,
+                        descriptorCount = 1,
+                        pImageInfo = &imageInfos[i],
+
+                    };
+
+
+                    ptr[i] = write_descriptor;
+
+                }
             }
 
             vkUpdateDescriptorSets(NativeDevice.handle, (uint)resources_count, ptr, 0, null);

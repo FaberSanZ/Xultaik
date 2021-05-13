@@ -143,7 +143,7 @@ namespace Zeckoxe.Vulkan
         private byte[] CompileHLSL(string path)
         {
             string profile = "";
-            string? shadermodel = "_6_0";
+            string? shadermodel = "_6_5";
 
 
             switch (Stage)
@@ -217,7 +217,7 @@ namespace Zeckoxe.Vulkan
                 "-spirv",
                 "-T", profile,
                 "-E", "main",
-                "-fspv-target-env=vulkan1.2",
+                "-fspv-target-env=vulkan1.1",
                 "-fspv-extension=SPV_NV_ray_tracing",
                 "-fspv-extension=SPV_KHR_multiview",
                 "-fspv-extension=SPV_KHR_shader_draw_parameters",
@@ -327,8 +327,30 @@ namespace Zeckoxe.Vulkan
                     resource_type = spvc_resource_type.SeparateImage,
                     stage = Stage,
                 });
+
             }
 
+
+            spvc_reflected_resource* SeparateSamplersList = default;
+            nuint SeparateSamplersCount = default;
+
+            spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SeparateSamplers, (spvc_reflected_resource*)&SeparateSamplersList, &SeparateSamplersCount);
+            for (uint i = 0; i < SeparateSamplersCount; i++)
+            {
+                uint set = spvc_compiler_get_decoration(compiler_glsl, (SpvId)SeparateSamplersList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_glsl, (SpvId)SeparateSamplersList[i].id, SpvDecoration.SpvDecorationBinding);
+
+                Resources.Add(new()
+                {
+                    set = set,
+                    binding = binding,
+                    resource_type = spvc_resource_type.SeparateSamplers,
+                    stage = Stage,
+                });
+            }
+
+
+            //Console.WriteLine(sampledImageCount);
 
 
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SampledImage, (spvc_reflected_resource*)&sampledImageList, &sampledImageCount);
@@ -344,8 +366,10 @@ namespace Zeckoxe.Vulkan
                     resource_type = spvc_resource_type.SampledImage,
                     stage = Stage,
                 });
-            }
 
+                Console.WriteLine(set);
+                Console.WriteLine(binding);
+            }
 
 
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.PushConstant, (spvc_reflected_resource*)&pushConstantList, &pushConstantCount);

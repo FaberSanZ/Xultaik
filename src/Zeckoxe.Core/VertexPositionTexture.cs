@@ -12,29 +12,21 @@ using System.Runtime.InteropServices;
 
 namespace Zeckoxe.Core
 {
-    public interface IVertex
-    {
-
-    }
 
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct VertexPositionTexture : IEquatable<VertexPositionTexture>, IVertex
+    public struct VertexPositionTexture : IEquatable<VertexPositionTexture>
     {
 
-        public VertexPositionTexture(Vector3 position, Vector2 textureCoordinate, Vector3 _color)
+        public VertexPositionTexture(Vector3 position, Vector2 textureCoordinate)
             : this()
         {
             Position = position;
             TextureCoordinate = textureCoordinate;
-            _color = color;
 
         }
 
 
         public Vector3 Position;
-        public Vector3 color;
-
-
         public Vector2 TextureCoordinate;
 
 

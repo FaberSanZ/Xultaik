@@ -47,6 +47,7 @@ namespace Zeckoxe.Vulkan
 
         private void SetupDescriptorSetLayout()
         {
+
             // Setup layout of descriptors used in this example
             // Basically connects the different shader stages to descriptors for binding uniform buffers, image samplers, etc.
             // So every shader binding should map to one descriptor set layout binding
@@ -61,12 +62,12 @@ namespace Zeckoxe.Vulkan
                 layoutBinding[i] = new VkDescriptorSetLayoutBinding
                 {
                     binding = resources[i].binding,
-                    descriptorCount = 3,
+                    descriptorCount = 4,
                     descriptorType = resources[i].resource_type.StageTVkDescriptorType(),
                     stageFlags = resources[i].stage.StageToVkShaderStageFlags(),
                     pImmutableSamplers = null,
                 };
-
+                System.Console.WriteLine(layoutBinding[i].descriptorType);
             }
 
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
