@@ -127,6 +127,7 @@ namespace Zeckoxe.Vulkan
         public ShaderBackend Backend { get; set; }
 
 
+
         private byte[] CompileGLSL(string path)
         {
             Options _options = new();
