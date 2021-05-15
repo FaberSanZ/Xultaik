@@ -9,7 +9,7 @@
 <hr>
 
 [![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Vultaik/actions)
-[![NuGet](https://img.shields.io/nuget/v/Zeckoxe.Vulkan.svg)](https://www.nuget.org/profiles/FaberSanZ)
+[![NuGet](https://img.shields.io/nuget/v/Vultaik.svg)](https://www.nuget.org/packages?q=Tags%3A%22Vultaik%22)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FaberSanZ/Vultaik/blob/master/LICENSE) 
 
 The code is licensed under MIT. Feel free to use it for whatever purpose.
