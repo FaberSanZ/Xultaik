@@ -12,9 +12,9 @@ using Buffer = Vultaik.Buffer;
 using Interop = Vultaik.Interop;
 using Samples.Common;
 
-namespace Samples.Lighting
+namespace Samples.DiffuseLighting
 {
-    public class LightingExample : Application, IDisposable
+    public class DiffuseLightingExample : Application, IDisposable
     {
         public Camera camera { get; set; }
         public ApplicationTime GameTime { get; set; }
@@ -36,7 +36,7 @@ namespace Samples.Lighting
 
 
 
-        public LightingExample() : base()
+        public DiffuseLightingExample() : base()
         {
 
         }
@@ -54,7 +54,7 @@ namespace Samples.Lighting
         {
             base.InitializeSettings();
             Parameters.Settings.Validation = ValidationType.None;
-            Window.Title += " - (Lighting) ";
+            Window.Title += " - (Diffuse Lighting) ";
         }
 
 
@@ -75,7 +75,7 @@ namespace Samples.Lighting
             Model = Matrix4x4.Identity;
 
             uniform = new(camera.Projection, Model, camera.View);
-            light = new(new(1.2f, 1.0f, 1.0f), camera.Position, new(1, 1, 1));
+            light = new(new Vector4(1.0f, 1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f));
 
 
             BufferDescription bufferDescription = new()
@@ -120,21 +120,22 @@ namespace Samples.Lighting
             string shaders = Constants.ShadersFile;
             string images = Constants.ImagesFile;
 
-            string Fragment = shaders + "Lighting/shader.frag";
-            string Vertex = shaders + "Lighting/shader.vert";
+            string Fragment = shaders + "Lighting/Fragment.hlsl";
+            string Vertex = shaders + "Lighting/Vertex.hlsl";
 
 
 
-            Image text1 = ImageFile.Load2DFromFile(Device, images +"UVCheckerMap08-512.png");
-            Image text2 = ImageFile.Load2DFromFile(Device, images +"IndustryForgedDark512.ktx");
-            Image text3 = ImageFile.Load2DFromFile(Device, images + "floor_tiles.bmp");
+            Image text1 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png");
+            Image text2 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap02-512.png");
+            Image text3 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap09-512.png");
 
             Sampler sampler = new Sampler(Device);
 
 
             PipelineStateDescription Pipelinedescription0 = new();
             Pipelinedescription0.SetFramebuffer(Framebuffer);
-            Pipelinedescription0.SetProgram(new[] { Fragment, Vertex });
+            Pipelinedescription0.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment, ShaderBackend.Hlsl));
+            Pipelinedescription0.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex, ShaderBackend.Hlsl));
             Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
@@ -143,8 +144,9 @@ namespace Samples.Lighting
 
             DescriptorData descriptorData_0 = new();
             descriptorData_0.SetUniformBuffer(0, ConstBuffer);
-            descriptorData_0.SetImageSampler(1, text1, sampler);
-            descriptorData_0.SetUniformBuffer(2, ConstBuffer4);
+            descriptorData_0.SetImage(1, text1);
+            descriptorData_0.SetSampler(2, sampler);
+            descriptorData_0.SetUniformBuffer(3, ConstBuffer4);
             DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
              
 
@@ -153,7 +155,8 @@ namespace Samples.Lighting
 
             PipelineStateDescription Pipelinedescription1 = new();
             Pipelinedescription1.SetFramebuffer(Framebuffer);
-            Pipelinedescription1.SetProgram(new[] { Fragment, Vertex });
+            Pipelinedescription1.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment, ShaderBackend.Hlsl));
+            Pipelinedescription1.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex, ShaderBackend.Hlsl)); 
             Pipelinedescription1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription1.SetVertexAttribute(VertexType.Position);
             Pipelinedescription1.SetVertexAttribute(VertexType.TextureCoordinate);
@@ -162,8 +165,9 @@ namespace Samples.Lighting
 
             DescriptorData descriptorData_1 = new();
             descriptorData_1.SetUniformBuffer(0, ConstBuffer2);
-            descriptorData_1.SetImageSampler(1, text2, sampler);
-            descriptorData_1.SetUniformBuffer(2, ConstBuffer4);
+            descriptorData_1.SetImage(1, text2);
+            descriptorData_1.SetSampler(2, sampler);
+            descriptorData_1.SetUniformBuffer(3, ConstBuffer4);
             DescriptorSet_1 = new(PipelineState_1, descriptorData_1);
 
 
@@ -171,7 +175,8 @@ namespace Samples.Lighting
 
             PipelineStateDescription Pipelinedescription2 = new();
             Pipelinedescription2.SetFramebuffer(Framebuffer);
-            Pipelinedescription2.SetProgram(new[] { Fragment, Vertex });
+            Pipelinedescription2.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment, ShaderBackend.Hlsl));
+            Pipelinedescription2.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex, ShaderBackend.Hlsl)); 
             Pipelinedescription2.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription2.SetVertexAttribute(VertexType.Position);
             Pipelinedescription2.SetVertexAttribute(VertexType.TextureCoordinate);
@@ -180,8 +185,9 @@ namespace Samples.Lighting
 
             DescriptorData descriptorData_2 = new();
             descriptorData_2.SetUniformBuffer(0, ConstBuffer3);
-            descriptorData_2.SetImageSampler(1, text3, sampler);
-            descriptorData_2.SetUniformBuffer(2, ConstBuffer4);
+            descriptorData_2.SetImage(1, text3);
+            descriptorData_2.SetSampler(2, sampler);
+            descriptorData_2.SetUniformBuffer(3, ConstBuffer4);
             DescriptorSet_2 = new(PipelineState_2, descriptorData_2);
         }
 
@@ -284,17 +290,18 @@ namespace Samples.Lighting
     [StructLayout(LayoutKind.Sequential)]
     public struct Light
     {
-        public Vector3 Pos;
-        public Vector3 ViewPos;
-        public Vector3 Color;
-        public Vector3 Pad;
+    
+        public Vector4 Diffuse;
 
-        public Light(Vector3 p, Vector3 v, Vector3 c)
+        public Vector3 LightDirection;
+
+        public float Padding;
+
+        public Light(Vector4 D, Vector3 L)
         {
-            Pos = p;
-            ViewPos = v;
-            Color = c;
-            Pad = Vector3.One;
+            Diffuse = D;
+            LightDirection = L;
+            Padding = 0;
         }
     }
 }
