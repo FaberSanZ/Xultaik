@@ -54,6 +54,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 - [ ] Multithreaded rendering
 - [x] Automatic descriptor set management
 - [x] SPIRV reflection with [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross)
+- [x] Vulkan HLSL for shaders, shaders are compiled in runtime with [DirectXShaderCompiler](https://github.com/microsoft/DirectXShaderCompiler)
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with [Shaderc](https://github.com/google/shaderc)
 - [x] GLTF 2.0 for samples
 
@@ -71,7 +72,7 @@ Example | Details
 <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/Transformations.PNG" width=350> | [Transformations](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Transformations.cs)<br> This example how to transform the world space for each object.
 <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/LoadGLTF.PNG" width=350> | [LoadGLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs)<br> This example shows how to load GLTF models.
 <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/LoadTexture.PNG" width=350> | [LoadTexture](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadTexture.cs)<br> This example shows how to load 2D texture from disk (including all mip levels). 
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/Lighting.PNG" width=350> | [Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create basic lighting. 
+<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/DiffuseLighting.PNG" width=350> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create DiffuseLighting. 
 
 
 
