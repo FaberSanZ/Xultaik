@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+﻿// Copyright(c) 2019 - 2021 Faber Leonardo.All Rights Reserved. https://github.com/FaberSanZ
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 
@@ -7,6 +7,7 @@ using SPIRVCross;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Vortice.Dxc;
 using Vortice.ShaderCompiler;
 using static SPIRVCross.SPIRV;
 
@@ -49,6 +50,12 @@ namespace Vultaik
         All = int.MaxValue
     }
 
+    public enum ShaderBackend
+    {
+        None = 0,
+        Glsl = 1,
+        Hlsl = 2,
+    }
 
     internal class ShaderResource
     {
@@ -68,22 +75,35 @@ namespace Vultaik
 
         internal List<ShaderResource> Resources { get; set; } = new();
 
-        public ShaderBytecode(string path, ShaderStage stage)
+        public ShaderBytecode(string path, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
         {
             Stage = stage;
+            Backend = backend;
 
+            switch (backend)
+            {
+                case ShaderBackend.None:
+                    Data = File.ReadAllBytes(path);
+                    break;
 
-            Data = CompileGLSL(path);
+                case ShaderBackend.Glsl:
+                    Data = CompileGLSL(path);
+                    break;
 
+                case ShaderBackend.Hlsl:
+                    Data = CompileHLSL(path);
+                    break;
+            }
 
 
             AddShaderResource(Data);
         }
 
-        public ShaderBytecode(byte[] buffer, ShaderStage stage)
+        public ShaderBytecode(byte[] buffer, ShaderStage stage, ShaderBackend backend)
         {
             Data = buffer;
             Stage = stage;
+            Backend = backend;
 
             AddShaderResource(buffer);
 
@@ -104,6 +124,8 @@ namespace Vultaik
 
         public byte[] Data { get; set; }
         public ShaderStage Stage { get; set; }
+        public ShaderBackend Backend { get; set; }
+
 
 
         private byte[] CompileGLSL(string path)
@@ -119,107 +141,107 @@ namespace Vultaik
             return result.GetBytecode().ToArray();
 
         }
-        //private byte[] CompileHLSL(string path)
-        //{
-        //    string profile = "";
-        //    string? shadermodel = "_6_5";
+        private byte[] CompileHLSL(string path)
+        {
+            string profile = "";
+            string? shadermodel = "_6_5";
 
 
-        //    switch (Stage)
-        //    {
-        //        case ShaderStage.Vertex:
-        //            profile = "vs" + shadermodel;
-        //            break;
+            switch (Stage)
+            {
+                case ShaderStage.Vertex:
+                    profile = "vs" + shadermodel;
+                    break;
 
-        //        case ShaderStage.TessellationControl:
-        //            profile = "hs" + shadermodel;
-        //            break;
+                case ShaderStage.TessellationControl:
+                    profile = "hs" + shadermodel;
+                    break;
 
-        //        case ShaderStage.TessellationEvaluation:
-        //            profile = "ds" + shadermodel;
-        //            break;
+                case ShaderStage.TessellationEvaluation:
+                    profile = "ds" + shadermodel;
+                    break;
 
-        //        case ShaderStage.Geometry:
-        //            profile = "gs" + shadermodel;
-        //            break;
+                case ShaderStage.Geometry:
+                    profile = "gs" + shadermodel;
+                    break;
 
-        //        case ShaderStage.Fragment:
-        //            profile = "ps" + shadermodel;
-        //            break;
-
-
-        //        case ShaderStage.Compute:
-        //            profile = "cs" + shadermodel;
-        //            break;
-
-        //        case ShaderStage.TaskNV:
-        //            profile = "as_6_5";
-        //            break;
-
-        //        case ShaderStage.MeshNV:
-        //            profile = "ms_6_5";
-        //            break;
-
-        //        case ShaderStage.Raygen:
-        //            profile = "lib_6_5";
-        //            break;
+                case ShaderStage.Fragment:
+                    profile = "ps" + shadermodel;
+                    break;
 
 
-        //        case ShaderStage.AnyHit:
-        //            profile = "lib_6_5";
-        //            break;
+                case ShaderStage.Compute:
+                    profile = "cs" + shadermodel;
+                    break;
 
-        //        case ShaderStage.ClosestHit:
-        //            profile = "lib_6_5";
-        //            break;
+                case ShaderStage.TaskNV:
+                    profile = "as_6_5";
+                    break;
 
-        //        case ShaderStage.Miss:
-        //            profile = "lib_6_5";
-        //            break;
+                case ShaderStage.MeshNV:
+                    profile = "ms_6_5";
+                    break;
 
-        //        case ShaderStage.Intersection:
-        //            profile = "lib_6_5";
-        //            break;
-
-        //        case ShaderStage.Callable:
-        //            profile = "lib_6_5";
-        //            break;
-
-        //    }
+                case ShaderStage.Raygen:
+                    profile = "lib_6_5";
+                    break;
 
 
+                case ShaderStage.AnyHit:
+                    profile = "lib_6_5";
+                    break;
+
+                case ShaderStage.ClosestHit:
+                    profile = "lib_6_5";
+                    break;
+
+                case ShaderStage.Miss:
+                    profile = "lib_6_5";
+                    break;
+
+                case ShaderStage.Intersection:
+                    profile = "lib_6_5";
+                    break;
+
+                case ShaderStage.Callable:
+                    profile = "lib_6_5";
+                    break;
+
+            }
 
 
-        //    string? source = File.ReadAllText(path);
-        //    string[] args = new[]
-        //    {
-        //        "-spirv",
-        //        "-T", profile,
-        //        "-E", "main",
-        //        "-fspv-target-env=vulkan1.1",
-        //        "-fspv-extension=SPV_NV_ray_tracing",
-        //        "-fspv-extension=SPV_KHR_multiview",
-        //        "-fspv-extension=SPV_KHR_shader_draw_parameters",
-        //        "-fspv-extension=SPV_EXT_descriptor_indexing",
 
-        //    };
-        //    IDxcUtils? utils = Dxc.CreateDxcUtils();
-        //    IDxcIncludeHandler? handler = utils!.CreateDefaultIncludeHandler();
 
-        //    IDxcCompiler3? compiler = Dxc.CreateDxcCompiler3();
+            string? source = File.ReadAllText(path);
+            string[] args = new[]
+            {
+                "-spirv",
+                "-T", profile,
+                "-E", "main",
+                "-fspv-target-env=vulkan1.1",
+                "-fspv-extension=SPV_NV_ray_tracing",
+                "-fspv-extension=SPV_KHR_multiview",
+                "-fspv-extension=SPV_KHR_shader_draw_parameters",
+                "-fspv-extension=SPV_EXT_descriptor_indexing",
 
-        //    IDxcResult? result = compiler?.Compile(source, args, handler);
+            };
+            IDxcUtils? utils = Dxc.CreateDxcUtils();
+            IDxcIncludeHandler? handler = utils!.CreateDefaultIncludeHandler();
 
-        //    if (result == null || result.GetStatus().Failure)
-        //    {
-        //        throw new Exception(result!.GetErrors());
-        //    }
+            IDxcCompiler3? compiler = Dxc.CreateDxcCompiler3();
 
-        //    byte[] data = result.GetObjectBytecodeArray();
+            IDxcResult? result = compiler?.Compile(source, args, handler);
 
-        //    result.Dispose();
-        //    return data;
-        //}
+            if (result == null || result.GetStatus().Failure)
+            {
+                throw new Exception(result!.GetErrors());
+            }
+
+            byte[] data = result.GetObjectBytecodeArray();
+
+            result.Dispose();
+            return data;
+        }
 
         public void AddShaderResource(byte[] data)
         {
@@ -254,10 +276,6 @@ namespace Vultaik
             spvc_reflected_resource* pushConstantList = default;
             nuint pushConstantCount = default;
 
-            spvc_reflected_resource* SeparateSamplersList = default;
-            nuint SeparateSamplersCount = default;
-
-
 
 
             byte* result_ = null;
@@ -274,7 +292,8 @@ namespace Vultaik
             spvc_context_parse_spirv(context, spirv, word_count, &ir);
 
             // Hand it off to a compiler instance and give it ownership of the IR.
-            spvc_context_create_compiler(context, spvc_backend.Glsl, ir, spvc_capture_mode.TakeOwnership, &compiler_glsl);
+            spvc_backend backend = Backend == ShaderBackend.Hlsl ? spvc_backend.Hlsl : spvc_backend.Glsl;
+            spvc_context_create_compiler(context, backend, ir, spvc_capture_mode.TakeOwnership, &compiler_glsl);
 
             spvc_compiler_create_shader_resources(compiler_glsl, &resources);
 
@@ -313,6 +332,9 @@ namespace Vultaik
             }
 
 
+            spvc_reflected_resource* SeparateSamplersList = default;
+            nuint SeparateSamplersCount = default;
+
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SeparateSamplers, (spvc_reflected_resource*)&SeparateSamplersList, &SeparateSamplersCount);
             for (uint i = 0; i < SeparateSamplersCount; i++)
             {
@@ -345,6 +367,9 @@ namespace Vultaik
                     resource_type = spvc_resource_type.SampledImage,
                     stage = Stage,
                 });
+
+                Console.WriteLine(set);
+                Console.WriteLine(binding);
             }
 
 
@@ -376,14 +401,14 @@ namespace Vultaik
         }
 
 
-        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage)
+        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
         {
-            return new ShaderBytecode(path, stage);
+            return new ShaderBytecode(path, stage, backend);
         }
 
-        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage)
+        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
         {
-            return new ShaderBytecode(bytes, stage);
+            return new ShaderBytecode(bytes, stage, backend);
         }
 
         public static implicit operator byte[](ShaderBytecode shaderBytecode)
