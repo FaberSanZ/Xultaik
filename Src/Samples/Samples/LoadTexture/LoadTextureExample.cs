@@ -20,10 +20,6 @@ namespace Samples.LoadTexture
         internal int TexturePixelSize = 4;  // The number of bytes used to represent a pixel in the texture. RGBA
 
 
-
-
-
-
         public Camera Camera { get; set; }
         public ApplicationTime GameTime { get; set; }
 
