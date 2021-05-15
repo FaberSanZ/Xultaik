@@ -1,0 +1,46 @@
+﻿<Project>
+  <PropertyGroup>
+
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <RepositoryRootDirectory>$(MSBuildThisFileDirectory)../</RepositoryRootDirectory>
+    <BinDir>$(RepositoryRootDirectory)bin</BinDir>
+    <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(BinDir)\$(MSBuildProjectName)\</BaseOutputPath>
+
+
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>CS1591;CS1701</NoWarn>
+
+    <PackageTags>gamedev Vulkan Zeckoxe</PackageTags>
+    <Company>Faber Leonardo</Company>
+    <Authors>Faber Leonardo</Authors>
+    <Copyright>Copyright © 2020-2021 Faber Leonardo and contributors.</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/FaberSanZ/Zeckoxe</PackageProjectUrl>
+
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Packages versions -->
+    <NerdbankGitVersioningVersion>3.3.37</NerdbankGitVersioningVersion>
+    <GitHubSourceLinkVersion>1.1.0-beta-20204-02</GitHubSourceLinkVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="$(NerdbankGitVersioningVersion)" PrivateAssets="all" />
+
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(GitHubSourceLinkVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
