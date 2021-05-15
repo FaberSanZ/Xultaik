@@ -55,8 +55,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 - [x] Automatic descriptor set management
 - [x] SPIRV reflection with [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross)
 - [x] Vulkan GLSL for shaders, shaders are compiled in runtime with [Shaderc](https://github.com/google/shaderc)
-- [x] Vulkan HLSL for shaders, shaders are compiled in runtime with [DirectXShaderCompiler](https://github.com/microsoft/DirectXShaderCompiler)
-- [x] GLTF 2.0
+- [x] GLTF 2.0 for samples
 
 <hr>
 <br>
@@ -88,7 +87,7 @@ The-Forge (<https://github.com/ConfettiFX/The-Forge>)
 <br>
 
 
-Additionally, **Zeckoxe** uses NuGet packages from the following repositories:
+Additionally, **Vultaik** uses NuGet packages from the following repositories:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan)
 - [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows)
