@@ -11,7 +11,7 @@ namespace Samples.ClearScreen
     {
         public ClearScreenExample()
         {
-            Window = new("Zeckoxe Engine", 1200, 800);
+            Window = new("Vultaik - (ClearScreen)", 1200, 800);
 
             Parameters = new()
             {
@@ -19,10 +19,9 @@ namespace Samples.ClearScreen
                 BackBufferHeight = Window.Height,
                 Settings = new()
                 {
-                    Validation = ValidationType.Error,
+                    Validation = ValidationType.None,
                     Fullscreen = false,
                     VSync = false,
-                    OptionalDeviceExtensions = OptionalDeviceExtensions.BindMemory2 | OptionalDeviceExtensions.CopyCommands2,
                 },
             };
         }
@@ -36,6 +35,16 @@ namespace Samples.ClearScreen
         public SwapChain SwapChain { get; set; }
 
         public CommandBuffer CommandBuffer { get; set; }
+
+
+        public float R { get; set; }
+        public float G { get; set; }
+        public float B { get; set; }
+        public float A { get; set; }
+
+        private float ModR = 20;
+        private float ModG = 20;
+        private float ModB = 20;
 
 
 
@@ -113,7 +122,19 @@ namespace Samples.ClearScreen
 
         public void Update()
         {
+            //Update the colors of our scene
+            R += ModR * 0.00005f;
+            G += ModG * 0.00002f;
+            B += ModB * 0.00001f;
 
+            if (R >= 1.0f || R <= 0.0f)
+                ModR *= -1;
+
+            if (G >= 1.0f || G <= 0.0f)
+                ModG *= -1;
+
+            if (B >= 1.0f || B <= 0.0f)
+                ModB *= -1;
         }
 
         public void Draw()
@@ -122,7 +143,7 @@ namespace Samples.ClearScreen
             Device.WaitIdle();
 
             CommandBuffer.Begin();
-            CommandBuffer.BeginFramebuffer(Framebuffer);
+            CommandBuffer.BeginFramebuffer(Framebuffer, R, G, B, A);
 
             CommandBuffer.Close();
             CommandBuffer.Submit();
