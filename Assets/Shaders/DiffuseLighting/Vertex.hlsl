@@ -16,7 +16,8 @@ cbuffer ubo : register(b0) { UBO ubo; }
 
 
 
-struct PushConsts {
+struct PushConsts 
+{
 	float4x4 model;
 };
 [[vk::push_constant]] PushConsts primitive;
