@@ -87,7 +87,7 @@ The-Forge (<https://github.com/ConfettiFX/The-Forge>)
 <br>
 
 
-Additionally, **Zeckoxe** uses NuGet packages from the following repositories:
+Additionally, **Vultaik** uses NuGet packages from the following repositories:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan)
 - [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows)
