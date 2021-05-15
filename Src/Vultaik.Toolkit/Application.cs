@@ -52,9 +52,8 @@ namespace Vultaik.Engine
         {
             base.InitializeSettings();
 
-            Window = new Window("Zeckoxe Engine", 1200, 800)
+            Window = new Window("Vultaik", 1200, 800)
             {
-                //StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen,
             };
 
 
