@@ -97,13 +97,11 @@ namespace Samples.LoadGLTF
 
             string shaders = Constants.ShadersFile;
 
-            string Fragment = shaders + "LoadGLTF/shader.frag";
-            string Vertex = shaders + "LoadGLTF/shader.vert";
-
 
             PipelineStateDescription pipelineStateDescription = new();
             pipelineStateDescription.SetFramebuffer(Framebuffer);
-            pipelineStateDescription.SetProgram(new[] { Fragment, Vertex });
+            pipelineStateDescription.SetShader(new ShaderBytecode(shaders + "LoadGLTF/Fragment.hlsl", ShaderStage.Fragment, ShaderBackend.Hlsl));
+            pipelineStateDescription.SetShader(new ShaderBytecode(shaders + "LoadGLTF/Vertex.hlsl", ShaderStage.Vertex, ShaderBackend.Hlsl)); 
             pipelineStateDescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormal.Size);
             pipelineStateDescription.SetVertexAttribute(VertexType.Position);
             pipelineStateDescription.SetVertexAttribute(VertexType.Color);
