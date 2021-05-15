@@ -120,8 +120,8 @@ namespace Samples.DiffuseLighting
             string shaders = Constants.ShadersFile;
             string images = Constants.ImagesFile;
 
-            string Fragment = shaders + "Lighting/Fragment.hlsl";
-            string Vertex = shaders + "Lighting/Vertex.hlsl";
+            string Fragment = shaders + "DiffuseLighting/Fragment.hlsl";
+            string Vertex = shaders + "DiffuseLighting/Vertex.hlsl";
 
 
 

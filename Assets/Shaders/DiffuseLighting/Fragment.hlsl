@@ -12,7 +12,7 @@ struct LightBuffer
 };
 
 
-cbuffer ubol : register(b3) { LightBuffer ubol; }
+cbuffer light : register(b3) { LightBuffer light; }
 
 
 
@@ -24,15 +24,6 @@ struct VSOutput
 
 float4 main(VSOutput input) : SV_TARGET
 {
-	//float4 color = textureColor.Sample(samplerColor, input.UV);
-
-
-	//return color;
-
-
-
-
-
 
 	float4 textureColor;
 	float3 lightDir;
@@ -44,13 +35,13 @@ float4 main(VSOutput input) : SV_TARGET
 	textureColor = shaderTexture.Sample(samplerColor, input.UV);
 
 	// Invert the light direction for calculations.
-	lightDir = -ubol.lightDirection;
+	lightDir = -light.lightDirection;
 
 	// Calculate the amount of light on this pixel.
 	lightIntensity = saturate(dot(input.Normal, lightDir));
 
 	// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
-	color = saturate(ubol.diffuseColor * lightIntensity);
+	color = saturate(light.diffuseColor * lightIntensity);
 
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
 	color = color * textureColor;
