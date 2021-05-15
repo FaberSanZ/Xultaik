@@ -8,14 +8,13 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
-using Zeckoxe.Core;
-using Zeckoxe.Desktop;
-using Zeckoxe.Engine;
-using Zeckoxe.GLTF;
-using Zeckoxe.Vulkan;
-using Zeckoxe.Physics;
-using Buffer = Zeckoxe.Vulkan.Buffer;
-using Interop = Zeckoxe.Core.Interop;
+using Vultaik.Desktop;
+using Vultaik.Engine;
+using Vultaik.GLTF;
+using Vultaik;
+using Vultaik.Physics;
+using Buffer = Vultaik.Buffer;
+using Interop = Vultaik.Interop;
 using Samples.Common;
 
 namespace Samples.LoadGLTF

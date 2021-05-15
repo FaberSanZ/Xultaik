@@ -17,109 +17,13 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Zeckoxe.Desktop\Zeckoxe.Desktop.csproj" />
-    <ProjectReference Include="..\Zeckoxe.Engine\Zeckoxe.Engine.csproj" />
-    <ProjectReference Include="..\Zeckoxe.GLTF\Zeckoxe.GLTF.csproj" />
-    <ProjectReference Include="..\Zeckoxe.Vulkan\Zeckoxe.Vulkan.csproj" />
-    <ProjectReference Include="..\Zeckoxe.Physics\Zeckoxe.Physics.csproj" />
+    <ProjectReference Include="..\Vultaik.Toolkit\Vultaik.Toolkit.csproj" />
+    <ProjectReference Include="..\Vultaik\Vultaik.csproj" />
   </ItemGroup>
 
 
   <ItemGroup>
     <None Update="floor_tiles.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\BoxVertexColors.glb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\CesiumMan.glb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\NormalTangentTest.glb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\bg.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\chinesedragon.gltf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\DamagedHelmet.bin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\DamagedHelmet.glb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\DamagedHelmet.gltf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\Default_albedo.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\Default_AO.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\Default_emissive.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\Default_metalRoughness.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\Default_normal.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\mesh_mat.bin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\mesh_mat.gltf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\model.glb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\BoxVertexColors.bin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\cornellBox.bin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\daytime.hdr">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\grunge-green.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\grunge-grey.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\grunge-red.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\hdri-19_color_small.hdr">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\mask.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\refl.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\robot-base-vis.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\robot-face-vis2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\robot-torso-vis.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\robot.bin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\robot\robot.gltf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Models\sponza.gltf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Stonewall.bmp">

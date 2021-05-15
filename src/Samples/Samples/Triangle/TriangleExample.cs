@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Zeckoxe.Core;
-using Zeckoxe.Desktop;
-using Zeckoxe.Engine;
-using Zeckoxe.Vulkan;
-using Zeckoxe.Physics;
-using Buffer = Zeckoxe.Vulkan.Buffer;
+using Vultaik;
+using Vultaik.Desktop;
+using Vultaik.Engine;
+using Vultaik.Physics;
+using Buffer = Vultaik.Buffer;
 using Vortice.Vulkan;
-using Interop = Zeckoxe.Core.Interop;
+using Interop = Vultaik.Interop;
 using Samples.Common;
 
 namespace Samples.Triangle

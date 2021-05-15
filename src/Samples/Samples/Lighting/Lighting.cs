@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
-using Zeckoxe.Core;
-using Zeckoxe.Desktop;
-using Zeckoxe.Physics;
-using Zeckoxe.Engine;
-using Zeckoxe.GLTF;
-using Zeckoxe.Vulkan;
-using Buffer = Zeckoxe.Vulkan.Buffer;
-using Interop = Zeckoxe.Core.Interop;
+using Vultaik.Desktop;
+using Vultaik.Physics;
+using Vultaik.Engine;
+using Vultaik.GLTF;
+using Vultaik;
+using Buffer = Vultaik.Buffer;
+using Interop = Vultaik.Interop;
 using Samples.Common;
 
 namespace Samples.Lighting

@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Zeckoxe.Core;
-using Zeckoxe.Desktop;
-using Zeckoxe.Vulkan;
+using Vultaik.Desktop;
+using Vultaik;
 
 namespace Samples.ClearScreen
 {

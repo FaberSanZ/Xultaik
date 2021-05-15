@@ -4,13 +4,12 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
-using Zeckoxe.Core;
-using Zeckoxe.Desktop;
-using Zeckoxe.Engine;
-using Zeckoxe.GLTF;
-using Zeckoxe.Vulkan;
-using Buffer = Zeckoxe.Vulkan.Buffer;
-using Interop = Zeckoxe.Core.Interop;
+using Vultaik.Desktop;
+using Vultaik.Engine;
+using Vultaik.GLTF;
+using Vultaik;
+using Buffer = Vultaik.Buffer;
+using Interop = Vultaik.Interop;
 
 namespace Samples.Skinning
 {
