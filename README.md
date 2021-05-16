@@ -63,6 +63,9 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 
 
 ## Examples
+### 
+
+> ℹ️: All examples use HLSL.
 
 
 Example | Details
