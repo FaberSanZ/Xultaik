@@ -44,7 +44,7 @@ float4 main(VSOutput input) : SV_TARGET
 	color = saturate(light.diffuseColor * lightIntensity);
 
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-	color = color * textureColor;
+	color *= textureColor;
 
 	return color;
 

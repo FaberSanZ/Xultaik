@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Vultaik.Desktop;
-using Vultaik.Engine;
 using Vultaik;
 using Vultaik.Physics;
 using Buffer = Vultaik.Buffer;
@@ -13,7 +12,7 @@ using Samples.Common;
 
 namespace Samples.LoadTexture
 {
-    public class LoadTextureExample : Application, IDisposable
+    public class LoadTextureExample : IDisposable
     {
         internal int TextureWidth = 256; //Texture Data
         internal int TextureHeight = 256; //Texture Data
@@ -21,7 +20,6 @@ namespace Samples.LoadTexture
 
 
         public Camera Camera { get; set; }
-        public ApplicationTime GameTime { get; set; }
 
         public int[] Indices = new[]
         {
@@ -36,6 +34,15 @@ namespace Samples.LoadTexture
             new(new(0.5f,  -0.5f, -0.5f),  new Vector2(1.0f, 0.0f)) ,
         };
 
+
+        public PresentationParameters Parameters { get; set; }
+        public Adapter Adapter { get; set; }
+        public Device Device { get; set; }
+        public Framebuffer Framebuffer { get; set; }
+        public SwapChain SwapChain { get; set; }
+        public GraphicsContext Context { get; set; }
+        public Matrix4x4 Model { get; set; }
+        public Window? Window { get; set; }
 
 
         public GraphicsPipeline PipelineState_0;
@@ -59,16 +66,41 @@ namespace Samples.LoadTexture
         }
 
 
-        public override void InitializeSettings()
+        public void Initialize()
         {
-            base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.None;
-            Window.Title += " - (LoadTexture) ";
-        }
+            Window = new Window("Vultaik", 1200, 800);
 
-        public override void Initialize()
-        {
-            base.Initialize();
+            Parameters = new PresentationParameters()
+            {
+                BackBufferWidth = Window.Width,
+                BackBufferHeight = Window.Height,
+                Settings = new Settings()
+                {
+                    Validation = ValidationType.None,
+                    Fullscreen = false,
+                    VSync = false,
+                },
+            };
+
+
+
+            Adapter = new Adapter(Parameters);
+
+            Device = new Device(Adapter);
+
+            SwapChain = new SwapChain(Device, new()
+            {
+                Source = GetSwapchainSource(),
+                ColorSrgb = false,
+                Height = Window.Height,
+                Width = Window.Width,
+                SyncToVerticalBlank = false,
+                DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
+            });
+
+            Context = new GraphicsContext(Device);
+            Framebuffer = new Framebuffer(SwapChain);
+
 
             Camera = new(45f, 1f, 0.1f, 64f);
             Camera.SetPosition(0, 0.34f, -3.5f);
@@ -182,7 +214,7 @@ namespace Samples.LoadTexture
 
 
 
-        public override void Update(ApplicationTime game)
+        public void Update()
         {
             Camera.Update();
 
@@ -205,11 +237,13 @@ namespace Samples.LoadTexture
 
 
 
-        public override void BeginDraw()
+        public void Draw()
         {
-            base.BeginDraw();
 
+            Device.WaitIdle();
             CommandBuffer commandBuffer = Context.CommandBuffer;
+            commandBuffer.Begin();
+
 
             commandBuffer.BeginFramebuffer(Framebuffer);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
@@ -230,8 +264,45 @@ namespace Samples.LoadTexture
             commandBuffer.SetGraphicPipeline(PipelineState_1);
             commandBuffer.BindDescriptorSets(DescriptorSet_1);
             commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
+
+
+            commandBuffer.Close();
+            commandBuffer.Submit();
+            SwapChain.Present();
         }
 
+        public void Run()
+        {
+
+            Initialize();
+
+            Window?.Show();
+            Window.RenderLoop(() =>
+            {
+                Update();
+                Draw();
+            });
+        }
+
+        public SwapchainSource GetSwapchainSource()
+        {
+            if (Adapter.SupportsSurface)
+            {
+                if (Adapter.SupportsWin32Surface)
+                    return Window.SwapchainWin32;
+
+                if (Adapter.SupportsX11Surface)
+                    return Window.SwapchainX11;
+
+                if (Adapter.SupportsWaylandSurface)
+                    return Window.SwapchainWayland;
+
+                if (Adapter.SupportsMacOSSurface)
+                    return Window.SwapchainNS;
+            }
+
+            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
+        }
 
         internal byte[] GenerateTextureData()
         {

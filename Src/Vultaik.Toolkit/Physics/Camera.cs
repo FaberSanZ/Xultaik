@@ -1,13 +1,8 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. Faber.reach@gmail.com
-
-/*===================================================================================
-	Camera.cs
-====================================================================================*/
+﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. Faber.reach@gmail.com
 
 
 using System;
 using System.Numerics;
-using Vultaik.Engine;
 
 namespace Vultaik.Physics
 {

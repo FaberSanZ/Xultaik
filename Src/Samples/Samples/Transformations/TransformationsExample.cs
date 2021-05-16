@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Vultaik.Desktop;
-using Vultaik.Engine;
 using Vultaik;
 using Vultaik.Physics;
 using Buffer = Vultaik.Buffer;
@@ -13,32 +12,7 @@ using Samples.Common;
 
 namespace Samples.Transformations
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct TransformUniform
-    {
-        public TransformUniform(Matrix4x4 m, Matrix4x4 v, Matrix4x4 p)
-        {
-            P = p;
-            M = m;
-            V = v;
-        }
-
-        public Matrix4x4 M;
-
-        public Matrix4x4 V;
-
-        public Matrix4x4 P;
-
-
-        public void Update(Camera camera, Matrix4x4 m)
-        {
-            P = camera.Projection;
-            M = m;
-            V = camera.View;
-        }
-    }
-
-    public class TransformationsExample : Application, IDisposable
+    public class TransformationsExample : IDisposable
     {
 
 
@@ -117,6 +91,15 @@ namespace Samples.Transformations
 
 
 
+        public Camera Camera { get; set; }
+        public PresentationParameters Parameters { get; set; }
+        public Adapter Adapter { get; set; }
+        public Device Device { get; set; }
+        public Framebuffer Framebuffer { get; set; }
+        public SwapChain SwapChain { get; set; }
+        public GraphicsContext Context { get; set; }
+        public Matrix4x4 Model { get; set; }
+        public Window? Window { get; set; }
 
 
         public GraphicsPipeline PipelineState_0 { get; set; }
@@ -130,33 +113,38 @@ namespace Samples.Transformations
         public Buffer IndexBuffer { get; set; }
         public Buffer ConstBuffer { get; set; }
         public Buffer ConstBuffer2 { get; set; }
-        public Camera Camera { get; set; }
-        public ApplicationTime GameTime { get; set; }
 
 
 
-        public TransformationsExample() : base()
+        public TransformationsExample() 
         {
 
         }
 
 
-        // Transform Uniform 
         public TransformUniform uniform;
         public float yaw;
         public float pitch;
         public float roll;
 
-        public override void InitializeSettings()
-        {
-            base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.None;
-            Window.Title += " - (Transformations) ";
-        }
 
-        public override void Initialize()
+
+        public void Initialize()
         {
-            base.Initialize();
+            Window = new Window("Vultaik", 1200, 800);
+
+            Parameters = new PresentationParameters()
+            {
+                BackBufferWidth = Window.Width,
+                BackBufferHeight = Window.Height,
+                //SwapchainSource = Window.GetSwapchainSource(Adapter),
+                Settings = new Settings()
+                {
+                    Validation = ValidationType.None,
+                    Fullscreen = false,
+                    VSync = false,
+                },
+            };
 
 
             Camera = new(45f, 1f, 0.1f, 64f);
@@ -165,9 +153,30 @@ namespace Samples.Transformations
             Camera.Update();
 
 
+            Adapter = new Adapter(Parameters);
+
+            Device = new Device(Adapter);
+
+            SwapChain = new SwapChain(Device, new()
+            {
+                Source = GetSwapchainSource(),
+                ColorSrgb = false,
+                Height = Window.Height,
+                Width = Window.Width,
+                SyncToVerticalBlank = false,
+                DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
+            });
+
+            Framebuffer = new Framebuffer(SwapChain);
+
+            Context = new GraphicsContext(Device);
             // Reset Model
             Model = Matrix4x4.Identity;
-            Models.Add(Model);
+
+
+
+            // Reset Model
+            Model = Matrix4x4.Identity;
 
 
             uniform = new(Camera.Projection, Model, Camera.View);
@@ -263,7 +272,7 @@ namespace Samples.Transformations
 
 
 
-        public override void Update(ApplicationTime game)
+        public void Update()
         {
             Camera.Update();
 
@@ -284,12 +293,13 @@ namespace Samples.Transformations
         }
 
 
-        public override void BeginDraw()
+        public void Draw()
         {
-            base.BeginDraw();
 
+            Device.WaitIdle();
             CommandBuffer commandBuffer = Context.CommandBuffer;
 
+            commandBuffer.Begin();
             commandBuffer.BeginFramebuffer(Framebuffer, .0f, .2f, .4f);
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
@@ -307,12 +317,76 @@ namespace Samples.Transformations
             commandBuffer.SetGraphicPipeline(PipelineState_1);
             commandBuffer.BindDescriptorSets(DescriptorSet_1);
             commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);
+
+
+            commandBuffer.Close();
+            commandBuffer.Submit();
+            SwapChain.Present();
         }
+
+        public void Run()
+        {
+
+            Initialize();
+
+            Window?.Show();
+            Window.RenderLoop(() =>
+            {
+                Update();
+                Draw();
+            });
+        }
+
+        public SwapchainSource GetSwapchainSource()
+        {
+            if (Adapter.SupportsSurface)
+            {
+                if (Adapter.SupportsWin32Surface)
+                    return Window.SwapchainWin32;
+
+                if (Adapter.SupportsX11Surface)
+                    return Window.SwapchainX11;
+
+                if (Adapter.SupportsWaylandSurface)
+                    return Window.SwapchainWayland;
+
+                if (Adapter.SupportsMacOSSurface)
+                    return Window.SwapchainNS;
+            }
+
+            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
+        }
+
 
 
         public void Dispose()
         {
             Adapter.Dispose();
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct TransformUniform
+    {
+        public TransformUniform(Matrix4x4 m, Matrix4x4 v, Matrix4x4 p)
+        {
+            P = p;
+            M = m;
+            V = v;
+        }
+
+        public Matrix4x4 M;
+
+        public Matrix4x4 V;
+
+        public Matrix4x4 P;
+
+
+        public void Update(Camera camera, Matrix4x4 m)
+        {
+            P = camera.Projection;
+            M = m;
+            V = camera.View;
         }
     }
 }

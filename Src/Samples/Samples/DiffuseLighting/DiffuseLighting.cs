@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using Vultaik.Desktop;
 using Vultaik.Physics;
-using Vultaik.Engine;
 using Vultaik.GLTF;
 using Vultaik;
 using Buffer = Vultaik.Buffer;
@@ -14,12 +13,21 @@ using Samples.Common;
 
 namespace Samples.DiffuseLighting
 {
-    public class DiffuseLightingExample : Application, IDisposable
+    public class DiffuseLightingExample : IDisposable
     {
         public Camera camera { get; set; }
-        public ApplicationTime GameTime { get; set; }
 
         public ModelAssetImporter<VertexPositionNormalTexture> GLTFModel { get; set; }
+
+        public Camera Camera { get; set; }
+        public PresentationParameters Parameters { get; set; }
+        public Adapter Adapter { get; set; }
+        public Device Device { get; set; }
+        public Framebuffer Framebuffer { get; set; }
+        public SwapChain SwapChain { get; set; }
+        public GraphicsContext Context { get; set; }
+        public Matrix4x4 Model { get; set; }
+        public Window? Window { get; set; }
 
         public DescriptorSet DescriptorSet_0 { get; set; }
         public DescriptorSet DescriptorSet_1 { get; set; }
@@ -50,20 +58,43 @@ namespace Samples.DiffuseLighting
         public float roll;
 
 
-        public override void InitializeSettings()
+
+
+
+        public void Initialize()
         {
-            base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.None;
-            Window.Title += " - (Diffuse Lighting) ";
-        }
+            Window = new Window("Vultaik", 1200, 800);
+
+            Parameters = new PresentationParameters()
+            {
+                BackBufferWidth = Window.Width,
+                BackBufferHeight = Window.Height,
+                Settings = new Settings()
+                {
+                    Validation = ValidationType.None,
+                    Fullscreen = false,
+                    VSync = false,
+                },
+            };
 
 
 
+            Adapter = new Adapter(Parameters);
 
+            Device = new Device(Adapter);
 
-        public override void Initialize()
-        {
-            base.Initialize();
+            SwapChain = new SwapChain(Device, new()
+            {
+                Source = GetSwapchainSource(),
+                ColorSrgb = false,
+                Height = Window.Height,
+                Width = Window.Width,
+                SyncToVerticalBlank = false,
+                DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
+            });
+
+            Context = new GraphicsContext(Device);
+            Framebuffer = new Framebuffer(SwapChain);
 
             camera = new Camera(45f, 1f, 0.1f, 64f);
             camera.SetRotation(0, 0, 0);
@@ -193,7 +224,7 @@ namespace Samples.DiffuseLighting
 
 
 
-        public override void Update(ApplicationTime game)
+        public void Update()
         {
 
             ConstBuffer4.SetData(ref light);
@@ -217,12 +248,13 @@ namespace Samples.DiffuseLighting
         }
 
 
-        public override void BeginDraw()
+        public void Draw()
         {
-            base.BeginDraw();
 
-
+            Device.WaitIdle();
             CommandBuffer cmd = Context.CommandBuffer;
+
+            cmd.Begin();
             cmd.BeginFramebuffer(Framebuffer);
             cmd.SetScissor(Window.Width, Window.Height, 0, 0);
             cmd.SetViewport(Window.Width, Window.Height, 0, 0);
@@ -241,22 +273,56 @@ namespace Samples.DiffuseLighting
             cmd.BindDescriptorSets(DescriptorSet_2);
             cmd.SetGraphicPipeline(PipelineState_2);
             GLTFModel.Draw(cmd, PipelineState_2);
+
+
+            cmd.Close();
+            cmd.Submit();
+            SwapChain.Present();
         }
 
 
-        public override void Destroy()
+        public void Run()
+        {
+
+            Initialize();
+
+            Window?.Show();
+            Window.RenderLoop(() =>
+            {
+                Update();
+                Draw();
+            });
+        }
+
+        public SwapchainSource GetSwapchainSource()
+        {
+            if (Adapter.SupportsSurface)
+            {
+                if (Adapter.SupportsWin32Surface)
+                    return Window.SwapchainWin32;
+
+                if (Adapter.SupportsX11Surface)
+                    return Window.SwapchainX11;
+
+                if (Adapter.SupportsWaylandSurface)
+                    return Window.SwapchainWayland;
+
+                if (Adapter.SupportsMacOSSurface)
+                    return Window.SwapchainNS;
+            }
+
+            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
+        }
+
+
+
+
+        public void Dispose()
         {
             ConstBuffer.Dispose();
             ConstBuffer2.Dispose();
             ConstBuffer3.Dispose();
             ConstBuffer4.Dispose();
-            base.Destroy();
-        }
-
-
-        public void Dispose()
-        {
-            Destroy();
         }
     }
 

@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Vultaik;
 using Vultaik.Desktop;
-using Vultaik.Engine;
 using Vultaik.Physics;
 using Buffer = Vultaik.Buffer;
 using Vortice.Vulkan;
@@ -13,34 +12,7 @@ using Samples.Common;
 
 namespace Samples.Triangle
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct TransformUniform
-    {
-        public TransformUniform(Matrix4x4 m, Matrix4x4 v, Matrix4x4 p)
-        {
-            P = p;
-            M = m;
-            V = v;
-        }
-
-
-        public Matrix4x4 M;
-
-        public Matrix4x4 V;
-
-        public Matrix4x4 P;
-
-
-
-        public void Update(Camera camera, Matrix4x4 m)
-        {
-            P = camera.Projection;
-            M = m;
-            V = camera.View;
-        }
-    }
-
-    public class TriangleExample : Application, IDisposable
+    public class TriangleExample : IDisposable
     {
 
         public TriangleExample() : base()
@@ -49,10 +21,18 @@ namespace Samples.Triangle
         }
 
         public Camera Camera { get; set; }
+        public PresentationParameters Parameters { get; set; }
+        public Adapter Adapter { get; set; }
+        public Device Device { get; set; }
+        public Framebuffer Framebuffer { get; set; }
+        public SwapChain SwapChain { get; set; }
+        public GraphicsContext Context { get; set; }
+        public Matrix4x4 Model { get; set; }
+        public Window? Window { get; set; }
+
 
         public GraphicsPipeline PipelineState { get; set; }
         public DescriptorSet DescriptorSet { get; set; }
-
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
         public Buffer ConstBuffer { get; set; }
@@ -60,28 +40,49 @@ namespace Samples.Triangle
         public TransformUniform Uniform;
 
 
-
-        public override void InitializeSettings()
+        public void Initialize()
         {
-            base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.None;
-            Window.Title += " - (Triangle) ";
-        }
+            Window = new Window("Vultaik", 1200, 800);
 
-        public override void Initialize()
-        {
-            base.Initialize();
+            Parameters = new PresentationParameters()
+            {
+                BackBufferWidth = Window.Width,
+                BackBufferHeight = Window.Height,
+                Settings = new Settings()
+                {
+                    Validation = ValidationType.None,
+                    Fullscreen = false,
+                    VSync = false,
+                },
+            };
+
+
+
+            Adapter = new Adapter(Parameters);
+
+            Device = new Device(Adapter);
+
+            SwapChain = new SwapChain(Device, new()
+            {
+                Source = GetSwapchainSource(),
+                ColorSrgb = false,
+                Height = Window.Height,
+                Width = Window.Width,
+                SyncToVerticalBlank = false,
+                DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
+            });
+
+            Context = new GraphicsContext(Device);
+            Framebuffer = new Framebuffer(SwapChain);
 
             Camera = new(45f, 1f, 0.1f, 64f);
             Camera.SetPosition(0, 0, -3.0f);
             Camera.AspectRatio = (float)Window.Width / Window.Height;
-            Camera.Update(); 
-
+            Camera.Update();
 
 
             // Reset Model
             Model = Matrix4x4.Identity;
-            Models.Add(Model);
 
 
             Uniform = new(Camera.Projection, Model, Camera.View);
@@ -168,10 +169,9 @@ namespace Samples.Triangle
             DescriptorSet = new(PipelineState, descriptorData);
         }
 
-        public override void Update(ApplicationTime game)
+        public void Update()
         {
             Camera.Update();
-
 
             Uniform.Update(Camera, Model);
 
@@ -179,15 +179,14 @@ namespace Samples.Triangle
         }
 
 
-        public override void BeginDraw()
+        public void Draw()
         {
-            base.BeginDraw();
-
+            Device.WaitIdle();
             CommandBuffer commandBuffer = Context.CommandBuffer;
+            commandBuffer.Begin();
 
 
             commandBuffer.BeginFramebuffer(Framebuffer);
-
             commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
 
@@ -196,6 +195,45 @@ namespace Samples.Triangle
             commandBuffer.SetVertexBuffer(VertexBuffer);
             commandBuffer.SetIndexBuffer(IndexBuffer);
             commandBuffer.DrawIndexed(3, 1, 0, 0, 0);
+
+
+            commandBuffer.Close();
+            commandBuffer.Submit();
+            SwapChain.Present();
+        }
+
+
+        public void Run()
+        {
+
+            Initialize();
+
+            Window?.Show();
+            Window.RenderLoop(() =>
+            {
+                Update();
+                Draw();
+            });
+        }
+
+        public SwapchainSource GetSwapchainSource()
+        {
+            if (Adapter.SupportsSurface)
+            {
+                if (Adapter.SupportsWin32Surface)
+                    return Window.SwapchainWin32;
+
+                if (Adapter.SupportsX11Surface)
+                    return Window.SwapchainX11;
+
+                if (Adapter.SupportsWaylandSurface)
+                    return Window.SwapchainWayland;
+
+                if (Adapter.SupportsMacOSSurface)
+                    return Window.SwapchainNS;
+            }
+
+            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
         }
 
 
@@ -203,6 +241,34 @@ namespace Samples.Triangle
         public void Dispose()
         {
             Adapter.Dispose();
+        }
+    }
+
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct TransformUniform
+    {
+        public TransformUniform(Matrix4x4 m, Matrix4x4 v, Matrix4x4 p)
+        {
+            P = p;
+            M = m;
+            V = v;
+        }
+
+
+        public Matrix4x4 M;
+
+        public Matrix4x4 V;
+
+        public Matrix4x4 P;
+
+
+
+        public void Update(Camera camera, Matrix4x4 m)
+        {
+            P = camera.Projection;
+            M = m;
+            V = camera.View;
         }
     }
 }

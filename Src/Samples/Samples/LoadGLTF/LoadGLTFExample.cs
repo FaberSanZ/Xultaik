@@ -9,7 +9,6 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using Vultaik.Desktop;
-using Vultaik.Engine;
 using Vultaik.GLTF;
 using Vultaik;
 using Vultaik.Physics;
@@ -21,13 +20,22 @@ namespace Samples.LoadGLTF
 {
 
 
-    public class LoadGLTFExample : Application, IDisposable
+    public class LoadGLTFExample : IDisposable
     {
 
+        public Camera Camera { get; set; }
+        public PresentationParameters Parameters { get; set; }
+        public Adapter Adapter { get; set; }
+        public Device Device { get; set; }
+        public Framebuffer Framebuffer { get; set; }
+        public SwapChain SwapChain { get; set; }
+        public GraphicsContext Context { get; set; }
+        public Matrix4x4 Model { get; set; }
+        public Window? Window { get; set; }
         public Camera camera { get; set; }
-        public ApplicationTime GameTime { get; set; }
+
+
         public ModelAssetImporter<VertexPositionNormal> GLTFModel { get; set; }
-        //public List<Mesh> Meshes { get; private set; }
 
 
         public Buffer ConstBuffer;
@@ -49,18 +57,42 @@ namespace Samples.LoadGLTF
         public float roll;
 
 
-        public override void InitializeSettings()
+
+        public void Initialize()
         {
-            base.InitializeSettings();
-            Parameters.Settings.Validation = ValidationType.None;
-            Window.Title += " - (LoadGLTF) ";
-        }
+            Window = new Window("Vultaik", 1200, 800);
+
+            Parameters = new PresentationParameters()
+            {
+                BackBufferWidth = Window.Width,
+                BackBufferHeight = Window.Height,
+                Settings = new Settings()
+                {
+                    Validation = ValidationType.None,
+                    Fullscreen = false,
+                    VSync = false,
+                },
+            };
 
 
 
-        public override void Initialize()
-        {
-            base.Initialize();
+            Adapter = new Adapter(Parameters);
+
+            Device = new Device(Adapter);
+
+            SwapChain = new SwapChain(Device, new()
+            {
+                Source = GetSwapchainSource(),
+                ColorSrgb = false,
+                Height = Window.Height,
+                Width = Window.Width,
+                SyncToVerticalBlank = false,
+                DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
+            });
+
+
+            Context = new GraphicsContext(Device);
+            Framebuffer = new Framebuffer(SwapChain);
 
             camera = new Camera(45f, 1f, 0.1f, 64f);
             camera.SetPosition(0, 0, -4.0f);
@@ -114,7 +146,7 @@ namespace Samples.LoadGLTF
 
 
 
-        public override void Update(ApplicationTime game)
+        public void Update()
         {
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, .0f, 0.0f);
@@ -127,11 +159,13 @@ namespace Samples.LoadGLTF
 
 
 
-        public override void BeginDraw()
+        public void Draw()
         {
-            base.BeginDraw();
 
+            Device.WaitIdle();
             CommandBuffer commandBuffer = Context.CommandBuffer;
+            commandBuffer.Begin();
+
 
             commandBuffer.BeginFramebuffer(Framebuffer);
             commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
@@ -152,6 +186,11 @@ namespace Samples.LoadGLTF
                 }
             }
 
+
+            commandBuffer.Close();
+            commandBuffer.Submit();
+            SwapChain.Present();
+
         }
 
         public void RenderNode(CommandBuffer cmd, Node node, Matrix4x4 currentTransform)
@@ -171,6 +210,41 @@ namespace Samples.LoadGLTF
             foreach (Node child in node.Children)
                 RenderNode(cmd, child, localMat);
         }
+
+
+        public void Run()
+        {
+
+            Initialize();
+
+            Window?.Show();
+            Window.RenderLoop(() =>
+            {
+                Update();
+                Draw();
+            });
+        }
+
+        public SwapchainSource GetSwapchainSource()
+        {
+            if (Adapter.SupportsSurface)
+            {
+                if (Adapter.SupportsWin32Surface)
+                    return Window.SwapchainWin32;
+
+                if (Adapter.SupportsX11Surface)
+                    return Window.SwapchainX11;
+
+                if (Adapter.SupportsWaylandSurface)
+                    return Window.SwapchainWayland;
+
+                if (Adapter.SupportsMacOSSurface)
+                    return Window.SwapchainNS;
+            }
+
+            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
+        }
+
 
 
 
