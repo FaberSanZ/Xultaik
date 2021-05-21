@@ -56,6 +56,7 @@ namespace Samples.DiffuseLighting
         public float yaw;
         public float pitch;
         public float roll;
+        public float timer;
 
 
 
@@ -136,6 +137,7 @@ namespace Samples.DiffuseLighting
             yaw = 0f;
             pitch = 0;
             roll = 0;
+            timer = 0;
         }
 
 
@@ -223,10 +225,13 @@ namespace Samples.DiffuseLighting
         }
 
 
-
         public void Update()
         {
 
+            //light.LightDirection.X = -14.0f + MathF.Abs(MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f);
+            light.LightDirection.X = 0.0f + MathF.Sin(MathUtil.Radians(timer * 360.0f)) * MathF.Cos(MathUtil.Radians(timer * 360.0f)) * 2.0f;
+            light.LightDirection.Y = 0.0f + MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f;
+            light.LightDirection.Z = 0.0f + MathF.Cos(MathUtil.Radians(timer * 360.0f)) * 2.0f;
             ConstBuffer4.SetData(ref light);
 
 
@@ -243,8 +248,8 @@ namespace Samples.DiffuseLighting
             ConstBuffer3.SetData(ref uniform);
 
 
-            yaw += 0.0006f * MathF.PI;
-
+            timer += 0.0006f;
+            //yaw = timer * MathF.PI;
         }
 
 

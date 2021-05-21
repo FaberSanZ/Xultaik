@@ -12,7 +12,7 @@ namespace Samples
             //using var App = new Transformations.TransformationsExample();
             //using var App = new LoadGLTF.LoadGLTFExample();
             //using var App = new LoadTexture.LoadTextureExample();
-            //using var App = new DiffuseLighting.DiffuseLightingExample();
+            using var App = new DiffuseLighting.DiffuseLightingExample();
             //using var App = new Skinning.SkinningExample();
 
             App.Run();

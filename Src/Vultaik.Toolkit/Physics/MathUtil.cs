@@ -1,8 +1,5 @@
 ﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. Faber.reach@gmail.com
 
-/*===================================================================================
-	MathUtil.cs
-====================================================================================*/
 
 
 using System;
@@ -26,6 +23,12 @@ namespace Vultaik.Physics
 
 
         public const float PiOverFour = (float)(Math.PI / 4);
+
+
+        public static float Radians(float degrees)
+        {
+            return degrees * (float)Math.PI / 180f;
+        }
 
 
         // From http://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/ Comparing Floating point numbers 2012 edition
