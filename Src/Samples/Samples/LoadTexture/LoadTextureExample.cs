@@ -246,8 +246,8 @@ namespace Samples.LoadTexture
 
 
             commandBuffer.BeginFramebuffer(Framebuffer);
-            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
-            commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetScissor(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
+            commandBuffer.SetViewport(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
 
 
 
@@ -271,12 +271,23 @@ namespace Samples.LoadTexture
             SwapChain.Present();
         }
 
+        private void Window_Resize((int Width, int Height) obj)
+        {
+            Device.WaitIdle();
+            SwapChain.Resize(obj.Width, obj.Height);
+            Framebuffer.Resize();
+
+            Camera.AspectRatio = (float)obj.Width / obj.Height;
+        }
+
+
         public void Run()
         {
 
             Initialize();
 
             Window?.Show();
+            Window!.Resize += Window_Resize;
             Window.RenderLoop(() =>
             {
                 Update();

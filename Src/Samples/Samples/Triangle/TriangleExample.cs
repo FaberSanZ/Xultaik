@@ -93,8 +93,16 @@ namespace Samples.Triangle
 
 
         }
+        private void Window_Resize((int Width, int Height) obj)
+        {
+            Console.WriteLine($"Height: {obj.Height}");
+            Console.WriteLine($"Width: {obj.Width}");
+            Console.WriteLine("=======");
 
-
+            Device.WaitIdle();
+            SwapChain.Resize(obj.Width, obj.Height);
+            Framebuffer.Resize();
+        }
 
 
         public void CreateBuffers()
@@ -171,11 +179,17 @@ namespace Samples.Triangle
 
         public void Update()
         {
+
+            Camera.AspectRatio = (float)Window.FramebufferSize.Width / Window.FramebufferSize.Height;
+            //Camera.Update();
             Camera.Update();
 
             Uniform.Update(Camera, Model);
 
             ConstBuffer.SetData(ref Uniform);
+
+
+
         }
 
 
@@ -187,8 +201,8 @@ namespace Samples.Triangle
 
 
             commandBuffer.BeginFramebuffer(Framebuffer);
-            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
-            commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetViewport(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
+            commandBuffer.SetScissor(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
 
             commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.BindDescriptorSets(DescriptorSet);
@@ -209,11 +223,13 @@ namespace Samples.Triangle
             Initialize();
 
             Window?.Show();
+            Window!.Resize += Window_Resize;
             Window.RenderLoop(() =>
             {
                 Update();
                 Draw();
             });
+
         }
 
         public SwapchainSource GetSwapchainSource()

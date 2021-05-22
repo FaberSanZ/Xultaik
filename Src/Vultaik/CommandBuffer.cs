@@ -26,6 +26,8 @@ namespace Vultaik
             WaitFences = new();
 
             Recreate();
+
+            WaitFences.Add(new(NativeDevice, true));
         }
 
         public CommandBufferType Type { get; set; }
@@ -58,7 +60,7 @@ namespace Vultaik
             }
 
 
-            WaitFences.Add(new(NativeDevice, true));
+
 
         }
 
@@ -90,8 +92,8 @@ namespace Vultaik
             clearValues[0].color = new(r, g, b, a);
             clearValues[1].depthStencil = new(1, 0);
 
-            int h = NativeDevice.NativeParameters.BackBufferHeight;
-            int w = NativeDevice.NativeParameters.BackBufferWidth;
+            int h = framebuffer.SwapChain.Height;
+            int w = framebuffer.SwapChain.Width;
             int x = 0;
             int y = 0;
 
@@ -116,8 +118,8 @@ namespace Vultaik
             clearValues[0].color = new(r, g, b, a);
             clearValues[1].depthStencil = new(1, 0);
 
-            int h = NativeDevice.NativeParameters.BackBufferHeight;
-            int w = NativeDevice.NativeParameters.BackBufferWidth;
+            int h = framebuffer.SwapChain.Height;
+            int w = framebuffer.SwapChain.Width;
             int x = 0;
             int y = 0;
 
@@ -513,6 +515,11 @@ namespace Vultaik
             };
 
             vkBeginCommandBuffer(handle, &cmd_buffer_info);
+        }
+
+        public void Free()
+        {
+            vkFreeCommandBuffers(NativeDevice.handle, NativeDevice.graphics_cmd_pool, handle);
         }
 
         public void End()

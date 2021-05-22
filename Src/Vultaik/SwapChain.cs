@@ -38,15 +38,23 @@ namespace Vultaik
             SwapchainSource = description.Source;
 
             surface = CreateSurface();
+            init_queue_family();
 
-            CreateSwapChain();
+            CreateSwapChain(Parameters.BackBufferWidth, Parameters.BackBufferHeight);
 
 
             CreateBackBuffers();
 
-            if (description.DepthFormat is not null)
+            SetupDepthStencil();
+
+        }
+
+
+        public void SetupDepthStencil()
+        {
+            if (Description.DepthFormat is not null)
             {
-                DepthStencil = new Image(device, new ImageDescription
+                DepthStencil = new Image(NativeDevice, new ImageDescription
                 {
                     Flags = TextureFlags.DepthStencil,
                     Usage = GraphicsResourceUsage.Default,
@@ -57,12 +65,13 @@ namespace Vultaik
                     ImageType = VkImageType.Image2D,
                     IsCubeMap = false,
                     Size = 0,
-                    Width = Parameters.BackBufferWidth,
-                    Height = Parameters.BackBufferHeight,
-                    Format = description.DepthFormat.Value,
+                    Width = Width,
+                    Height = Height,
+                    Format = Description.DepthFormat.Value,
                 });
             }
 
+            //DepthStencil.Initialize();
         }
 
         public PresentationParameters Parameters { get; set; }
@@ -72,7 +81,7 @@ namespace Vultaik
         public Framebuffer Framebuffer { get; private set; }
         public SwapchainDescription Description { get; }
 
-        private unsafe void CreateBackBuffers()
+        public unsafe void CreateBackBuffers()
         {
 
             swapChain_image_views = new VkImageView[images.Length];
@@ -174,17 +183,11 @@ namespace Vultaik
         }
 
 
-
-        public void CreateSwapChain()
+        internal void init_queue_family()
         {
 
             VkPhysicalDevice PhysicalDevice = NativeDevice.NativeAdapter.handle;
 
-            int width = Parameters.BackBufferWidth;
-
-            int height = Parameters.BackBufferHeight;
-
-            bool vsync = Parameters.Settings.VSync;
 
 
             // Get available queue family properties
@@ -311,6 +314,31 @@ namespace Vultaik
             }
 
 
+
+
+
+        }
+
+        public void Resize(int width, int height)
+        {
+            CreateSwapChain(width, height);
+            CreateBackBuffers();
+        }
+
+
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public void CreateSwapChain(int width, int height)
+        {
+
+            VkPhysicalDevice PhysicalDevice = NativeDevice.NativeAdapter.handle;
+
+
+            Width = width;
+            Height = height;
+
+
+            bool vsync = Parameters.Settings.VSync;
             // Get physical Device Surface properties and formats
             vkGetPhysicalDeviceSurfaceCapabilitiesKHR(PhysicalDevice, surface, out VkSurfaceCapabilitiesKHR surfCaps);
 
@@ -321,7 +349,6 @@ namespace Vultaik
             vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, null);
             VkPresentModeKHR* presentModes = stackalloc VkPresentModeKHR[(int)presentModeCount];
             vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, presentModes);
-
 
             VkExtent2D swapchainExtent = default;
             // If width (and height) equals the special value 0xFFFFFFFF, the size of the Surface will be set by the swapchain
@@ -409,9 +436,9 @@ namespace Vultaik
             }
 
 
-            uint* extent = stackalloc uint[2];
-            extent[0] = swapchainExtent.width + 1;
-            extent[1] = swapchainExtent.height + 1;
+            //uint* extent = stackalloc uint[2];
+            //extent[0] = swapchainExtent.width + 1;
+            //extent[1] = swapchainExtent.height + 1;
 
             //VkExtent2D imageExtent = *(VkExtent2D*)&extent;
 
@@ -465,12 +492,19 @@ namespace Vultaik
 
             // If an existing swap chain is re-created, destroy the old swap chain
             // This also cleans up all the presentable images
-            if (oldSwapchain != VkSwapchainKHR.Null)
+            //if (oldSwapchain != VkSwapchainKHR.Null)
+            //{
+            //    vkDestroySwapchainKHR(NativeDevice.handle, oldSwapchain, null);
+            //}
+
+            if (oldSwapchain.Handle != VkSwapchainKHR.Null)
             {
+                for (uint i = 0; i < images.Length; i++)
+                {
+                    vkDestroyImageView(NativeDevice.handle, swapChain_image_views[i], null);
+                }
                 vkDestroySwapchainKHR(NativeDevice.handle, oldSwapchain, null);
             }
-
-
 
 
             uint imageCount;
@@ -481,6 +515,7 @@ namespace Vultaik
             {
                 vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, images_ptr);
             }
+
         }
 
 

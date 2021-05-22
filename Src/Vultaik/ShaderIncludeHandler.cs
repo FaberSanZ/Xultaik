@@ -69,7 +69,6 @@ namespace Vultaik
             {
                 string? filePath = Path.GetFullPath(Path.Combine(_includeDirectories[i], fileName));
 
-                Console.WriteLine(filePath);
                 if (File.Exists(filePath))
                 {
                     return filePath;
@@ -94,7 +93,7 @@ namespace Vultaik
 
                 _dataPointer = GCHandle.Alloc(data, GCHandleType.Pinned);
 
-                _blob = DxcCompiler.Utils.CreateBlob(_dataPointer.AddrOfPinnedObject(), data.Length, Dxc.DXC_CP_UTF8);
+                _blob = DxcCompiler.Utils?.CreateBlob(_dataPointer.AddrOfPinnedObject(), data.Length, Dxc.DXC_CP_UTF8);
             }
 
             public void Dispose()

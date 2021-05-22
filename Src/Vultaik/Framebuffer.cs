@@ -39,7 +39,7 @@ namespace Vultaik
             CreateFrameBuffers();
         }
 
-        internal void CreateFrameBuffers()
+        public void CreateFrameBuffers()
         {
             VkImageView[] SwapChainImageViews = SwapChain.swapChain_image_views;
             framebuffers = new VkFramebuffer[SwapChainImageViews.Length];
@@ -62,8 +62,8 @@ namespace Vultaik
                     renderPass = renderPass,
                     attachmentCount = 2,
                     pAttachments = attachments,
-                    width = (uint)NativeDevice.NativeParameters.BackBufferWidth,
-                    height = (uint)NativeDevice.NativeParameters.BackBufferWidth,
+                    width = (uint)SwapChain.Width,
+                    height = (uint)SwapChain.Height,
                     layers = 1,
                 };
 
@@ -206,6 +206,26 @@ namespace Vultaik
             vkCreateRenderPass(NativeDevice.handle, &render_pass_info, null, out renderPass).CheckResult();
         }
 
+
+        public void Resize()
+        {
+            Free();
+            CreateFrameBuffers();
+        }
+        public void Free()
+        {
+
+            //vkDestroyImageView(NativeDevice.handle, depthImageView, nullptr);
+            //vkDestroyImage(NativeDevice.handle, depthImage, nullptr);
+            //vkFreeMemory(NativeDevice.handle, depthImageMemory, nullptr);
+            SwapChain.DepthStencil.Dispose();
+
+            SwapChain.DepthStencil.Initialize(SwapChain.Width, SwapChain.Height);
+            for (int i = 0; i < SwapChain.swapChain_image_views.Length; i++)
+            {
+                vkDestroyFramebuffer(NativeDevice.handle, framebuffers[i], null);
+            }
+        }
 
         public void Dispose()
         {

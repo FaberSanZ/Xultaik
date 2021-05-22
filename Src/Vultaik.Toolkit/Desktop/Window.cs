@@ -53,6 +53,8 @@ namespace Vultaik.Desktop
         private GlfwCallbacks.WindowIconifyCallback? _onMinimized;
         private GlfwCallbacks.WindowMaximizeCallback? _onMaximized;
 
+        private bool is_render;
+
         public Window(string title, int width, int height)
         {
             _title = title;
@@ -72,7 +74,8 @@ namespace Vultaik.Desktop
 
             _onResize = (window, width, height) =>
             {
-                Resize?.Invoke((width, height));
+                if (is_render)
+                    Resize?.Invoke((width, height));
             };
 
             _onFramebufferResize = (window, width, height) =>
@@ -285,6 +288,7 @@ namespace Vultaik.Desktop
 
             while (!glfw.WindowShouldClose(pWindowHandle))
             {
+                is_render = true;
                 Update?.Invoke(0);
                 render();
                 glfw.PollEvents();

@@ -24,7 +24,7 @@ namespace Vultaik
 
         Geometry = 8,
 
-        Fragment = 16,
+        Fragment = 16, // Pixel?
 
         AllGraphics = 31,
 
@@ -180,7 +180,6 @@ namespace Vultaik
             string source = File.ReadAllText(path);
             using IDxcIncludeHandler includeHandler = new ShaderIncludeHandler(directory);
             IDxcCompiler3? compiler = Dxc.CreateDxcCompiler3();
-            Console.WriteLine();
 
             IDxcResult? result = compiler?.Compile(source, args.ToArray(), includeHandler);
 

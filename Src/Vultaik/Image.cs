@@ -165,6 +165,30 @@ namespace Vultaik
         }
 
 
+        internal void Initialize(int w, int h)
+        {
+            //create_buffer_image(0);
+
+
+            create_image(w, h);
+
+            // For depth-stencil formats, automatically fall back to a supported one
+            if (IsDepthStencil)
+            {
+                image_view = get_depth_stencil_view();
+            }
+
+            if (IsShaderResource)
+            {
+                create_buffer_image();
+
+                image_view = get_image_view();
+            }
+
+
+
+        }
+
         internal void create_buffer_image()
         {
             buffer = new Buffer(NativeDevice, new()
@@ -180,7 +204,77 @@ namespace Vultaik
 
         }
 
+        internal void create_image(int w, int h)
+        {
 
+            // Create a new image
+            VkImageCreateInfo image_create_info = new VkImageCreateInfo
+            {
+                sType = VkStructureType.ImageCreateInfo,
+                arrayLayers = 1, // TODO: arrayLayers
+                extent = new(w, h, Depth),
+                mipLevels = 1,
+                samples = VkSampleCountFlags.Count1,
+                format = Format,
+                flags = VkImageCreateFlags.None,
+                tiling = VkImageTiling.Optimal,
+                initialLayout = VkImageLayout.Undefined,
+
+                imageType = ImageType,
+            };
+
+
+
+
+            // TODO: Can we restrict more based on GraphicsResourceUsage? 
+            image_create_info.usage |= VkImageUsageFlags.TransferSrc | VkImageUsageFlags.TransferDst;
+
+            if (IsCubeMap)
+                image_create_info.flags |= VkImageCreateFlags.CubeCompatible;
+
+            if (IsRenderTarget)
+                image_create_info.usage |= VkImageUsageFlags.ColorAttachment;
+
+            if (IsDepthStencil)
+                image_create_info.usage |= VkImageUsageFlags.DepthStencilAttachment;
+
+            if (IsShaderResource)
+                image_create_info.usage |= VkImageUsageFlags.Sampled; // TODO: Input attachments
+
+            if (IsUnorderedAccess)
+                image_create_info.usage |= VkImageUsageFlags.Storage;
+
+
+
+
+
+            vkCreateImage(NativeDevice.handle, &image_create_info, null, out handle);
+
+
+            vkGetImageMemoryRequirements(NativeDevice.handle, handle, out VkMemoryRequirements imageMemReq);
+
+            VkMemoryPropertyFlags memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
+
+            uint imageHeapIndex = NativeDevice.GetMemoryTypeIndex(imageMemReq.memoryTypeBits, memoryProperties);
+
+            VkMemoryAllocateInfo allocInfo = new VkMemoryAllocateInfo
+            {
+                sType = VkStructureType.MemoryAllocateInfo,
+                pNext = null,
+                allocationSize = imageMemReq.size,
+                memoryTypeIndex = imageHeapIndex,
+            };
+
+            VkDeviceMemory _memory = default;
+            vkAllocateMemory(NativeDevice.handle, &allocInfo, null, out _memory).CheckResult();
+            memory = _memory;
+
+
+
+            vkBindImageMemory(NativeDevice.handle, handle, memory, 0).CheckResult();
+
+
+        }
         internal void create_image()
         {
 

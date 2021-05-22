@@ -9,6 +9,7 @@ using Buffer = Vultaik.Buffer;
 using Vortice.Vulkan;
 using Interop = Vultaik.Interop;
 using Samples.Common;
+using Vultaik.Toolkit;
 
 namespace Samples.Transformations
 {
@@ -100,6 +101,7 @@ namespace Samples.Transformations
         public GraphicsContext Context { get; set; }
         public Matrix4x4 Model { get; set; }
         public Window? Window { get; set; }
+        public ApplicationTime Timer;
 
 
         public GraphicsPipeline PipelineState_0 { get; set; }
@@ -153,10 +155,12 @@ namespace Samples.Transformations
             Camera.Update();
 
 
+            Timer = new();
+            Timer.Start();
+
+
             Adapter = new Adapter(Parameters);
-
             Device = new Device(Adapter);
-
             SwapChain = new SwapChain(Device, new()
             {
                 Source = GetSwapchainSource(),
@@ -168,12 +172,7 @@ namespace Samples.Transformations
             });
 
             Framebuffer = new Framebuffer(SwapChain);
-
             Context = new GraphicsContext(Device);
-            // Reset Model
-            Model = Matrix4x4.Identity;
-
-
 
             // Reset Model
             Model = Matrix4x4.Identity;
@@ -187,10 +186,6 @@ namespace Samples.Transformations
 
             CreatePipelineState();
 
-
-            yaw = 0;
-            pitch = 0;
-            roll = 0;
         }
 
 
@@ -268,6 +263,7 @@ namespace Samples.Transformations
             DescriptorData descriptorData_1 = new();
             descriptorData_1.SetUniformBuffer(0, ConstBuffer2);
             DescriptorSet_1 = new(PipelineState_1, descriptorData_1);
+
         }
 
 
@@ -276,20 +272,19 @@ namespace Samples.Transformations
         {
             Camera.Update();
 
+            float rotation = Timer.TotalMilliseconds / 800;
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(-yaw, -pitch, -roll) * Matrix4x4.CreateTranslation(-0.45f, 0.0f, 0.0f);
+            Console.WriteLine(rotation);
+            Model = Matrix4x4.CreateFromYawPitchRoll(-rotation, -rotation, -rotation) * Matrix4x4.CreateTranslation(-0.45f, 0.0f, 0.0f);
             uniform.Update(Camera, Model);
             ConstBuffer.SetData(ref uniform);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.45f, 0.0f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(rotation, rotation, rotation) * Matrix4x4.CreateTranslation(0.45f, 0.0f, 0.0f);
             uniform.Update(Camera, Model);
             ConstBuffer2.SetData(ref uniform);
 
-
-            yaw += 0.0005f * MathF.PI;
-            pitch += 0.0005f * MathF.PI;
-            roll += 0.0005f * MathF.PI;
+            Timer.Update();
         }
 
 
@@ -301,8 +296,8 @@ namespace Samples.Transformations
 
             commandBuffer.Begin();
             commandBuffer.BeginFramebuffer(Framebuffer, .0f, .2f, .4f);
-            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
-            commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetViewport(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
+            commandBuffer.SetScissor(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
 
             commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
             commandBuffer.SetIndexBuffer(IndexBuffer);
@@ -324,12 +319,26 @@ namespace Samples.Transformations
             SwapChain.Present();
         }
 
+        private void Window_Resize((int Width, int Height) obj)
+        {
+            Console.WriteLine($"Height: {obj.Height}");
+            Console.WriteLine($"Width: {obj.Width}");
+            Console.WriteLine("=======");
+
+
+            Device.WaitIdle();
+            SwapChain.Resize(obj.Width, obj.Height);
+            Framebuffer.Resize();
+
+            Camera.AspectRatio = (float)obj.Width / obj.Height;
+        }
+
         public void Run()
         {
-
             Initialize();
 
             Window?.Show();
+            Window!.Resize += Window_Resize;
             Window.RenderLoop(() =>
             {
                 Update();

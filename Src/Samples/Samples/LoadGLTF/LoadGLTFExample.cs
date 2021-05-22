@@ -32,7 +32,6 @@ namespace Samples.LoadGLTF
         public GraphicsContext Context { get; set; }
         public Matrix4x4 Model { get; set; }
         public Window? Window { get; set; }
-        public Camera camera { get; set; }
 
 
         public ModelAssetImporter<VertexPositionNormal> GLTFModel { get; set; }
@@ -94,16 +93,16 @@ namespace Samples.LoadGLTF
             Context = new GraphicsContext(Device);
             Framebuffer = new Framebuffer(SwapChain);
 
-            camera = new Camera(45f, 1f, 0.1f, 64f);
-            camera.SetPosition(0, 0, -4.0f);
-            camera.AspectRatio = (float)Window.Width / Window.Height;
-            camera.Update();
+            Camera = new Camera(45f, 1f, 0.1f, 64f);
+            Camera.SetPosition(0, 0, -4.0f);
+            Camera.AspectRatio = (float)Window.Width / Window.Height;
+            Camera.Update();
 
 
             // Reset Model
             Model = Matrix4x4.Identity;
 
-            uniform = new(camera.Projection, Model, camera.View);
+            uniform = new(Camera.Projection, Model, Camera.View);
 
 
             ConstBuffer = new(Device, new()
@@ -150,7 +149,7 @@ namespace Samples.LoadGLTF
         {
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, .0f, 0.0f);
-            uniform.Update(camera, Model);
+            uniform.Update(Camera, Model);
             ConstBuffer.SetData(ref uniform);
 
             yaw += 0.0006f * MathF.PI;
@@ -168,8 +167,8 @@ namespace Samples.LoadGLTF
 
 
             commandBuffer.BeginFramebuffer(Framebuffer);
-            commandBuffer.SetScissor(Window.Width, Window.Height, 0, 0);
-            commandBuffer.SetViewport(Window.Width, Window.Height, 0, 0);
+            commandBuffer.SetScissor(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
+            commandBuffer.SetViewport(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
 
             commandBuffer.SetGraphicPipeline(PipelineState);
             commandBuffer.BindDescriptorSets(DescriptorSet);
@@ -212,12 +211,23 @@ namespace Samples.LoadGLTF
         }
 
 
+        private void Window_Resize((int Width, int Height) obj)
+        {
+            Device.WaitIdle();
+            SwapChain.Resize(obj.Width, obj.Height);
+            Framebuffer.Resize();
+
+            Camera.AspectRatio = (float)obj.Width / obj.Height;
+        }
+
+
         public void Run()
         {
 
             Initialize();
 
             Window?.Show();
+            Window!.Resize += Window_Resize;
             Window.RenderLoop(() =>
             {
                 Update();

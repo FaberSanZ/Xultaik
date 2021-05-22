@@ -92,6 +92,18 @@ namespace Samples.ClearScreen
         }
 
 
+        private void Window_Resize((int Width, int Height) obj)
+        {
+            Console.WriteLine($"Height: {obj.Height}");
+            Console.WriteLine($"Width: {obj.Width}");
+            Console.WriteLine("=======");
+
+            Device.WaitIdle();
+            SwapChain.Resize(obj.Width, obj.Height);
+            Framebuffer.Resize();
+        }
+
+
         public void Run()
         {
             Initialize();
@@ -99,7 +111,7 @@ namespace Samples.ClearScreen
             BeginRun();
 
             Window?.Show();
-
+            Window!.Resize += Window_Resize;
             Tick();
         }
 

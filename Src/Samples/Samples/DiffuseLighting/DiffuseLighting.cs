@@ -15,7 +15,6 @@ namespace Samples.DiffuseLighting
 {
     public class DiffuseLightingExample : IDisposable
     {
-        public Camera camera { get; set; }
 
         public ModelAssetImporter<VertexPositionNormalTexture> GLTFModel { get; set; }
 
@@ -27,7 +26,7 @@ namespace Samples.DiffuseLighting
         public SwapChain SwapChain { get; set; }
         public GraphicsContext Context { get; set; }
         public Matrix4x4 Model { get; set; }
-        public Window? Window { get; set; }
+        public Window Window { get; set; }
 
         public Input Input => Window!.Input;
         public DescriptorSet DescriptorSet_0 { get; set; }
@@ -79,7 +78,12 @@ namespace Samples.DiffuseLighting
                 },
             };
 
+            Console.WriteLine(Window.FramebufferSize.Height);
 
+            Camera = new Camera(45f, 1f, 0.1f, 64f);
+            Camera.SetPosition(0, -8, -40.0f);
+            Camera.AspectRatio = (float)Window.Width / Window.Height;
+            Camera.Update();
 
             Adapter = new Adapter(Parameters);
 
@@ -98,16 +102,12 @@ namespace Samples.DiffuseLighting
             Context = new GraphicsContext(Device);
             Framebuffer = new Framebuffer(SwapChain);
 
-            camera = new Camera(45f, 1f, 0.1f, 64f);
-            camera.SetRotation(0, 0, 0);
-            camera.SetPosition(0, -8, -40.0f);
-            camera.AspectRatio = (float)Window.Width / Window.Height;
 
 
             // Reset Model
             Model = Matrix4x4.Identity;
 
-            uniform = new(camera.Projection, Model, camera.View);
+            uniform = new(Camera.Projection, Model, Camera.View);
             light = new(new Vector4(1.0f, 1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f));
 
 
@@ -158,8 +158,6 @@ namespace Samples.DiffuseLighting
 
             string Fragment = shaders + @"\Fragment.hlsl";
             string Vertex = shaders + @"\Vertex.hlsl";
-
-            Console.WriteLine(shaders);
 
             Image text1 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png");
             Image text2 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap02-512.png");
@@ -230,6 +228,7 @@ namespace Samples.DiffuseLighting
         public void Update()
         {
 
+            Camera.Update();
             //light.LightDirection.X = -14.0f + MathF.Abs(MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f);
             light.LightDirection.X = 0.0f + MathF.Sin(MathUtil.Radians(timer * 360.0f)) * MathF.Cos(MathUtil.Radians(timer * 360.0f)) * 2.0f;
             light.LightDirection.Y = 0.0f + MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f;
@@ -242,15 +241,15 @@ namespace Samples.DiffuseLighting
 
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(11.0f, .3f, 0.0f);
-            uniform.Update(camera, Model);
+            uniform.Update(Camera, Model);
             ConstBuffer.SetData(ref uniform);
 
             Model = Matrix4x4.CreateFromYawPitchRoll(-yaw, pitch, roll) * Matrix4x4.CreateTranslation(0, 1.0f, 0.0f);
-            uniform.Update(camera, Model);
+            uniform.Update(Camera, Model);
             ConstBuffer2.SetData(ref uniform);
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-11.0f, .3f, 0.0f);
-            uniform.Update(camera, Model);
+            uniform.Update(Camera, Model);
             ConstBuffer3.SetData(ref uniform);
 
             if (Input.Keyboards[0].IsKeyPressed(Key.T))
@@ -277,8 +276,8 @@ namespace Samples.DiffuseLighting
 
             cmd.Begin();
             cmd.BeginFramebuffer(Framebuffer);
-            cmd.SetScissor(Window.Width, Window.Height, 0, 0);
-            cmd.SetViewport(Window.Width, Window.Height, 0, 0);
+            cmd.SetScissor(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
+            cmd.SetViewport(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
 
 
             cmd.BindDescriptorSets(DescriptorSet_0);
@@ -302,12 +301,22 @@ namespace Samples.DiffuseLighting
         }
 
 
+        private void Window_Resize((int Width, int Height) obj)
+        {
+            Device.WaitIdle();
+            SwapChain.Resize(obj.Width, obj.Height);
+            Framebuffer.Resize();
+
+            Camera.AspectRatio = (float)obj.Width / obj.Height;
+        }
+
+
         public void Run()
         {
-
             Initialize();
 
             Window?.Show();
+            Window!.Resize += Window_Resize;
             Window.RenderLoop(() =>
             {
                 Update();
