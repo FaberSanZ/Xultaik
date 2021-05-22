@@ -33,7 +33,7 @@ The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan e
 
 ## Features:
 
-- [ ] KHR Ray Tracing
+- [ ] Ray Tracing
 - [ ] Conservative rasterization
 - [ ] Multiview rendering
 - [ ] Conditional rendering 
@@ -41,12 +41,12 @@ The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan e
 - [ ] Descriptor indexing
 - [ ] Timeline semaphore
 - [ ] Buffer device address 
-- [ ] Synchronization
+- [ ] Synchronization2
 - [x] Memory allocator
 - [x] GPU-Assisted Validation
 - [ ] Compute Shader
 - [ ] Geometry Shader
-- [ ] Tessellation Shader (Phong, PN Triangles, and Displacement Mapping)
+- [ ] Tessellation Shader
 - [ ] G-Buffer
 - [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
