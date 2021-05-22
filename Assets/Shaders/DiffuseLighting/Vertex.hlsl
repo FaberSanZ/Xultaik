@@ -5,14 +5,14 @@ struct VSInput
 	[[vk::location(2)]] float2 UV : TEXCOORD0;
 };
 
+
 struct UBO
 {
 	float4x4 Model;
 	float4x4 View;
 	float4x4 Projection;
 };
-
-cbuffer ubo : register(b0) { UBO ubo; }
+ConstantBuffer<UBO> ubo : register(b0);
 
 
 

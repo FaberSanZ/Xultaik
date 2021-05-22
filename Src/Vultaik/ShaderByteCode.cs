@@ -144,7 +144,7 @@ namespace Vultaik
         private byte[] CompileHLSL(string path)
         {
             string profile = "";
-            string? shadermodel = "_6_5";
+            string shadermodel = "_6_5";
 
 
             switch (Stage)
@@ -175,64 +175,65 @@ namespace Vultaik
                     break;
 
                 case ShaderStage.TaskNV:
-                    profile = "as_6_5";
+                    profile = "as" + shadermodel;
                     break;
 
                 case ShaderStage.MeshNV:
-                    profile = "ms_6_5";
+                    profile = "ms" + shadermodel;
                     break;
 
                 case ShaderStage.Raygen:
-                    profile = "lib_6_5";
+                    profile = "lib" + shadermodel;
                     break;
 
 
                 case ShaderStage.AnyHit:
-                    profile = "lib_6_5";
+                    profile = "lib" + shadermodel;
                     break;
 
                 case ShaderStage.ClosestHit:
-                    profile = "lib_6_5";
+                    profile = "lib" + shadermodel;
                     break;
 
                 case ShaderStage.Miss:
-                    profile = "lib_6_5";
+                    profile = "lib" + shadermodel;
                     break;
 
                 case ShaderStage.Intersection:
-                    profile = "lib_6_5";
+                    profile = "lib" + shadermodel;
                     break;
 
                 case ShaderStage.Callable:
-                    profile = "lib_6_5";
+                    profile = "lib" + shadermodel;
                     break;
 
             }
 
-
-
-
             string? source = File.ReadAllText(path);
-            string[] args = new[]
+
+            List<string> args = new()
             {
                 "-spirv",
                 "-T", profile,
                 "-E", "main",
-                "-fspv-target-env=vulkan1.1",
-                "-fspv-extension=SPV_NV_ray_tracing",
+                "-fspv-target-env=vulkan1.2",
+                "-fspv-extension=SPV_KHR_ray_tracing",
                 "-fspv-extension=SPV_KHR_multiview",
                 "-fspv-extension=SPV_KHR_shader_draw_parameters",
                 "-fspv-extension=SPV_EXT_descriptor_indexing",
-
             };
+
+            //if (Stage == ShaderStage.AnyHit || Stage)
+            //    args.Add("SPV_KHR_ray_tracing ");
+
             IDxcUtils? utils = Dxc.CreateDxcUtils();
             IDxcIncludeHandler? handler = utils!.CreateDefaultIncludeHandler();
 
             IDxcCompiler3? compiler = Dxc.CreateDxcCompiler3();
 
-            IDxcResult? result = compiler?.Compile(source, args, handler);
+            IDxcResult? result = compiler?.Compile(source, args.ToArray(), handler);
 
-            if (result == null || result.GetStatus().Failure)
+            if (result is null || result.GetStatus().Failure)
             {
                 throw new Exception(result!.GetErrors());
             }

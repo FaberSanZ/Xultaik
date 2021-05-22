@@ -29,6 +29,7 @@ namespace Samples.DiffuseLighting
         public Matrix4x4 Model { get; set; }
         public Window? Window { get; set; }
 
+        public Input Input => Window!.Input;
         public DescriptorSet DescriptorSet_0 { get; set; }
         public DescriptorSet DescriptorSet_1 { get; set; }
         public DescriptorSet DescriptorSet_2 { get; set; }
@@ -107,7 +108,7 @@ namespace Samples.DiffuseLighting
             Model = Matrix4x4.Identity;
 
             uniform = new(camera.Projection, Model, camera.View);
-            light = new(new Vector4(1.0f, 1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f));
+            light = new(new Vector4(1.0f, 1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f));
 
 
             BufferDescription bufferDescription = new()
@@ -138,6 +139,8 @@ namespace Samples.DiffuseLighting
             pitch = 0;
             roll = 0;
             timer = 0;
+
+            
         }
 
 
@@ -224,7 +227,7 @@ namespace Samples.DiffuseLighting
             DescriptorSet_2 = new(PipelineState_2, descriptorData_2);
         }
 
-
+        float is_texture = 0;
         public void Update()
         {
 
@@ -232,6 +235,10 @@ namespace Samples.DiffuseLighting
             light.LightDirection.X = 0.0f + MathF.Sin(MathUtil.Radians(timer * 360.0f)) * MathF.Cos(MathUtil.Radians(timer * 360.0f)) * 2.0f;
             light.LightDirection.Y = 0.0f + MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f;
             light.LightDirection.Z = 0.0f + MathF.Cos(MathUtil.Radians(timer * 360.0f)) * 2.0f;
+
+
+
+
             ConstBuffer4.SetData(ref light);
 
 
@@ -247,11 +254,21 @@ namespace Samples.DiffuseLighting
             uniform.Update(camera, Model);
             ConstBuffer3.SetData(ref uniform);
 
+            if (Input.Keyboards[0].IsKeyPressed(Key.T))
+            {
+                if (light.IsTexture == 1)
+                    light.IsTexture = 0;
+
+                else if (light.IsTexture == 0)
+                    light.IsTexture = 1;
+            }
+
 
             timer += 0.0006f;
             //yaw = timer * MathF.PI;
-        }
 
+        }
+   
 
         public void Draw()
         {
@@ -366,13 +383,13 @@ namespace Samples.DiffuseLighting
 
         public Vector3 LightDirection;
 
-        public float Padding;
+        public float IsTexture;
 
         public Light(Vector4 D, Vector3 L)
         {
             Diffuse = D;
             LightDirection = L;
-            Padding = 0;
+            IsTexture = 1;
         }
     }
 }
