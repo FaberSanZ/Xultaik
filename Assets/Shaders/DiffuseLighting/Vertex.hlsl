@@ -1,3 +1,6 @@
+#include "../Common.hlsl"
+
+
 struct VSInput
 {
 	[[vk::location(0)]] float3 Pos : POSITION0;
@@ -6,12 +9,7 @@ struct VSInput
 };
 
 
-struct UBO
-{
-	float4x4 Model;
-	float4x4 View;
-	float4x4 Projection;
-};
+
 ConstantBuffer<UBO> ubo : register(b0);
 
 

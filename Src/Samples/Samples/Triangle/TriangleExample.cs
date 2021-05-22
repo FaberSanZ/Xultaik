@@ -151,8 +151,8 @@ namespace Samples.Triangle
 
             PipelineStateDescription Pipelinedescription = new();
             Pipelinedescription.SetFramebuffer(Framebuffer);
-            Pipelinedescription.SetShader(new ShaderBytecode(file + "Triangle/Fragment.hlsl", ShaderStage.Fragment, ShaderBackend.Hlsl));
-            Pipelinedescription.SetShader(new ShaderBytecode(file + "Triangle/Vertex.hlsl", ShaderStage.Vertex, ShaderBackend.Hlsl));
+            Pipelinedescription.SetShader(new ShaderBytecode(file + "Triangle/Fragment.hlsl", ShaderStage.Fragment));
+            Pipelinedescription.SetShader(new ShaderBytecode(file + "Triangle/Vertex.hlsl", ShaderStage.Vertex));
             Pipelinedescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription.SetVertexAttribute(VertexType.Position);
             Pipelinedescription.SetVertexAttribute(VertexType.Color);

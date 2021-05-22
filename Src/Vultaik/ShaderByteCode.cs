@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Vortice.Dxc;
-using Vortice.ShaderCompiler;
 using static SPIRVCross.SPIRV;
 
 namespace Vultaik
@@ -50,12 +49,6 @@ namespace Vultaik
         All = int.MaxValue
     }
 
-    public enum ShaderBackend
-    {
-        None = 0,
-        Glsl = 1,
-        Hlsl = 2,
-    }
 
     internal class ShaderResource
     {
@@ -75,37 +68,21 @@ namespace Vultaik
 
         internal List<ShaderResource> Resources { get; set; } = new();
 
-        public ShaderBytecode(string path, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
+        public ShaderBytecode(string path, ShaderStage stage, string directory = "")
         {
             Stage = stage;
-            Backend = backend;
 
-            switch (backend)
-            {
-                case ShaderBackend.None:
-                    Data = File.ReadAllBytes(path);
-                    break;
+            Data = CompileHLSL(path, directory);
 
-                case ShaderBackend.Glsl:
-                    Data = CompileGLSL(path);
-                    break;
-
-                case ShaderBackend.Hlsl:
-                    Data = CompileHLSL(path);
-                    break;
-            }
+            
 
 
             AddShaderResource(Data);
         }
 
-        public ShaderBytecode(byte[] buffer, ShaderStage stage, ShaderBackend backend)
+        public ShaderBytecode(byte[] buffer, ShaderStage stage)
         {
             Data = buffer;
-            Stage = stage;
-            Backend = backend;
-
-            AddShaderResource(buffer);
 
         }
 
@@ -114,8 +91,6 @@ namespace Vultaik
         {
             Data = buffer.ToArray();
             Stage = stage;
-            AddShaderResource(buffer.ToArray());
-
         }
 
 
@@ -124,28 +99,13 @@ namespace Vultaik
 
         public byte[] Data { get; set; }
         public ShaderStage Stage { get; set; }
-        public ShaderBackend Backend { get; set; }
 
 
-
-        private byte[] CompileGLSL(string path)
-        {
-            Options _options = new();
-
-            _options.SetSourceLanguage(SourceLanguage.GLSL);
-
-            using Vortice.ShaderCompiler.Compiler compiler = new(_options);
-
-            var result = compiler.Compile(File.ReadAllText(path), string.Empty, Stage.StageToShaderKind());
-
-            return result.GetBytecode().ToArray();
-
-        }
-        private byte[] CompileHLSL(string path)
+        private byte[] CompileHLSL(string path, string directory)
         {
             string profile = "";
             string shadermodel = "_6_5";
-
+            bool ray_tracing = false;
 
             switch (Stage)
             {
@@ -182,34 +142,25 @@ namespace Vultaik
                     profile = "ms" + shadermodel;
                     break;
 
+
                 case ShaderStage.Raygen:
-                    profile = "lib" + shadermodel;
-                    break;
-
-
                 case ShaderStage.AnyHit:
-                    profile = "lib" + shadermodel;
-                    break;
-
                 case ShaderStage.ClosestHit:
-                    profile = "lib" + shadermodel;
-                    break;
-
                 case ShaderStage.Miss:
-                    profile = "lib" + shadermodel;
-                    break;
-
+                case ShaderStage.Callable:
                 case ShaderStage.Intersection:
                     profile = "lib" + shadermodel;
+                    ray_tracing = true;
                     break;
 
-                case ShaderStage.Callable:
-                    profile = "lib" + shadermodel;
-                    break;
 
             }
 
-            string? source = File.ReadAllText(path);
+            //string hlslFileName = Path.GetFileName(path);
+            //string hlslDirectoryPath = Path.GetDirectoryName(path);
+            //string hlslFileData = File.ReadAllText(path);
+
+
 
             List<string> args = new()
             {
@@ -217,21 +168,21 @@ namespace Vultaik
                 "-T", profile,
                 "-E", "main",
                 "-fspv-target-env=vulkan1.2",
-                "-fspv-extension=SPV_KHR_ray_tracing",
                 "-fspv-extension=SPV_KHR_multiview",
                 "-fspv-extension=SPV_KHR_shader_draw_parameters",
                 "-fspv-extension=SPV_EXT_descriptor_indexing",
             };
 
-            //if (Stage == ShaderStage.AnyHit || Stage)
-            //    args.Add("SPV_KHR_ray_tracing ");
+            if (ray_tracing)
+                args.Add("SPV_KHR_ray_tracing");
 
-            IDxcUtils? utils = Dxc.CreateDxcUtils();
-            IDxcIncludeHandler? handler = utils!.CreateDefaultIncludeHandler();
 
+            string source = File.ReadAllText(path);
+            using IDxcIncludeHandler includeHandler = new ShaderIncludeHandler(directory);
             IDxcCompiler3? compiler = Dxc.CreateDxcCompiler3();
+            Console.WriteLine();
 
-            IDxcResult? result = compiler?.Compile(source, args.ToArray(), handler);
+            IDxcResult? result = compiler?.Compile(source, args.ToArray(), includeHandler);
 
             if (result is null || result.GetStatus().Failure)
             {
@@ -293,7 +244,7 @@ namespace Vultaik
             spvc_context_parse_spirv(context, spirv, word_count, &ir);
 
             // Hand it off to a compiler instance and give it ownership of the IR.
-            spvc_backend backend = Backend == ShaderBackend.Hlsl ? spvc_backend.Hlsl : spvc_backend.Glsl;
+            spvc_backend backend = spvc_backend.Hlsl;
             spvc_context_create_compiler(context, backend, ir, spvc_capture_mode.TakeOwnership, &compiler_glsl);
 
             spvc_compiler_create_shader_resources(compiler_glsl, &resources);
@@ -402,14 +353,14 @@ namespace Vultaik
         }
 
 
-        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
+        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage, string directory = "")
         {
-            return new ShaderBytecode(path, stage, backend);
+            return new ShaderBytecode(path, stage, directory);
         }
 
-        public static ShaderBytecode LoadFromFile(byte[] bytes, ShaderStage stage, ShaderBackend backend = ShaderBackend.Glsl)
+        public static ShaderBytecode LoadFromBytes(byte[] bytes, ShaderStage stage)
         {
-            return new ShaderBytecode(bytes, stage, backend);
+            return new ShaderBytecode(bytes, stage);
         }
 
         public static implicit operator byte[](ShaderBytecode shaderBytecode)

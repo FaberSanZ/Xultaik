@@ -236,8 +236,8 @@ namespace Samples.Transformations
         {
             var file = Constants.ShadersFile;
 
-            ShaderBytecode Fragment = ShaderBytecode.LoadFromFile(file + "Transformations/Fragment.hlsl", ShaderStage.Fragment, ShaderBackend.Hlsl);
-            ShaderBytecode Vertex = ShaderBytecode.LoadFromFile(file + "Transformations/Vertex.hlsl", ShaderStage.Vertex, ShaderBackend.Hlsl);
+            ShaderBytecode Fragment = ShaderBytecode.LoadFromFile(file + "Transformations/Fragment.hlsl", ShaderStage.Fragment);
+            ShaderBytecode Vertex = ShaderBytecode.LoadFromFile(file + "Transformations/Vertex.hlsl", ShaderStage.Vertex);
 
 
 
