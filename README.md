@@ -25,7 +25,7 @@ Due to the parallel nature of GPUs, Vultaik can use [GPGPU](https://en.wikipedia
 
 ## Low-level rendering backend
 
-The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Zeckoxe/wiki/Extension) and [features](#Features) are aggressively made use of to improve performance
+The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Zeckoxe/wiki/Extension) and [features](#Features) are aggressively made use of to improve performance
 
 
 <br>
@@ -33,7 +33,7 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 
 ## Features:
 
-- [ ] KHR Ray Tracing
+- [ ] Ray Tracing
 - [ ] Conservative rasterization
 - [ ] Multiview rendering
 - [ ] Conditional rendering 
@@ -41,12 +41,12 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 - [ ] Descriptor indexing
 - [ ] Timeline semaphore
 - [ ] Buffer device address 
-- [ ] Synchronization
+- [ ] Synchronization2
 - [x] Memory allocator
 - [x] GPU-Assisted Validation
 - [ ] Compute Shader
 - [ ] Geometry Shader
-- [ ] Tessellation Shader (Phong, PN Triangles, and Displacement Mapping)
+- [ ] Tessellation Shader
 - [ ] G-Buffer
 - [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
@@ -55,7 +55,6 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 - [x] Automatic descriptor set management
 - [x] SPIRV reflection with [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross)
 - [x] Vulkan HLSL for shaders, shaders are compiled in runtime with [DirectXShaderCompiler](https://github.com/microsoft/DirectXShaderCompiler)
-- [x] Vulkan GLSL for shaders, shaders are compiled in runtime with [Shaderc](https://github.com/google/shaderc)
 - [x] GLTF 2.0 for samples
 
 <hr>
@@ -64,8 +63,6 @@ The rendering backend focuses entirely on Vulkan, so it reuses Vulkan enums wher
 
 ## Examples
 ### 
-
-> ℹ️: All examples use HLSL.
 
 
 Example | Details
@@ -80,14 +77,6 @@ Example | Details
 
 
 <hr>
-<br>
-
-
-## The project is inspired by and based on:
-The-Forge (<https://github.com/ConfettiFX/The-Forge>)
-
-
-
 <br>
 
 
