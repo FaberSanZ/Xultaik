@@ -80,14 +80,6 @@ Example | Details
 <br>
 
 
-## The project is inspired by and based on:
-The-Forge (<https://github.com/ConfettiFX/The-Forge>)
-
-
-
-<br>
-
-
 Additionally, **Vultaik** uses NuGet packages from the following repositories:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan)
