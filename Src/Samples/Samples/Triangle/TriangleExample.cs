@@ -210,9 +210,10 @@ namespace Samples.Triangle
             commandBuffer.SetIndexBuffer(IndexBuffer);
             commandBuffer.DrawIndexed(3, 1, 0, 0, 0);
 
-
             commandBuffer.Close();
-            commandBuffer.Submit();
+
+            Device.Submit(commandBuffer);
+
             SwapChain.Present();
         }
 

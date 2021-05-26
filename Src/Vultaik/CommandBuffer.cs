@@ -18,48 +18,50 @@ namespace Vultaik
         internal VkCommandBuffer handle;
 
 
+        internal VkCommandPool cmd_command_pool;
 
         public CommandBuffer(Device graphicsDevice, CommandBufferType type) : base(graphicsDevice)
         {
             Type = type;
 
-            WaitFences = new();
 
             Recreate();
 
-            WaitFences.Add(new(NativeDevice, true));
+            WaitFence = new(NativeDevice, true);
         }
 
         public CommandBufferType Type { get; set; }
-        public List<Fence> WaitFences { get; set; }
+        public Fence WaitFence { get; set; }
 
         public void Recreate()
         {
-
+            
+            // TODO: Reuse the same VkCommandPool only for transfer, compute and graphics use an independent one per thread
+            
             switch (Type)
             {
                 case CommandBufferType.Generic:
-                    handle = NativeDevice.create_command_buffer_primary(NativeDevice.graphics_cmd_pool);
+                    cmd_command_pool = NativeDevice.create_command_pool(NativeDevice.GraphicsFamily);
                     break;
 
                 case CommandBufferType.AsyncGraphics:
-                    handle = NativeDevice.create_command_buffer_primary(NativeDevice.graphics_cmd_pool);
+                    cmd_command_pool = NativeDevice.create_command_pool(NativeDevice.GraphicsFamily);
                     break;
 
                 case CommandBufferType.AsyncCompute:
-                    handle = NativeDevice.create_command_buffer_primary(NativeDevice.compute_cmd_pool);
+                    cmd_command_pool = NativeDevice.create_command_pool(NativeDevice.ComputeFamily);
                     break;
 
                 case CommandBufferType.AsyncTransfer:
-                    handle = NativeDevice.create_command_buffer_primary(NativeDevice.transfer_cmd_pool);
+                    cmd_command_pool = NativeDevice.transfer_cmd_pool;
                     break;
 
                 case CommandBufferType.Count:
-                    handle = NativeDevice.create_command_buffer_primary(NativeDevice.graphics_cmd_pool); // TODO: CommandBufferType.Count
+                    cmd_command_pool = NativeDevice.create_command_pool(NativeDevice.GraphicsFamily);
                     break;
             }
 
-
+            handle = NativeDevice.create_command_buffer_primary(cmd_command_pool); 
 
 
         }
@@ -71,8 +73,8 @@ namespace Vultaik
         {
             BeginRenderPassContinue();
 
-            WaitFences[0].Wait();
-            WaitFences[0].Reset();
+            WaitFence.Wait();
+            WaitFence.Reset();
         }
 
 
@@ -488,7 +490,7 @@ namespace Vultaik
                 pSignalSemaphores = &signalSemaphore,
             };
 
-            vkQueueSubmit(NativeDevice.command_queue, 1, &submitInfo, WaitFences[0].handle);
+            vkQueueSubmit(NativeDevice.command_queue, 1, &submitInfo, WaitFence.handle);
         }
 
         public void BeginRenderPassContinue()
@@ -519,7 +521,7 @@ namespace Vultaik
 
         public void Free()
         {
-            vkFreeCommandBuffers(NativeDevice.handle, NativeDevice.graphics_cmd_pool, handle);
+            vkFreeCommandBuffers(NativeDevice.handle, cmd_command_pool, handle);
         }
 
         public void End()

@@ -285,11 +285,25 @@ namespace Vultaik.Desktop
 
         public void RenderLoop(Action render)
         {
+            bool isClosing = false;
+
+
+
+            //while (!isClosing)
+            //{
+            //    if (Input.Keyboards[0].IsKeyPressed(Key.Escape))
+            //        isClosing = true;
+
+            //    Console.WriteLine(isClosing);
+
+
+            //}
+
+
 
             while (!glfw.WindowShouldClose(pWindowHandle))
             {
                 is_render = true;
-                Update?.Invoke(0);
                 render();
                 glfw.PollEvents();
             }

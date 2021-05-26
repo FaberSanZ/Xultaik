@@ -23,8 +23,6 @@ namespace Vultaik
         internal VkQueue compute_queue;
         internal VkQueue transfer_queue;
 
-        internal VkCommandPool graphics_cmd_pool;
-        internal VkCommandPool compute_cmd_pool;
         internal VkCommandPool transfer_cmd_pool;
 
 
@@ -46,6 +44,8 @@ namespace Vultaik
 
         internal DescriptorPool _descriptorPoolManager_0;
         internal DescriptorPool _descriptorPoolManager_1;
+
+
 
 
         internal VkPhysicalDeviceProperties device_properties;
@@ -91,7 +91,6 @@ namespace Vultaik
         public uint ComputeFamily { get; private set; }
         public uint TransferFamily { get; private set; }
         public List<string> DeviceExtensionsNames { get; private set; } = new();
-
         public bool RayTracingSupport { get; private set; }
 
 
@@ -134,13 +133,12 @@ namespace Vultaik
             render_finished_semaphore = create_semaphore();
 
 
-            graphics_cmd_pool = create_command_pool(GraphicsFamily);
-            compute_cmd_pool = create_command_pool(ComputeFamily);
+
             transfer_cmd_pool = create_command_pool(TransferFamily);
 
 
-            command_buffer_primary = create_command_buffer_primary(graphics_cmd_pool);
-            command_buffer_secondary = CreateCommandBufferSecondary();
+            //command_buffer_primary = create_command_buffer_primary(graphics_cmd_pool);
+            //command_buffer_secondary = CreateCommandBufferSecondary();
 
 
             GraphicsCommandBuffer = new(this, CommandBufferType.AsyncGraphics);
@@ -263,7 +261,6 @@ namespace Vultaik
             if ((requestedQueueTypes & VkQueueFlags.Transfer) is not 0)
             {
                 TransferFamily = GetQueueFamilyIndex(VkQueueFlags.Transfer, queue_family_properties);
-
                 if (TransferFamily != GraphicsFamily && TransferFamily != ComputeFamily)
                 {
                     // If compute family index differs, we need an additional queue create info for the transfer queue
@@ -630,12 +627,12 @@ namespace Vultaik
         }
 
 
-        internal VkCommandBuffer CreateCommandBufferSecondary()
+        internal VkCommandBuffer CreateCommandBufferSecondary(VkCommandPool pool)
         {
             VkCommandBufferAllocateInfo allocInfo = new()
             {
                 sType = VkStructureType.CommandBufferAllocateInfo,
-                commandPool = graphics_cmd_pool,
+                commandPool = pool,
 
                 level = VkCommandBufferLevel.Secondary,
                 commandBufferCount = 1,
@@ -648,6 +645,53 @@ namespace Vultaik
             return commandBuffers;
         }
 
+        public VkQueue get_queue_type_cmd(CommandBuffer cmd)
+        {
+            if (cmd.Type == CommandBufferType.AsyncGraphics)
+                return graphics_queue;
+
+            if (cmd.Type == CommandBufferType.AsyncCompute)
+                return compute_queue;
+
+            if (cmd.Type == CommandBufferType.AsyncTransfer)
+                return transfer_queue;
+
+            return VkQueue.Null;
+        }
+
+
+        public void Submit(CommandBuffer commandBuffer, Fence? fence = null)
+        {
+            VkSemaphore signal_semaphore = render_finished_semaphore;
+            VkSemaphore wait_semaphore = image_available_semaphore;
+            VkPipelineStageFlags wait_stages = VkPipelineStageFlags.ColorAttachmentOutput;
+            VkCommandBuffer cmd = commandBuffer.handle;
+            VkQueue queue = get_queue_type_cmd(commandBuffer);
+            VkFence sync_fence = VkFence.Null;
+
+
+            VkSubmitInfo submit_info = new()
+            {
+                sType = VkStructureType.SubmitInfo,
+                waitSemaphoreCount = 1,
+                pWaitSemaphores = &wait_semaphore,
+                pWaitDstStageMask = &wait_stages,
+                pNext = null,
+                commandBufferCount = 1,
+                pCommandBuffers = &cmd,
+                signalSemaphoreCount = 1,
+                pSignalSemaphores = &signal_semaphore,
+            };
+
+
+            if (fence is not null)
+                sync_fence = fence.handle;
+            else
+                sync_fence = commandBuffer.WaitFence.handle;
+
+            if (sync_fence != VkFence.Null && queue != VkQueue.Null)
+                vkQueueSubmit(queue, 1, &submit_info, sync_fence).CheckResult();
+        }
 
         internal VkMemoryType GetMemoryTypeExt(VkPhysicalDeviceMemoryProperties memoryProperties, uint index)
         {
@@ -655,7 +699,7 @@ namespace Vultaik
         }
 
 
-        internal uint GetMemoryType(uint typeBits, VkMemoryPropertyFlags properties)
+        internal uint get_memory_type(uint typeBits, VkMemoryPropertyFlags properties)
         {
 
             for (uint i = 0; i < _memoryProperties.memoryTypeCount; i++)
@@ -677,7 +721,7 @@ namespace Vultaik
 
 
 
-        internal VkSurfaceFormatKHR ChooseSwapSurfaceFormat(VkSurfaceFormatKHR[] formats)
+        internal VkSurfaceFormatKHR choose_swap_surface_format(VkSurfaceFormatKHR[] formats)
         {
             if (formats.Length is 1 && formats.First().format is VkFormat.Undefined)
             {
@@ -689,35 +733,38 @@ namespace Vultaik
             }
 
             foreach (VkSurfaceFormatKHR availableFormat in formats)
-            {
                 if (availableFormat.format is VkFormat.B8G8R8A8UNorm && availableFormat.colorSpace is VkColorSpaceKHR.SrgbNonLinear)
-                {
                     return availableFormat;
-                }
-            }
 
             return formats.First();
         }
 
-        internal VkPresentModeKHR ChooseSwapPresentMode(VkPresentModeKHR[] presentModes)
+        internal VkPresentModeKHR choose_swap_present_mode(VkPresentModeKHR[] modes)
         {
-            //VkPresentModeKHR bestMode = VkPresentModeKHR.FifoKHR;
+            VkPresentModeKHR fifo_mode = VkPresentModeKHR.Fifo;
 
-            foreach (VkPresentModeKHR availablePresentMode in presentModes)
+            foreach (VkPresentModeKHR mode in modes)
             {
-                if (availablePresentMode is VkPresentModeKHR.Mailbox)
-                {
-                    return availablePresentMode; // MailboxKHR
-                }
-                else if (availablePresentMode is VkPresentModeKHR.Immediate)
-                {
-                    return availablePresentMode; // ImmediateKHR;
-                }
+                if (mode is VkPresentModeKHR.Mailbox)
+                    return mode;
+
+                else if (mode is VkPresentModeKHR.Immediate)
+                    return mode; 
             }
 
             return VkPresentModeKHR.Immediate;
         }
 
+
+        static int convert_to_signed_delta(uint start_ticks, uint end_ticks, uint valid_bits)
+        {
+            int shamt = (int)(64 - valid_bits);
+            start_ticks <<= shamt;
+            end_ticks <<= shamt;
+            int ticks_delta = (int)(end_ticks - start_ticks);
+            ticks_delta >>= shamt;
+            return ticks_delta;
+        }
 
 
         public void WaitIdle()
@@ -727,15 +774,15 @@ namespace Vultaik
         }
 
 
-        //public TDelegate GetInstanceProcAddr<TDelegate>(string name) where TDelegate : class
-        //{
-        //    IntPtr funcPtr = vkGetInstanceProcAddr(NativeAdapter.instance, Interop.String.ToPointer(name));
+        public TDelegate? GetInstanceProcAddr<TDelegate>(string name) where TDelegate : class
+        {
+            delegate* unmanaged[Stdcall]<void> funcPtr = vkGetInstanceProcAddr(NativeAdapter.instance, Interop.String.ToPointer(name));
 
-        //    return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
-        //}
+            return null;
+        }
 
 
-        public TDelegate GetDeviceProcAddr<TDelegate>(string name) where TDelegate : class
+        public TDelegate? GetDeviceProcAddr<TDelegate>(string name) where TDelegate : class
         {
             IntPtr funcPtr = vkGetDeviceProcAddr(handle, Interop.String.ToPointer(name));
 
