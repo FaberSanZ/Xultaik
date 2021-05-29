@@ -34,7 +34,7 @@ namespace Vultaik
 
         public GraphicsResourceUsage Usage { get; set; }
 
-        public TextureFlags Flags { get; set; }
+        public ImageFlags Flags { get; set; }
 
     }
 }

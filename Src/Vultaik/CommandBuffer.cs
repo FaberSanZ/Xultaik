@@ -67,8 +67,6 @@ namespace Vultaik
         }
 
 
-
-
         public void Begin()
         {
             BeginRenderPassContinue();
@@ -281,6 +279,10 @@ namespace Vultaik
         }
 
 
+        internal void copy_buffer_to_image(VkImage image, VkBuffer buffer, uint num_blits, VkBufferImageCopy* blits, VkImageLayout layout)
+        {
+            vkCmdCopyBufferToImage(handle, buffer, image, layout, num_blits, blits);
+        }
 
         internal void copy_buffer_to_image(Image image, Buffer buffer, uint num_blits, VkBufferImageCopy* blits)
         {
@@ -336,6 +338,16 @@ namespace Vultaik
             //    else
             //        qvkCmdSetDeviceMaskKHR(handle, 1 << gpu_index);
             //}
+        }
+
+        public void PipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint memoryBarrierCount, VkMemoryBarrier* memoryBarriers, uint bufferMemoryBarrierCount, VkBufferMemoryBarrier* bufferMemoryBarriers, VkImageMemoryBarrier imageMemoryBarriers)
+        {
+            vkCmdPipelineBarrier(handle, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, memoryBarriers, bufferMemoryBarrierCount, null, 1, &imageMemoryBarriers);
+        }
+
+        public void PipelineBarrier(VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint memoryBarrierCount, VkMemoryBarrier* memoryBarriers, uint bufferMemoryBarrierCount, VkBufferMemoryBarrier* bufferMemoryBarriers, VkImageMemoryBarrier[] imageMemoryBarriers)
+        {
+
         }
 
 

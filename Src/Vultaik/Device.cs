@@ -668,20 +668,32 @@ namespace Vultaik
             VkCommandBuffer cmd = commandBuffer.handle;
             VkQueue queue = get_queue_type_cmd(commandBuffer);
             VkFence sync_fence = VkFence.Null;
+            bool use_semaphore = true;
 
+            if (queue == transfer_queue)
+            {
+                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+                wait_stages |= VkPipelineStageFlags.Transfer;
+                use_semaphore = false;
+            }
 
             VkSubmitInfo submit_info = new()
             {
                 sType = VkStructureType.SubmitInfo,
-                waitSemaphoreCount = 1,
-                pWaitSemaphores = &wait_semaphore,
                 pWaitDstStageMask = &wait_stages,
                 pNext = null,
                 commandBufferCount = 1,
                 pCommandBuffers = &cmd,
-                signalSemaphoreCount = 1,
-                pSignalSemaphores = &signal_semaphore,
             };
+
+            if (use_semaphore)
+            {
+                submit_info.waitSemaphoreCount = 1;
+                submit_info.pWaitSemaphores = &wait_semaphore;
+
+                submit_info.signalSemaphoreCount = 1;
+                submit_info.pSignalSemaphores = &signal_semaphore;
+            }
 
 
             if (fence is not null)

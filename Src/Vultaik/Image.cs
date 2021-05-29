@@ -12,7 +12,7 @@ using Interop = Vultaik.Interop;
 namespace Vultaik
 {
     [Flags]
-    public enum TextureFlags
+    public enum ImageFlags
     {
 
         None = 0,
@@ -124,15 +124,15 @@ namespace Vultaik
         public int Height => Description.Height;
         public int Depth => Description.Depth;
         public bool IsCubeMap => Description.IsCubeMap;
-        public TextureFlags ViewFlags => Description.Flags;
+        public ImageFlags ViewFlags => Description.Flags;
 
-        public bool IsRenderTarget => (ViewFlags & TextureFlags.RenderTarget) != 0;
+        public bool IsRenderTarget => (ViewFlags & ImageFlags.RenderTarget) != 0;
 
-        public bool IsDepthStencil => (ViewFlags & TextureFlags.DepthStencil) != 0;
+        public bool IsDepthStencil => (ViewFlags & ImageFlags.DepthStencil) != 0;
 
-        public bool IsShaderResource => (ViewFlags & TextureFlags.ShaderResource) != 0;
+        public bool IsShaderResource => (ViewFlags & ImageFlags.ShaderResource) != 0;
 
-        public bool IsUnorderedAccess => (ViewFlags & TextureFlags.UnorderedAccess) != 0;
+        public bool IsUnorderedAccess => (ViewFlags & ImageFlags.UnorderedAccess) != 0;
 
         public bool IsMultisample => MultisampleCount > VkSampleCountFlags.None;
 
@@ -203,6 +203,7 @@ namespace Vultaik
             buffer.SetData(Data);
 
         }
+
 
         internal void create_image(int w, int h)
         {
@@ -349,7 +350,7 @@ namespace Vultaik
 
         internal VkImageLayout get_layout(VkImageLayout imageLayout)
         {
-            throw new NotImplementedException();
+            return VkImageLayout.TransferDstOptimal;
         }
 
 
@@ -358,38 +359,19 @@ namespace Vultaik
         public void Image2D()
         {
 
+            CommandBuffer cmd = new(NativeDevice, CommandBufferType.AsyncTransfer);
+            cmd.BeginOneTimeSubmit();
 
-            Description.MipLevels = 1; // TODO: MipMaps
 
-            VkImageSubresourceRange subresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, (uint)MipLevels, 0, 1);
+            VkImageSubresourceRange subresource_range = new(VkImageAspectFlags.Color, 0, (uint)MipLevels, 0, 1);
 
-            // Copy the data from staging buffers to device local buffers.
-            VkCommandBufferAllocateInfo allocInfo2 = new VkCommandBufferAllocateInfo()
-            {
-                sType = VkStructureType.CommandBufferAllocateInfo,
-                commandPool = NativeDevice.transfer_cmd_pool,
-
-                level = VkCommandBufferLevel.Primary,
-                commandBufferCount = 1,
-            };
-            VkCommandBuffer cmdBuffer;
-            vkAllocateCommandBuffers(NativeDevice.handle, &allocInfo2, &cmdBuffer);
-
-            VkCommandBufferBeginInfo beginInfo = new VkCommandBufferBeginInfo()
-            {
-                sType = VkStructureType.CommandBufferBeginInfo,
-                flags = VkCommandBufferUsageFlags.OneTimeSubmit,
-            };
-
-            vkBeginCommandBuffer(cmdBuffer, &beginInfo);
-
-            VkImageMemoryBarrier imageMemoryBarrier = new VkImageMemoryBarrier
+            VkImageMemoryBarrier memory_barrier = new()
             {
                 sType = VkStructureType.ImageMemoryBarrier,
                 pNext = null,
                 image = handle,
-                subresourceRange = subresourceRange,
-                srcAccessMask = 0,
+                subresourceRange = subresource_range,
+                srcAccessMask =  VkAccessFlags.None,
                 dstAccessMask = VkAccessFlags.TransferWrite,
                 oldLayout = VkImageLayout.Undefined,
                 newLayout = VkImageLayout.TransferDstOptimal,
@@ -397,42 +379,36 @@ namespace Vultaik
                 dstQueueFamilyIndex = QueueFamilyIgnored
             };
 
-            vkCmdPipelineBarrier(cmdBuffer, VkPipelineStageFlags.TopOfPipe, VkPipelineStageFlags.Transfer, VkDependencyFlags.None, 0, null, 0, null, 1, &imageMemoryBarrier);
+            cmd.PipelineBarrier(VkPipelineStageFlags.TopOfPipe, VkPipelineStageFlags.Transfer, VkDependencyFlags.None, 0, null, 0, null, memory_barrier);
 
 
 
-
-
-            // Setup buffer copy regions for each mip level.
-            VkBufferImageCopy[] bufferCopyRegions = new VkBufferImageCopy[MipLevels]; // TODO: stackalloc
+            uint num_blits = (uint)MipLevels;
             int offset = 0;
-            for (int i = 0; i < bufferCopyRegions.Length; i++)
-            {
+            
+            VkBufferImageCopy* blits = stackalloc VkBufferImageCopy[MipLevels]; // Setup buffer copy regions for each mip level.
 
-                bufferCopyRegions = new[]
+            for (uint i = 0; i < num_blits; i++)
+            {
+                blits[i] = new()
                 {
-                    new VkBufferImageCopy
-                    {
-                        imageSubresource = new VkImageSubresourceLayers(VkImageAspectFlags.Color, (uint)i, 0, 1),
-                        imageExtent = new(Width, Height, 1),
-                        bufferOffset = (ulong)offset
-                    }
+                    imageSubresource = new(VkImageAspectFlags.Color, i, 0, 1),
+                    imageExtent = new(Width, Height, 1),
+                    bufferOffset = (ulong)offset
                 };
+
                 offset += Size;
             }
-
-            fixed (VkBufferImageCopy* regionsPtr = bufferCopyRegions)
-            {
-                vkCmdCopyBufferToImage(cmdBuffer, buffer.handle, handle, VkImageLayout.TransferDstOptimal, (uint)bufferCopyRegions.Length, regionsPtr);
-            }
+            cmd.copy_buffer_to_image(handle, buffer.handle, num_blits, blits, VkImageLayout.TransferDstOptimal);
 
 
-            VkImageMemoryBarrier imageMemoryBarrier2 = new VkImageMemoryBarrier
+
+            VkImageMemoryBarrier memory_barrier_read = new()
             {
                 sType = VkStructureType.ImageMemoryBarrier,
                 pNext = null,
                 image = handle,
-                subresourceRange = subresourceRange,
+                subresourceRange = subresource_range,
                 srcAccessMask = VkAccessFlags.TransferWrite,
                 dstAccessMask = VkAccessFlags.ShaderRead,
                 oldLayout = VkImageLayout.TransferDstOptimal,
@@ -441,39 +417,24 @@ namespace Vultaik
                 dstQueueFamilyIndex = QueueFamilyIgnored
             };
 
-            vkCmdPipelineBarrier(cmdBuffer, VkPipelineStageFlags.Transfer, VkPipelineStageFlags.FragmentShader, VkDependencyFlags.None, 0, null, 0, null, 1, &imageMemoryBarrier2);
+            cmd.PipelineBarrier(VkPipelineStageFlags.Transfer, VkPipelineStageFlags.FragmentShader, VkDependencyFlags.None, 0, null, 0, null, memory_barrier_read);
 
-            vkEndCommandBuffer(cmdBuffer);
-
+            cmd.End();
 
 
             Fence fence = new Fence(NativeDevice);
 
-
-            VkSubmitInfo submitInfo = new VkSubmitInfo
-            {
-                sType = VkStructureType.SubmitInfo,
-                pNext = null,
-                commandBufferCount = 1,
-                pCommandBuffers = &cmdBuffer
-            };
-
-            vkQueueSubmit(NativeDevice.transfer_queue, submitInfo, fence.handle);
+            NativeDevice.Submit(cmd, fence);
 
             fence.Wait();
 
-
+            //if (fence.IsSignaled)
 
 
             // Cleanup staging resources.
             fence.Dispose();
             vkFreeMemory(NativeDevice.handle, buffer_memory, null);
             vkDestroyBuffer(NativeDevice.handle, buffer.handle, null);
-
-
-
-
-
 
         }
 
@@ -528,7 +489,7 @@ namespace Vultaik
         {
         }
 
-        private void set_data_cubemap()
+        private void set_data_cube_map()
         {
         }
 

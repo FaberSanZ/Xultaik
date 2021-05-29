@@ -56,7 +56,7 @@ namespace Vultaik
             {
                 DepthStencil = new Image(NativeDevice, new ImageDescription
                 {
-                    Flags = TextureFlags.DepthStencil,
+                    Flags = ImageFlags.DepthStencil,
                     Usage = GraphicsResourceUsage.Default,
                     ArraySize = 1,
                     MipLevels = 1,

@@ -24,7 +24,7 @@ namespace Vultaik
 
             Image text2d = new Image(device, new ImageDescription
             {
-                Flags = TextureFlags.ShaderResource,
+                Flags = ImageFlags.ShaderResource,
                 Usage = GraphicsResourceUsage.Staging,
                 Width = tex2D.Width,
                 Height = tex2D.Height,
@@ -50,7 +50,7 @@ namespace Vultaik
                 description = IMGLoader.LoadFromFile(path);
 
             description.ImageType = VkImageType.Image2D;
-            description.Flags = TextureFlags.ShaderResource;
+            description.Flags = ImageFlags.ShaderResource;
             description.Usage = GraphicsResourceUsage.Staging;
 
 
