@@ -674,6 +674,18 @@ namespace Vultaik
             {
                 wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
                 wait_stages |= VkPipelineStageFlags.Transfer;
+
+                //if (GraphicsFamily == TransferFamily)
+                //    wait_stages &= ~VkPipelineStageFlags.Transfer;
+
+                use_semaphore = false;
+            }
+
+            if (queue == compute_queue)
+            {
+                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+                wait_stages |= VkPipelineStageFlags.ComputeShader;
+
                 use_semaphore = false;
             }
 
@@ -705,9 +717,13 @@ namespace Vultaik
                 vkQueueSubmit(queue, 1, &submit_info, sync_fence).CheckResult();
         }
 
-        internal VkMemoryType GetMemoryTypeExt(VkPhysicalDeviceMemoryProperties memoryProperties, uint index)
+        internal VkMemoryType GetMemoryTypeExt(VkPhysicalDeviceMemoryProperties memory, uint index)
         {
-            return (&memoryProperties.memoryTypes_0)[index];
+            //VkMemoryType* ptr = &memory.memoryTypes_0;
+            //if ((*ptr).propertyFlags == VkMemoryPropertyFlags.DeviceCoherentAMD)
+
+
+            return (&memory.memoryTypes_0)[index];
         }
 
 
@@ -768,12 +784,12 @@ namespace Vultaik
         }
 
 
-        static int convert_to_signed_delta(uint start_ticks, uint end_ticks, uint valid_bits)
+        static int convert_to_signed_delta(int start_ticks, int end_ticks, int valid_bits)
         {
-            int shamt = (int)(64 - valid_bits);
+            int shamt = 64 - valid_bits;
             start_ticks <<= shamt;
             end_ticks <<= shamt;
-            int ticks_delta = (int)(end_ticks - start_ticks);
+            int ticks_delta = end_ticks - start_ticks;
             ticks_delta >>= shamt;
             return ticks_delta;
         }
