@@ -1,9 +1,10 @@
-://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/ClearScreen.PNG" width=350> </a>
+
 
 
 
 <h1 align="center">
-   Vultaik
+   <img src="Logo/vultain.png" width=420>
+
   
   ##               Vultaik is a 2D/3D renderer implemented in [Vulkan®](https://www.khronos.org/vulkan/)
   
@@ -15,9 +16,7 @@
 [![NuGet](https://img.shields.io/nuget/v/Vultaik.svg)](https://www.nuget.org/packages?q=Tags%3A%22Vultaik%22)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FaberSanZ/Vultaik/blob/master/LICENSE) 
 
-The code is licensed under MIT. Feel free to use it for whatever purpose.
-
-<hr>
+<br>
 
 ## Overview
 Vultaik can be used to produce render layers for custom engines or next-gen games and provides building blocks for writing your own engine or game quickly.
@@ -60,7 +59,6 @@ The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan e
 - [x] Vulkan HLSL for shaders, shaders are compiled in runtime with [DirectXShaderCompiler](https://github.com/microsoft/DirectXShaderCompiler)
 - [x] GLTF 2.0 for samples
 
-<hr>
 <br>
 
 
@@ -70,10 +68,10 @@ The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan e
 
 Example | Details
 ---------|--------
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/ClearScreen.PNG" width=350> | [ClearScreen](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/ClearScreen.cs)<br> This example shows how to configure the device and clear the color.
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/Triangle.PNG" width=350> | [Triangle](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Triangle.cs)<br> This example shows how to render simple triangle.
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/Transformations.PNG" width=350> | [Transformations](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Transformations.cs)<br> This example how to transform the world space for each object.
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/LoadGLTF.PNG" width=350> | [LoadGLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs)<br> This example shows how to load GLTF models.
+<img src="Screenshots/ClearScreen.PNG" width=350> | [ClearScreen](Src/Samples/Samples/ClearScreen.cs)<br> This example shows how to configure the device and clear the color.
+<img src="Screenshots/Triangle.PNG" width=350> | [Triangle](Src/Samples/Samples/Triangle.cs)<br> This example shows how to render simple triangle.
+<img src="Screenshots/Transformations.PNG" width=350> | [Transformations](Src/Samples/Samples/Transformations.cs)<br> This example how to transform the world space for each object.
+<img src="Screenshots/LoadGLTF.PNG" width=350> | [LoadGLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs)<br> This example shows how to load GLTF models.
 <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/LoadTexture.PNG" width=350> | [LoadTexture](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadTexture.cs)<br> This example shows how to load 2D texture from disk (including all mip levels). 
 <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/DiffuseLighting.PNG" width=350> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create DiffuseLighting. 
 
