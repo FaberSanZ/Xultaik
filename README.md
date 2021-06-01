@@ -10,7 +10,6 @@
   
 </h1>
 
-<hr>
 
 [![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Vultaik/actions)
 [![NuGet](https://img.shields.io/nuget/v/Vultaik.svg)](https://www.nuget.org/packages?q=Tags%3A%22Vultaik%22)
@@ -30,7 +29,6 @@ Due to the parallel nature of GPUs, Vultaik can use [GPGPU](https://en.wikipedia
 The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Zeckoxe/wiki/Extension) and [features](#Features) are aggressively made use of to improve performance
 
 
-<br>
 <br>
 
 ## Features:
