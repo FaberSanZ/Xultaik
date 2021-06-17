@@ -10,6 +10,7 @@ using Vortice.Vulkan;
 using Interop = Vultaik.Interop;
 using Samples.Common;
 using Vultaik.Toolkit;
+using System.Runtime.CompilerServices;
 
 namespace Samples.DynamicUniformBuffer
 {
@@ -312,7 +313,6 @@ namespace Samples.DynamicUniformBuffer
 
                         // Aligned offset
                         Matrix4x4* modelMat = (Matrix4x4*)(((ulong)model_uniform.Model + (index * (ulong)dynamicAlignment)));
-
                         // Update rotations
                         rotations[index] = rotation * rotationSpeeds[index];
 
@@ -331,9 +331,7 @@ namespace Samples.DynamicUniformBuffer
             var map = ConstBuffer2.Map();
 
             // Copy
-            System.Runtime.CompilerServices.Unsafe.CopyBlock(map, model_uniform.Model, (uint)ConstBuffer2.SizeInBytes);
-            Interop.MemoryHelper.Write(map, ref model_uniform);
-
+            Unsafe.CopyBlock(map, model_uniform.Model, (uint)ConstBuffer2.SizeInBytes);
 
             //ConstBuffer2.Unmap();
 
