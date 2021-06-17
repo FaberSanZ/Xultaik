@@ -16,7 +16,6 @@ namespace Samples.DynamicUniformBuffer
     public class DynamicUniformBufferExample : IDisposable
     {
 
-
         public VertexPositionColor[] vertices = new VertexPositionColor[]
         {
             // front face
