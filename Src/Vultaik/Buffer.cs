@@ -149,6 +149,21 @@ namespace Vultaik
         }
 
 
+
+        public void SetDataFlush<T>(T* data) where T : unmanaged
+        {
+            // Map uniform buffer and update it
+            void* ppData;
+            vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, &ppData);
+
+            // Copy
+            //data.CopyTo(new Span<T>(ppData, SizeInBytes));
+            Unsafe.CopyBlock(ppData, data, (uint)SizeInBytes);
+
+            FlushMappedMemoryRanges();
+
+        }
+
         public void SetDataFlush<T>(Span<T> data) where T : unmanaged
         {
             // Map uniform buffer and update it
@@ -156,7 +171,7 @@ namespace Vultaik
             vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, &ppData);
 
             // Copy
-            data.CopyTo(new Span<T>(ppData, BufferDescription.SizeInBytes));
+            data.CopyTo(new Span<T>(ppData, SizeInBytes));
             //Unsafe.CopyBlock(ppData, data, (uint)SizeInBytes);
 
             FlushMappedMemoryRanges();
