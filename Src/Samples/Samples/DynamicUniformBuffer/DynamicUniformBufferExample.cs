@@ -121,13 +121,14 @@ namespace Samples.DynamicUniformBuffer
 
         }
 
-
         public ViewUniform view_uniform;
         public ModelUniform model_uniform;
         public float yaw;
         public float pitch;
         public float roll;
         private IntPtr dynamicAlignment;
+        private const uint OBJECT_INSTANCES = 125;
+        private Vector3[] rotationSpeeds = new Vector3[OBJECT_INSTANCES]; // Store random per-object rotations
 
         public void Initialize()
         {
@@ -149,7 +150,6 @@ namespace Samples.DynamicUniformBuffer
 
             Camera = new(45f, 1f, 0.1f, 64f);
             Camera.SetPosition(0, 0, -20.5f);
-            //Camera.SetRotation(0, 0.0f, .5f);
             Camera.AspectRatio = (float)Window.Width / Window.Height;
             Camera.Update();
 
@@ -197,10 +197,8 @@ namespace Samples.DynamicUniformBuffer
             dynamicAlignment = (IntPtr)(((ulong)sizeof(Matrix4x4) / uboAlignment) * uboAlignment + (((ulong)sizeof(Matrix4x4) % uboAlignment) > 0 ? uboAlignment : 0));
             IntPtr bufferSize = (IntPtr)(OBJECT_INSTANCES * (ulong)dynamicAlignment);
 
-            unsafe
-            {
-                model_uniform.Model = (Matrix4x4*)alignedAlloc(bufferSize, dynamicAlignment);
-            }
+            model_uniform.Model = (Matrix4x4*)alignedAlloc(bufferSize, dynamicAlignment);
+            
 
             // Prepare per-object matrices with offsets and random rotations
             Random rndGen = new Random();
@@ -208,7 +206,6 @@ namespace Samples.DynamicUniformBuffer
 
             for (uint i = 0; i < OBJECT_INSTANCES; i++)
             {
-                rotations[i] = new Vector3(rndDist(rndGen), rndDist(rndGen), rndDist(rndGen)) * 2.0f * (float)Math.PI;
                 rotationSpeeds[i] = new Vector3(rndDist(rndGen), rndDist(rndGen), rndDist(rndGen));
             }
 
@@ -277,16 +274,26 @@ namespace Samples.DynamicUniformBuffer
 
         }
 
-        private const uint OBJECT_INSTANCES = 125;
 
-
-        // Store random per-object rotations
-        Vector3[] rotations = new Vector3[OBJECT_INSTANCES];
-        Vector3[] rotationSpeeds = new Vector3[OBJECT_INSTANCES];
 
         private unsafe void* alignedAlloc(IntPtr size, IntPtr alignment)
         {
             return Marshal.AllocHGlobal(size).ToPointer();
+        }
+
+        // TODO: Span<Matrix4x4>
+        public unsafe void AddCube(Vector3 position, Vector3 rotation, uint index)
+        {
+
+            // Aligned offset
+            Matrix4x4* modelMat = (Matrix4x4*)(((ulong)model_uniform.Model + (index * (ulong)dynamicAlignment)));
+
+
+            // Update matrices
+            *modelMat = Matrix4x4.CreateTranslation(position);
+            *modelMat = Matrix4x4.CreateRotationX(MathUtil.DegreesToRadians(rotation.X)) * *modelMat;
+            *modelMat = Matrix4x4.CreateRotationY(MathUtil.DegreesToRadians(rotation.Y)) * *modelMat;
+            *modelMat = Matrix4x4.CreateRotationZ(MathUtil.DegreesToRadians(rotation.Z)) * *modelMat;
         }
 
         public unsafe void Update()
@@ -310,32 +317,16 @@ namespace Samples.DynamicUniformBuffer
                     for (uint z = 0; z < dim; z++)
                     {
                         uint index = x * dim * dim + y * dim + z;
-
-                        // Aligned offset
-                        Matrix4x4* modelMat = (Matrix4x4*)(((ulong)model_uniform.Model + (index * (ulong)dynamicAlignment)));
-                        // Update rotations
-                        rotations[index] = rotation * rotationSpeeds[index];
-
-                        // Update matrices
+                        
+                        Vector3 rotations = rotation * rotationSpeeds[index];
                         Vector3 pos = new Vector3(-((dim * offset.X) / 2.0f) + offset.X / 2.0f + x * offset.X, -((dim * offset.Y) / 2.0f) + offset.Y / 2.0f + y * offset.Y, -((dim * offset.Z) / 2.0f) + offset.Z / 2.0f + z * offset.Z);
-                        *modelMat = Matrix4x4.CreateTranslation(pos);
-                        *modelMat = Matrix4x4.CreateRotationX(MathUtil.DegreesToRadians(rotations[index].X)) * *modelMat;
-                        *modelMat = Matrix4x4.CreateRotationY(MathUtil.DegreesToRadians(rotations[index].Y)) * *modelMat;
-                        *modelMat = Matrix4x4.CreateRotationZ(MathUtil.DegreesToRadians(rotations[index].Z)) * *modelMat;
-
+                        
+                        AddCube(pos, rotations, index);
                     }
                 }
             }
 
-
-            var map = ConstBuffer2.Map();
-
-            // Copy
-            Unsafe.CopyBlock(map, model_uniform.Model, (uint)ConstBuffer2.SizeInBytes);
-
-            //ConstBuffer2.Unmap();
-
-            ConstBuffer2.FlushMappedMemoryRanges();
+            ConstBuffer2.SetDataFlush(new Span<Matrix4x4>(model_uniform.Model, ConstBuffer2.SizeInBytes));
 
             Timer.Update();
         }
