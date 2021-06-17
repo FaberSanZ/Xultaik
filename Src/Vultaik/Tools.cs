@@ -1,10 +1,8 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 
-/*=============================================================================
-	Tools.cs
-=============================================================================*/
+
 
 
 
@@ -35,12 +33,12 @@ namespace Vultaik
 
         
 
-        internal static VkDescriptorType StageTVkDescriptorType(this spvc_resource_type stage)
+        internal static VkDescriptorType StageTVkDescriptorType(this spvc_resource_type stage, bool is_dynamic)
         {
             switch (stage)
             {
                 case spvc_resource_type.UniformBuffer:
-                    return VkDescriptorType.UniformBuffer;
+                    return is_dynamic ? VkDescriptorType.UniformBufferDynamic : VkDescriptorType.UniformBuffer;
 
                 case spvc_resource_type.StorageBuffer:
                     return VkDescriptorType.StorageBuffer;
@@ -177,39 +175,27 @@ namespace Vultaik
             }
         }
 
-        public static VkSampleCountFlags ExtractMaxSampleCount(VkPhysicalDeviceProperties physicalDeviceProperties)
+        public static VkSampleCountFlags ExtractMaxSampleCount(VkPhysicalDeviceProperties physical)
         {
-            VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts & physicalDeviceProperties.limits.framebufferDepthSampleCounts;
+            VkSampleCountFlags counts = physical.limits.framebufferColorSampleCounts & physical.limits.framebufferDepthSampleCounts;
 
             if ((counts & VkSampleCountFlags.Count64) != 0)
-            {
                 return VkSampleCountFlags.Count64;
-            }
 
             if ((counts & VkSampleCountFlags.Count32) != 0)
-            {
                 return VkSampleCountFlags.Count32;
-            }
 
             if ((counts & VkSampleCountFlags.Count16) != 0)
-            {
                 return VkSampleCountFlags.Count16;
-            }
 
             if ((counts & VkSampleCountFlags.Count8) != 0)
-            {
                 return VkSampleCountFlags.Count8;
-            }
 
             if ((counts & VkSampleCountFlags.Count4) != 0)
-            {
                 return VkSampleCountFlags.Count4;
-            }
 
             if ((counts & VkSampleCountFlags.Count2) != 0)
-            {
                 return VkSampleCountFlags.Count2;
-            }
 
             return VkSampleCountFlags.Count1;
         }

@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. Faber.reach@gmail.com
-
+﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+// This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 using System;
 using System.Numerics;
@@ -150,7 +150,8 @@ namespace Vultaik.Physics
         {
             Projection = CreatePerspectiveFieldOfView(fov, aspectRatio, zNear, zFar);
 
-            Matrix4x4 translation = Matrix4x4.CreateTranslation(position * zoom);// * new Vector3(1,1,-1)) ;
+            Matrix4x4 translation = Matrix4x4.CreateTranslation(position * zoom);
+
             if (Type == CameraType.LookAt)
             {
                 View =

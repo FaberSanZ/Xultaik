@@ -28,10 +28,10 @@ namespace Samples.LoadTexture
 
         public VertexPositionTexture[] Vertices = new VertexPositionTexture[]
         {
-            new(new(0.5f, 0.5f, -0.5f), new Vector2(1.0f, 1.0f)) ,
-            new(new(-0.5f, 0.5f, -0.5f), new Vector2(0.0f, 1.0f)) ,
-            new(new(-0.5f, -0.5f, -0.5f),  new Vector2(0.0f, 0.0f)) ,
-            new(new(0.5f,  -0.5f, -0.5f),  new Vector2(1.0f, 0.0f)) ,
+            new(new(0.5f, 0.5f, -0.5f), new(1.0f, 1.0f)) ,
+            new(new(-0.5f, 0.5f, -0.5f), new(0.0f, 1.0f)) ,
+            new(new(-0.5f, -0.5f, -0.5f),  new(0.0f, 0.0f)) ,
+            new(new(0.5f,  -0.5f, -0.5f),  new(1.0f, 0.0f)) ,
         };
 
 
@@ -264,6 +264,7 @@ namespace Samples.LoadTexture
             commandBuffer.SetGraphicPipeline(PipelineState_1);
             commandBuffer.BindDescriptorSets(DescriptorSet_1);
             commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
+
 
 
             commandBuffer.Close();

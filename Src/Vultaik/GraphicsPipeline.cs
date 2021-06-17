@@ -56,11 +56,13 @@ namespace Vultaik
 
             for (int i = 0; i < resources.Length; i++)
             {
+                bool is_dynamic = resources[i].is_dynamic;
+
                 layoutBinding[i] = new VkDescriptorSetLayoutBinding
                 {
                     binding = resources[i].binding,
                     descriptorCount = 4,
-                    descriptorType = resources[i].resource_type.StageTVkDescriptorType(),
+                    descriptorType = resources[i].resource_type.StageTVkDescriptorType(is_dynamic),
                     stageFlags = resources[i].stage.StageToVkShaderStageFlags(),
                     pImmutableSamplers = null,
                 };
