@@ -3,14 +3,13 @@
 
 
 <h1 align="center">
-   <img src="Logo/vultain-logo.png" width=420>
+   <img src="Logo/vultaik-logo.png" width=410>
 
   
   ##               Vultaik is a 2D/3D renderer implemented in [Vulkan®](https://www.khronos.org/vulkan/)
   
 </h1>
 
-<hr>
 
 [![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Vultaik/actions)
 [![NuGet](https://img.shields.io/nuget/v/Vultaik.svg)](https://www.nuget.org/packages?q=Tags%3A%22Vultaik%22)
@@ -27,10 +26,9 @@ Due to the parallel nature of GPUs, Vultaik can use [GPGPU](https://en.wikipedia
 
 ## Low-level rendering backend
 
-The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Zeckoxe/wiki/Extension) and [features](#Features) are aggressively made use of to improve performance
+The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Vultaik/wiki/Extension) and [features](#Features) are aggressively made use of to improve performance
 
 
-<br>
 <br>
 
 ## Features:
@@ -42,15 +40,12 @@ The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan e
 - [ ] Shading rate
 - [ ] Descriptor indexing
 - [ ] Timeline semaphore
-- [ ] Buffer device address 
 - [ ] Synchronization2
 - [x] Memory allocator
 - [x] GPU-Assisted Validation
 - [ ] Compute Shader
 - [ ] Geometry Shader
 - [ ] Tessellation Shader
-- [ ] G-Buffer
-- [ ] Physically-Based Rendering
 - [ ] Instancing, Indirect drawing
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [ ] Multithreaded rendering
@@ -73,7 +68,7 @@ Example | Details
 <img src="Screenshots/Transformations.PNG" width=350> | [Transformations](Src/Samples/Samples/Transformations.cs)<br> This example how to transform the world space for each object.
 <img src="Screenshots/LoadGLTF.PNG" width=350> | [LoadGLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs)<br> This example shows how to load GLTF models.
 <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/LoadTexture.PNG" width=350> | [LoadTexture](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadTexture.cs)<br> This example shows how to load 2D texture from disk (including all mip levels). 
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/DiffuseLighting.PNG" width=350> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create DiffuseLighting. 
+<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/DiffuseLighting.PNG" width=350> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create diffuse lighting. 
 
 
 
