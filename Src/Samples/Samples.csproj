@@ -31,9 +31,4 @@
     </None>
   </ItemGroup>
 
-
-  <ItemGroup>
-    <Folder Include="Samples\DynamicUniformBuffer\" />
-  </ItemGroup>
-
 </Project>

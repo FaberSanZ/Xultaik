@@ -470,13 +470,13 @@ namespace Vultaik
         }
 
 
-        public void BindDescriptorSets(DescriptorSet descriptor)
+        public void BindDescriptorSets(DescriptorSet descriptor, uint dynamicOffsetCount = 0, uint dynamicOffsets = 0)
         {
             // Bind descriptor sets describing shader binding points
             VkDescriptorSet descriptor_set = descriptor._descriptorSet;
             VkPipelineLayout pipeline_layout = descriptor.PipelineState._pipelineLayout;
 
-            vkCmdBindDescriptorSets(handle, VkPipelineBindPoint.Graphics, pipeline_layout, 0, 1, &descriptor_set, 0, null);
+            vkCmdBindDescriptorSets(handle, VkPipelineBindPoint.Graphics, pipeline_layout, 0, 1, &descriptor_set, dynamicOffsetCount, &dynamicOffsets);
         }
 
 

@@ -82,6 +82,18 @@ namespace Vultaik
         }
 
 
+        public void SetUniformBufferDynamic(int binding, Buffer buffer, int offset = 0)
+        {
+            Data.Add(new()
+            {
+                Offset = offset,
+                Binding = binding,
+                Buffer = buffer,
+                DescriptorType = VkDescriptorType.UniformBufferDynamic,
+            });
+
+        }
+
         public void SetUniformBuffer(int binding, Buffer buffer, int offset = 0)
         {
             Data.Add(new()

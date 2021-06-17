@@ -57,7 +57,6 @@ namespace Vultaik
             for (int i = 0; i < resources.Length; i++)
             {
                 bool is_dynamic = resources[i].is_dynamic;
-
                 layoutBinding[i] = new VkDescriptorSetLayoutBinding
                 {
                     binding = resources[i].binding,

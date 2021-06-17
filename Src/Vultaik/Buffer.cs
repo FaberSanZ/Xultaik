@@ -60,6 +60,7 @@ namespace Vultaik
             {
                 access = VkAccessFlags.HostRead | VkAccessFlags.HostWrite;
             }
+
             else
             {
                 if ((Flags/*.HasFlag()*/& BufferFlags.VertexBuffer) != 0)
@@ -104,6 +105,10 @@ namespace Vultaik
             {
                 memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
             }
+            if (Usage == GraphicsResourceUsage.DynamicUniform)
+            {
+                memoryProperties = VkMemoryPropertyFlags.HostVisible;
+            }
 
             vkGetBufferMemoryRequirements(NativeDevice.handle, handle, out VkMemoryRequirements memReqs);
 
@@ -141,6 +146,19 @@ namespace Vultaik
             vkUnmapMemory(NativeDevice.handle, memory);
 
 
+        }
+
+
+        public void FlushMappedMemoryRanges()
+        {
+            // Flush to make changes visible to the host 
+            VkMappedMemoryRange memory_range = new()
+            {
+                sType = VkStructureType.MappedMemoryRange,
+                memory = memory,
+                size = (ulong)SizeInBytes,
+            };
+            vkFlushMappedMemoryRanges(NativeDevice.handle, 1, &memory_range).CheckResult();
         }
 
 
@@ -231,9 +249,10 @@ namespace Vultaik
         }
 
 
-        public void* Map(void* pData)
+        public void* Map()
         {
-            vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, pData);
+            void* pData;
+            vkMapMemory(NativeDevice.handle, memory, 0, (ulong)BufferDescription.SizeInBytes, 0, &pData);
             return pData;
         }
 

@@ -71,6 +71,8 @@ namespace Vultaik
 
         public uint MaxDrawIndirectCount => device_properties.limits.maxDrawIndirectCount;
 
+        public ulong MinUniformBufferOffsetAlignment => device_properties.limits.minUniformBufferOffsetAlignment;
+
         public VkSampleCountFlags MultisampleCount => Tools.ExtractMaxSampleCount(device_properties);
 
         public bool SupportsPhysicalDeviceProperties2 { get; private set; }
@@ -165,7 +167,6 @@ namespace Vultaik
 
             if (device_properties.apiVersion >= VkVersion.Version_1_1) 
                 SupportsVulkan11Device = SupportsVulkan11Instance;
-
 
         }
 

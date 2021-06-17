@@ -15,5 +15,7 @@ namespace Vultaik
         Dynamic = unchecked(2),
 
         Staging = unchecked(3),
+
+        DynamicUniform = unchecked(4),
     }
 }
