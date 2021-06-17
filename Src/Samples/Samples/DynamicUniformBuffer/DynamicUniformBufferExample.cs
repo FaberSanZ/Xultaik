@@ -326,7 +326,7 @@ namespace Samples.DynamicUniformBuffer
                 }
             }
 
-            ConstBuffer2.SetDataFlush(new Span<Matrix4x4>(model_uniform.Model, ConstBuffer2.SizeInBytes));
+            ConstBuffer2.SetDataFlush(model_uniform.Model);
 
             Timer.Update();
         }
