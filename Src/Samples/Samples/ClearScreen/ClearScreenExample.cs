@@ -158,7 +158,7 @@ namespace Samples.ClearScreen
             CommandBuffer.BeginFramebuffer(Framebuffer, R, G, B, A);
 
             CommandBuffer.Close();
-            CommandBuffer.Submit();
+            Device.Submit(CommandBuffer);
 
             SwapChain.Present();
         }

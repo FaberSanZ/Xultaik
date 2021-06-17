@@ -481,29 +481,6 @@ namespace Vultaik
 
 
 
-        public void Submit()
-        {
-            VkSemaphore signalSemaphore = NativeDevice.render_finished_semaphore;
-            VkSemaphore waitSemaphore = NativeDevice.image_available_semaphore;
-            VkPipelineStageFlags waitStages = VkPipelineStageFlags.ColorAttachmentOutput;
-            VkCommandBuffer commandBuffer = handle;
-
-
-            VkSubmitInfo submitInfo = new()
-            {
-                sType = VkStructureType.SubmitInfo,
-                waitSemaphoreCount = 1,
-                pWaitSemaphores = &waitSemaphore,
-                pWaitDstStageMask = &waitStages,
-                pNext = null,
-                commandBufferCount = 1,
-                pCommandBuffers = &commandBuffer,
-                signalSemaphoreCount = 1,
-                pSignalSemaphores = &signalSemaphore,
-            };
-
-            vkQueueSubmit(NativeDevice.command_queue, 1, &submitInfo, WaitFence.handle);
-        }
 
         public void BeginRenderPassContinue()
         {

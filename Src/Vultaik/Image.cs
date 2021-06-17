@@ -383,7 +383,7 @@ namespace Vultaik
 
 
 
-            uint num_blits = (uint)MipLevels;
+            uint num_blits = (uint)1;
             int offset = 0;
             
             VkBufferImageCopy* blits = stackalloc VkBufferImageCopy[MipLevels]; // Setup buffer copy regions for each mip level.

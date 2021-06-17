@@ -179,7 +179,7 @@ namespace Samples.LoadTexture
             Sampler sampler = new Sampler(Device);
 
 
-            PipelineStateDescription Pipelinedescription_0 = new();
+            GraphicsPipelineDescription Pipelinedescription_0 = new();
             Pipelinedescription_0.SetFramebuffer(Framebuffer);
             Pipelinedescription_0.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment));
             Pipelinedescription_0.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex));
@@ -196,7 +196,7 @@ namespace Samples.LoadTexture
 
 
 
-            PipelineStateDescription Pipelinedescription_1 = new();
+            GraphicsPipelineDescription Pipelinedescription_1 = new();
             Pipelinedescription_1.SetFramebuffer(Framebuffer);
             Pipelinedescription_1.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment));
             Pipelinedescription_1.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex));
@@ -267,7 +267,7 @@ namespace Samples.LoadTexture
 
 
             commandBuffer.Close();
-            commandBuffer.Submit();
+            Device.Submit(commandBuffer);
             SwapChain.Present();
         }
 

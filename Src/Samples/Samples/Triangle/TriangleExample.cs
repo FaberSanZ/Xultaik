@@ -157,7 +157,7 @@ namespace Samples.Triangle
 
             var file = Constants.ShadersFile;
 
-            PipelineStateDescription Pipelinedescription = new();
+            GraphicsPipelineDescription Pipelinedescription = new();
             Pipelinedescription.SetFramebuffer(Framebuffer);
             Pipelinedescription.SetShader(new ShaderBytecode(file + "Triangle/Fragment.hlsl", ShaderStage.Fragment));
             Pipelinedescription.SetShader(new ShaderBytecode(file + "Triangle/Vertex.hlsl", ShaderStage.Vertex));

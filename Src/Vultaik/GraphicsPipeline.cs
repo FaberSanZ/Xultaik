@@ -19,13 +19,13 @@ namespace Vultaik
         internal VkPipelineCache _pipelineCache;
         internal VkPipelineLayout _pipelineLayout;
 
-        public GraphicsPipeline(PipelineStateDescription description) : base(description.Framebuffer.NativeDevice)
+        public GraphicsPipeline(GraphicsPipelineDescription description) : base(description.Framebuffer.NativeDevice)
         {
             PipelineStateDescription = description;
             Recreate();
         }
 
-        public PipelineStateDescription PipelineStateDescription { get; set; }
+        public GraphicsPipelineDescription PipelineStateDescription { get; set; }
 
         private void Recreate()
         {
@@ -151,7 +151,7 @@ namespace Vultaik
 
 
 
-        private void CreateGraphicsPipeline(PipelineStateDescription description)
+        private void CreateGraphicsPipeline(GraphicsPipelineDescription description)
         {
 
             List<ShaderBytecode> shaders = description.Shaders;

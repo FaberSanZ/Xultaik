@@ -119,12 +119,12 @@ namespace Vultaik
     }
 
 
-    public class PipelineStateDescription
+    public class GraphicsPipelineDescription
     {
         internal int VertexAttributeLocation = 0;
         internal int VertexAttributeOffset = 0;
 
-        public PipelineStateDescription()
+        public GraphicsPipelineDescription()
         {
             SetPrimitiveType(VkPrimitiveTopology.TriangleList);
             SetFillMode(VkPolygonMode.Fill);

@@ -236,7 +236,7 @@ namespace Samples.Transformations
 
 
 
-            PipelineStateDescription Pipelinedescription0 = new();
+            GraphicsPipelineDescription Pipelinedescription0 = new();
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.SetShader(Fragment);
             Pipelinedescription0.SetShader(Vertex);
@@ -251,7 +251,7 @@ namespace Samples.Transformations
 
 
 
-            PipelineStateDescription Pipelinedescription1 = new();
+            GraphicsPipelineDescription Pipelinedescription1 = new();
             Pipelinedescription1.SetFramebuffer(Framebuffer);
             Pipelinedescription1.SetShader(Fragment);
             Pipelinedescription1.SetShader(Vertex);
@@ -315,7 +315,7 @@ namespace Samples.Transformations
 
 
             commandBuffer.Close();
-            commandBuffer.Submit();
+            Device.Submit(commandBuffer);
             SwapChain.Present();
         }
 

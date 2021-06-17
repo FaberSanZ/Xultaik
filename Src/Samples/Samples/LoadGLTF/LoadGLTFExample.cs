@@ -129,7 +129,7 @@ namespace Samples.LoadGLTF
             string shaders = Constants.ShadersFile;
 
 
-            PipelineStateDescription pipelineStateDescription = new();
+            GraphicsPipelineDescription pipelineStateDescription = new();
             pipelineStateDescription.SetFramebuffer(Framebuffer);
             pipelineStateDescription.SetShader(new ShaderBytecode(shaders + "LoadGLTF/Fragment.hlsl", ShaderStage.Fragment));
             pipelineStateDescription.SetShader(new ShaderBytecode(shaders + "LoadGLTF/Vertex.hlsl", ShaderStage.Vertex)); 
@@ -187,7 +187,7 @@ namespace Samples.LoadGLTF
 
 
             commandBuffer.Close();
-            commandBuffer.Submit();
+            Device.Submit(commandBuffer);
             SwapChain.Present();
 
         }

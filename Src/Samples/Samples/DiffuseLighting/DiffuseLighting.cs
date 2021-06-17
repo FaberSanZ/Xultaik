@@ -166,7 +166,7 @@ namespace Samples.DiffuseLighting
             Sampler sampler = new Sampler(Device);
 
 
-            PipelineStateDescription Pipelinedescription0 = new();
+            GraphicsPipelineDescription Pipelinedescription0 = new();
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment, shaders));
             Pipelinedescription0.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex, shaders));
@@ -187,7 +187,7 @@ namespace Samples.DiffuseLighting
 
 
 
-            PipelineStateDescription Pipelinedescription1 = new();
+            GraphicsPipelineDescription Pipelinedescription1 = new();
             Pipelinedescription1.SetFramebuffer(Framebuffer);
             Pipelinedescription1.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment, shaders));
             Pipelinedescription1.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex, shaders)); 
@@ -207,7 +207,7 @@ namespace Samples.DiffuseLighting
 
 
 
-            PipelineStateDescription Pipelinedescription2 = new();
+            GraphicsPipelineDescription Pipelinedescription2 = new();
             Pipelinedescription2.SetFramebuffer(Framebuffer);
             Pipelinedescription2.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment, shaders));
             Pipelinedescription2.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex, shaders)); 
@@ -296,7 +296,7 @@ namespace Samples.DiffuseLighting
 
 
             cmd.Close();
-            cmd.Submit();
+            Device.Submit(cmd);
             SwapChain.Present();
         }
 

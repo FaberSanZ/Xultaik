@@ -551,7 +551,7 @@ namespace Vultaik
 
 
 
-            vkQueuePresentKHR(NativeDevice.command_queue, &present_info);
+            vkQueuePresentKHR(NativeDevice.graphics_queue, &present_info);
         }
 
         public void Dispose()

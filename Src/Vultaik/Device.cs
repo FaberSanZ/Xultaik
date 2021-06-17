@@ -11,6 +11,13 @@ using Interop = Vultaik.Interop;
 
 namespace Vultaik
 {
+    internal class QueueData
+    {
+        internal VkQueueFlags type;
+        internal uint family_index;
+        internal uint index;
+        internal uint timestamp_valid_bits = 0;
+    };
     public unsafe class Device : IDisposable
     {
         internal VkDevice handle;
@@ -18,7 +25,6 @@ namespace Vultaik
         internal VkQueueFamilyProperties[] queue_family_properties;
 
 
-        internal VkQueue command_queue;
         internal VkQueue graphics_queue;
         internal VkQueue compute_queue;
         internal VkQueue transfer_queue;
@@ -479,7 +485,6 @@ namespace Vultaik
 
         internal void CreateCommandQueues()
         {
-            command_queue = get_queue(GraphicsFamily);
             graphics_queue = get_queue(GraphicsFamily);
             compute_queue = get_queue(ComputeFamily);
             transfer_queue = get_queue(TransferFamily);
@@ -526,9 +531,66 @@ namespace Vultaik
             throw new InvalidOperationException("Could not find a suitable memory type!");
         }
 
+        internal QueueData get_queue_data(VkQueueFlags flags, VkQueueFamilyProperties[] queue_family_properties)
+        {
+            QueueData data = new();
+
+            // Dedicated queue for compute
+            // Try to find a queue family index that supports compute but not graphics
+            if ((flags & VkQueueFlags.Compute) != 0)
+            {
+                for (uint i = 0; i < queue_family_properties.Count(); i++)
+                {
+                    VkQueueFamilyProperties queue = queue_family_properties[(int)i];
+
+                    if (((queue.queueFlags & flags) != 0) && (queue.queueFlags & VkQueueFlags.Graphics) == 0)
+                    {
+                        data.index = queue.queueCount;
+                        data.family_index = i;
+                        data.timestamp_valid_bits = queue.timestampValidBits;
+                        data.type = queue.queueFlags;
+
+                        return data;
+                    }
+                }
+            }
+
+
+
+
+            // Dedicated queue for transfer
+            // Try to find a queue family index that supports transfer but not graphics and compute
+            if ((flags & VkQueueFlags.Transfer) != 0)
+            {
+                for (uint i = 0; i < queue_family_properties.Count(); i++)
+                {
+                    if (((queue_family_properties[(int)i].queueFlags & flags) != 0) &&
+                        (queue_family_properties[(int)i].queueFlags & VkQueueFlags.Graphics) == 0 &&
+                        (queue_family_properties[(int)i].queueFlags & VkQueueFlags.Compute) == 0)
+                    {
+                        return data;
+                    }
+                }
+            }
+
+
+
+
+            // For other queue types or if no separate compute queue is present, return the first one to support the requested flags
+            for (uint i = 0; i < queue_family_properties.Count(); i++)
+            {
+                if ((queue_family_properties[(int)i].queueFlags & flags) != 0)
+                {
+                    return data;
+                }
+            }
+
+            throw new InvalidOperationException("Could not find a matching queue family index");
+        }
 
         internal uint GetQueueFamilyIndex(VkQueueFlags queueFlags, VkQueueFamilyProperties[] queueFamilyProperties)
         {
+
             // Dedicated queue for compute
             // Try to find a queue family index that supports compute but not graphics
             if ((queueFlags & VkQueueFlags.Compute) != 0)
