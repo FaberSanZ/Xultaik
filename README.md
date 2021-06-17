@@ -63,12 +63,13 @@ The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan e
 
 Example | Details
 ---------|--------
-<img src="Screenshots/ClearScreen.PNG" width=350> | [ClearScreen](Src/Samples/Samples/ClearScreen.cs)<br> This example shows how to configure the device and clear the color.
-<img src="Screenshots/Triangle.PNG" width=350> | [Triangle](Src/Samples/Samples/Triangle.cs)<br> This example shows how to render simple triangle.
-<img src="Screenshots/Transformations.PNG" width=350> | [Transformations](Src/Samples/Samples/Transformations.cs)<br> This example how to transform the world space for each object.
-<img src="Screenshots/LoadGLTF.PNG" width=350> | [LoadGLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs)<br> This example shows how to load GLTF models.
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/LoadTexture.PNG" width=350> | [LoadTexture](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadTexture.cs)<br> This example shows how to load 2D texture from disk (including all mip levels). 
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/DiffuseLighting.PNG" width=350> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create diffuse lighting. 
+<img src="Screenshots/ClearScreen.PNG" width=380> | [ClearScreen](Src/Samples/Samples/ClearScreen.cs)<br> This example shows how to configure the device and clear the color.
+<img src="Screenshots/Triangle.PNG" width=380> | [Triangle](Src/Samples/Samples/Triangle.cs)<br> This example shows how to render simple triangle.
+<img src="Screenshots/Transformations.PNG" width=380> | [Transformations](Src/Samples/Samples/Transformations.cs)<br> This example how to transform the world space for each object.
+<img src="Screenshots/DynamicUniformBuffer.PNG" width=380> | [DynamicUniformBuffer](Src/Samples/Samples/DynamicUniformBuffer.cs)<br> This example use dynamic uniform buffers are used for rendering multiple objects with multiple matrices stored in a single uniform buffer object.
+<img src="Screenshots/LoadGLTF.PNG" width=380> | [LoadGLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs)<br> This example shows how to load GLTF models.
+<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/LoadTexture.PNG" width=380> | [LoadTexture](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadTexture.cs)<br> This example shows how to load 2D texture from disk (including all mip levels). 
+<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/DiffuseLighting.PNG" width=380> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create diffuse lighting. 
 
 
 
