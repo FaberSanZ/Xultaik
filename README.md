@@ -77,10 +77,11 @@ Example | Details
 <br>
 
 
-Additionally, **Vultaik** uses NuGet packages from the following repositories:
+Additionally, **Vultaik** uses NuGet packages or code from the following repositories:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan)
 - [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows)
 - [Silk.NET](https://github.com/dotnet/Silk.NET)
+- [VMASharp](https://github.com/sunkin351/VMASharp)
 
 
