@@ -14,13 +14,13 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>CS1591;CS1701</NoWarn>
 
-    <PackageTags>gamedev Vulkan Vultaik</PackageTags>
+    <PackageTags>gamedev HLSL Vulkan Vultaik</PackageTags>
     <Company>Faber Leonardo</Company>
     <Authors>Faber Leonardo</Authors>
     <Copyright>Copyright © 2020-2021 Faber Leonardo and contributors.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageProjectUrl>https://github.com/FaberSanZ/Zeckoxe</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/FaberSanZ/Vultaik</PackageProjectUrl>
 
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
