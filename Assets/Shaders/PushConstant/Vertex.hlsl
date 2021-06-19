@@ -4,6 +4,13 @@ struct VSInput
 	[[vk::location(1)]] float3 Color : COLOR0;
 };
 
+struct VSOutput
+{
+	float4 Pos : SV_POSITION;
+	[[vk::location(0)]] float3 Color : COLOR0;
+};
+
+
 struct View
 {
 	float4x4 View;
@@ -11,21 +18,16 @@ struct View
 };
 
 
-
-
 struct PushConsts
 {
 	float4x4 Model;
 };
-[[vk::push_constant]] PushConsts primitive;
 
+
+
+[[vk::push_constant]] PushConsts primitive;
 ConstantBuffer<View> view : register(b0);
 
-struct VSOutput
-{
-	float4 Pos : SV_POSITION;
-	[[vk::location(0)]] float3 Color : COLOR0;
-};
 
 VSOutput main(VSInput input)
 {

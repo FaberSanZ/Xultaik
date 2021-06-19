@@ -32,7 +32,7 @@ namespace Vultaik
 
         public VkFormat Format { get; set; }
 
-        public GraphicsResourceUsage Usage { get; set; }
+        public ResourceUsage Usage { get; set; }
 
         public ImageFlags Flags { get; set; }
 

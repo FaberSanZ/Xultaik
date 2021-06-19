@@ -35,7 +35,7 @@ namespace Vultaik
         public BufferDescription BufferDescription { get; set; }
         public int SizeInBytes => BufferDescription.SizeInBytes;
         public int ByteStride => BufferDescription.ByteStride;
-        public GraphicsResourceUsage Usage => BufferDescription.Usage;
+        public ResourceUsage Usage => BufferDescription.Usage;
         public BufferFlags Flags => BufferDescription.BufferFlags;
 
 
@@ -56,7 +56,7 @@ namespace Vultaik
             buffer_info.usage |= VkBufferUsageFlags.TransferSrc;
 
 
-            if (Usage == GraphicsResourceUsage.Staging)
+            if (Usage == ResourceUsage.Staging)
             {
                 access = VkAccessFlags.HostRead | VkAccessFlags.HostWrite;
             }
@@ -101,11 +101,11 @@ namespace Vultaik
 
             // Allocate memory
             var memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
-            if (BufferDescription.Usage is GraphicsResourceUsage.Staging || Usage == GraphicsResourceUsage.Dynamic)
+            if (BufferDescription.Usage is ResourceUsage.Staging || Usage == ResourceUsage.Dynamic)
             {
                 memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
             }
-            if (Usage == GraphicsResourceUsage.DynamicUniform)
+            if (Usage == ResourceUsage.DynamicUniform)
             {
                 memoryProperties = VkMemoryPropertyFlags.HostVisible;
             }
@@ -219,20 +219,20 @@ namespace Vultaik
             switch (Usage)
             {
 
-                case GraphicsResourceUsage.Default:
+                case ResourceUsage.Default:
 
                     break;
 
-                case GraphicsResourceUsage.Immutable:
+                case ResourceUsage.Immutable:
 
                     break;
 
-                case GraphicsResourceUsage.Dynamic:
+                case ResourceUsage.Dynamic:
                     DynamicData(Data);
 
                     break;
 
-                case GraphicsResourceUsage.Staging:
+                case ResourceUsage.Staging:
                     break;
 
                 default:

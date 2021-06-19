@@ -822,9 +822,9 @@ namespace Vultaik
                 };
             }
 
-            foreach (VkSurfaceFormatKHR availableFormat in formats)
-                if (availableFormat.format is VkFormat.B8G8R8A8UNorm && availableFormat.colorSpace is VkColorSpaceKHR.SrgbNonLinear)
-                    return availableFormat;
+            foreach (VkSurfaceFormatKHR format in formats)
+                if (format.format is VkFormat.B8G8R8A8UNorm && format.colorSpace is VkColorSpaceKHR.SrgbNonLinear)
+                    return format;
 
             return formats.First();
         }
@@ -857,10 +857,16 @@ namespace Vultaik
         }
 
 
+        public void QueueWaitIdleIdle(VkQueue queue)
+        {
+            if(queue != VkQueue.Null)
+                vkQueueWaitIdle(queue).CheckResult();
+        }
+
         public void WaitIdle()
         {
-            //vkQueueWaitIdle(nativeCommandQueue);
-            vkDeviceWaitIdle(handle);
+            if (handle != VkDevice.Null)
+                vkDeviceWaitIdle(handle);
         }
 
 

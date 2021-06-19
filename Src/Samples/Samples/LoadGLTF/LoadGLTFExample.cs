@@ -108,7 +108,7 @@ namespace Samples.LoadGLTF
             ConstBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
+                Usage = ResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 

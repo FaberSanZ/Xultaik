@@ -257,14 +257,14 @@ namespace Vultaik.GLTF
             VertexBuffer = new(_device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
+                Usage = ResourceUsage.Dynamic,
                 SizeInBytes = (int)vertSize
             });
 
             IndexBuffer = new(_device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
+                Usage = ResourceUsage.Dynamic,
                 SizeInBytes = (int)indexSize,
             });
 

@@ -17,11 +17,11 @@ namespace Vultaik
 
         public BufferFlags BufferFlags;
 
-        public GraphicsResourceUsage Usage;
+        public ResourceUsage Usage;
 
 
 
-        public BufferDescription(int sizeInBytes, BufferFlags bufferFlags, GraphicsResourceUsage usage, int byteStride = 0)
+        public BufferDescription(int sizeInBytes, BufferFlags bufferFlags, ResourceUsage usage, int byteStride = 0)
         {
             SizeInBytes = sizeInBytes;
 

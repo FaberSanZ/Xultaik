@@ -196,7 +196,7 @@ namespace Samples.PushConstant
             VertexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
+                Usage = ResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<VertexPositionColor>(vertices),
             });
 
@@ -206,7 +206,7 @@ namespace Samples.PushConstant
             IndexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
+                Usage = ResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<int>(indices),
             });
             IndexBuffer.SetData(indices);
@@ -215,7 +215,7 @@ namespace Samples.PushConstant
             ConstBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = GraphicsResourceUsage.Dynamic,
+                Usage = ResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<ViewUniform>(),
             });
         }
@@ -276,9 +276,10 @@ namespace Samples.PushConstant
         public void AddCube(CommandBuffer cmd, Vector3 position, Vector3 rotation, bool r)
         {
 
-            // Aligned offset
             Matrix4x4 model = Matrix4x4.Identity;
             model = Matrix4x4.CreateTranslation(position);
+
+            // Update matrices
             if (r)
             {
                 model *= Matrix4x4.CreateRotationX(MathUtil.DegreesToRadians(rotation.X));
@@ -292,11 +293,7 @@ namespace Samples.PushConstant
                 model = Matrix4x4.CreateRotationZ(MathUtil.DegreesToRadians(rotation.Z)) * model;
             }
 
-            // Update matrices
-
-
-
-            cmd.PushConstant(PipelineState, ShaderStage.Vertex, model);
+            cmd.PushConstant(PipelineState, ShaderStage.Vertex, model); // Vertex.hlsl Line 28: [[vk::push_constant]]
             cmd.DrawIndexed(indices.Length, 1, 0, 0, 0);
 
         }
@@ -329,29 +326,23 @@ namespace Samples.PushConstant
         {
 
             Device.WaitIdle();
-            CommandBuffer commandBuffer = Context.CommandBuffer;
+            CommandBuffer cmd = Context.CommandBuffer;
 
-            commandBuffer.Begin();
-            commandBuffer.BeginFramebuffer(Framebuffer, .0f, .2f, .4f);
-            commandBuffer.SetViewport(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
-            commandBuffer.SetScissor(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
+            cmd.Begin();
+            cmd.BeginFramebuffer(Framebuffer, .0f, .2f, .4f);
+            cmd.SetViewport(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
+            cmd.SetScissor(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 0, 0);
 
-            commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
-            commandBuffer.SetIndexBuffer(IndexBuffer);
+            cmd.SetVertexBuffers(new[] { VertexBuffer });
+            cmd.SetIndexBuffer(IndexBuffer);
+            cmd.SetGraphicPipeline(PipelineState);
+            cmd.BindDescriptorSets(DescriptorSet);
 
-
-            commandBuffer.SetGraphicPipeline(PipelineState);
-
-            commandBuffer.BindDescriptorSets(DescriptorSet);
-
+            GenerateCubes(cmd, CubesRandom);
 
 
-            GenerateCubes(commandBuffer, CubesRandom);
-
-
-
-            commandBuffer.Close();
-            Device.Submit(commandBuffer);
+            cmd.Close();
+            Device.Submit(cmd);
             SwapChain.Present();
         }
 
