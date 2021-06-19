@@ -126,7 +126,7 @@ namespace Samples.Triangle
             VertexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<VertexPositionColor>(vertices),
             });
             VertexBuffer.SetData(vertices);
@@ -135,7 +135,7 @@ namespace Samples.Triangle
             IndexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<int>(indices),
             });
             IndexBuffer.SetData(indices);
@@ -144,7 +144,7 @@ namespace Samples.Triangle
             ConstBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 

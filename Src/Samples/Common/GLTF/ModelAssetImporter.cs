@@ -257,21 +257,18 @@ namespace Vultaik.GLTF
             VertexBuffer = new(_device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = (int)vertSize
             });
 
             IndexBuffer = new(_device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = (int)indexSize,
             });
 
 
-
-            VertexBuffer.Map();
-            IndexBuffer.Map();
 
             Meshes = new();
 
@@ -279,8 +276,8 @@ namespace Vultaik.GLTF
             IEnumerable<PropertyInfo> propertyInfos = typeof(TVertex).GetTypeInfo().GetRuntimeProperties();
 
 
-            byte* stagVertPtrInit = (byte*)VertexBuffer.MappedData.ToPointer();
-            byte* stagIdxPtrInit = (byte*)(IndexBuffer.MappedData.ToPointer());
+            byte* stagVertPtrInit = (byte*)VertexBuffer.Map();
+            byte* stagIdxPtrInit = (byte*)(IndexBuffer.Map());
             byte* stagVertPtr = stagVertPtrInit;
             byte* stagIdxPtr = stagIdxPtrInit;
 

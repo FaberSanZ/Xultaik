@@ -196,7 +196,7 @@ namespace Samples.Transformations
             VertexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<VertexPositionColor>(vertices),
             });
             VertexBuffer.SetData(vertices);
@@ -205,7 +205,7 @@ namespace Samples.Transformations
             IndexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<int>(indices),
             });
             IndexBuffer.SetData(indices);
@@ -214,14 +214,14 @@ namespace Samples.Transformations
             ConstBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 
             ConstBuffer2 = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
         }

@@ -196,7 +196,7 @@ namespace Vultaik
                 BufferFlags = BufferFlags.ShaderResource,
                 SizeInBytes = Size,
                 ByteStride = Size,
-                Usage = ResourceUsage.Dynamic
+                Usage = ResourceUsage.CPU_To_GPU
             });
 
 

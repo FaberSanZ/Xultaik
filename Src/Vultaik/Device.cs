@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Vultaik.Interop;
@@ -79,6 +81,9 @@ namespace Vultaik
         internal VkPhysicalDeviceSamplerYcbcrConversionFeatures sampler_ycbcr_conversion_features;
         internal VkPhysicalDeviceDriverProperties driver_properties;
 
+
+        internal const VkBufferUsageFlags UnknownBufferUsage = unchecked((VkBufferUsageFlags)uint.MaxValue);
+
         public Device(Adapter adapter)
         {
             NativeAdapter = adapter;
@@ -88,6 +93,21 @@ namespace Vultaik
 
             Recreate();
         }
+
+        public const long SmallHeapMaxSize = 1024L * 1024 * 1024;
+
+        public const long MinFreeSuballocationSizeToRegister = 16;
+        public const int FrameIndexLost = -1;
+        public const uint CorruptionDetectionMagicValue = 0x7F84E666;
+
+        public const byte AllocationFillPattern_Created = 0xDC;
+        public const byte AllocationFillPattern_Destroyed = 0xEF;
+        public const bool DebugInitializeAllocations = false;
+
+        public const long DebugMargin = 0;
+        public const long DebugAlignment = 1;
+        public const long DebugMinBufferImageGranularity = 1;
+
 
 
         public Adapter NativeAdapter { get; set; }
@@ -198,11 +218,9 @@ namespace Vultaik
 
         internal void CreateDevice()
         {
-            VkDeviceQueueCreateInfo* queue_create_infos = stackalloc VkDeviceQueueCreateInfo[3];
-
-            float defaultQueuePriority = 0.0f;
-
             VkQueueFlags requestedQueueTypes = VkQueueFlags.Graphics | VkQueueFlags.Compute | VkQueueFlags.Transfer;
+            VkDeviceQueueCreateInfo* queue_create_infos = stackalloc VkDeviceQueueCreateInfo[3];
+            float defaultQueuePriority = 0.0f;
 
 
             // Graphics queue
@@ -302,10 +320,10 @@ namespace Vultaik
 
             OptionalDeviceExtensions OptDeviceExt = NativeAdapter.Parameters.Settings.OptionalDeviceExtensions;
 
+            bool OptConsRaster= (OptDeviceExt & OptionalDeviceExtensions.ConservativeRasterization) != 0;
+            bool OptShadingRate = (OptDeviceExt & OptionalDeviceExtensions.ShadingRate) != 0;
             bool OptRayTracing = (OptDeviceExt & OptionalDeviceExtensions.RayTracing) != 0;
             bool OptMultiview = (OptDeviceExt & OptionalDeviceExtensions.Multiview) != 0;
-            bool OptShadingRate = (OptDeviceExt & OptionalDeviceExtensions.ShadingRate) != 0;
-            bool OptConsRaster= (OptDeviceExt & OptionalDeviceExtensions.ConservativeRasterization) != 0;
 
             void** ppNext = &features.pNext;
 
@@ -724,11 +742,11 @@ namespace Vultaik
 
         public void Submit(CommandBuffer commandBuffer, Fence? fence = null)
         {
+            VkPipelineStageFlags wait_stages = VkPipelineStageFlags.ColorAttachmentOutput;
             VkSemaphore signal_semaphore = render_finished_semaphore;
             VkSemaphore wait_semaphore = image_available_semaphore;
-            VkPipelineStageFlags wait_stages = VkPipelineStageFlags.ColorAttachmentOutput;
-            VkCommandBuffer cmd = commandBuffer.handle;
             VkQueue queue = get_queue_type_cmd(commandBuffer);
+            VkCommandBuffer cmd = commandBuffer.handle;
             VkFence sync_fence = VkFence.Null;
             bool use_semaphore = true;
 
@@ -846,7 +864,7 @@ namespace Vultaik
         }
 
 
-        static int convert_to_signed_delta(int start_ticks, int end_ticks, int valid_bits)
+        public int ConvertToSignedDelta(int start_ticks, int end_ticks, int valid_bits)
         {
             int shamt = 64 - valid_bits;
             start_ticks <<= shamt;
@@ -856,6 +874,63 @@ namespace Vultaik
             return ticks_delta;
         }
 
+        public bool IsPow2(int v)
+        {
+            return BitOperations.PopCount((uint)v) == 1;
+        }
+
+        public bool IsPow2(long v)
+        {
+            return BitOperations.PopCount((ulong)v) == 1;
+        }
+
+        public int NextPow2(int v)
+        {
+            if (IsPow2(v))
+                return v;
+
+            return 1 << (32 - BitOperations.LeadingZeroCount((uint)v));
+        }
+
+        public long NextPow2(long v)
+        {
+            if (IsPow2(v))
+                return v;
+
+            return 1L << (64 - BitOperations.LeadingZeroCount((ulong)v));
+        }
+
+        public int PrevPow(int v)
+        {
+            return 1 << (31 - BitOperations.LeadingZeroCount((uint)v));
+        }
+
+        public long PrevPow(long v)
+        {
+            return 1L << (63 - BitOperations.LeadingZeroCount((ulong)v));
+        }
+
+        public bool BlocksOnSamePage(long resourceAOffset, long resourceASize, long resourceBOffset, long pageSize)
+        {
+            Debug.Assert(resourceAOffset + resourceASize <= resourceBOffset && resourceASize > 0 && pageSize > 0);
+
+            long resourceAEnd = resourceAOffset + resourceASize - 1;
+            long resourceAEndPage = resourceAEnd & ~(pageSize - 1);
+            long resourceBStart = resourceBOffset;
+            long resourceBStartPage = resourceBStart & ~(pageSize - 1);
+
+            return resourceAEndPage == resourceBStartPage;
+        }
+
+        public long AlignUp(long value, long alignment)
+        {
+            return (value + alignment - 1) / alignment * alignment;
+        }
+
+        public long AlignDown(long value, long alignment)
+        {
+            return (long)((ulong)value / (ulong)alignment * (ulong)alignment);
+        }
 
         public void QueueWaitIdleIdle(VkQueue queue)
         {

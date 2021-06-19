@@ -57,7 +57,7 @@ namespace Vultaik
                 DepthStencil = new Image(NativeDevice, new ImageDescription
                 {
                     Flags = ImageFlags.DepthStencil,
-                    Usage = ResourceUsage.Default,
+                    Usage = ResourceUsage.CPU_To_GPU,
                     ArraySize = 1,
                     MipLevels = 1,
                     Data = null,

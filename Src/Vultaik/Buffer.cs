@@ -56,7 +56,7 @@ namespace Vultaik
             buffer_info.usage |= VkBufferUsageFlags.TransferSrc;
 
 
-            if (Usage == ResourceUsage.Staging)
+            if (Usage == ResourceUsage.GPU_Only)
             {
                 access = VkAccessFlags.HostRead | VkAccessFlags.HostWrite;
             }
@@ -101,11 +101,11 @@ namespace Vultaik
 
             // Allocate memory
             var memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
-            if (BufferDescription.Usage is ResourceUsage.Staging || Usage == ResourceUsage.Dynamic)
+            if (BufferDescription.Usage is ResourceUsage.GPU_Only || Usage == ResourceUsage.CPU_To_GPU)
             {
                 memoryProperties = VkMemoryPropertyFlags.HostVisible | VkMemoryPropertyFlags.HostCoherent;
             }
-            if (Usage == ResourceUsage.DynamicUniform)
+            if (Usage == ResourceUsage.GPU_To_CPU)
             {
                 memoryProperties = VkMemoryPropertyFlags.HostVisible;
             }
@@ -216,29 +216,8 @@ namespace Vultaik
 
         public void SetData<T>(T[] Data) where T : unmanaged
         {
-            switch (Usage)
-            {
 
-                case ResourceUsage.Default:
-
-                    break;
-
-                case ResourceUsage.Immutable:
-
-                    break;
-
-                case ResourceUsage.Dynamic:
                     DynamicData(Data);
-
-                    break;
-
-                case ResourceUsage.Staging:
-                    break;
-
-                default:
-                    break;
-            }
-
 
             
 

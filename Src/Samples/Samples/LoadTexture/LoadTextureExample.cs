@@ -128,7 +128,7 @@ namespace Samples.LoadTexture
             Buffers["VertexBuffer"] = new(Device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf(Vertices),
             });
             Buffers["VertexBuffer"].SetData(Vertices);
@@ -137,7 +137,7 @@ namespace Samples.LoadTexture
             Buffers["IndexBuffer"] = new(Device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf(Indices),
             });
             Buffers["IndexBuffer"].SetData(Indices);
@@ -146,14 +146,14 @@ namespace Samples.LoadTexture
             Buffers["ConstBuffer1"] = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 
             Buffers["ConstBuffer2"] = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 

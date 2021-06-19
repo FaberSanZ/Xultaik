@@ -114,7 +114,7 @@ namespace Samples.DiffuseLighting
             BufferDescription bufferDescription = new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             };
 
@@ -125,7 +125,7 @@ namespace Samples.DiffuseLighting
             ConstBuffer4 = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = ResourceUsage.Dynamic,
+                Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf<Light>(),
             });
 
