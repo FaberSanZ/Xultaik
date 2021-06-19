@@ -227,7 +227,7 @@ namespace Vultaik
 
 
 
-            // TODO: Can we restrict more based on GraphicsResourceUsage? 
+            // TODO: Can we restrict more based on ResourceUsage? 
             image_create_info.usage |= VkImageUsageFlags.TransferSrc | VkImageUsageFlags.TransferDst;
 
             if (IsCubeMap)
