@@ -110,6 +110,7 @@ namespace Vultaik
                 memoryProperties = VkMemoryPropertyFlags.HostVisible;
             }
 
+
             vkGetBufferMemoryRequirements(NativeDevice.handle, handle, out VkMemoryRequirements memReqs);
 
             VkMemoryAllocateInfo MemoryAlloc_info = new VkMemoryAllocateInfo()
