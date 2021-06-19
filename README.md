@@ -50,7 +50,7 @@ The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan e
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [ ] Multithreaded rendering
 - [x] Automatic descriptor set management
-- [x] SPIRV reflection with [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross)
+- [x] Shader reflection with [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross)
 - [x] Vulkan HLSL for shaders, shaders are compiled in runtime with [DirectXShaderCompiler](https://github.com/microsoft/DirectXShaderCompiler)
 - [x] GLTF 2.0 for samples
 
