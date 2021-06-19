@@ -12,9 +12,9 @@ using Samples.Common;
 using Vultaik.Toolkit;
 using System.Runtime.CompilerServices;
 
-namespace Samples.DynamicUniformBuffer
+namespace Samples.PushConstant
 {
-    public class DynamicUniformBufferExample : IDisposable
+    public class PushConstantExample : IDisposable
     {
 
         public VertexPositionColor[] vertices = new VertexPositionColor[]
@@ -99,7 +99,6 @@ namespace Samples.DynamicUniformBuffer
         public Framebuffer Framebuffer { get; set; }
         public SwapChain SwapChain { get; set; }
         public GraphicsContext Context { get; set; }
-        public Matrix4x4 Model { get; set; }
         public Window? Window { get; set; }
         public ApplicationTime Timer;
 
@@ -112,23 +111,18 @@ namespace Samples.DynamicUniformBuffer
         public Buffer VertexBuffer { get; set; }
         public Buffer IndexBuffer { get; set; }
         public Buffer ConstBuffer { get; set; }
-        public Buffer ConstBuffer2 { get; set; }
 
 
 
-        public DynamicUniformBufferExample()
+        public PushConstantExample()
         {
 
         }
 
         public ViewUniform view_uniform;
-        public ModelUniform model_uniform;
-        public float yaw;
-        public float pitch;
-        public float roll;
-        private IntPtr dynamicAlignment;
         private const uint OBJECT_INSTANCES = 125;
         private Vector3[] rotationSpeeds = new Vector3[OBJECT_INSTANCES]; // Store random per-object rotations
+        private bool CubesRandom = false;
 
         public void Initialize()
         {
@@ -173,10 +167,6 @@ namespace Samples.DynamicUniformBuffer
             Framebuffer = new Framebuffer(SwapChain);
             Context = new GraphicsContext(Device);
 
-            // Reset Model
-            Model = Matrix4x4.Identity;
-
-
             view_uniform = new(Camera.Projection, Camera.View);
 
 
@@ -190,17 +180,10 @@ namespace Samples.DynamicUniformBuffer
 
 
 
-        public unsafe void CreateBuffers()
+        public void CreateBuffers()
         {
-            // Calculate required alignment depending on device limits
-            ulong uboAlignment = Adapter.MinUniformBufferOffsetAlignment;
-            dynamicAlignment = (IntPtr)(((ulong)sizeof(Matrix4x4) / uboAlignment) * uboAlignment + (((ulong)sizeof(Matrix4x4) % uboAlignment) > 0 ? uboAlignment : 0));
-            IntPtr bufferSize = (IntPtr)(OBJECT_INSTANCES * (ulong)dynamicAlignment);
 
-            model_uniform.Model = (Matrix4x4*)alignedAlloc(bufferSize, dynamicAlignment);
-            
-
-            // Prepare per-object matrices with offsets and random rotations
+            // Prepare per-object matrices with random rotations
             Random rndGen = new Random();
             Func<Random, float> rndDist = rand => (float)(rand.NextDouble() * 2 - 1.0);
 
@@ -235,26 +218,16 @@ namespace Samples.DynamicUniformBuffer
                 Usage = GraphicsResourceUsage.Dynamic,
                 SizeInBytes = Interop.SizeOf<ViewUniform>(),
             });
-
-            ConstBuffer2 = new(Device, new()
-            {
-                BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = GraphicsResourceUsage.DynamicUniform,
-                SizeInBytes = (int)(ulong)bufferSize,
-            });
-
-
-
         }
 
 
-        public unsafe void CreatePipelineState()
+        public void CreatePipelineState()
         {
 
             var file = Constants.ShadersFile;
 
-            ShaderBytecode Fragment = ShaderBytecode.LoadFromFile(file + "DynamicUniformBuffer/Fragment.hlsl", ShaderStage.Fragment);
-            ShaderBytecode Vertex = ShaderBytecode.LoadFromFile(file + "DynamicUniformBuffer/Vertex.hlsl", ShaderStage.Vertex);
+            ShaderBytecode Fragment = ShaderBytecode.LoadFromFile(file + "PushConstant/Fragment.hlsl", ShaderStage.Fragment);
+            ShaderBytecode Vertex = ShaderBytecode.LoadFromFile(file + "PushConstant/Vertex.hlsl", ShaderStage.Vertex);
 
 
 
@@ -268,7 +241,6 @@ namespace Samples.DynamicUniformBuffer
 
             DescriptorData descriptorData_0 = new();
             descriptorData_0.SetUniformBuffer(0, ConstBuffer);
-            descriptorData_0.SetUniformBufferDynamic(1, ConstBuffer2);
             DescriptorSet = new(PipelineState, descriptorData_0);
 
 
@@ -276,36 +248,62 @@ namespace Samples.DynamicUniformBuffer
 
 
 
-        private unsafe void* alignedAlloc(IntPtr size, IntPtr alignment)
-        {
-            return Marshal.AllocHGlobal(size).ToPointer();
-        }
-
-        // TODO: Span<Matrix4x4>
-        public unsafe void AddCube(Vector3 position, Vector3 rotation, uint index)
-        {
-
-            // Aligned offset
-            Matrix4x4* modelMat = (Matrix4x4*)(((ulong)model_uniform.Model + (index * (ulong)dynamicAlignment)));
 
 
-            // Update matrices
-            *modelMat = Matrix4x4.CreateTranslation(position);
-            *modelMat = Matrix4x4.CreateRotationX(MathUtil.DegreesToRadians(rotation.X)) * *modelMat;
-            *modelMat = Matrix4x4.CreateRotationY(MathUtil.DegreesToRadians(rotation.Y)) * *modelMat;
-            *modelMat = Matrix4x4.CreateRotationZ(MathUtil.DegreesToRadians(rotation.Z)) * *modelMat;
-        }
-
-        public unsafe void Update()
+        public void Update()
         {
             Camera.Update();
 
-            float rotation = Timer.TotalMilliseconds / 6;
 
             view_uniform.Update(Camera);
             ConstBuffer.SetData(ref view_uniform);
 
 
+            if (Window!.Input.Keyboards[0].IsKeyPressed(Key.R))
+                CubesRandom = true;
+
+            if (Window.Input.Keyboards[0].IsKeyPressed(Key.N))
+                CubesRandom = false;
+
+
+
+
+            Timer.Update();
+        }
+
+
+
+        public void AddCube(CommandBuffer cmd, Vector3 position, Vector3 rotation, bool r)
+        {
+
+            // Aligned offset
+            Matrix4x4 model = Matrix4x4.Identity;
+            model = Matrix4x4.CreateTranslation(position);
+            if (r)
+            {
+                model *= Matrix4x4.CreateRotationX(MathUtil.DegreesToRadians(rotation.X));
+                model *= Matrix4x4.CreateRotationY(MathUtil.DegreesToRadians(-rotation.Y));
+                model *= Matrix4x4.CreateRotationZ(MathUtil.DegreesToRadians(rotation.Z));
+            }
+            else
+            {
+                model = Matrix4x4.CreateRotationX(MathUtil.DegreesToRadians(rotation.X)) * model;
+                model = Matrix4x4.CreateRotationY(MathUtil.DegreesToRadians(rotation.Y)) * model;
+                model = Matrix4x4.CreateRotationZ(MathUtil.DegreesToRadians(rotation.Z)) * model;
+            }
+
+            // Update matrices
+
+
+
+            cmd.PushConstant(PipelineState, ShaderStage.Vertex, model);
+            cmd.DrawIndexed(indices.Length, 1, 0, 0, 0);
+
+        }
+
+        public void GenerateCubes(CommandBuffer cmd, bool r)
+        {
+            float rotation = Timer.TotalMilliseconds / 6;
 
             uint dim = (uint)(Math.Pow(OBJECT_INSTANCES, (1.0f / 3.0f)));
             Vector3 offset = new Vector3(5.0f);
@@ -317,20 +315,15 @@ namespace Samples.DynamicUniformBuffer
                     for (uint z = 0; z < dim; z++)
                     {
                         uint index = x * dim * dim + y * dim + z;
-                        
+
                         Vector3 rotations = rotation * rotationSpeeds[index];
                         Vector3 pos = new Vector3(-((dim * offset.X) / 2.0f) + offset.X / 2.0f + x * offset.X, -((dim * offset.Y) / 2.0f) + offset.Y / 2.0f + y * offset.Y, -((dim * offset.Z) / 2.0f) + offset.Z / 2.0f + z * offset.Z);
-                        
-                        AddCube(pos, rotations, index);
+
+                        AddCube(cmd, pos, rotations, r);
                     }
                 }
             }
-
-            ConstBuffer2.SetDataFlush(model_uniform.Model);
-
-            Timer.Update();
         }
-
 
         public void Draw()
         {
@@ -349,19 +342,11 @@ namespace Samples.DynamicUniformBuffer
 
             commandBuffer.SetGraphicPipeline(PipelineState);
 
+            commandBuffer.BindDescriptorSets(DescriptorSet);
 
 
-            for (uint j = 0; j < OBJECT_INSTANCES; j++)
-            {
-                // One dynamic offset per dynamic descriptor to offset into the ubo containing all model matrices
-                uint dynamicOffset = j * (uint)(dynamicAlignment);
 
-                // Bind the descriptor set for rendering a mesh using the dynamic offset
-                commandBuffer.BindDescriptorSets(DescriptorSet, 1, dynamicOffset);
-
-                commandBuffer.DrawIndexed(indices.Length, 1, 0, 0, 0);
-            }
-
+            GenerateCubes(commandBuffer, CubesRandom);
 
 
 
@@ -446,9 +431,4 @@ namespace Samples.DynamicUniformBuffer
         }
     }
 
-    public unsafe struct ModelUniform
-    {
-        public Matrix4x4* Model;
-
-    }
 }
