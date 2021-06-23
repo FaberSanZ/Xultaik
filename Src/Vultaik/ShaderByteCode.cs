@@ -49,6 +49,16 @@ namespace Vultaik
         All = int.MaxValue
     }
 
+    public enum ShaderBackend
+    {
+        None = 0,
+        Glsl = 1,
+        Hlsl = 2,
+        Msl = 3,
+        Cpp = 4,
+        Json = 5,
+    }
+
 
     internal class ShaderResource
     {
@@ -73,30 +83,33 @@ namespace Vultaik
             Stage = stage;
 
             Data = CompileHLSL(path, directory);
+            Backend = ShaderBackend.Hlsl;
 
-            
+
 
 
             AddShaderResource(Data);
         }
 
-        public ShaderBytecode(byte[] buffer, ShaderStage stage)
+        public ShaderBytecode(byte[] buffer, ShaderStage stage, ShaderBackend backend)
         {
             Data = buffer;
-
+            Stage = stage;
+            Backend = backend;
         }
 
 
-        public ShaderBytecode(Span<byte> buffer, ShaderStage stage)
+        public ShaderBytecode(Span<byte> buffer, ShaderStage stage, ShaderBackend backend)
         {
             Data = buffer.ToArray();
             Stage = stage;
+            Backend = backend;
         }
 
 
 
 
-
+        public ShaderBackend Backend { get; set; }
         public byte[] Data { get; set; }
         public ShaderStage Stage { get; set; }
 
@@ -359,9 +372,9 @@ namespace Vultaik
             return new ShaderBytecode(path, stage, directory);
         }
 
-        public static ShaderBytecode LoadFromBytes(byte[] bytes, ShaderStage stage)
+        public static ShaderBytecode LoadFromBytes(byte[] bytes, ShaderStage stage, ShaderBackend backend)
         {
-            return new ShaderBytecode(bytes, stage);
+            return new ShaderBytecode(bytes, stage, backend);
         }
 
         public static implicit operator byte[](ShaderBytecode shaderBytecode)
