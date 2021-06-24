@@ -153,11 +153,9 @@ namespace Samples.DiffuseLighting
         public void CreatePipelineState()
         {
 
-            string shaders = Constants.ShadersFile + "DiffuseLighting";
             string images = Constants.ImagesFile;
-
-            string Fragment = shaders + @"\Fragment.hlsl";
-            string Vertex = shaders + @"\Vertex.hlsl";
+            string fragment = Constants.ShadersFile + @"DiffuseLighting\Fragment.hlsl";
+            string vertex = Constants.ShadersFile + @"DiffuseLighting\Vertex.hlsl";
 
             Image text1 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png");
             Image text2 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap02-512.png");
@@ -168,8 +166,8 @@ namespace Samples.DiffuseLighting
 
             GraphicsPipelineDescription Pipelinedescription0 = new();
             Pipelinedescription0.SetFramebuffer(Framebuffer);
-            Pipelinedescription0.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment, shaders));
-            Pipelinedescription0.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex, shaders));
+            Pipelinedescription0.SetShader(new ShaderBytecode(fragment, ShaderStage.Fragment));
+            Pipelinedescription0.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex));
             Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
@@ -189,8 +187,8 @@ namespace Samples.DiffuseLighting
 
             GraphicsPipelineDescription Pipelinedescription1 = new();
             Pipelinedescription1.SetFramebuffer(Framebuffer);
-            Pipelinedescription1.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment, shaders));
-            Pipelinedescription1.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex, shaders)); 
+            Pipelinedescription1.SetShader(new ShaderBytecode(fragment, ShaderStage.Fragment));
+            Pipelinedescription1.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex)); 
             Pipelinedescription1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription1.SetVertexAttribute(VertexType.Position);
             Pipelinedescription1.SetVertexAttribute(VertexType.TextureCoordinate);
@@ -209,8 +207,8 @@ namespace Samples.DiffuseLighting
 
             GraphicsPipelineDescription Pipelinedescription2 = new();
             Pipelinedescription2.SetFramebuffer(Framebuffer);
-            Pipelinedescription2.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment, shaders));
-            Pipelinedescription2.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex, shaders)); 
+            Pipelinedescription2.SetShader(new ShaderBytecode(fragment, ShaderStage.Fragment));
+            Pipelinedescription2.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex)); 
             Pipelinedescription2.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription2.SetVertexAttribute(VertexType.Position);
             Pipelinedescription2.SetVertexAttribute(VertexType.TextureCoordinate);

@@ -166,7 +166,7 @@ namespace Vultaik
                     pNext = null,
                     stage = (VkShaderStageFlags)shaders[i].Stage,
                     module = NativeDevice.LoadSpir_V_Shader(shaders[i].Data),
-                    pName = Interop.String.ToPointer("main"),
+                    pName = Interop.String.ToPointer(shaders[i].EntryPoint),
                 };
             }
 

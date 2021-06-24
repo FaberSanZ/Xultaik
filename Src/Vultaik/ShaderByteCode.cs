@@ -78,12 +78,12 @@ namespace Vultaik
 
         internal List<ShaderResource> Resources { get; set; } = new();
 
-        public ShaderBytecode(string path, ShaderStage stage, string directory = "")
+        public ShaderBytecode(string path, ShaderStage stage, string entryPoint = "main", string directory = "")
         {
             Stage = stage;
-
-            Data = CompileHLSL(path, directory);
+            EntryPoint = entryPoint;
             Backend = ShaderBackend.Hlsl;
+            Data = CompileHLSL(path, directory, entryPoint);
 
 
 
@@ -112,9 +112,10 @@ namespace Vultaik
         public ShaderBackend Backend { get; set; }
         public byte[] Data { get; set; }
         public ShaderStage Stage { get; set; }
+        public string EntryPoint { get; set; }
 
 
-        private byte[] CompileHLSL(string path, string directory)
+        private byte[] CompileHLSL(string path, string directory, string entryPoint)
         {
             string profile = "";
             string shadermodel = "_6_5";
@@ -169,17 +170,12 @@ namespace Vultaik
 
             }
 
-            //string hlslFileName = Path.GetFileName(path);
-            //string hlslDirectoryPath = Path.GetDirectoryName(path);
-            //string hlslFileData = File.ReadAllText(path);
-
-
 
             List<string> args = new()
             {
                 "-spirv",
                 "-T", profile,
-                "-E", "main",
+                "-E", entryPoint,
                 "-fspv-target-env=vulkan1.2",
                 "-fspv-extension=SPV_KHR_multiview",
                 "-fspv-extension=SPV_KHR_shader_draw_parameters",
