@@ -9,55 +9,30 @@ using Buffer = Vultaik.Buffer;
 using Vortice.Vulkan;
 using Interop = Vultaik.Interop;
 using Samples.Common;
+using Vultaik.Toolkit;
 
 namespace Samples.LoadTexture
 {
-    public class LoadTextureExample : IDisposable
+    public class LoadTextureExample : ExampleBase, IDisposable
     {
-        internal int TextureWidth = 256; //Texture Data
-        internal int TextureHeight = 256; //Texture Data
-        internal int TexturePixelSize = 4;  // The number of bytes used to represent a pixel in the texture. RGBA
+        private const int TextureWidth = 256; //Texture Data
+        private const int TextureHeight = 256; //Texture Data
+        private const int TexturePixelSize = 4;  // The number of bytes used to represent a pixel in the texture. RGBA
 
 
-        public Camera Camera { get; set; }
+        private PresentationParameters Parameters;
+        private Adapter Adapter;
+        private Device Device;
+        private Framebuffer Framebuffer;
+        private SwapChain SwapChain;
+        private GraphicsContext Context;
+        private GraphicsPipeline PipelineState_0;
+        private GraphicsPipeline PipelineState_1;
+        private DescriptorSet DescriptorSet_0;
+        private DescriptorSet DescriptorSet_1;
+        private Dictionary<string, Buffer> Buffers = new();
+        private TransformUniform uniform;
 
-        public int[] Indices = new[]
-        {
-            0, 1, 2, 2, 3, 0
-        };
-
-        public VertexPositionTexture[] Vertices = new VertexPositionTexture[]
-        {
-            new(new(0.5f, 0.5f, -0.5f), new(1.0f, 1.0f)) ,
-            new(new(-0.5f, 0.5f, -0.5f), new(0.0f, 1.0f)) ,
-            new(new(-0.5f, -0.5f, -0.5f),  new(0.0f, 0.0f)) ,
-            new(new(0.5f,  -0.5f, -0.5f),  new(1.0f, 0.0f)) ,
-        };
-
-
-        public PresentationParameters Parameters { get; set; }
-        public Adapter Adapter { get; set; }
-        public Device Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public SwapChain SwapChain { get; set; }
-        public GraphicsContext Context { get; set; }
-        public Matrix4x4 Model { get; set; }
-        public Window? Window { get; set; }
-
-
-        public GraphicsPipeline PipelineState_0;
-        public GraphicsPipeline PipelineState_1;
-
-        public DescriptorSet DescriptorSet_0;
-        public DescriptorSet DescriptorSet_1;
-
-        public Dictionary<string, Buffer> Buffers = new();
-
-        // TransformUniform 
-        public TransformUniform uniform;
-        public float yaw;
-        public float pitch;
-        public float roll;
 
 
         public LoadTextureExample() : base()
@@ -66,11 +41,10 @@ namespace Samples.LoadTexture
         }
 
 
-        public void Initialize()
+        public override void Initialize()
         {
-            Window = new Window("Vultaik", 1200, 800);
 
-            Parameters = new PresentationParameters()
+            Parameters = new()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
@@ -84,13 +58,11 @@ namespace Samples.LoadTexture
 
 
 
-            Adapter = new Adapter(Parameters);
-
-            Device = new Device(Adapter);
-
-            SwapChain = new SwapChain(Device, new()
+            Adapter = new(Parameters);
+            Device = new(Adapter);
+            SwapChain = new(Device, new()
             {
-                Source = GetSwapchainSource(),
+                Source = GetSwapchainSource(Adapter),
                 ColorSrgb = false,
                 Height = Window.Height,
                 Width = Window.Width,
@@ -98,33 +70,37 @@ namespace Samples.LoadTexture
                 DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
             });
 
-            Context = new GraphicsContext(Device);
-            Framebuffer = new Framebuffer(SwapChain);
+            Context = new(Device);
+            Framebuffer = new(SwapChain);
 
 
-            Camera = new(45f, 1f, 0.1f, 64f);
-            Camera.SetPosition(0, 0.34f, -3.5f);
-            Camera.AspectRatio = (float)Window.Width / Window.Height;
-
-
-            // Reset Model
-            Model = Matrix4x4.Identity;
-
+            Camera.SetPosition(0, 0.34f, -2.5f);
             uniform = new(Camera.Projection, Model, Camera.View);
 
 
             CreateBuffers();
             CreatePipelineState();
-
-
-            yaw = 0;
-            pitch = 3.0f;
-            roll = 0;
         }
+
 
 
         public void CreateBuffers()
         {
+
+            int[] Indices = new[]
+            {
+                0, 1, 2, 2, 3, 0
+            };
+
+            VertexPositionTexture[] Vertices = new VertexPositionTexture[]
+            {
+                new(new(0.5f, 0.5f, -0.5f), new(1.0f, 1.0f)) ,
+                new(new(-0.5f, 0.5f, -0.5f), new(0.0f, 1.0f)) ,
+                new(new(-0.5f, -0.5f, -0.5f),  new(0.0f, 0.0f)) ,
+                new(new(0.5f,  -0.5f, -0.5f),  new(1.0f, 0.0f)) ,
+            };
+
+
             Buffers["VertexBuffer"] = new(Device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
@@ -158,7 +134,6 @@ namespace Samples.LoadTexture
             });
 
         }
-
 
         public void CreatePipelineState()
         {
@@ -214,30 +189,31 @@ namespace Samples.LoadTexture
 
 
 
-        public void Update()
+        public override void Update(ApplicationTime time)
         {
             Camera.Update();
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-0.8f, -0.4f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix4x4.CreateTranslation(-0.8f, -0.4f, 0.0f);
             uniform.Update(Camera, Model);
             Buffers["ConstBuffer1"].SetData(ref uniform);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, -roll) * Matrix4x4.CreateTranslation(0.8f, -0.4f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, -Rotation.Z) * Matrix4x4.CreateTranslation(0.8f, -0.4f, 0.0f);
             uniform.Update(Camera, Model);
             Buffers["ConstBuffer2"].SetData(ref uniform);
 
 
 
-            roll -= 0.0004f * MathF.PI;
+            Rotation.Z -= 0.0004f * MathF.PI;
 
         }
 
 
 
 
-        public void Draw()
+        public override void Draw(ApplicationTime time)
+
         {
 
             Device.WaitIdle();
@@ -259,11 +235,11 @@ namespace Samples.LoadTexture
 
             commandBuffer.SetGraphicPipeline(PipelineState_0);
             commandBuffer.BindDescriptorSets(DescriptorSet_0);
-            commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
+            commandBuffer.DrawIndexed(6, 1, 0, 0, 0);
 
             commandBuffer.SetGraphicPipeline(PipelineState_1);
             commandBuffer.BindDescriptorSets(DescriptorSet_1);
-            commandBuffer.DrawIndexed(Indices.Length, 1, 0, 0, 0);
+            commandBuffer.DrawIndexed(6, 1, 0, 0, 0);
 
 
 
@@ -272,49 +248,15 @@ namespace Samples.LoadTexture
             SwapChain.Present();
         }
 
-        private void Window_Resize((int Width, int Height) obj)
+        public override void Resize(int width, int height)
         {
             Device.WaitIdle();
-            SwapChain.Resize(obj.Width, obj.Height);
+            SwapChain.Resize(width, height);
             Framebuffer.Resize();
 
-            Camera.AspectRatio = (float)obj.Width / obj.Height;
+            Camera.AspectRatio = (float)width / height;
         }
 
-
-        public void Run()
-        {
-
-            Initialize();
-
-            Window?.Show();
-            Window!.Resize += Window_Resize;
-            Window.RenderLoop(() =>
-            {
-                Update();
-                Draw();
-            });
-        }
-
-        public SwapchainSource GetSwapchainSource()
-        {
-            if (Adapter.SupportsSurface)
-            {
-                if (Adapter.SupportsWin32Surface)
-                    return Window.SwapchainWin32;
-
-                if (Adapter.SupportsX11Surface)
-                    return Window.SwapchainX11;
-
-                if (Adapter.SupportsWaylandSurface)
-                    return Window.SwapchainWayland;
-
-                if (Adapter.SupportsMacOSSurface)
-                    return Window.SwapchainNS;
-            }
-
-            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
-        }
 
         internal byte[] GenerateTextureData()
         {
@@ -329,26 +271,26 @@ namespace Samples.LoadTexture
             color |= b << 8;
             color |= a;
 
-            uint _value = (uint)color; // RBGA
+            uint color_value = (uint)color; // RBGA
 
-            byte Cr = (byte)((_value >> 24) & 0xFF);
-            byte Cg = (byte)((_value >> 16) & 0xFF);
-            byte Cb = (byte)((_value >> 8) & 0xFF);
-            byte Ca = (byte)(_value & 0xFF);
+            byte color_r = (byte)((color_value >> 24) & 0xFF);
+            byte color_g = (byte)((color_value >> 16) & 0xFF);
+            byte color_b = (byte)((color_value >> 8) & 0xFF);
+            byte color_a = (byte)(color_value & 0xFF);
 
 
-            int rowPitch = TextureWidth * TexturePixelSize;
-            int cellPitch = rowPitch >> 3;       // The width of a cell in the checkboard texture.
-            int cellHeight = TextureWidth >> 3;  // The height of a cell in the checkerboard texture.
-            int textureSize = rowPitch * TextureHeight;
-            byte[] data = new byte[textureSize];
+            int row_pitch = TextureWidth * TexturePixelSize;
+            int cell_pitch = row_pitch >> 3;       // The width of a cell in the checkboard texture.
+            int cell_height = TextureWidth >> 3;  // The height of a cell in the checkerboard texture.
+            int texture_size = row_pitch * TextureHeight; // w * h * rgba = 4
+            byte[] data = new byte[texture_size];
 
-            for (int n = 0; n < textureSize; n += TexturePixelSize)
+            for (int n = 0; n < texture_size; n += TexturePixelSize)
             {
-                int x = n % rowPitch;
-                int y = n / rowPitch;
-                int i = x / cellPitch;
-                int j = y / cellHeight;
+                int x = n % row_pitch;
+                int y = n / row_pitch;
+                int i = x / cell_pitch;
+                int j = y / cell_height;
 
                 if (i % 2 == j % 2)
                 {

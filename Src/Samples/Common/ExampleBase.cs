@@ -19,6 +19,7 @@ namespace Samples.Common
             Camera = new(45f, 1f, 0.1f, 64f);
             Camera.AspectRatio = (float)Window.Width / Window.Height;
             Time = new();
+            Rotation = Vector3.Zero;
             Model = Matrix4x4.Identity;
             Models = new();
         }
@@ -29,6 +30,7 @@ namespace Samples.Common
         public Matrix4x4 Model { get; set; }
         public List<Matrix4x4> Models { get; set; }
         public Camera Camera { get; set; }
+        public Vector3 Rotation;
 
 
         public virtual void Initialize()
@@ -98,6 +100,14 @@ namespace Samples.Common
             }
 
             throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
+        }
+
+
+        public void UpdateRotation(float x, float y, float z)
+        {
+            Rotation.X = x;
+            Rotation.Y = y;
+            Rotation.Z = z;
         }
 
     }
