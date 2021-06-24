@@ -357,7 +357,7 @@ namespace Vultaik
         }
 
 
-        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage, string directory = "")
+        public static ShaderBytecode LoadFromFile(string path, ShaderStage stage, string directory = "main")
         {
             return new ShaderBytecode(path, stage, directory);
         }

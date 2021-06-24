@@ -14,10 +14,10 @@ using System.Runtime.CompilerServices;
 
 namespace Samples.PushConstant
 {
-    public class PushConstantExample : IDisposable
+    public class PushConstantExample : ExampleBase, IDisposable
     {
 
-        public VertexPositionColor[] vertices = new VertexPositionColor[]
+        private VertexPositionColor[] vertices = new VertexPositionColor[]
         {
             // front face
             new(new(-0.5f,  0.5f, -0.5f), new(1.0f, 0.0f, 0.0f)),
@@ -63,7 +63,7 @@ namespace Samples.PushConstant
 
         };
 
-        public int[] indices = new[]
+        private int[] indices = new[]
         {
             // front face
             0, 1, 2, // first triangle
@@ -92,47 +92,36 @@ namespace Samples.PushConstant
 
 
 
-        public Camera Camera { get; set; }
-        public PresentationParameters Parameters { get; set; }
-        public Adapter Adapter { get; set; }
-        public Device Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public SwapChain SwapChain { get; set; }
-        public GraphicsContext Context { get; set; }
-        public Window? Window { get; set; }
-        public ApplicationTime Timer;
+        private PresentationParameters Parameters;
+        private Adapter Adapter;
+        private Device Device;
+        private Framebuffer Framebuffer;
+        private SwapChain SwapChain;
+        private GraphicsContext Context;
+        private GraphicsPipeline PipelineState;
+        public DescriptorSet DescriptorSet;
+        private Buffer VertexBuffer;
+        private Buffer IndexBuffer;
+        private Buffer ConstBuffer;
 
+        private ViewUniform view_uniform;
+        private const uint OBJECT_INSTANCES = 125;
+        private Vector3[] rotationSpeeds = new Vector3[OBJECT_INSTANCES]; // Store random per-object rotations
+        private bool cubes_random = false;
 
-        public GraphicsPipeline PipelineState { get; set; }
-
-        public DescriptorSet DescriptorSet { get; set; }
-
-
-        public Buffer VertexBuffer { get; set; }
-        public Buffer IndexBuffer { get; set; }
-        public Buffer ConstBuffer { get; set; }
-
-
-
-        public PushConstantExample()
+        public PushConstantExample() : base()
         {
 
         }
 
-        public ViewUniform view_uniform;
-        private const uint OBJECT_INSTANCES = 125;
-        private Vector3[] rotationSpeeds = new Vector3[OBJECT_INSTANCES]; // Store random per-object rotations
-        private bool CubesRandom = false;
 
-        public void Initialize()
+        public override void Initialize()
         {
-            Window = new Window("Vultaik", 1200, 800);
 
             Parameters = new PresentationParameters()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                //SwapchainSource = Window.GetSwapchainSource(Adapter),
                 Settings = new Settings()
                 {
                     Validation = ValidationType.None,
@@ -142,21 +131,14 @@ namespace Samples.PushConstant
             };
 
 
-            Camera = new(45f, 1f, 0.1f, 64f);
             Camera.SetPosition(0, 0, -20.5f);
-            Camera.AspectRatio = (float)Window.Width / Window.Height;
             Camera.Update();
-
-
-            Timer = new();
-            Timer.Start();
-
 
             Adapter = new Adapter(Parameters);
             Device = new Device(Adapter);
             SwapChain = new SwapChain(Device, new()
             {
-                Source = GetSwapchainSource(),
+                Source = GetSwapchainSource(Adapter),
                 ColorSrgb = false,
                 Height = Window.Height,
                 Width = Window.Width,
@@ -250,7 +232,7 @@ namespace Samples.PushConstant
 
 
 
-        public void Update()
+        public override void Update(ApplicationTime time)
         {
             Camera.Update();
 
@@ -260,15 +242,14 @@ namespace Samples.PushConstant
 
 
             if (Window!.Input.Keyboards[0].IsKeyPressed(Key.R))
-                CubesRandom = true;
+                cubes_random = true;
 
             if (Window.Input.Keyboards[0].IsKeyPressed(Key.N))
-                CubesRandom = false;
+                cubes_random = false;
 
 
 
 
-            Timer.Update();
         }
 
 
@@ -300,7 +281,7 @@ namespace Samples.PushConstant
 
         public void GenerateCubes(CommandBuffer cmd, bool r)
         {
-            float rotation = Timer.TotalMilliseconds / 6;
+            float rotation = Time.TotalMilliseconds / 6;
 
             uint dim = (uint)(Math.Pow(OBJECT_INSTANCES, (1.0f / 3.0f)));
             Vector3 offset = new Vector3(5.0f);
@@ -322,7 +303,7 @@ namespace Samples.PushConstant
             }
         }
 
-        public void Draw()
+        public override void Draw(ApplicationTime time)
         {
 
             Device.WaitIdle();
@@ -338,7 +319,7 @@ namespace Samples.PushConstant
             cmd.SetGraphicPipeline(PipelineState);
             cmd.BindDescriptorSets(DescriptorSet);
 
-            GenerateCubes(cmd, CubesRandom);
+            GenerateCubes(cmd, cubes_random);
 
 
             cmd.Close();
@@ -346,52 +327,16 @@ namespace Samples.PushConstant
             SwapChain.Present();
         }
 
-        private void Window_Resize((int Width, int Height) obj)
+        public override void Resize(int width, int height)
         {
-            Console.WriteLine($"Height: {obj.Height}");
-            Console.WriteLine($"Width: {obj.Width}");
-            Console.WriteLine("=======");
-
-
             Device.WaitIdle();
-            SwapChain.Resize(obj.Width, obj.Height);
+            SwapChain.Resize(width, height);
             Framebuffer.Resize();
 
-            Camera.AspectRatio = (float)obj.Width / obj.Height;
+            Camera.AspectRatio = (float)width / height;
         }
 
-        public void Run()
-        {
-            Initialize();
 
-            Window?.Show();
-            Window!.Resize += Window_Resize;
-            Window.RenderLoop(() =>
-            {
-                Update();
-                Draw();
-            });
-        }
-
-        public SwapchainSource GetSwapchainSource()
-        {
-            if (Adapter.SupportsSurface)
-            {
-                if (Adapter.SupportsWin32Surface)
-                    return Window.SwapchainWin32;
-
-                if (Adapter.SupportsX11Surface)
-                    return Window.SwapchainX11;
-
-                if (Adapter.SupportsWaylandSurface)
-                    return Window.SwapchainWayland;
-
-                if (Adapter.SupportsMacOSSurface)
-                    return Window.SwapchainNS;
-            }
-
-            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
-        }
 
 
 
