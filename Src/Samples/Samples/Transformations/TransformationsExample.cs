@@ -13,11 +13,11 @@ using Vultaik.Toolkit;
 
 namespace Samples.Transformations
 {
-    public class TransformationsExample : IDisposable
+    public class TransformationsExample : ExampleBase, IDisposable
     {
 
 
-        public VertexPositionColor[] vertices = new VertexPositionColor[]
+        private VertexPositionColor[] vertices = new VertexPositionColor[]
         {
             // front face
             new(new(-0.5f,  0.5f, -0.5f), new(1.0f, 0.0f, 0.0f)),
@@ -63,7 +63,7 @@ namespace Samples.Transformations
 
         };
 
-        public int[] indices = new[]
+        private int[] indices = new[]
         {
             // front face
             0, 1, 2, // first triangle
@@ -92,50 +92,35 @@ namespace Samples.Transformations
 
 
 
-        public Camera Camera { get; set; }
-        public PresentationParameters Parameters { get; set; }
-        public Adapter Adapter { get; set; }
-        public Device Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public SwapChain SwapChain { get; set; }
-        public GraphicsContext Context { get; set; }
-        public Matrix4x4 Model { get; set; }
-        public Window? Window { get; set; }
-        public ApplicationTime Timer;
-
-
-        public GraphicsPipeline PipelineState_0 { get; set; }
-        public GraphicsPipeline PipelineState_1 { get; set; }
-
-        public DescriptorSet DescriptorSet_0 { get; set; }
-        public DescriptorSet DescriptorSet_1 { get; set; }
-
-
-        public Buffer VertexBuffer { get; set; }
-        public Buffer IndexBuffer { get; set; }
-        public Buffer ConstBuffer { get; set; }
-        public Buffer ConstBuffer2 { get; set; }
+        private PresentationParameters Parameters;
+        private Adapter Adapter;
+        private Device Device;
+        private Framebuffer Framebuffer;
+        private SwapChain SwapChain;
+        private GraphicsContext Context;
+        private GraphicsPipeline PipelineState_0;
+        private GraphicsPipeline PipelineState_1;
+        private DescriptorSet DescriptorSet_0;
+        private DescriptorSet DescriptorSet_1;
+        private Buffer VertexBuffer;
+        private Buffer IndexBuffer;
+        private Buffer ConstBuffer;
+        private Buffer ConstBuffer2;
+        private TransformUniform uniform;
 
 
 
-        public TransformationsExample() 
+        public TransformationsExample() : base()
         {
 
         }
 
 
-        public TransformUniform uniform;
-        public float yaw;
-        public float pitch;
-        public float roll;
 
-
-
-        public void Initialize()
+        public override void Initialize()
         {
-            Window = new Window("Vultaik", 1200, 800);
 
-            Parameters = new PresentationParameters()
+            Parameters = new()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
@@ -149,21 +134,16 @@ namespace Samples.Transformations
             };
 
 
-            Camera = new(45f, 1f, 0.1f, 64f);
             Camera.SetPosition(0, 0, -3.5f);
-            Camera.AspectRatio = (float)Window.Width / Window.Height;
             Camera.Update();
 
 
-            Timer = new();
-            Timer.Start();
 
-
-            Adapter = new Adapter(Parameters);
-            Device = new Device(Adapter);
-            SwapChain = new SwapChain(Device, new()
+            Adapter = new(Parameters);
+            Device = new(Adapter);
+            SwapChain = new(Device, new()
             {
-                Source = GetSwapchainSource(),
+                Source = GetSwapchainSource(Adapter),
                 ColorSrgb = false,
                 Height = Window.Height,
                 Width = Window.Width,
@@ -171,11 +151,8 @@ namespace Samples.Transformations
                 DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
             });
 
-            Framebuffer = new Framebuffer(SwapChain);
-            Context = new GraphicsContext(Device);
-
-            // Reset Model
-            Model = Matrix4x4.Identity;
+            Framebuffer = new(SwapChain);
+            Context = new(Device);
 
 
             uniform = new(Camera.Projection, Model, Camera.View);
@@ -183,7 +160,6 @@ namespace Samples.Transformations
 
 
             CreateBuffers();
-
             CreatePipelineState();
 
         }
@@ -268,11 +244,12 @@ namespace Samples.Transformations
 
 
 
-        public void Update()
+
+        public override void Update(ApplicationTime time)
         {
             Camera.Update();
 
-            float rotation = Timer.TotalMilliseconds / 800;
+            float rotation = time.TotalMilliseconds / 800;
 
             Console.WriteLine(rotation);
             Model = Matrix4x4.CreateFromYawPitchRoll(-rotation, -rotation, -rotation) * Matrix4x4.CreateTranslation(-0.45f, 0.0f, 0.0f);
@@ -284,11 +261,10 @@ namespace Samples.Transformations
             uniform.Update(Camera, Model);
             ConstBuffer2.SetData(ref uniform);
 
-            Timer.Update();
         }
 
 
-        public void Draw()
+        public override void Draw(ApplicationTime time)
         {
 
             Device.WaitIdle();
@@ -319,54 +295,14 @@ namespace Samples.Transformations
             SwapChain.Present();
         }
 
-        private void Window_Resize((int Width, int Height) obj)
+        public override void Resize(int width, int height)
         {
-            Console.WriteLine($"Height: {obj.Height}");
-            Console.WriteLine($"Width: {obj.Width}");
-            Console.WriteLine("=======");
-
-
             Device.WaitIdle();
-            SwapChain.Resize(obj.Width, obj.Height);
+            SwapChain.Resize(width, height);
             Framebuffer.Resize();
 
-            Camera.AspectRatio = (float)obj.Width / obj.Height;
+            Camera.AspectRatio = (float)width / height;
         }
-
-        public void Run()
-        {
-            Initialize();
-
-            Window?.Show();
-            Window!.Resize += Window_Resize;
-            Window.RenderLoop(() =>
-            {
-                Update();
-                Draw();
-            });
-        }
-
-        public SwapchainSource GetSwapchainSource()
-        {
-            if (Adapter.SupportsSurface)
-            {
-                if (Adapter.SupportsWin32Surface)
-                    return Window.SwapchainWin32;
-
-                if (Adapter.SupportsX11Surface)
-                    return Window.SwapchainX11;
-
-                if (Adapter.SupportsWaylandSurface)
-                    return Window.SwapchainWayland;
-
-                if (Adapter.SupportsMacOSSurface)
-                    return Window.SwapchainNS;
-            }
-
-            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
-        }
-
-
 
         public void Dispose()
         {
