@@ -252,7 +252,7 @@ namespace Vultaik
             spvc_context_parse_spirv(context, spirv, word_count, &ir);
 
             // Hand it off to a compiler instance and give it ownership of the IR.
-            spvc_backend backend = spvc_backend.Hlsl;
+            spvc_backend backend = (spvc_backend)Backend;
             spvc_context_create_compiler(context, backend, ir, spvc_capture_mode.TakeOwnership, &compiler_hlsl);
 
             spvc_compiler_create_shader_resources(compiler_hlsl, &resources);
@@ -313,9 +313,6 @@ namespace Vultaik
             }
 
 
-            //Console.WriteLine(sampledImageCount);
-
-
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SampledImage, (spvc_reflected_resource*)&sampledImageList, &sampledImageCount);
             for (uint i = 0; i < sampledImageCount; i++)
             {
@@ -329,9 +326,6 @@ namespace Vultaik
                     resource_type = spvc_resource_type.SampledImage,
                     stage = Stage,
                 });
-
-                Console.WriteLine(set);
-                Console.WriteLine(binding);
             }
 
 
