@@ -78,7 +78,6 @@ namespace Samples.DiffuseLighting
                 },
             };
 
-            Console.WriteLine(Window.FramebufferSize.Height);
 
             Camera = new Camera(45f, 1f, 0.1f, 64f);
             Camera.SetPosition(0, -8, -40.0f);
