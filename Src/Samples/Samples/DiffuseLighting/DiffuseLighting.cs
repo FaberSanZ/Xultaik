@@ -10,38 +10,34 @@ using Vultaik;
 using Buffer = Vultaik.Buffer;
 using Interop = Vultaik.Interop;
 using Samples.Common;
+using Vultaik.Toolkit;
 
 namespace Samples.DiffuseLighting
 {
-    public class DiffuseLightingExample : IDisposable
+    public class DiffuseLightingExample : ExampleBase, IDisposable
     {
 
-        public ModelAssetImporter<VertexPositionNormalTexture> GLTFModel { get; set; }
+        private ModelAssetImporter<VertexPositionNormalTexture> GLTFModel;
+        private PresentationParameters Parameters;
+        private Adapter Adapter;
+        private Device Device;
+        private Framebuffer Framebuffer;
+        private SwapChain SwapChain;
+        private GraphicsContext Context;
+        private DescriptorSet DescriptorSet_0;
+        private DescriptorSet DescriptorSet_1;
+        private DescriptorSet DescriptorSet_2;
+        private Buffer ConstBuffer;
+        private Buffer ConstBuffer2;
+        private Buffer ConstBuffer3;
+        private Buffer ConstBuffer4;
+        private GraphicsPipeline PipelineState_0;
+        private GraphicsPipeline PipelineState_1;
+        private GraphicsPipeline PipelineState_2;
 
-        public Camera Camera { get; set; }
-        public PresentationParameters Parameters { get; set; }
-        public Adapter Adapter { get; set; }
-        public Device Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public SwapChain SwapChain { get; set; }
-        public GraphicsContext Context { get; set; }
-        public Matrix4x4 Model { get; set; }
-        public Window Window { get; set; }
-
-        public Input Input => Window!.Input;
-        public DescriptorSet DescriptorSet_0 { get; set; }
-        public DescriptorSet DescriptorSet_1 { get; set; }
-        public DescriptorSet DescriptorSet_2 { get; set; }
-
-        public Buffer ConstBuffer;
-        public Buffer ConstBuffer2;
-        public Buffer ConstBuffer3;
-        public Buffer ConstBuffer4;
-        public GraphicsPipeline PipelineState_0;
-        public GraphicsPipeline PipelineState_1;
-        public GraphicsPipeline PipelineState_2;
-
-
+        private TransformUniform uniform;
+        private Light light;
+        private float yaw, pitch, roll = 0;
 
 
         public DiffuseLightingExample() : base()
@@ -50,19 +46,7 @@ namespace Samples.DiffuseLighting
         }
 
 
-        public TransformUniform uniform;
-        public Light light;
-
-        public float yaw;
-        public float pitch;
-        public float roll;
-        public float timer;
-
-
-
-
-
-        public void Initialize()
+        public override void Initialize()
         {
             Window = new Window("Vultaik", 1200, 800);
 
@@ -79,18 +63,14 @@ namespace Samples.DiffuseLighting
             };
 
 
-            Camera = new Camera(45f, 1f, 0.1f, 64f);
             Camera.SetPosition(0, -8, -40.0f);
-            Camera.AspectRatio = (float)Window.Width / Window.Height;
             Camera.Update();
 
-            Adapter = new Adapter(Parameters);
-
-            Device = new Device(Adapter);
-
-            SwapChain = new SwapChain(Device, new()
+            Adapter = new(Parameters);
+            Device = new(Adapter);
+            SwapChain = new(Device, new()
             {
-                Source = GetSwapchainSource(),
+                Source = GetSwapchainSource(Adapter),
                 ColorSrgb = false,
                 Height = Window.Height,
                 Width = Window.Width,
@@ -98,13 +78,8 @@ namespace Samples.DiffuseLighting
                 DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
             });
 
-            Context = new GraphicsContext(Device);
-            Framebuffer = new Framebuffer(SwapChain);
-
-
-
-            // Reset Model
-            Model = Matrix4x4.Identity;
+            Context = new(Device);
+            Framebuffer = new(SwapChain);
 
             uniform = new(Camera.Projection, Model, Camera.View);
             light = new(new Vector4(1.0f, 1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f));
@@ -133,12 +108,6 @@ namespace Samples.DiffuseLighting
             CreatePipelineState();
 
             GLTFModel = new(Device, Constants.ModelsFile + "mesh_mat.gltf");
-
-            yaw = 0f;
-            pitch = 0;
-            roll = 0;
-            timer = 0;
-
             
         }
 
@@ -222,8 +191,9 @@ namespace Samples.DiffuseLighting
             DescriptorSet_2 = new(PipelineState_2, descriptorData_2);
         }
 
-        public void Update()
+        public override void Update(ApplicationTime time)
         {
+            var timer = time.TotalMilliseconds / (3600);
 
             Camera.Update();
             //light.LightDirection.X = -14.0f + MathF.Abs(MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f);
@@ -257,15 +227,10 @@ namespace Samples.DiffuseLighting
                 else if (light.IsTexture == 0)
                     light.IsTexture = 1;
             }
-
-
-            timer += 0.0006f;
-            //yaw = timer * MathF.PI;
-
         }
    
 
-        public void Draw()
+        public override void Draw(ApplicationTime time)
         {
 
             Device.WaitIdle();
@@ -297,49 +262,16 @@ namespace Samples.DiffuseLighting
             SwapChain.Present();
         }
 
-
-        private void Window_Resize((int Width, int Height) obj)
+        public override void Resize(int width, int height)
         {
             Device.WaitIdle();
-            SwapChain.Resize(obj.Width, obj.Height);
+            SwapChain.Resize(width, height);
             Framebuffer.Resize();
 
-            Camera.AspectRatio = (float)obj.Width / obj.Height;
+            Camera.AspectRatio = (float)width / height;
         }
 
 
-        public void Run()
-        {
-            Initialize();
-
-            Window?.Show();
-            Window!.Resize += Window_Resize;
-            Window.RenderLoop(() =>
-            {
-                Update();
-                Draw();
-            });
-        }
-
-        public SwapchainSource GetSwapchainSource()
-        {
-            if (Adapter.SupportsSurface)
-            {
-                if (Adapter.SupportsWin32Surface)
-                    return Window.SwapchainWin32;
-
-                if (Adapter.SupportsX11Surface)
-                    return Window.SwapchainX11;
-
-                if (Adapter.SupportsWaylandSurface)
-                    return Window.SwapchainWayland;
-
-                if (Adapter.SupportsMacOSSurface)
-                    return Window.SwapchainNS;
-            }
-
-            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
-        }
 
 
 

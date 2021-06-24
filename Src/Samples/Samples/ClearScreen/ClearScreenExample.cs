@@ -11,13 +11,20 @@ namespace Samples.ClearScreen
 {
     public class ClearScreenExample : ExampleBase, IDisposable
     {
+        private PresentationParameters Parameters;
+        private Adapter Adapter;
+        private Device Device;
+        private Framebuffer Framebuffer;
+        private SwapChain SwapChain;
+        private CommandBuffer CommandBuffer;
+
         private float r, g, b, mod_r, mod_g, mod_b;
 
         public ClearScreenExample() : base()
         {
             Parameters = new()
             {
-                BackBufferWidth = Window.Width,
+                BackBufferWidth = Window.Width, 
                 BackBufferHeight = Window.Height,
                 Settings = new()
                 {
@@ -29,12 +36,6 @@ namespace Samples.ClearScreen
         }
 
 
-        public PresentationParameters Parameters;
-        public Adapter Adapter;
-        public Device Device;
-        public Framebuffer Framebuffer;
-        public SwapChain SwapChain;
-        public CommandBuffer CommandBuffer;
 
 
 

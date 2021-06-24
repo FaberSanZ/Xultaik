@@ -11,12 +11,13 @@ using Vultaik.Toolkit;
 
 namespace Samples.Common
 {
-    public class ExampleBase
+    public class ExampleBase 
     {
         public ExampleBase()
         {
             Window = new("Vultaik", 1200, 800);
             Camera = new(45f, 1f, 0.1f, 64f);
+            Camera.AspectRatio = (float)Window.Width / Window.Height;
             Time = new();
             Model = Matrix4x4.Identity;
             Models = new();
@@ -65,6 +66,7 @@ namespace Samples.Common
             {
                 Update(Time);
                 Draw(Time);
+                Time.Update();
             });
 
 
