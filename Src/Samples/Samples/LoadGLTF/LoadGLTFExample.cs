@@ -15,31 +15,28 @@ using Vultaik.Physics;
 using Buffer = Vultaik.Buffer;
 using Interop = Vultaik.Interop;
 using Samples.Common;
+using Vultaik.Toolkit;
 
 namespace Samples.LoadGLTF
 {
 
 
-    public class LoadGLTFExample : IDisposable
+    public class LoadGLTFExample : ExampleBase, IDisposable
     {
 
-        public Camera Camera { get; set; }
-        public PresentationParameters Parameters { get; set; }
-        public Adapter Adapter { get; set; }
-        public Device Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public SwapChain SwapChain { get; set; }
-        public GraphicsContext Context { get; set; }
-        public Matrix4x4 Model { get; set; }
-        public Window? Window { get; set; }
+        private ModelAssetImporter<VertexPositionNormal> GLTFModel { get; set; }
+        private PresentationParameters Parameters;
+        private Adapter Adapter;
+        private Device Device;
+        private Framebuffer Framebuffer;
+        private SwapChain SwapChain;
+        private GraphicsContext Context;
+        private Buffer ConstBuffer;
+        private DescriptorSet DescriptorSet;
+        private GraphicsPipeline PipelineState;
 
-
-        public ModelAssetImporter<VertexPositionNormal> GLTFModel { get; set; }
-
-
-        public Buffer ConstBuffer;
-        public DescriptorSet DescriptorSet { get; set; }
-        public GraphicsPipeline PipelineState;
+        private TransformUniform uniform;
+        private float yaw, pitch, roll = 0;
 
 
         public LoadGLTFExample() : base()
@@ -49,19 +46,12 @@ namespace Samples.LoadGLTF
 
 
 
-        // TransformUniform 
-        public TransformUniform uniform;
-        public float yaw;
-        public float pitch;
-        public float roll;
 
 
-
-        public void Initialize()
+        public override void Initialize()
         {
-            Window = new Window("Vultaik", 1200, 800);
 
-            Parameters = new PresentationParameters()
+            Parameters = new()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
@@ -75,13 +65,11 @@ namespace Samples.LoadGLTF
 
 
 
-            Adapter = new Adapter(Parameters);
-
-            Device = new Device(Adapter);
-
-            SwapChain = new SwapChain(Device, new()
+            Adapter = new(Parameters);
+            Device = new(Adapter);
+            SwapChain = new(Device, new()
             {
-                Source = GetSwapchainSource(),
+                Source = GetSwapchainSource(Adapter),
                 ColorSrgb = false,
                 Height = Window.Height,
                 Width = Window.Width,
@@ -90,17 +78,11 @@ namespace Samples.LoadGLTF
             });
 
 
-            Context = new GraphicsContext(Device);
-            Framebuffer = new Framebuffer(SwapChain);
+            Context = new(Device);
+            Framebuffer = new(SwapChain);
 
-            Camera = new Camera(45f, 1f, 0.1f, 64f);
             Camera.SetPosition(0, 0, -4.0f);
-            Camera.AspectRatio = (float)Window.Width / Window.Height;
             Camera.Update();
-
-
-            // Reset Model
-            Model = Matrix4x4.Identity;
 
             uniform = new(Camera.Projection, Model, Camera.View);
 
@@ -117,9 +99,6 @@ namespace Samples.LoadGLTF
 
             GLTFModel = new(Device, Constants.ModelsFile + "DamagedHelmet.gltf");
 
-            yaw = 0f;
-            pitch = 0;
-            roll = 0;
         }
 
         public void CreatePipelineState()
@@ -145,7 +124,7 @@ namespace Samples.LoadGLTF
 
 
 
-        public void Update()
+        public override void Update(ApplicationTime time)
         {
 
             Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, .0f, 0.0f);
@@ -158,7 +137,7 @@ namespace Samples.LoadGLTF
 
 
 
-        public void Draw()
+        public override void Draw(ApplicationTime time)
         {
 
             Device.WaitIdle();
@@ -211,50 +190,14 @@ namespace Samples.LoadGLTF
         }
 
 
-        private void Window_Resize((int Width, int Height) obj)
+        public override void Resize(int width, int height)
         {
             Device.WaitIdle();
-            SwapChain.Resize(obj.Width, obj.Height);
+            SwapChain.Resize(width, height);
             Framebuffer.Resize();
 
-            Camera.AspectRatio = (float)obj.Width / obj.Height;
+            Camera.AspectRatio = (float)width / height;
         }
-
-
-        public void Run()
-        {
-
-            Initialize();
-
-            Window?.Show();
-            Window!.Resize += Window_Resize;
-            Window.RenderLoop(() =>
-            {
-                Update();
-                Draw();
-            });
-        }
-
-        public SwapchainSource GetSwapchainSource()
-        {
-            if (Adapter.SupportsSurface)
-            {
-                if (Adapter.SupportsWin32Surface)
-                    return Window.SwapchainWin32;
-
-                if (Adapter.SupportsX11Surface)
-                    return Window.SwapchainX11;
-
-                if (Adapter.SupportsWaylandSurface)
-                    return Window.SwapchainWayland;
-
-                if (Adapter.SupportsMacOSSurface)
-                    return Window.SwapchainNS;
-            }
-
-            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
-        }
-
 
 
 
