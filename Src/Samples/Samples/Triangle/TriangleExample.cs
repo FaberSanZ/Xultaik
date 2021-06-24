@@ -9,38 +9,33 @@ using Buffer = Vultaik.Buffer;
 using Vortice.Vulkan;
 using Interop = Vultaik.Interop;
 using Samples.Common;
+using Vultaik.Toolkit;
 
 namespace Samples.Triangle
 {
-    public class TriangleExample : IDisposable
+    public class TriangleExample : ExampleBase, IDisposable
     {
+
+        private PresentationParameters Parameters;
+        private Adapter Adapter;
+        private Device Device;
+        private Framebuffer Framebuffer;
+        private SwapChain SwapChain;
+        private GraphicsContext Context;
+        private GraphicsPipeline PipelineState;
+        private DescriptorSet DescriptorSet;
+        private Buffer VertexBuffer;
+        private Buffer IndexBuffer;
+        private Buffer ConstBuffer;
+
+        private TransformUniform Uniform;
 
         public TriangleExample() : base()
         {
 
         }
 
-        public Camera Camera { get; set; }
-        public PresentationParameters Parameters { get; set; }
-        public Adapter Adapter { get; set; }
-        public Device Device { get; set; }
-        public Framebuffer Framebuffer { get; set; }
-        public SwapChain SwapChain { get; set; }
-        public GraphicsContext Context { get; set; }
-        public Matrix4x4 Model { get; set; }
-        public Window? Window { get; set; }
-
-
-        public GraphicsPipeline PipelineState { get; set; }
-        public DescriptorSet DescriptorSet { get; set; }
-        public Buffer VertexBuffer { get; set; }
-        public Buffer IndexBuffer { get; set; }
-        public Buffer ConstBuffer { get; set; }
-
-        public TransformUniform Uniform;
-
-
-        public void Initialize()
+        public override void Initialize()
         {
             Window = new Window("Vultaik", 1200, 800);
 
@@ -64,7 +59,7 @@ namespace Samples.Triangle
 
             SwapChain = new SwapChain(Device, new()
             {
-                Source = GetSwapchainSource(),
+                Source = GetSwapchainSource(Adapter),
                 ColorSrgb = false,
                 Height = Window.Height,
                 Width = Window.Width,
@@ -92,16 +87,6 @@ namespace Samples.Triangle
             CreatePipelineState();
 
 
-        }
-        private void Window_Resize((int Width, int Height) obj)
-        {
-            Console.WriteLine($"Height: {obj.Height}");
-            Console.WriteLine($"Width: {obj.Width}");
-            Console.WriteLine("=======");
-
-            Device.WaitIdle();
-            SwapChain.Resize(obj.Width, obj.Height);
-            Framebuffer.Resize();
         }
 
 
@@ -177,11 +162,9 @@ namespace Samples.Triangle
             DescriptorSet = new(PipelineState, descriptorData);
         }
 
-        public void Update()
+        public override void Update(ApplicationTime time)
         {
 
-            Camera.AspectRatio = (float)Window.FramebufferSize.Width / Window.FramebufferSize.Height;
-            //Camera.Update();
             Camera.Update();
 
             Uniform.Update(Camera, Model);
@@ -193,7 +176,7 @@ namespace Samples.Triangle
         }
 
 
-        public void Draw()
+        public override void Draw(ApplicationTime time)
         {
             Device.WaitIdle();
             CommandBuffer commandBuffer = Context.CommandBuffer;
@@ -218,42 +201,14 @@ namespace Samples.Triangle
         }
 
 
-        public void Run()
+        public override void Resize(int width, int height)
         {
+            Device.WaitIdle();
+            SwapChain.Resize(width, height);
+            Framebuffer.Resize();
 
-            Initialize();
-
-            Window?.Show();
-            Window!.Resize += Window_Resize;
-            Window.RenderLoop(() =>
-            {
-                Update();
-                Draw();
-            });
-
+            Camera.AspectRatio = (float)width / height;
         }
-
-        public SwapchainSource GetSwapchainSource()
-        {
-            if (Adapter.SupportsSurface)
-            {
-                if (Adapter.SupportsWin32Surface)
-                    return Window.SwapchainWin32;
-
-                if (Adapter.SupportsX11Surface)
-                    return Window.SwapchainX11;
-
-                if (Adapter.SupportsWaylandSurface)
-                    return Window.SwapchainWayland;
-
-                if (Adapter.SupportsMacOSSurface)
-                    return Window.SwapchainNS;
-            }
-
-            throw new PlatformNotSupportedException("Cannot create a SwapchainSource.");
-        }
-
-
 
         public void Dispose()
         {
