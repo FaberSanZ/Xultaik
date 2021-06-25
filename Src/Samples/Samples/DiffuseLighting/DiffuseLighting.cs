@@ -274,14 +274,12 @@ namespace Samples.DiffuseLighting
 
 
 
-
-
         public void Dispose()
         {
-            ConstBuffer.Dispose();
-            ConstBuffer2.Dispose();
-            ConstBuffer3.Dispose();
-            ConstBuffer4.Dispose();
+            //ConstBuffer.Dispose();
+            //ConstBuffer2.Dispose();
+            //ConstBuffer3.Dispose();
+            //ConstBuffer4.Dispose();
         }
     }
 

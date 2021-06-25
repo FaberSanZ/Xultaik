@@ -206,17 +206,17 @@ namespace Vultaik.Desktop
             get => _title;
             set => glfw.SetWindowTitle(pWindowHandle, _title = value);
         }
+        GlfwNativeWindow glfw_native => new(glfw, pWindowHandle);
 
+        public IntPtr Win32Handle => glfw_native.Win32.Value.Hwnd;
 
-        public IntPtr Win32Handle => glfw.Library.LoadFunction<GLFW.glfwGetWin32Window>(nameof(GLFW.glfwGetWin32Window))(pWindowHandle);
+        public IntPtr CocoaWindowHandle => glfw_native.Cocoa.Value;
 
-        public IntPtr CocoaWindowHandle => glfw.Library.LoadFunction<GLFW.glfwGetCocoaWindow>(nameof(GLFW.glfwGetCocoaWindow))(pWindowHandle);
+        public IntPtr X11WindowHandle => (IntPtr)(uint)glfw_native.X11.Value.Window;
+        public IntPtr X11DisplayHandle => glfw_native.X11.Value.Display;
 
-        public IntPtr X11WindowHandle => glfw.Library.LoadFunction<GLFW.glfwGetX11Window>(nameof(GLFW.glfwGetX11Window))(pWindowHandle);
-        public IntPtr X11DisplayHandle => glfw.Library.LoadFunction<GLFW.glfwGetX11Display>(nameof(GLFW.glfwGetX11Display))();
-
-        public IntPtr WaylandWindowHandle => glfw.Library.LoadFunction<GLFW.glfwGetWaylandWindow>(nameof(GLFW.glfwGetX11Window))(pWindowHandle);
-        public IntPtr WaylandDisplayHandle => glfw.Library.LoadFunction<GLFW.glfwGetWaylandDisplay>(nameof(GLFW.glfwGetX11Display))();
+        public IntPtr WaylandWindowHandle => glfw_native.Wayland.Value.Surface;
+        public IntPtr WaylandDisplayHandle => glfw_native.Wayland.Value.Display;
 
 
         public SwapchainSource? SwapchainWin32
