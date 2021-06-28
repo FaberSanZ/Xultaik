@@ -188,7 +188,7 @@ namespace Vultaik
                                                     .Select(_ => Interop.String.FromPointer(_.extensionName));
 
 
-            if (((AdapterConfig.Validation & ValidationType.None) == 0) && instance_extensions_names.Contains("VK_EXT_debug_utils"))
+            if (AdapterConfig.VulkanDebug && instance_extensions_names.Contains("VK_EXT_debug_utils"));
             {
                 InstanceExtensionsNames.Add("VK_EXT_debug_utils");
                 SupportsDebugUtils = true;
@@ -304,20 +304,11 @@ namespace Vultaik
 
 
             VkDebugUtilsMessageSeverityFlagsEXT messageSeverity = VkDebugUtilsMessageSeverityFlagsEXT.None;
-            ValidationType validation = AdapterConfig.Validation;
 
-
-            if ((validation & ValidationType.Info) is not 0)
-                messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Info;
-
-            if ((validation & ValidationType.Error) is not 0)
-                messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Error;
-
-            if ((validation & ValidationType.Verbose) is not 0)
-                messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Verbose;
-
-            if ((validation & ValidationType.Warning) is not 0)
-                messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Warning;
+            messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Info;
+            messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Error;
+            messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Verbose;
+            messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Warning;
 
             List<string> requested_validation_layers = new();
 

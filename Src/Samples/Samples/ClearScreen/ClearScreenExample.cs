@@ -27,9 +27,17 @@ namespace Samples.ClearScreen
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
 
-                Validation = ValidationType.None,
+                VulkanDebug = false,
                 Fullscreen = false,
                 VSync = false,
+                Bindless = false,
+                BindMemory2 = false,
+                ConditionalRendering = false,
+                ConservativeRasterization = false,
+                CopyCommands2 = false,
+                Multiview = false,
+                RayTracing = false,
+                ShadingRate = false,
 
             };
         }

@@ -15,7 +15,7 @@ namespace Vultaik
 
         public int BackBufferHeight { get; set; }
 
-        public ValidationType Validation { get; set; }
+        public bool VulkanDebug { get; set; }
 
         public bool Fullscreen { get; set; }
 

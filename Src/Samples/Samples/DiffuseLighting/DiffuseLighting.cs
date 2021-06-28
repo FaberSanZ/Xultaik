@@ -55,7 +55,7 @@ namespace Samples.DiffuseLighting
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
 
-                Validation = ValidationType.None,
+                VulkanDebug = false,
                 Fullscreen = false,
                 VSync = false,
 
