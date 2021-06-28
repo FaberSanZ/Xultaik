@@ -491,9 +491,17 @@ namespace Vultaik
                 createInfo.queueFamilyIndexCount = 0;
             }
 
-            createInfo.preTransform = VkSurfaceTransformFlagsKHR.Identity;
 
-            vkCreateSwapchainKHR(NativeDevice.handle, &createInfo, null, out handle);
+            VkSwapchainKHR oldSwapchain = handle;
+            createInfo.oldSwapchain = oldSwapchain;
+
+            vkCreateSwapchainKHR(NativeDevice.handle, &createInfo, null, out handle).CheckResult();
+
+
+            if (oldSwapchain != VkSwapchainKHR.Null)
+            {
+                vkDestroySwapchainKHR(NativeDevice.handle, oldSwapchain, null);
+            }
 
 
             uint image_count;
