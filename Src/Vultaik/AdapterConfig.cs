@@ -37,7 +37,7 @@ namespace Vultaik
 
         public bool SingleQueue { get; set; } // TODO: Implement SingleQueue 
 
-        public bool ForceExclusiveTransferQueue { get; set; } // TODO: ForceExclusiveTransferQueue ?
+        public bool ForceExclusiveTransferQueue { get; set; } 
 
     }
 

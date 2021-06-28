@@ -153,8 +153,10 @@ namespace Vultaik
             render_finished_semaphore = create_semaphore();
 
 
-
-            transfer_cmd_pool = create_command_pool(TransferFamily);
+            if (AdapterConfig.ForceExclusiveTransferQueue)
+                transfer_cmd_pool = create_command_pool(TransferFamily);
+            else
+                transfer_cmd_pool = create_command_pool(GraphicsFamily);
 
 
             //command_buffer_primary = create_command_buffer_primary(graphics_cmd_pool);
@@ -336,18 +338,18 @@ namespace Vultaik
 
 
 
-                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure"))
-                //{
-                //    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
-                //    fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
-                //    {
-                //        *ppNext = feature;
-                //        ppNext = &feature->pNext;
-                //    }
-                //    RayTracingSupport = true;
-                //}
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && AdapterConfig.RayTracing)
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
+                    fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                    RayTracingSupport = true;
+                }
 
-                if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing"))
+                if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing") && AdapterConfig.Bindless)
                 {
                     DeviceExtensionsNames.Add("VK_EXT_descriptor_indexing");
                     fixed (VkPhysicalDeviceDescriptorIndexingFeatures* feature = &descriptor_indexing_features)
@@ -440,29 +442,29 @@ namespace Vultaik
 
             ppNext = &props.pNext;
 
-            //if (has_pdf2)
-            //{
-            //    if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing_pipeline"))
-            //    {
-            //        DeviceExtensionsNames.Add("VK_KHR_ray_tracing_pipeline");
-            //        fixed (VkPhysicalDeviceRayTracingPipelineFeaturesKHR* feature = &ray_tracing_features)
-            //        {
-            //            *ppNext = feature;
-            //            ppNext = &feature->pNext;
-            //        }
-            //    }
-            //}
+            if (has_pdf2)
+            {
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing_pipeline") && AdapterConfig.RayTracing)
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_ray_tracing_pipeline");
+                    fixed (VkPhysicalDeviceRayTracingPipelineFeaturesKHR* feature = &ray_tracing_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                }
+            }
 
 
-            //if (NativeAdapter.device_extensions_names.Contains("VK_EXT_conservative_rasterization"))
-            //{
-            //    DeviceExtensionsNames.Add("VK_EXT_conservative_rasterization");
-            //    fixed (VkPhysicalDeviceConservativeRasterizationPropertiesEXT* feature = &conservative_rasterization_properties)
-            //    {
-            //        *ppNext = feature;
-            //        ppNext = &feature->pNext;
-            //    }
-            //}
+            if (NativeAdapter.device_extensions_names.Contains("VK_EXT_conservative_rasterization") && AdapterConfig.ConservativeRasterization)
+            {
+                DeviceExtensionsNames.Add("VK_EXT_conservative_rasterization");
+                fixed (VkPhysicalDeviceConservativeRasterizationPropertiesEXT* feature = &conservative_rasterization_properties)
+                {
+                    *ppNext = feature;
+                    ppNext = &feature->pNext;
+                }
+            }
 
 
             if (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device)
@@ -494,7 +496,7 @@ namespace Vultaik
         {
             graphics_queue = get_queue(GraphicsFamily);
             compute_queue = get_queue(ComputeFamily);
-            transfer_queue = get_queue(TransferFamily);
+            transfer_queue = get_queue(AdapterConfig.ForceExclusiveTransferQueue ? TransferFamily : GraphicsFamily);
         }
 
 
@@ -723,7 +725,7 @@ namespace Vultaik
                 return compute_queue;
 
             if (cmd.Type == CommandBufferType.AsyncTransfer)
-                return transfer_queue;
+                return AdapterConfig.ForceExclusiveTransferQueue ? transfer_queue : graphics_queue;
 
             return VkQueue.Null;
         }
@@ -739,16 +741,20 @@ namespace Vultaik
             VkFence sync_fence = VkFence.Null;
             bool use_semaphore = true;
 
-            if (queue == transfer_queue)
+            if(commandBuffer.Type == CommandBufferType.AsyncTransfer)
             {
-                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
-                wait_stages |= VkPipelineStageFlags.Transfer;
+                if ((queue == graphics_queue) || (AdapterConfig.ForceExclusiveTransferQueue && queue == transfer_queue))
+                {
+                    wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+                    wait_stages |= VkPipelineStageFlags.Transfer;
 
-                //if (GraphicsFamily == TransferFamily)
-                //    wait_stages &= ~VkPipelineStageFlags.Transfer;
+                    if (GraphicsFamily == TransferFamily)
+                        wait_stages &= ~VkPipelineStageFlags.Transfer;
 
-                use_semaphore = false;
+                    use_semaphore = false;
+                }
             }
+
 
             if (queue == compute_queue)
             {
