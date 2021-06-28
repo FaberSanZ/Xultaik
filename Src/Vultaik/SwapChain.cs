@@ -676,18 +676,12 @@ namespace Vultaik
 
 
 
-
-
-
-
-            uint image_count;
-            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &image_count, null);
+            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, null);
             images = new VkImage[imageCount];
 
-            fixed (VkImage* images_ptr = images)
-            {
-                vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &image_count, images_ptr);
-            }
+            fixed (VkImage* img = images)
+                vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, img);
+
 
             color_format = surfaceFormat.format;
             //extent = extent;
