@@ -102,7 +102,7 @@ namespace Vultaik
         internal VkFormat color_format;
         internal VkColorSpaceKHR color_space;
         internal VkSwapchainKHR handle;
-        internal VkImage[] images;
+        internal VkImage[] swapChainImages;
         internal VkImageView[] swapChain_image_views;
 
         internal bool vultaik_debug => AdapterConfig.VultaikDebug;
@@ -161,9 +161,9 @@ namespace Vultaik
         public unsafe void CreateBackBuffers()
         {
 
-            swapChain_image_views = new VkImageView[images.Length];
+            swapChain_image_views = new VkImageView[swapChainImages.Length];
 
-            for (int i = 0; i < images.Length; i++)
+            for (int i = 0; i < swapChainImages.Length; i++)
             {
 
                 VkImageViewCreateInfo image_view_info = new VkImageViewCreateInfo()
@@ -172,7 +172,7 @@ namespace Vultaik
                     pNext = null,
                     flags = VkImageViewCreateFlags.None,
                     components = VkComponentMapping.Identity, // TODO: VkComponentMapping
-                    image = images[i],
+                    image = swapChainImages[i],
                     viewType = VkImageViewType.Image2D,
                     format = color_format,
                     subresourceRange = new VkImageSubresourceRange()
@@ -495,12 +495,12 @@ namespace Vultaik
             vkCreateSwapchainKHR(NativeDevice.handle, &createInfo, null, out handle);
 
 
+            uint image_count = 0;
+            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &image_count, null);
+            swapChainImages = new VkImage[image_count];
 
-            //vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, null);
-            images = vkGetSwapchainImagesKHR(NativeDevice.handle, handle).ToArray();
-
-            //fixed (VkImage* img = images)
-            //    vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, img);
+            fixed (VkImage* img = swapChainImages)
+                vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &image_count, img);
 
 
             color_format = surfaceFormat.format;
