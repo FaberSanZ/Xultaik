@@ -24,13 +24,9 @@ namespace Samples.ClearScreen
         {
             AdapterConfig = new()
             {
-                BackBufferWidth = Window.Width,
-                BackBufferHeight = Window.Height,
-
                 VulkanDebug = false,
                 VultaikDebug = false,
                 Fullscreen = false,
-                VSync = false,
                 Bindless = false,
                 BindMemory2 = false,
                 ConditionalRendering = false,
@@ -62,7 +58,7 @@ namespace Samples.ClearScreen
                 ColorSrgb = false,
                 Height = Window.Height,
                 Width = Window.Width,
-                SyncToVerticalBlank = false,
+                VSync = false,
                 DepthFormat = Adapter.DepthFormat is Vortice.Vulkan.VkFormat.Undefined ? null : Adapter.DepthFormat
             });
             Framebuffer = new(SwapChain);

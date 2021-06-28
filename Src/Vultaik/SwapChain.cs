@@ -40,8 +40,7 @@ namespace Vultaik
             surface = CreateSurface();
             init_queue_family();
 
-            CreateSwapChain(AdapterConfig.BackBufferWidth, AdapterConfig.BackBufferHeight);
-            Console.WriteLine(AdapterConfig.BackBufferWidth);
+            CreateSwapChain(description.Width, description.Height);
 
             CreateBackBuffers();
 
@@ -338,7 +337,7 @@ namespace Vultaik
             Height = height;
 
 
-            bool vsync = AdapterConfig.VSync;
+            bool vsync = Description.VSync;
             // Get physical Device Surface properties and formats
             vkGetPhysicalDeviceSurfaceCapabilitiesKHR(PhysicalDevice, surface, out VkSurfaceCapabilitiesKHR surfCaps);
 
@@ -435,12 +434,6 @@ namespace Vultaik
                 }
             }
 
-
-            //uint* extent = stackalloc uint[2];
-            //extent[0] = swapchainExtent.width + 1;
-            //extent[1] = swapchainExtent.height + 1;
-
-            //VkExtent2D imageExtent = *(VkExtent2D*)&extent;
 
 
 

@@ -41,13 +41,9 @@ namespace Samples.Triangle
 
             AdapterConfig = new()
             {
-                BackBufferWidth = Window.Width,
-                BackBufferHeight = Window.Height,
                 VulkanDebug = false,
                 VultaikDebug = false,
                 Fullscreen = false,
-                VSync = false,
-
             };
 
 
@@ -61,7 +57,7 @@ namespace Samples.Triangle
                 ColorSrgb = false,
                 Height = Window.Height,
                 Width = Window.Width,
-                SyncToVerticalBlank = false,
+                VSync = false,
                 DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
             });
 

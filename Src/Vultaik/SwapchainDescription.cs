@@ -10,24 +10,24 @@ namespace Vultaik
     public struct SwapchainDescription : IEquatable<SwapchainDescription>
     {
 
-        public SwapchainDescription(SwapchainSource source, int width, int height, VkFormat? depthFormat, bool syncToVerticalBlank)
+        public SwapchainDescription(SwapchainSource source, int width, int height, VkFormat? depthFormat, bool vSync)
         {
             Source = source;
             Width = width;
             Height = height;
             DepthFormat = depthFormat;
-            SyncToVerticalBlank = syncToVerticalBlank;
+            VSync = vSync;
             ColorSrgb = false;
         }
 
 
-        public SwapchainDescription(SwapchainSource source, int width, int height, VkFormat? depthFormat, bool syncToVerticalBlank, bool colorSrgb)
+        public SwapchainDescription(SwapchainSource source, int width, int height, VkFormat? depthFormat, bool vSync, bool colorSrgb)
         {
             Source = source;
             Width = width;
             Height = height;
             DepthFormat = depthFormat;
-            SyncToVerticalBlank = syncToVerticalBlank;
+            VSync = vSync;
             ColorSrgb = colorSrgb;
         }
 
@@ -40,7 +40,7 @@ namespace Vultaik
 
         public VkFormat? DepthFormat { get; set; }
 
-        public bool SyncToVerticalBlank { get; set; }
+        public bool VSync { get; set; }
 
         public bool ColorSrgb { get; set; }
 
@@ -51,7 +51,7 @@ namespace Vultaik
                 && Width.Equals(other.Width)
                 && Height.Equals(other.Height)
                 && DepthFormat == other.DepthFormat
-                && SyncToVerticalBlank.Equals(other.SyncToVerticalBlank)
+                && VSync.Equals(other.VSync)
                 && ColorSrgb.Equals(other.ColorSrgb);
         }
 

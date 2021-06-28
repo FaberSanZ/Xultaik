@@ -120,13 +120,8 @@ namespace Samples.PushConstant
 
             AdapterConfig = new()
             {
-                BackBufferWidth = Window.Width,
-                BackBufferHeight = Window.Height,
-
                 VulkanDebug = false,
                 Fullscreen = false,
-                VSync = false,
-
             };
 
 
@@ -141,7 +136,7 @@ namespace Samples.PushConstant
                 ColorSrgb = false,
                 Height = Window.Height,
                 Width = Window.Width,
-                SyncToVerticalBlank = false,
+                VSync = false,
                 DepthFormat = Adapter.DepthFormat is VkFormat.Undefined ? null : Adapter.DepthFormat
             });
 

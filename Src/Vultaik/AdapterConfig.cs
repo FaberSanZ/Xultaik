@@ -11,10 +11,6 @@ namespace Vultaik
 {
     public class AdapterConfig
     {
-        public int BackBufferWidth { get; set; }
-
-        public int BackBufferHeight { get; set; }
-
         public bool VulkanDebug { get; set; }
 
         public bool ValidationGpuAssisted { get; set; }
@@ -22,8 +18,6 @@ namespace Vultaik
         public bool VultaikDebug { get; set; } // TODO: Implement VultaikDebug 
 
         public bool Fullscreen { get; set; } // TODO: Implement Fullscreen 
-
-        public bool VSync { get; set; } // TODO: VSync? 
 
         public bool RayTracing { get; set; } // TODO: Implement RayTracing 
 
