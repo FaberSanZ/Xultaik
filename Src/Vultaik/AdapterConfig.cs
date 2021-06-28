@@ -17,7 +17,7 @@ namespace Vultaik
 
         public bool VulkanDebug { get; set; }
 
-        public bool VultaiknDebug { get; set; } // TODO: Implement VultaiknDebug 
+        public bool VultaikDebug { get; set; } // TODO: Implement VultaikDebug 
 
         public bool Fullscreen { get; set; } // TODO: Implement Fullscreen 
 
