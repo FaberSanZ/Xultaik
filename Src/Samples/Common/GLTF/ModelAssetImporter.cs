@@ -725,7 +725,7 @@ namespace Vultaik.GLTF
         }
 
 
-
+        // TODO: PreTransform?
         public void PreTransform(Node node, Matrix4x4 currentTransform)
         {
             Matrix4x4 localMat = node.LocalMatrix * currentTransform;
@@ -742,7 +742,7 @@ namespace Vultaik.GLTF
             //            Vector3 position = Vector3.Transform(vertexPositionTextures[index].Position, localMat);
             //            Vector3 color = Vector3.TransformNormal(vertexPositionTextures[index].color, localMat);
 
-            //            // TODO: Normalize?
+            //            
             //            color = Vector3.Normalize(color);
 
             //            vertexPositionTextures[index] = new(position, vertexPositionTextures[index].TextureCoordinate, color);

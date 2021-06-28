@@ -28,6 +28,7 @@ namespace Samples.ClearScreen
                 BackBufferHeight = Window.Height,
 
                 VulkanDebug = false,
+                VultaiknDebug = false,
                 Fullscreen = false,
                 VSync = false,
                 Bindless = false,
@@ -38,7 +39,8 @@ namespace Samples.ClearScreen
                 Multiview = false,
                 RayTracing = false,
                 ShadingRate = false,
-
+                SingleQueue = false,
+                ForceExclusiveTransferQueue = false,
             };
         }
 

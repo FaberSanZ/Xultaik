@@ -17,25 +17,31 @@ namespace Vultaik
 
         public bool VulkanDebug { get; set; }
 
-        public bool Fullscreen { get; set; }
+        public bool VultaiknDebug { get; set; } // TODO: Implement VultaiknDebug 
 
-        public bool VSync { get; set; }
+        public bool Fullscreen { get; set; } // TODO: Implement Fullscreen 
 
-        public bool RayTracing { get; set; }
+        public bool VSync { get; set; } // TODO: VSync? 
 
-        public bool ConservativeRasterization { get; set; }
+        public bool RayTracing { get; set; } // TODO: Implement RayTracing 
 
-        public bool CopyCommands2 { get; set; }
+        public bool ConservativeRasterization { get; set; } // TODO: Implement ConservativeRasterization 
 
-        public bool BindMemory2 { get; set; }
+        public bool CopyCommands2 { get; set; } // TODO: Implement CopyCommands2 
 
-        public bool Multiview { get; set; }
+        public bool BindMemory2 { get; set; } // TODO: Implement BindMemory2 
 
-        public bool ConditionalRendering { get; set; }
+        public bool Multiview { get; set; } // TODO: Implement Multiview 
 
-        public bool ShadingRate { get; set; }
+        public bool ConditionalRendering { get; set; } // TODO: Implement ConditionalRendering 
 
-        public bool Bindless { get; set; }
+        public bool ShadingRate { get; set; } // TODO: Implement ShadingRate 
+
+        public bool Bindless { get; set; } // TODO: Implement Bindless 
+
+        public bool SingleQueue { get; set; } // TODO: Implement SingleQueue 
+
+        public bool ForceExclusiveTransferQueue { get; set; } // TODO: ForceExclusiveTransferQueue ?
     }
 
 

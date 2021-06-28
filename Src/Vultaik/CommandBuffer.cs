@@ -336,7 +336,7 @@ namespace Vultaik
             //    if (gpu_index == ALL_GPUS)
             //        vkCmdSetDeviceMaskKHR(handle, (1 << NativeDevice.device_count) - 1);
             //    else
-            //        qvkCmdSetDeviceMaskKHR(handle, 1 << gpu_index);
+            //        vkCmdSetDeviceMaskKHR(handle, 1 << gpu_index);
             //}
         }
 

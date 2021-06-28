@@ -13,13 +13,7 @@ using Interop = Vultaik.Interop;
 
 namespace Vultaik
 {
-    internal class QueueData
-    {
-        internal VkQueueFlags type;
-        internal uint family_index;
-        internal uint index;
-        internal uint timestamp_valid_bits = 0;
-    };
+
     public unsafe class Device : IDisposable
     {
         internal VkDevice handle;
@@ -960,4 +954,11 @@ namespace Vultaik
         }
     }
 
+    internal class QueueData
+    {
+        internal VkQueueFlags type;
+        internal uint family_index;
+        internal uint index;
+        internal uint timestamp_valid_bits = 0;
+    }
 }

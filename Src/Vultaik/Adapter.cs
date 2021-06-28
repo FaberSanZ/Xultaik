@@ -13,23 +13,25 @@ using Interop = Vultaik.Interop;
 
 namespace Vultaik
 {
+
     public enum VendorId
     {
         AMD = 0x1002,
 
-        NVIDIA = 0x10de,
+        ImgTec = 0x1010,
 
-        INTEL = 0x8086,
+        NVIDIA = 0x10DE,
 
-        ARM = 0x13b5,
+        ARM = 0x13B5,
 
-        QCOM = 0x5143
+        Qualcomm = 0x5143,
+
+        Intel = 0x8086,
     }
-
 
     public unsafe class Adapter : IDisposable
     {
-        internal bool? _supportInitializad;
+        internal bool? _supportInitialized;
         internal VkInstance instance;
 
         internal VkDebugUtilsMessengerEXT _debugMessenger = VkDebugUtilsMessengerEXT.Null;
@@ -128,18 +130,18 @@ namespace Vultaik
 
         public bool IsSupported()
         {
-            if (_supportInitializad.HasValue)
-                return _supportInitializad.Value;
+            if (_supportInitialized.HasValue)
+                return _supportInitialized.Value;
 
             try
             {
                 VkResult result = vkInitialize();
-                _supportInitializad = result == VkResult.Success;
-                return _supportInitializad.Value;
+                _supportInitialized = result == VkResult.Success;
+                return _supportInitialized.Value;
             }
             catch
             {
-                _supportInitializad = false;
+                _supportInitialized = false;
                 return false;
             }
         }
@@ -345,7 +347,8 @@ namespace Vultaik
                 VkValidationFeatureEnableEXT* enable_features = stackalloc VkValidationFeatureEnableEXT[2]
                 {
                     VkValidationFeatureEnableEXT.GpuAssistedReserveBindingSlot,
-                    VkValidationFeatureEnableEXT.GpuAssisted
+                    VkValidationFeatureEnableEXT.GpuAssisted,
+                    //VkValidationFeatureEnableEXT.SynchronizationValidation
                 };
 
                 validation_features_info.enabledValidationFeatureCount = 2;
@@ -526,32 +529,15 @@ namespace Vultaik
 
 
 
-        internal string VendorNameString(uint vendorId)
-        {
-            switch (vendorId)
-            {
-                case 0x1002:
-                    return "AMD";
-
-                case 0x1010:
-                    return "ImgTec";
-
-                case 0x10DE:
-                    return "NVIDIA";
-
-                case 0x13B5:
-                    return "ARM";
-
-                case 0x5143:
-                    return "Qualcomm";
-
-                case 0x8086:
-                    return "Intel";
-
-                default:
-                    return "Unknown";
-            }
-        }
+        //internal string VendorNameString(uint vendorId)
+        //{
+        //    var id = VendorId.AMD;
+        //    switch (vendorId, id)
+        //    {
+        //        case (0x1002, VendorId.AMD):
+        //            return "AMD";
+        //    }
+        //}
 
 
 
