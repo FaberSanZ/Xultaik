@@ -488,6 +488,7 @@ namespace Vultaik
             else
             {
                 createInfo.imageSharingMode = VkSharingMode.Exclusive;
+                createInfo.queueFamilyIndexCount = 0;
             }
 
             createInfo.preTransform = VkSurfaceTransformFlagsKHR.Identity;
@@ -495,8 +496,8 @@ namespace Vultaik
             vkCreateSwapchainKHR(NativeDevice.handle, &createInfo, null, out handle);
 
 
-            uint image_count = 0;
-            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &image_count, null);
+            uint image_count;
+            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &image_count, null).CheckResult();
             swapChainImages = new VkImage[image_count];
 
             fixed (VkImage* img = swapChainImages)

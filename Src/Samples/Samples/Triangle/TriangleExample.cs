@@ -41,8 +41,8 @@ namespace Samples.Triangle
 
             AdapterConfig = new()
             {
-                VulkanDebug = false,
-                VultaikDebug = true,
+                VulkanDebug = true,
+                VultaikDebug = false,
                 Fullscreen = false,
             };
 
