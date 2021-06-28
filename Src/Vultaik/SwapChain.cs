@@ -107,8 +107,6 @@ namespace Vultaik
                     }
                 };
 
-
-
                 vkCreateImageView(NativeDevice.handle, &image_view_info, null, out swapChain_image_views[i]);
 
 
