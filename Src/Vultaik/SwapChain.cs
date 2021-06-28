@@ -14,6 +14,84 @@ using static Vortice.Vulkan.VkUtils;
 
 namespace Vultaik
 {
+    public struct QueueFamilyIndices
+    {
+        public readonly int GraphicsFamily;
+        public readonly int PresentFamily;
+
+        public bool IsComplete => GraphicsFamily >= 0 && PresentFamily >= 0;
+
+        public unsafe QueueFamilyIndices(VkPhysicalDevice device, VkSurfaceKHR surface)
+        {
+            int graphicsIndex = -1;
+            int presentIndex = -1;
+
+            uint queueFamilyCount = 0;
+            vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, null);
+            VkQueueFamilyProperties* queueFamilies = stackalloc VkQueueFamilyProperties[(int)queueFamilyCount];
+            vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies);
+
+            for (int i = 0; i < queueFamilyCount; i++)
+            {
+                VkQueueFamilyProperties q = queueFamilies[i];
+
+                if (q.queueCount > 0 && (q.queueFlags & VkQueueFlags.Graphics) != 0)
+                {
+                    graphicsIndex = i;
+                }
+
+                vkGetPhysicalDeviceSurfaceSupportKHR(device, (uint)i, surface, out VkBool32 presentSupported);
+                if (presentIndex < 0 && q.queueCount > 0 && presentSupported)
+                {
+                    presentIndex = i;
+                }
+
+
+            }
+
+            GraphicsFamily = graphicsIndex;
+            PresentFamily = presentIndex;
+        }
+    }
+    public ref struct SwapChainSupportDetails
+    {
+        public VkSurfaceCapabilitiesKHR capabilities;
+        public VkSurfaceFormatKHR[] formats;
+        public VkPresentModeKHR[] presentModes;
+
+        public bool IsComplete => formats.Length > 0 && presentModes.Length > 0;
+
+        public unsafe SwapChainSupportDetails(VkPhysicalDevice device, VkSurfaceKHR surface)
+        {
+            formats = default;
+            presentModes = default;
+            capabilities = default;
+
+            vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, out capabilities);
+
+            uint formatCount;
+            vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, null); // Count
+            formats = new VkSurfaceFormatKHR[formatCount];
+            fixed (VkSurfaceFormatKHR* formatsPtr = formats)
+            {
+                vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, formatsPtr);
+            }
+
+
+            uint presentModeCount;
+            vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, null); //Count 
+            presentModes = new VkPresentModeKHR[presentModeCount];
+            fixed (VkPresentModeKHR* presentsPtr = presentModes)
+            {
+                vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, presentsPtr);
+            }
+
+        }
+    }
+
+
+
+
     public unsafe class SwapChain : GraphicsResource, IDisposable
     {
         private delegate VkResult PFN_vkCreateWin32SurfaceKHRDelegate(VkInstance instance, VkWin32SurfaceCreateInfoKHR* createInfo, VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
@@ -38,7 +116,7 @@ namespace Vultaik
             SwapchainSource = description.Source;
 
             surface = CreateSurface();
-            init_queue_family();
+            //init_queue_family();
 
             CreateSwapChain(description.Width, description.Height);
 
@@ -136,15 +214,6 @@ namespace Vultaik
             VkInstance instance = NativeDevice.NativeAdapter.instance;
             VkSurfaceKHR surface = 0;
 
-            //PFN_vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
-            //PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateXlibSurfaceKHR>("vkCreateXlibSurfaceKHR");
-            //PFN_vkCreateWaylandSurfaceKHR vkCreateWaylandSurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWaylandSurfaceKHR>("vkCreateWaylandSurfaceKHR");
-
-
-            //if (SwapchainSource is WindowSwapchainSource sourcewin)
-            //{
-            //    surface = new VkSurfaceKHR(sourcewin.Surface);
-            //}
 
 
             if (SwapchainSource is Win32SwapchainSource sourcewin32 && NativeDevice.NativeAdapter.SupportsWin32Surface)
@@ -369,204 +438,315 @@ namespace Vultaik
         public void CreateSwapChain(int width, int height)
         {
 
-            VkPhysicalDevice PhysicalDevice = NativeDevice.NativeAdapter.handle;
+            //VkPhysicalDevice PhysicalDevice = NativeDevice.NativeAdapter.handle;
 
 
             Width = width;
             Height = height;
 
 
-            bool vsync = Description.VSync;
-            // Get physical Device Surface properties and formats
-            vkGetPhysicalDeviceSurfaceCapabilitiesKHR(PhysicalDevice, surface, out VkSurfaceCapabilitiesKHR surfCaps);
+            //bool vsync = Description.VSync;
+            //// Get physical Device Surface properties and formats
+            //vkGetPhysicalDeviceSurfaceCapabilitiesKHR(PhysicalDevice, surface, out VkSurfaceCapabilitiesKHR surfCaps);
 
 
 
-            // Get available present modes
-            uint presentModeCount;
-            vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, null);
-            VkPresentModeKHR* presentModes = stackalloc VkPresentModeKHR[(int)presentModeCount];
-            vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, presentModes);
+            //// Get available present modes
+            //uint presentModeCount;
+            //vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, null);
+            //VkPresentModeKHR* presentModes = stackalloc VkPresentModeKHR[(int)presentModeCount];
+            //vkGetPhysicalDeviceSurfacePresentModesKHR(PhysicalDevice, surface, &presentModeCount, presentModes);
 
-            VkExtent2D swapchainExtent = default;
-            // If width (and height) equals the special value 0xFFFFFFFF, the size of the Surface will be set by the swapchain
-            if (surfCaps.currentExtent.width == unchecked(-1))
+            //VkExtent2D swapchainExtent = default;
+            //// If width (and height) equals the special value 0xFFFFFFFF, the size of the Surface will be set by the swapchain
+            //if (surfCaps.currentExtent.width == unchecked(-1))
+            //{
+            //    // If the Surface size is undefined, the size is set to
+            //    // the size of the Images requested.
+
+            //    swapchainExtent = new(width, height);
+            //}
+            //else
+            //{
+            //    // If the Surface size is defined, the swap chain size must match
+            //    swapchainExtent = surfCaps.currentExtent;
+            //    width = (int)surfCaps.currentExtent.width;
+            //    height = (int)surfCaps.currentExtent.height;
+            //}
+
+
+            //// Select a present mode for the swapchain
+
+            //// The VK_PRESENT_MODE_FIFO_KHR mode must always be present as per spec
+            //// This mode waits for the vertical blank ("v-sync")
+            //VkPresentModeKHR swapchainPresentMode = VkPresentModeKHR.Fifo;
+
+            //// If v-sync is not requested, try to find a mailbox mode
+            //// It's the lowest latency non-tearing present mode available
+            //if (!vsync)
+            //{
+            //    for (uint i = 0; i < presentModeCount; i++)
+            //    {
+            //        if (presentModes[i] is VkPresentModeKHR.Mailbox)
+            //        {
+            //            swapchainPresentMode = VkPresentModeKHR.Mailbox;
+            //            break;
+            //        }
+            //        if ((swapchainPresentMode is not VkPresentModeKHR.Mailbox) && (presentModes[i] is VkPresentModeKHR.Immediate))
+            //        {
+            //            swapchainPresentMode = VkPresentModeKHR.Immediate;
+            //        }
+            //    }
+            //}
+
+
+
+
+            //// Determine the number of Images
+            //uint desiredNumberOfSwapchainImages = surfCaps.minImageCount + 1;
+            //if ((surfCaps.maxImageCount > 0) && (desiredNumberOfSwapchainImages > surfCaps.maxImageCount))
+            //{
+            //    desiredNumberOfSwapchainImages = surfCaps.maxImageCount;
+            //}
+
+
+
+            //// Find the transformation of the Surface
+            //VkSurfaceTransformFlagsKHR preTransform;
+            //if ((surfCaps.supportedTransforms & VkSurfaceTransformFlagsKHR.Identity) is not 0)
+            //{
+            //    // We prefer a non-rotated transform
+            //    preTransform = VkSurfaceTransformFlagsKHR.Identity;
+            //}
+            //else
+            //{
+            //    preTransform = surfCaps.currentTransform;
+            //}
+
+
+
+            //// Find a supported composite alpha format (not all devices support alpha opaque)
+            //VkCompositeAlphaFlagsKHR compositeAlpha = VkCompositeAlphaFlagsKHR.Opaque;
+
+            //// Simply select the first composite alpha format available
+            //VkCompositeAlphaFlagsKHR[] compositeAlphaFlags = new[]
+            //{
+            //    VkCompositeAlphaFlagsKHR.Opaque,
+            //    VkCompositeAlphaFlagsKHR.PreMultiplied,
+            //    VkCompositeAlphaFlagsKHR.PostMultiplied,
+            //    VkCompositeAlphaFlagsKHR.Inherit,
+            //};
+
+            //foreach (VkCompositeAlphaFlagsKHR compositeAlphaFlag in compositeAlphaFlags)
+            //{
+            //    if ((surfCaps.supportedCompositeAlpha & compositeAlphaFlag) is not 0)
+            //    {
+            //        compositeAlpha = compositeAlphaFlag;
+            //        break;
+            //    }
+            //}
+
+
+
+
+            //VkSwapchainKHR oldSwapchain = handle;
+
+            //VkSwapchainCreateInfoKHR swapchain_info = new()
+            //{
+            //    sType = VkStructureType.SwapchainCreateInfoKHR,
+            //    pNext = null,
+
+            //    surface = surface,
+            //    minImageCount = desiredNumberOfSwapchainImages,
+            //    imageFormat = color_format,
+            //    imageColorSpace = color_space,
+            //    imageExtent = swapchainExtent,
+
+            //    imageUsage = VkImageUsageFlags.ColorAttachment,
+            //    preTransform = preTransform,
+            //    imageArrayLayers = 1,
+            //    imageSharingMode = VkSharingMode.Exclusive,
+            //    queueFamilyIndexCount = 0,
+            //    pQueueFamilyIndices = null,
+            //    presentMode = swapchainPresentMode,
+            //    oldSwapchain = oldSwapchain,
+
+            //    // TODO: Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
+            //    clipped = true,
+            //    compositeAlpha = compositeAlpha,
+            //};
+
+
+            //// Enable transfer source on swap chain images if supported
+            //if ((surfCaps.supportedUsageFlags & VkImageUsageFlags.TransferSrc) is not 0)
+            //{
+            //    swapchain_info.imageUsage |= VkImageUsageFlags.TransferSrc;
+            //}
+
+            //// Enable transfer destination on swap chain images if supported
+            //if ((surfCaps.supportedUsageFlags & VkImageUsageFlags.TransferDst) is not 0)
+            //{
+            //    swapchain_info.imageUsage |= VkImageUsageFlags.TransferDst;
+            //}
+
+
+            //if (vultaik_debug)
+            //{
+            //    ConsoleLog.Info("SwapChain", $"Width = {width}, Height = {height}");
+            //    ConsoleLog.Info("SwapChain", $"PresentMode = {swapchainPresentMode}");
+            //    ConsoleLog.Info("SwapChain", $"VSync = {vsync}");
+            //    ConsoleLog.Info("SwapChain", $"SwapchainImages = {desiredNumberOfSwapchainImages}");
+            //    ConsoleLog.Info("SwapChain", $"SurfaceTransform = {preTransform}");
+            //    ConsoleLog.Info("SwapChain", $"CompositeAlpha = {compositeAlpha}");
+            //    ConsoleLog.Info("SwapChain", $"ImageUsage = {swapchain_info.imageUsage}");
+            //}
+
+            //vkCreateSwapchainKHR(NativeDevice.handle, &swapchain_info, null, out handle).CheckResult();
+
+
+            //if (vultaik_debug)
+            //{
+            //    ConsoleLog.Info("SwapChain", $"Handle = 0x{handle.Handle.ToString("X")}");
+            //}
+
+
+            //if (oldSwapchain.Handle != VkSwapchainKHR.Null)
+            //{
+
+            //    if (vultaik_debug)
+            //    {
+            //        ConsoleLog.Info("SwapChain Old", $"Handle = 0x{oldSwapchain.Handle.ToString("X")}");
+            //    }
+
+            //    for (uint i = 0; i < images.Length; i++)
+            //    {
+            //        vkDestroyImageView(NativeDevice.handle, swapChain_image_views[i], null);
+            ////    }
+            //    vkDestroySwapchainKHR(NativeDevice.handle, oldSwapchain, null);
+            //}
+
+
+            SwapChainSupportDetails swapChainSupport = new SwapChainSupportDetails(NativeDevice.NativeAdapter.handle, surface);
+
+            VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
+            VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapChainSupport.presentModes);
+            VkExtent2D extent = ChooseSwapExtent(swapChainSupport.capabilities, (uint)width, (uint)height);
+
+            uint imageCount = swapChainSupport.capabilities.minImageCount + 1;
+            if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount)
             {
-                // If the Surface size is undefined, the size is set to
-                // the size of the Images requested.
-
-                swapchainExtent = new(width, height);
+                imageCount = Math.Min(imageCount, swapChainSupport.capabilities.maxImageCount);
             }
-            else
-            {
-                // If the Surface size is defined, the swap chain size must match
-                swapchainExtent = surfCaps.currentExtent;
-                width = (int)surfCaps.currentExtent.width;
-                height = (int)surfCaps.currentExtent.height;
-            }
 
-
-            // Select a present mode for the swapchain
-
-            // The VK_PRESENT_MODE_FIFO_KHR mode must always be present as per spec
-            // This mode waits for the vertical blank ("v-sync")
-            VkPresentModeKHR swapchainPresentMode = VkPresentModeKHR.Fifo;
-
-            // If v-sync is not requested, try to find a mailbox mode
-            // It's the lowest latency non-tearing present mode available
-            if (!vsync)
-            {
-                for (uint i = 0; i < presentModeCount; i++)
-                {
-                    if (presentModes[i] is VkPresentModeKHR.Mailbox)
-                    {
-                        swapchainPresentMode = VkPresentModeKHR.Mailbox;
-                        break;
-                    }
-                    if ((swapchainPresentMode is not VkPresentModeKHR.Mailbox) && (presentModes[i] is VkPresentModeKHR.Immediate))
-                    {
-                        swapchainPresentMode = VkPresentModeKHR.Immediate;
-                    }
-                }
-            }
-
-
-
-
-            // Determine the number of Images
-            uint desiredNumberOfSwapchainImages = surfCaps.minImageCount + 1;
-            if ((surfCaps.maxImageCount > 0) && (desiredNumberOfSwapchainImages > surfCaps.maxImageCount))
-            {
-                desiredNumberOfSwapchainImages = surfCaps.maxImageCount;
-            }
-
-
-
-            // Find the transformation of the Surface
-            VkSurfaceTransformFlagsKHR preTransform;
-            if ((surfCaps.supportedTransforms & VkSurfaceTransformFlagsKHR.Identity) is not 0)
-            {
-                // We prefer a non-rotated transform
-                preTransform = VkSurfaceTransformFlagsKHR.Identity;
-            }
-            else
-            {
-                preTransform = surfCaps.currentTransform;
-            }
-
-
-
-            // Find a supported composite alpha format (not all devices support alpha opaque)
-            VkCompositeAlphaFlagsKHR compositeAlpha = VkCompositeAlphaFlagsKHR.Opaque;
-
-            // Simply select the first composite alpha format available
-            VkCompositeAlphaFlagsKHR[] compositeAlphaFlags = new[]
-            {
-                VkCompositeAlphaFlagsKHR.Opaque,
-                VkCompositeAlphaFlagsKHR.PreMultiplied,
-                VkCompositeAlphaFlagsKHR.PostMultiplied,
-                VkCompositeAlphaFlagsKHR.Inherit,
-            };
-
-            foreach (VkCompositeAlphaFlagsKHR compositeAlphaFlag in compositeAlphaFlags)
-            {
-                if ((surfCaps.supportedCompositeAlpha & compositeAlphaFlag) is not 0)
-                {
-                    compositeAlpha = compositeAlphaFlag;
-                    break;
-                }
-            }
-
-
-
-
-            VkSwapchainKHR oldSwapchain = handle;
-
-            VkSwapchainCreateInfoKHR swapchain_info = new()
+            VkSwapchainCreateInfoKHR createInfo = new VkSwapchainCreateInfoKHR()
             {
                 sType = VkStructureType.SwapchainCreateInfoKHR,
-                pNext = null,
-                
                 surface = surface,
-                minImageCount = desiredNumberOfSwapchainImages,
-                imageFormat = color_format,
-                imageColorSpace = color_space,
-                imageExtent = swapchainExtent,
-
-                imageUsage = VkImageUsageFlags.ColorAttachment,
-                preTransform = preTransform,
+                minImageCount = imageCount,
+                imageFormat = surfaceFormat.format,
+                imageColorSpace = surfaceFormat.colorSpace,
+                imageExtent = extent,
                 imageArrayLayers = 1,
-                imageSharingMode = VkSharingMode.Exclusive,
-                queueFamilyIndexCount = 0,
-                pQueueFamilyIndices = null,
-                presentMode = swapchainPresentMode,
-                oldSwapchain = oldSwapchain,
-                
-                // TODO: Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
+                imageUsage = VkImageUsageFlags.ColorAttachment,
+                preTransform = swapChainSupport.capabilities.currentTransform,
+                compositeAlpha = VkCompositeAlphaFlagsKHR.Opaque,
+                presentMode = presentMode,
                 clipped = true,
-                compositeAlpha = compositeAlpha,
             };
 
+            QueueFamilyIndices indices = new QueueFamilyIndices(NativeDevice.NativeAdapter.handle, surface);
 
-            // Enable transfer source on swap chain images if supported
-            if ((surfCaps.supportedUsageFlags & VkImageUsageFlags.TransferSrc) is not 0)
+            uint* QueueFamilyIndicesPtr = stackalloc uint[]
             {
-                swapchain_info.imageUsage |= VkImageUsageFlags.TransferSrc;
+                (uint)indices.GraphicsFamily,
+                (uint)indices.PresentFamily,
+            };
+
+            if (indices.GraphicsFamily != indices.PresentFamily)
+            {
+                createInfo.imageSharingMode = VkSharingMode.Concurrent;
+                createInfo.pQueueFamilyIndices = QueueFamilyIndicesPtr;
+            }
+            else
+            {
+                createInfo.imageSharingMode = VkSharingMode.Exclusive;
             }
 
-            // Enable transfer destination on swap chain images if supported
-            if ((surfCaps.supportedUsageFlags & VkImageUsageFlags.TransferDst) is not 0)
-            {
-                swapchain_info.imageUsage |= VkImageUsageFlags.TransferDst;
-            }
+            vkCreateSwapchainKHR(NativeDevice.handle, &createInfo, null, out handle);
 
 
-            if (vultaik_debug)
-            {
-                ConsoleLog.Info("SwapChain", $"Width = {width}, Height = {height}");
-                ConsoleLog.Info("SwapChain", $"PresentMode = {swapchainPresentMode}");
-                ConsoleLog.Info("SwapChain", $"VSync = {vsync}");
-                ConsoleLog.Info("SwapChain", $"SwapchainImages = {desiredNumberOfSwapchainImages}");
-                ConsoleLog.Info("SwapChain", $"SurfaceTransform = {preTransform}");
-                ConsoleLog.Info("SwapChain", $"CompositeAlpha = {compositeAlpha}");
-                ConsoleLog.Info("SwapChain", $"ImageUsage = {swapchain_info.imageUsage}");
-            }
-
-            vkCreateSwapchainKHR(NativeDevice.handle, &swapchain_info, null, out handle).CheckResult();
 
 
-            if (vultaik_debug)
-            {
-                ConsoleLog.Info("SwapChain", $"Handle = 0x{handle.Handle.ToString("X")}");
-            }
 
 
-            if (oldSwapchain.Handle != VkSwapchainKHR.Null)
-            {
 
-                if (vultaik_debug)
-                {
-                    ConsoleLog.Info("SwapChain Old", $"Handle = 0x{oldSwapchain.Handle.ToString("X")}");
-                }
-
-                for (uint i = 0; i < images.Length; i++)
-                {
-                    vkDestroyImageView(NativeDevice.handle, swapChain_image_views[i], null);
-                }
-                vkDestroySwapchainKHR(NativeDevice.handle, oldSwapchain, null);
-            }
-
-
-            uint imageCount;
-            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, null);
+            uint image_count;
+            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &image_count, null);
             images = new VkImage[imageCount];
 
             fixed (VkImage* images_ptr = images)
             {
-                vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, images_ptr);
+                vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &image_count, images_ptr);
             }
 
+            color_format = surfaceFormat.format;
+            //extent = extent;
+        }
 
+
+        private VkSurfaceFormatKHR ChooseSwapSurfaceFormat(VkSurfaceFormatKHR[] formats)
+        {
+            if (formats.Length == 1 && formats[0].format == VkFormat.Undefined)
+            {
+                return new VkSurfaceFormatKHR()
+                {
+                    format = VkFormat.B8G8R8A8UNorm,// 32 BITS BGRA
+                    colorSpace = VkColorSpaceKHR.SrgbNonLinear
+                };
+            }
+
+            foreach (VkSurfaceFormatKHR availableFormat in formats)
+            {
+                if (availableFormat.format == VkFormat.B8G8R8A8UNorm && availableFormat.colorSpace == VkColorSpaceKHR.SrgbNonLinear)
+                {
+                    return availableFormat;
+                }
+            }
+
+            return formats[0];
+        }
+
+        private VkPresentModeKHR ChooseSwapPresentMode(VkPresentModeKHR[] presentModes)
+        {
+            //VkPresentModeKHR bestMode = VkPresentModeKHR.FifoKHR;
+
+            foreach (VkPresentModeKHR availablePresentMode in presentModes)
+            {
+                if (availablePresentMode == VkPresentModeKHR.Mailbox)
+                {
+                    return availablePresentMode; // MailboxKHR
+                }
+                else if (availablePresentMode == VkPresentModeKHR.Immediate)
+                {
+                    return availablePresentMode; // ImmediateKHR;
+                }
+            }
+
+            return VkPresentModeKHR.Immediate;
+        }
+
+        private VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR capabilities, uint width, uint height)
+        {
+            if (capabilities.currentExtent.width != int.MaxValue)
+            {
+                return capabilities.currentExtent;
+            }
+
+            return new VkExtent2D()
+            {
+                width = (uint)Math.Max(capabilities.minImageExtent.width, Math.Min(capabilities.maxImageExtent.width, (uint)width)),
+                height = (uint)Math.Max(capabilities.minImageExtent.height, Math.Min(capabilities.maxImageExtent.height, (uint)height)),
+            };
         }
 
 

@@ -62,17 +62,18 @@ namespace Vultaik
                 ConsoleLog.Info("Adapter", $"DepthFormat = {DepthFormat}");
                 ConsoleLog.Info("Adapter", $"MultisampleCount = {MultisampleCount}");
                 ConsoleLog.Info("Adapter", $"VendorId = {VendorId}");
+                ConsoleLog.Info("Adapter", $"DeviceType = {DeviceType}");
                 ConsoleLog.Info("Adapter", $"MaxDrawIndirectCount = {MaxDrawIndirectCount}");
                 ConsoleLog.Info("Adapter", $"MinUniformBufferOffsetAlignment = {MinUniformBufferOffsetAlignment}");
                 ConsoleLog.Info("Adapter", $"SupportsValidationGpuAssisted = {SupportsValidationGpuAssisted}");
                 ConsoleLog.Info("Adapter", $"SupportsDebugUtils = {SupportsDebugUtils}");
                 ConsoleLog.Info("Adapter", $"SupportsExternal = {SupportsExternal}");
-                ConsoleLog.Info("Adapter", $"{EngineVersion.ToString()}");
 
                 ConsoleLog.Info("Adapter - ValidationLayer", $"ValidationLayer = {ValidationLayer.Count}");
                 foreach (var v in ValidationLayer)
                     ConsoleLog.InfoNode("ValidationLayer - ValidationLayer", $"Layer = {v}", v == ValidationLayer.Last());
 
+                ConsoleLog.Info("Adapter", $"{EngineVersion.ToString()}");
                 ConsoleLog.Info("Adapter", $"TimestampPeriod = {TimestampPeriod}", true);
             }
         }
