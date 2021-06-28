@@ -41,7 +41,7 @@ namespace Vultaik
             init_queue_family();
 
             CreateSwapChain(AdapterConfig.BackBufferWidth, AdapterConfig.BackBufferHeight);
-
+            Console.WriteLine(AdapterConfig.BackBufferWidth);
 
             CreateBackBuffers();
 
@@ -415,7 +415,7 @@ namespace Vultaik
 
 
             // Find a supported composite alpha format (not all devices support alpha opaque)
-            VkCompositeAlphaFlagsKHR compositeAlpha = VkCompositeAlphaFlagsKHR.Opaque; //VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+            VkCompositeAlphaFlagsKHR compositeAlpha = VkCompositeAlphaFlagsKHR.Opaque;
 
             // Simply select the first composite alpha format available
             VkCompositeAlphaFlagsKHR[] compositeAlphaFlags = new[]

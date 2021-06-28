@@ -28,7 +28,7 @@ namespace Samples.ClearScreen
                 BackBufferHeight = Window.Height,
 
                 VulkanDebug = false,
-                VultaiknDebug = false,
+                VultaikDebug = false,
                 Fullscreen = false,
                 VSync = false,
                 Bindless = false,

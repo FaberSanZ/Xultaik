@@ -17,6 +17,8 @@ namespace Vultaik
 
         public bool VulkanDebug { get; set; }
 
+        public bool ValidationGpuAssisted { get; set; }
+
         public bool VultaikDebug { get; set; } // TODO: Implement VultaikDebug 
 
         public bool Fullscreen { get; set; } // TODO: Implement Fullscreen 
@@ -42,6 +44,7 @@ namespace Vultaik
         public bool SingleQueue { get; set; } // TODO: Implement SingleQueue 
 
         public bool ForceExclusiveTransferQueue { get; set; } // TODO: ForceExclusiveTransferQueue ?
+
     }
 
 

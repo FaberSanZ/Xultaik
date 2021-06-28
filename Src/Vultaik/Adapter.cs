@@ -196,8 +196,7 @@ namespace Vultaik
                 SupportsDebugUtils = true;
             }
 
-
-            if (SupportsDebugUtils && instance_extensions_names.Contains("VK_EXT_validation_features"))
+            if (SupportsDebugUtils && AdapterConfig.ValidationGpuAssisted && instance_extensions_names.Contains("VK_EXT_validation_features"))
             {
                 InstanceExtensionsNames.Add("VK_EXT_validation_features");
                 SupportsValidationGpuAssisted = true;
@@ -317,12 +316,16 @@ namespace Vultaik
 
             ReadOnlySpan<VkLayerProperties> availableLayers = vkEnumerateInstanceLayerProperties();
 
-            foreach (var layer in availableLayers)
+            if (AdapterConfig.VulkanDebug)
             {
-                if ("VK_LAYER_KHRONOS_validation" == layer.GetLayerName())
-                    requested_validation_layers.Add("VK_LAYER_KHRONOS_validation");
+                foreach (var layer in availableLayers)
+                {
+                    if ("VK_LAYER_KHRONOS_validation" == layer.GetLayerName())
+                        requested_validation_layers.Add("VK_LAYER_KHRONOS_validation");
 
+                }
             }
+
 
 
 
@@ -341,7 +344,7 @@ namespace Vultaik
 
             VkValidationFeaturesEXT validation_features_info = new() { sType = VkStructureType.ValidationFeaturesEXT };
 
-            if (SupportsValidationGpuAssisted)
+            if (SupportsValidationGpuAssisted && AdapterConfig.ValidationGpuAssisted)
             {
                 
                 VkValidationFeatureEnableEXT* enable_features = stackalloc VkValidationFeatureEnableEXT[2]

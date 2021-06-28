@@ -44,6 +44,7 @@ namespace Samples.Triangle
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
                 VulkanDebug = false,
+                VultaikDebug = false,
                 Fullscreen = false,
                 VSync = false,
 
