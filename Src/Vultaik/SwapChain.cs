@@ -496,16 +496,31 @@ namespace Vultaik
 
 
 
-            vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, null);
-            images = new VkImage[imageCount];
+            //vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, null);
+            images = vkGetSwapchainImagesKHR(NativeDevice.handle, handle).ToArray();
 
-            fixed (VkImage* img = images)
-                vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, img);
+            //fixed (VkImage* img = images)
+            //    vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, img);
 
 
             color_format = surfaceFormat.format;
             //extent = extent;
         }
+
+
+        //internal void SetNewSwapchain(VkSwapchainKHR deviceSwapchain)
+        //{
+
+
+        //    // Get the images
+        //    uint scImageCount = 0;
+        //    VkResult result = vkGetSwapchainImagesKHR(NativeDevice.handle, deviceSwapchain, ref scImageCount, null);
+        //    if (images == null)
+        //    {
+        //        images = new VkImage[(int)scImageCount];
+        //    }
+        //    result = vkGetSwapchainImagesKHR(NativeDevice.handle, deviceSwapchain, ref scImageCount, out _scImages[0]);
+        //}
 
 
         private VkSurfaceFormatKHR ChooseSwapSurfaceFormat(VkSurfaceFormatKHR[] formats)
