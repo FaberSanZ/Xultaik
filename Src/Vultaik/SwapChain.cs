@@ -465,7 +465,7 @@ namespace Vultaik
                 pQueueFamilyIndices = null,
                 presentMode = swapchainPresentMode,
                 oldSwapchain = oldSwapchain,
-
+                
                 // TODO: Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the Surface area
                 clipped = true,
                 compositeAlpha = compositeAlpha,

@@ -336,16 +336,16 @@ namespace Vultaik
 
 
 
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure"))
-                {
-                    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
-                    fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
-                    {
-                        *ppNext = feature;
-                        ppNext = &feature->pNext;
-                    }
-                    RayTracingSupport = true;
-                }
+                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure"))
+                //{
+                //    DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
+                //    fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)
+                //    {
+                //        *ppNext = feature;
+                //        ppNext = &feature->pNext;
+                //    }
+                //    RayTracingSupport = true;
+                //}
 
                 if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing"))
                 {
@@ -454,15 +454,15 @@ namespace Vultaik
             }
 
 
-            if (NativeAdapter.device_extensions_names.Contains("VK_EXT_conservative_rasterization"))
-            {
-                DeviceExtensionsNames.Add("VK_EXT_conservative_rasterization");
-                fixed (VkPhysicalDeviceConservativeRasterizationPropertiesEXT* feature = &conservative_rasterization_properties)
-                {
-                    *ppNext = feature;
-                    ppNext = &feature->pNext;
-                }
-            }
+            //if (NativeAdapter.device_extensions_names.Contains("VK_EXT_conservative_rasterization"))
+            //{
+            //    DeviceExtensionsNames.Add("VK_EXT_conservative_rasterization");
+            //    fixed (VkPhysicalDeviceConservativeRasterizationPropertiesEXT* feature = &conservative_rasterization_properties)
+            //    {
+            //        *ppNext = feature;
+            //        ppNext = &feature->pNext;
+            //    }
+            //}
 
 
             if (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device)
