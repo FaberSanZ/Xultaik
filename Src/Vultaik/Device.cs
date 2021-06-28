@@ -88,7 +88,7 @@ namespace Vultaik
         {
             NativeAdapter = adapter;
 
-            NativeParameters = NativeAdapter.Parameters;
+            AdapterConfig = NativeAdapter.AdapterConfig;
 
 
             Recreate();
@@ -111,7 +111,7 @@ namespace Vultaik
 
 
         public Adapter NativeAdapter { get; set; }
-        public PresentationParameters NativeParameters { get; set; }
+        public AdapterConfig AdapterConfig { get; set; }
         public CommandBuffer GraphicsCommandBuffer { get; set; }
         public uint GraphicsFamily { get; private set; }
         public uint ComputeFamily { get; private set; }
@@ -318,12 +318,7 @@ namespace Vultaik
 
             bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
 
-            OptionalDeviceExtensions OptDeviceExt = NativeAdapter.Parameters.Settings.OptionalDeviceExtensions;
 
-            bool OptConsRaster= (OptDeviceExt & OptionalDeviceExtensions.ConservativeRasterization) != 0;
-            bool OptShadingRate = (OptDeviceExt & OptionalDeviceExtensions.ShadingRate) != 0;
-            bool OptRayTracing = (OptDeviceExt & OptionalDeviceExtensions.RayTracing) != 0;
-            bool OptMultiview = (OptDeviceExt & OptionalDeviceExtensions.Multiview) != 0;
 
             void** ppNext = &features.pNext;
 
@@ -347,7 +342,7 @@ namespace Vultaik
 
 
 
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && OptRayTracing)
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure"))
                 {
                     DeviceExtensionsNames.Add("VK_KHR_acceleration_structure");
                     fixed (VkPhysicalDeviceAccelerationStructureFeaturesKHR* feature = &acceleration_structure_features)

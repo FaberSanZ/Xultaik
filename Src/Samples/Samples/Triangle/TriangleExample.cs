@@ -16,7 +16,7 @@ namespace Samples.Triangle
     public class TriangleExample : ExampleBase, IDisposable
     {
 
-        private PresentationParameters Parameters;
+        private AdapterConfig AdapterConfig;
         private Adapter Adapter;
         private Device Device;
         private Framebuffer Framebuffer;
@@ -39,21 +39,19 @@ namespace Samples.Triangle
         {
             Window = new Window("Vultaik", 1200, 800);
 
-            Parameters = new PresentationParameters()
+            AdapterConfig = new()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                Settings = new Settings()
-                {
-                    Validation = ValidationType.None,
-                    Fullscreen = false,
-                    VSync = false,
-                },
+
+                Validation = ValidationType.None,
+                Fullscreen = false,
+                VSync = false,
+
             };
 
 
-
-            Adapter = new Adapter(Parameters);
+            Adapter = new Adapter(AdapterConfig);
 
             Device = new Device(Adapter);
 

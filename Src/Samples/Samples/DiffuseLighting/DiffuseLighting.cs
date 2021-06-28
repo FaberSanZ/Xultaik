@@ -18,7 +18,7 @@ namespace Samples.DiffuseLighting
     {
 
         private ModelAssetImporter<VertexPositionNormalTexture> GLTFModel;
-        private PresentationParameters Parameters;
+        private AdapterConfig AdapterConfig;
         private Adapter Adapter;
         private Device Device;
         private Framebuffer Framebuffer;
@@ -50,23 +50,22 @@ namespace Samples.DiffuseLighting
         {
             Window = new Window("Vultaik", 1200, 800);
 
-            Parameters = new PresentationParameters()
+            AdapterConfig = new()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                Settings = new Settings()
-                {
-                    Validation = ValidationType.None,
-                    Fullscreen = false,
-                    VSync = false,
-                },
+
+                Validation = ValidationType.None,
+                Fullscreen = false,
+                VSync = false,
+
             };
 
 
             Camera.SetPosition(0, -8, -40.0f);
             Camera.Update();
 
-            Adapter = new(Parameters);
+            Adapter = new(AdapterConfig);
             Device = new(Adapter);
             SwapChain = new(Device, new()
             {

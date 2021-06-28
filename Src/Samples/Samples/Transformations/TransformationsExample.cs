@@ -92,7 +92,7 @@ namespace Samples.Transformations
 
 
 
-        private PresentationParameters Parameters;
+        private AdapterConfig AdapterConfig;
         private Adapter Adapter;
         private Device Device;
         private Framebuffer Framebuffer;
@@ -120,17 +120,15 @@ namespace Samples.Transformations
         public override void Initialize()
         {
 
-            Parameters = new()
+            AdapterConfig = new()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                //SwapchainSource = Window.GetSwapchainSource(Adapter),
-                Settings = new Settings()
-                {
-                    Validation = ValidationType.None,
-                    Fullscreen = false,
-                    VSync = false,
-                },
+
+                Validation = ValidationType.None,
+                Fullscreen = false,
+                VSync = false,
+
             };
 
 
@@ -139,7 +137,7 @@ namespace Samples.Transformations
 
 
 
-            Adapter = new(Parameters);
+            Adapter = new(AdapterConfig);
             Device = new(Adapter);
             SwapChain = new(Device, new()
             {

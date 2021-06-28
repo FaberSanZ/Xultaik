@@ -20,7 +20,7 @@ namespace Samples.LoadTexture
         private const int TexturePixelSize = 4;  // The number of bytes used to represent a pixel in the texture. RGBA
 
 
-        private PresentationParameters Parameters;
+        private AdapterConfig AdapterConfig;
         private Adapter Adapter;
         private Device Device;
         private Framebuffer Framebuffer;
@@ -44,21 +44,20 @@ namespace Samples.LoadTexture
         public override void Initialize()
         {
 
-            Parameters = new()
+            AdapterConfig = new()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                Settings = new Settings()
-                {
-                    Validation = ValidationType.None,
-                    Fullscreen = false,
-                    VSync = false,
-                },
+
+                Validation = ValidationType.None,
+                Fullscreen = false,
+                VSync = false,
+
             };
 
 
 
-            Adapter = new(Parameters);
+            Adapter = new(AdapterConfig);
             Device = new(Adapter);
             SwapChain = new(Device, new()
             {

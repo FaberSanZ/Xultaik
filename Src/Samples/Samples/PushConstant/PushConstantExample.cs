@@ -92,7 +92,7 @@ namespace Samples.PushConstant
 
 
 
-        private PresentationParameters Parameters;
+        private AdapterConfig AdapterConfig;
         private Adapter Adapter;
         private Device Device;
         private Framebuffer Framebuffer;
@@ -118,23 +118,22 @@ namespace Samples.PushConstant
         public override void Initialize()
         {
 
-            Parameters = new PresentationParameters()
+            AdapterConfig = new()
             {
                 BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                Settings = new Settings()
-                {
-                    Validation = ValidationType.None,
-                    Fullscreen = false,
-                    VSync = false,
-                },
+
+                Validation = ValidationType.None,
+                Fullscreen = false,
+                VSync = false,
+
             };
 
 
             Camera.SetPosition(0, 0, -20.5f);
             Camera.Update();
 
-            Adapter = new Adapter(Parameters);
+            Adapter = new Adapter(AdapterConfig);
             Device = new Device(Adapter);
             SwapChain = new SwapChain(Device, new()
             {

@@ -11,7 +11,7 @@ namespace Samples.ClearScreen
 {
     public class ClearScreenExample : ExampleBase, IDisposable
     {
-        private PresentationParameters Parameters;
+        private AdapterConfig AdapterConfig;
         private Adapter Adapter;
         private Device Device;
         private Framebuffer Framebuffer;
@@ -22,16 +22,15 @@ namespace Samples.ClearScreen
 
         public ClearScreenExample() : base()
         {
-            Parameters = new()
+            AdapterConfig = new()
             {
-                BackBufferWidth = Window.Width, 
+                BackBufferWidth = Window.Width,
                 BackBufferHeight = Window.Height,
-                Settings = new()
-                {
-                    Validation = ValidationType.None,
-                    Fullscreen = false,
-                    VSync = false,
-                },
+
+                Validation = ValidationType.None,
+                Fullscreen = false,
+                VSync = false,
+
             };
         }
 
@@ -43,7 +42,7 @@ namespace Samples.ClearScreen
         public override void Initialize()
         {
 
-            Adapter = new(Parameters);
+            Adapter = new(AdapterConfig);
             Device = new(Adapter);
             CommandBuffer = new(Device, CommandBufferType.AsyncGraphics);
 

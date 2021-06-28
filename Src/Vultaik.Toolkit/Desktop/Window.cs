@@ -208,7 +208,7 @@ namespace Vultaik.Desktop
         }
         GlfwNativeWindow glfw_native => new(glfw, pWindowHandle);
 
-        public IntPtr Win32Handle => glfw_native.Win32.Value.Hwnd;
+        public IntPtr Win32Handle => glfw_native.Win32!.Value.Hwnd;
 
         public IntPtr CocoaWindowHandle => glfw_native.Cocoa.Value;
 

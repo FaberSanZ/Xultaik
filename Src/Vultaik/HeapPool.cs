@@ -50,7 +50,6 @@ namespace Vultaik
 
         public HeapPool(Device device) : base(device)
         {
-            Settings settings = NativeDevice.NativeParameters.Settings;
 
             if (NativeDevice.RayTracingSupport) 
                 MaxDescriptorTypeCounts[VkDescriptorType.AccelerationStructureKHR] = (MaxSets / 2);

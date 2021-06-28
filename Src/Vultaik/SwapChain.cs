@@ -33,14 +33,14 @@ namespace Vultaik
         public SwapChain(Device device, SwapchainDescription description) : base(device)
         {
             Description = description;
-            Parameters = NativeDevice.NativeParameters;
+            AdapterConfig = NativeDevice.AdapterConfig;
 
             SwapchainSource = description.Source;
 
             surface = CreateSurface();
             init_queue_family();
 
-            CreateSwapChain(Parameters.BackBufferWidth, Parameters.BackBufferHeight);
+            CreateSwapChain(AdapterConfig.BackBufferWidth, AdapterConfig.BackBufferHeight);
 
 
             CreateBackBuffers();
@@ -74,7 +74,7 @@ namespace Vultaik
             //DepthStencil.Initialize();
         }
 
-        public PresentationParameters Parameters { get; set; }
+        public AdapterConfig AdapterConfig { get; set; }
         public VkFormat ColorFormat { get; private set; }
         public Image DepthStencil { get; private set; }
         public SwapchainSource SwapchainSource { get; set; }
@@ -338,7 +338,7 @@ namespace Vultaik
             Height = height;
 
 
-            bool vsync = Parameters.Settings.VSync;
+            bool vsync = AdapterConfig.VSync;
             // Get physical Device Surface properties and formats
             vkGetPhysicalDeviceSurfaceCapabilitiesKHR(PhysicalDevice, surface, out VkSurfaceCapabilitiesKHR surfCaps);
 

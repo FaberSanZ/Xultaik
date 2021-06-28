@@ -46,9 +46,9 @@ namespace Vultaik
         internal VkPhysicalDeviceProperties device_properties;
 
 
-        public Adapter(PresentationParameters parameters)
+        public Adapter(AdapterConfig config)
         {
-            Parameters = parameters;
+            AdapterConfig = config;
 
             Recreate();
         }
@@ -57,7 +57,7 @@ namespace Vultaik
 
         public Version EngineVersion { get; internal set; } = new Version(1, 2, 155);
 
-        public PresentationParameters Parameters { get; set; }
+        public AdapterConfig AdapterConfig { get; set; }
 
         public List<string> InstanceExtensionsNames { get; private set; } = new();
 
@@ -188,7 +188,7 @@ namespace Vultaik
                                                     .Select(_ => Interop.String.FromPointer(_.extensionName));
 
 
-            if (((Parameters.Settings.Validation & ValidationType.None) == 0) && instance_extensions_names.Contains("VK_EXT_debug_utils"))
+            if (((AdapterConfig.Validation & ValidationType.None) == 0) && instance_extensions_names.Contains("VK_EXT_debug_utils"))
             {
                 InstanceExtensionsNames.Add("VK_EXT_debug_utils");
                 SupportsDebugUtils = true;
@@ -304,7 +304,7 @@ namespace Vultaik
 
 
             VkDebugUtilsMessageSeverityFlagsEXT messageSeverity = VkDebugUtilsMessageSeverityFlagsEXT.None;
-            ValidationType validation = Parameters.Settings.Validation;
+            ValidationType validation = AdapterConfig.Validation;
 
 
             if ((validation & ValidationType.Info) is not 0)
