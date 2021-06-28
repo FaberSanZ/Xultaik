@@ -15,12 +15,32 @@ namespace Vultaik
         }
         public static StringBuilder Data { get; set; } 
 
-        public static void Info(string type, string message)
+        public static void Info(string type, string message, bool node = false)
         {
-            WriteColored(ConsoleColor.Green, $"[INFO] [{type}]");
-            Console.WriteLine(" " + message + "\n");
+            string s_node = "";
+            if (node)
+                s_node += "\n";
 
-            Data.Append($"[INFO] [{type}] " + message + "\n");
+            WriteColored(ConsoleColor.Green, $"[INFO] [{type}]");
+            Console.WriteLine(" " + message + s_node);
+            Data.Append($"[INFO] [{type}] " + message + s_node);
+        }
+
+        public static void InfoNode(string type, string message, bool endNode = false)
+        {
+            var sub_node_count = type.Length / 2;
+            string s = "  ";
+            for (int i = 0; i < sub_node_count; i++)
+                s += " ";
+
+            string s_node = "";
+            if (endNode)
+                s_node += "\n";
+
+            WriteColored(ConsoleColor.Green, s + "└──");
+            Console.WriteLine(" " + message + s_node);
+
+            Data.Append($"{s} + {type + message}" + s_node);
         }
 
         public static void Warn(string type, string message)

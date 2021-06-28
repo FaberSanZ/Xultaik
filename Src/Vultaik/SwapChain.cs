@@ -107,7 +107,27 @@ namespace Vultaik
                     }
                 };
 
+
+
                 vkCreateImageView(NativeDevice.handle, &image_view_info, null, out swapChain_image_views[i]);
+
+
+                if (vultaik_debug)
+                {
+                    string type = "SwapChain - BackImageView";
+                    ConsoleLog.Info(type, $"Handle = 0x{swapChain_image_views[i].Handle.ToString("X")}");
+                    ConsoleLog.InfoNode(type, $"Image = 0x{image_view_info.image.Handle.ToString("X")}");
+                    ConsoleLog.InfoNode(type, $"Format = {image_view_info.format}");
+                    ConsoleLog.InfoNode(type, $"Flags = {image_view_info.flags}");
+                    ConsoleLog.InfoNode(type, $"Components R = {image_view_info.components.r}");
+                    ConsoleLog.InfoNode(type, $"Components G = {image_view_info.components.g}");
+                    ConsoleLog.InfoNode(type, $"Components B = {image_view_info.components.b}");
+                    ConsoleLog.InfoNode(type, $"Components A = {image_view_info.components.a}");
+                    ConsoleLog.InfoNode(type, $"AspectMask = {image_view_info.subresourceRange.aspectMask}");
+                    ConsoleLog.InfoNode(type, $"MipLevel = {image_view_info.subresourceRange.baseMipLevel}");
+                    ConsoleLog.InfoNode(type, $"ArrayLayer = {image_view_info.subresourceRange.baseArrayLayer}");
+                    ConsoleLog.InfoNode(type, $"ViewType = {image_view_info.viewType}", true);
+                }
             }
         }
 
@@ -145,7 +165,7 @@ namespace Vultaik
                 if (vultaik_debug)
                 {
                     string message = $"Win32, Handle = 0x{surface.Handle.ToString("X")}, Hwnd = 0x{win32_surface_create_info.hwnd.ToString("X")}";
-                    ConsoleLog.Info("Surface", message);
+                    ConsoleLog.Info("SwapChain - Surface", message, true);
                 }
             }
 
@@ -167,7 +187,7 @@ namespace Vultaik
 
                 if (vultaik_debug)
                 {
-                    string message = $"Xlib, Handle = 0x{surface.Handle.ToString("X")}, Display = 0x{xlib_surface_create_info.display.ToString("X")}, window = 0x{xlib_surface_create_info.window.ToString("X")}";
+                    string message = $"SwapChain - Xlib, Handle = 0x{surface.Handle.ToString("X")}, Display = 0x{xlib_surface_create_info.display.ToString("X")}, window = 0x{xlib_surface_create_info.window.ToString("X")}";
                     ConsoleLog.Info("Surface", message);
                 }
             }
@@ -523,15 +543,14 @@ namespace Vultaik
             }
 
 
-            // If an existing swap chain is re-created, destroy the old swap chain
-            // This also cleans up all the presentable images
-            //if (oldSwapchain != VkSwapchainKHR.Null)
-            //{
-            //    vkDestroySwapchainKHR(NativeDevice.handle, oldSwapchain, null);
-            //}
-
             if (oldSwapchain.Handle != VkSwapchainKHR.Null)
             {
+
+                if (vultaik_debug)
+                {
+                    ConsoleLog.Info("SwapChain Old", $"Handle = 0x{oldSwapchain.Handle.ToString("X")}");
+                }
+
                 for (uint i = 0; i < images.Length; i++)
                 {
                     vkDestroyImageView(NativeDevice.handle, swapChain_image_views[i], null);

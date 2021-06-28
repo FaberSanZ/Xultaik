@@ -46,6 +46,7 @@ namespace Vultaik
         internal VkPhysicalDevice handle;
         internal VkPhysicalDevice[] handles;
         internal VkPhysicalDeviceProperties device_properties;
+        internal bool vultaik_debug => AdapterConfig.VultaikDebug;
 
 
         public Adapter(AdapterConfig config)
