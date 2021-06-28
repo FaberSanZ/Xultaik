@@ -11,19 +11,19 @@ namespace Vultaik
         public static void Info(string type, string message)
         {
             WriteColored(ConsoleColor.Green, $"[INFO] [{type}]");
-            Console.WriteLine(" " + message + "\n \n \n");
+            Console.WriteLine(" " + message + "\n");
         }
 
         public static void Warn(string type, string message)
         {
             WriteColored(ConsoleColor.Yellow, $"[WARN] [{type}]");
-            Console.WriteLine(" " + message + "\n \n \n");
+            Console.WriteLine(" " + message + "\n \n");
         }
 
         public static void Error(string type, string message)
         {
             WriteColored(ConsoleColor.Red, $"[ERROR] [{type}]");
-            Console.WriteLine(" " + message + "\n \n \n");
+            Console.WriteLine(" " + message + "\n \n");
 
         }
 

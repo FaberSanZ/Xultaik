@@ -42,7 +42,7 @@ namespace Samples.Triangle
             AdapterConfig = new()
             {
                 VulkanDebug = false,
-                VultaikDebug = false,
+                VultaikDebug = true,
                 Fullscreen = false,
             };
 

@@ -27,7 +27,7 @@ namespace Vultaik
         internal VkImage[] images;
         internal VkImageView[] swapChain_image_views;
 
-
+        internal bool vultaik_debug => AdapterConfig.VultaikDebug;
 
 
         public SwapChain(Device device, SwapchainDescription description) : base(device)
@@ -131,7 +131,7 @@ namespace Vultaik
 
             if (SwapchainSource is Win32SwapchainSource sourcewin32 && NativeDevice.NativeAdapter.SupportsWin32Surface)
             {
-                VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfo = new()
+                VkWin32SurfaceCreateInfoKHR win32_surface_create_info = new()
                 {
                     sType = VkStructureType.Win32SurfaceCreateInfoKHR,
                     pNext = null,
@@ -140,7 +140,13 @@ namespace Vultaik
                     hwnd = sourcewin32.Hwnd,
                 };
 
-                vkCreateWin32SurfaceKHR(instance, &Win32SurfaceCreateInfo, null, out surface);
+                vkCreateWin32SurfaceKHR(instance, &win32_surface_create_info, null, out surface);
+
+                if (vultaik_debug)
+                {
+                    string message = $"Win32, Handle = 0x{surface.Handle.ToString("X")}, Hwnd = 0x{win32_surface_create_info.hwnd.ToString("X")}";
+                    ConsoleLog.Info("Surface", message);
+                }
             }
 
 
@@ -148,7 +154,7 @@ namespace Vultaik
             if (SwapchainSource is XlibSwapchainSource xlibsource)
             {
 
-                VkXlibSurfaceCreateInfoKHR XlibSurfaceCreateInfo = new()
+                VkXlibSurfaceCreateInfoKHR xlib_surface_create_info = new()
                 {
                     sType = VkStructureType.XlibSurfaceCreateInfoKHR,
                     pNext = null,
@@ -157,7 +163,13 @@ namespace Vultaik
                     window = xlibsource.Window
                 };
 
-                vkCreateXlibSurfaceKHR(instance, &XlibSurfaceCreateInfo, null, out surface);
+                vkCreateXlibSurfaceKHR(instance, &xlib_surface_create_info, null, out surface);
+
+                if (vultaik_debug)
+                {
+                    string message = $"Xlib, Handle = 0x{surface.Handle.ToString("X")}, Display = 0x{xlib_surface_create_info.display.ToString("X")}, window = 0x{xlib_surface_create_info.window.ToString("X")}";
+                    ConsoleLog.Info("Surface", message);
+                }
             }
 
             if (SwapchainSource is WaylandSwapchainSource Waylandsource)
@@ -261,6 +273,11 @@ namespace Vultaik
 
 
 
+            if (vultaik_debug)
+            {
+                string message = $"QueueNodeIndex = {presentQueueNodeIndex}, Type = {queueProps[presentQueueNodeIndex].queueFlags}";
+                ConsoleLog.Info("SwapChain", message);
+            }
 
             // Get list of supported Surface formats
             uint formatCount;
@@ -312,7 +329,11 @@ namespace Vultaik
                 }
             }
 
-
+            if (vultaik_debug)
+            {
+                string message = $"ColorFormat = {color_format}, ColorSpace = {color_space}";
+                ConsoleLog.Info("SwapChain", message);
+            }
 
 
 
@@ -391,12 +412,16 @@ namespace Vultaik
                 }
             }
 
+
+
+
             // Determine the number of Images
             uint desiredNumberOfSwapchainImages = surfCaps.minImageCount + 1;
             if ((surfCaps.maxImageCount > 0) && (desiredNumberOfSwapchainImages > surfCaps.maxImageCount))
             {
                 desiredNumberOfSwapchainImages = surfCaps.maxImageCount;
             }
+
 
 
             // Find the transformation of the Surface
@@ -478,9 +503,24 @@ namespace Vultaik
             }
 
 
+            if (vultaik_debug)
+            {
+                ConsoleLog.Info("SwapChain", $"Width = {width}, Height = {height}");
+                ConsoleLog.Info("SwapChain", $"PresentMode = {swapchainPresentMode}");
+                ConsoleLog.Info("SwapChain", $"VSync = {vsync}");
+                ConsoleLog.Info("SwapChain", $"SwapchainImages = {desiredNumberOfSwapchainImages}");
+                ConsoleLog.Info("SwapChain", $"SurfaceTransform = {preTransform}");
+                ConsoleLog.Info("SwapChain", $"CompositeAlpha = {compositeAlpha}");
+                ConsoleLog.Info("SwapChain", $"ImageUsage = {swapchain_info.imageUsage}");
+            }
 
             vkCreateSwapchainKHR(NativeDevice.handle, &swapchain_info, null, out handle).CheckResult();
 
+
+            if (vultaik_debug)
+            {
+                ConsoleLog.Info("SwapChain", $"Handle = 0x{handle.Handle.ToString("X")}");
+            }
 
 
             // If an existing swap chain is re-created, destroy the old swap chain
@@ -508,6 +548,7 @@ namespace Vultaik
             {
                 vkGetSwapchainImagesKHR(NativeDevice.handle, handle, &imageCount, images_ptr);
             }
+
 
         }
 
