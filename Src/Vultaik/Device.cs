@@ -143,8 +143,6 @@ namespace Vultaik
             CreateDevice();
 
 
-            if (!AdapterConfig.ForceExclusiveTransferQueue)
-                TransferFamily = GraphicsFamily;
 
             // Create CommandQueues
             CreateCommandQueues();
@@ -212,7 +210,11 @@ namespace Vultaik
 
         internal void CreateDevice()
         {
-            VkQueueFlags requestedQueueTypes = VkQueueFlags.Graphics | VkQueueFlags.Compute | VkQueueFlags.Transfer;
+            VkQueueFlags requestedQueueTypes = VkQueueFlags.Graphics | VkQueueFlags.Compute;
+
+            //if (AdapterConfig.ForceExclusiveTransferQueue)
+                requestedQueueTypes |= VkQueueFlags.Transfer;
+
             VkDeviceQueueCreateInfo* queue_create_infos = stackalloc VkDeviceQueueCreateInfo[3];
             float defaultQueuePriority = 0.0f;
 
@@ -496,7 +498,7 @@ namespace Vultaik
         {
             graphics_queue = get_queue(GraphicsFamily);
             compute_queue = get_queue(ComputeFamily);
-            transfer_queue = get_queue(AdapterConfig.ForceExclusiveTransferQueue ? TransferFamily : GraphicsFamily);
+            transfer_queue = get_queue(TransferFamily);
         }
 
 
@@ -745,9 +747,7 @@ namespace Vultaik
             if (queue == transfer_queue)
             {
                 wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
-
-                if (GraphicsFamily != TransferFamily)
-                    wait_stages |= VkPipelineStageFlags.Transfer;
+                wait_stages |= VkPipelineStageFlags.Transfer;
 
                 use_semaphore = false;
             }

@@ -122,6 +122,7 @@ namespace Samples.PushConstant
             {
                 VulkanDebug = false,
                 Fullscreen = false,
+                //ForceExclusiveTransferQueue = true
             };
 
 
