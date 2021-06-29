@@ -54,6 +54,7 @@ namespace Samples.DiffuseLighting
             {
                 VulkanDebug = false,
                 Fullscreen = false,
+                ForceExclusiveTransferQueue = true,
             };
 
 

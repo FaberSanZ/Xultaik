@@ -34,6 +34,25 @@ namespace Vultaik.Desktop
         /// </summary>
         Fullscreen
     }
+
+    [Flags]
+    public enum NativeWindow : ulong
+    {
+        Glfw = 1,
+        Sdl = 2,
+        Win32 = 512,
+        X11 = 1024,
+        DirectFB = 2048,
+        Cocoa = 4096,
+        UIKit = 8192,
+        Wayland = 16384,
+        WinRT = 32768,
+        Android = 65536,
+        Vivante = 131072,
+        OS2 = 262144,
+        Haiku = 524288
+    }
+
     public unsafe class Window : IDisposable
     {
         private string _title;
@@ -41,6 +60,7 @@ namespace Vultaik.Desktop
         internal readonly WindowHandle* pWindowHandle;
 
         internal IntPtr WindowHandle => new IntPtr(pWindowHandle);
+        internal GlfwNativeWindow glfw_native => new(glfw, pWindowHandle);
 
 
 
@@ -175,7 +195,7 @@ namespace Vultaik.Desktop
 
             
         }
-
+        public NativeWindow NativeWindow => (NativeWindow)glfw_native.Kind;
 
         public event Action<(int X, int Y)>? Move;
         public event Action<WindowState>? StateChanged;
@@ -208,7 +228,6 @@ namespace Vultaik.Desktop
             get => _title;
             set => glfw.SetWindowTitle(pWindowHandle, _title = value);
         }
-        GlfwNativeWindow glfw_native => new(glfw, pWindowHandle);
 
         public IntPtr Win32Handle => glfw_native.Win32!.Value.Hwnd;
 

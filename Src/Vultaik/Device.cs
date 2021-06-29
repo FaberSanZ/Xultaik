@@ -143,6 +143,8 @@ namespace Vultaik
             CreateDevice();
 
 
+            if (!AdapterConfig.ForceExclusiveTransferQueue)
+                TransferFamily = GraphicsFamily;
 
             // Create CommandQueues
             CreateCommandQueues();
@@ -153,11 +155,7 @@ namespace Vultaik
             render_finished_semaphore = create_semaphore();
 
 
-            if (AdapterConfig.ForceExclusiveTransferQueue)
-                transfer_cmd_pool = create_command_pool(TransferFamily);
-            else
-                transfer_cmd_pool = create_command_pool(GraphicsFamily);
-
+            transfer_cmd_pool = create_command_pool(TransferFamily);
 
             //command_buffer_primary = create_command_buffer_primary(graphics_cmd_pool);
             //command_buffer_secondary = CreateCommandBufferSecondary();
@@ -300,6 +298,8 @@ namespace Vultaik
                 // Else we use the same queue
                 TransferFamily = GraphicsFamily;
             }
+
+
 
 
             VkPhysicalDeviceFeatures2 features = new()
@@ -725,7 +725,7 @@ namespace Vultaik
                 return compute_queue;
 
             if (cmd.Type == CommandBufferType.AsyncTransfer)
-                return AdapterConfig.ForceExclusiveTransferQueue ? transfer_queue : graphics_queue;
+                return transfer_queue;
 
             return VkQueue.Null;
         }
@@ -741,19 +741,17 @@ namespace Vultaik
             VkFence sync_fence = VkFence.Null;
             bool use_semaphore = true;
 
-            if(commandBuffer.Type == CommandBufferType.AsyncTransfer)
+
+            if (queue == transfer_queue)
             {
-                if ((queue == graphics_queue) || (AdapterConfig.ForceExclusiveTransferQueue && queue == transfer_queue))
-                {
-                    wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+
+                if (GraphicsFamily != TransferFamily)
                     wait_stages |= VkPipelineStageFlags.Transfer;
 
-                    if (GraphicsFamily == TransferFamily)
-                        wait_stages &= ~VkPipelineStageFlags.Transfer;
-
-                    use_semaphore = false;
-                }
+                use_semaphore = false;
             }
+
 
 
             if (queue == compute_queue)
