@@ -53,7 +53,7 @@ namespace Samples.AmbientLighting
             };
 
 
-            Camera.SetPosition(0, -7.15f, -25.0f);
+            Camera.SetPosition(0, -7.15f, -30.0f);
             Camera.Update();
 
             Adapter = new(AdapterConfig);
@@ -120,7 +120,7 @@ namespace Samples.AmbientLighting
             string fragment = Constants.ShadersFile + @"AmbientLighting\Fragment.hlsl";
             string vertex = Constants.ShadersFile + @"AmbientLighting\Vertex.hlsl";
 
-            Image text1 = ImageFile.Load2DFromFile(Device, images + "rocks_ground_02_col_2k.jpg");
+            Image text1 = ImageFile.Load2DFromFile(Device, images + "large_red_bricks_diff_2k.jpg");
 
             var te = GLTFModel.ImageCount;
             Console.WriteLine(te);
