@@ -72,6 +72,7 @@ namespace Samples.AmbientLighting
             Framebuffer = new(SwapChain);
 
             uniform = new(Camera.Projection, Model, Camera.View);
+
             light = new()
             {
                 AmbientColor = new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
@@ -170,7 +171,7 @@ namespace Samples.AmbientLighting
 
 
 
-            //yaw = timer;
+            yaw = timer;
         }
    
 
@@ -189,7 +190,6 @@ namespace Samples.AmbientLighting
             cmd.BindDescriptorSets(DescriptorSet_0);
             cmd.SetGraphicPipeline(PipelineState_0);
             GLTFModel.Draw(cmd, PipelineState_0);
-
 
 
             cmd.Close();
