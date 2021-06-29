@@ -151,7 +151,7 @@ namespace Samples.AmbientLighting
 
         public override void Update(ApplicationTime time)
         {
-            var timer = time.TotalMilliseconds / (4600);
+            var timer = time.TotalMilliseconds / (3600);
 
             Camera.Update();
             light.LightDirection.X = -14.0f + MathF.Abs(MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f);
