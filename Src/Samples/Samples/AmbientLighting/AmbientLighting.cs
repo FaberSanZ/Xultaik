@@ -12,9 +12,9 @@ using Interop = Vultaik.Interop;
 using Samples.Common;
 using Vultaik.Toolkit;
 
-namespace Samples.DiffuseLighting
+namespace Samples.AmbientLighting
 {
-    public class DiffuseLightingExample : ExampleBase, IDisposable
+    public class AmbientLighting : ExampleBase, IDisposable
     {
 
         private ModelAssetImporter<VertexPositionNormalTexture> GLTFModel;
@@ -25,22 +25,18 @@ namespace Samples.DiffuseLighting
         private SwapChain SwapChain;
         private GraphicsContext Context;
         private DescriptorSet DescriptorSet_0;
-        private DescriptorSet DescriptorSet_1;
-        private DescriptorSet DescriptorSet_2;
+
         private Buffer ConstBuffer;
         private Buffer ConstBuffer2;
-        private Buffer ConstBuffer3;
-        private Buffer ConstBuffer4;
         private GraphicsPipeline PipelineState_0;
-        private GraphicsPipeline PipelineState_1;
-        private GraphicsPipeline PipelineState_2;
+
 
         private TransformUniform uniform;
         private Light light;
         private float yaw, pitch, roll = 0;
 
 
-        public DiffuseLightingExample() : base()
+        public AmbientLighting() : base()
         {
 
         }
@@ -57,7 +53,7 @@ namespace Samples.DiffuseLighting
             };
 
 
-            Camera.SetPosition(0, -8, -40.0f);
+            Camera.SetPosition(0, -7.15f, -25.0f);
             Camera.Update();
 
             Adapter = new(AdapterConfig);
@@ -76,7 +72,12 @@ namespace Samples.DiffuseLighting
             Framebuffer = new(SwapChain);
 
             uniform = new(Camera.Projection, Model, Camera.View);
-            light = new(new Vector4(1.0f, 1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f));
+            light = new()
+            {
+                AmbientColor = new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
+                Diffuse = new Vector4(0.8f, 0.8f, 0.8f, 1.0f),
+                LightDirection = new Vector3(1, 1, -1.05f),
+            };
 
 
             BufferDescription bufferDescription = new()
@@ -87,10 +88,9 @@ namespace Samples.DiffuseLighting
             };
 
             ConstBuffer = new(Device, bufferDescription);
-            ConstBuffer2 = new(Device, bufferDescription);
-            ConstBuffer3 = new(Device, bufferDescription);
 
-            ConstBuffer4 = new(Device, new()
+
+            ConstBuffer2 = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = ResourceUsage.CPU_To_GPU,
@@ -98,10 +98,10 @@ namespace Samples.DiffuseLighting
             });
 
 
+            GLTFModel = new(Device, Constants.ModelsFile + "mesh_mat.gltf");
 
             CreatePipelineState();
 
-            GLTFModel = new(Device, Constants.ModelsFile + "mesh_mat.gltf");
             
         }
 
@@ -116,13 +116,13 @@ namespace Samples.DiffuseLighting
         {
 
             string images = Constants.ImagesFile;
-            string fragment = Constants.ShadersFile + @"DiffuseLighting\Fragment.hlsl";
-            string vertex = Constants.ShadersFile + @"DiffuseLighting\Vertex.hlsl";
+            string fragment = Constants.ShadersFile + @"AmbientLighting\Fragment.hlsl";
+            string vertex = Constants.ShadersFile + @"AmbientLighting\Vertex.hlsl";
 
-            Image text1 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png");
-            Image text2 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap02-512.png");
-            Image text3 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap09-512.png");
+            Image text1 = ImageFile.Load2DFromFile(Device, images + "rocks_ground_02_col_2k.jpg");
 
+            var te = GLTFModel.ImageCount;
+            Console.WriteLine(te);
             Sampler sampler = new Sampler(Device);
 
 
@@ -140,57 +140,20 @@ namespace Samples.DiffuseLighting
             descriptorData_0.SetUniformBuffer(0, ConstBuffer);
             descriptorData_0.SetImage(1, text1);
             descriptorData_0.SetSampler(2, sampler);
-            descriptorData_0.SetUniformBuffer(3, ConstBuffer4);
+            descriptorData_0.SetUniformBuffer(3, ConstBuffer2);
             DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
              
 
 
 
-
-            GraphicsPipelineDescription Pipelinedescription1 = new();
-            Pipelinedescription1.SetFramebuffer(Framebuffer);
-            Pipelinedescription1.SetShader(new ShaderBytecode(fragment, ShaderStage.Fragment));
-            Pipelinedescription1.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex)); 
-            Pipelinedescription1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
-            Pipelinedescription1.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription1.SetVertexAttribute(VertexType.TextureCoordinate);
-            Pipelinedescription1.SetVertexAttribute(VertexType.Normal);
-            PipelineState_1 = new(Pipelinedescription1);
-
-            DescriptorData descriptorData_1 = new();
-            descriptorData_1.SetUniformBuffer(0, ConstBuffer2);
-            descriptorData_1.SetImage(1, text2);
-            descriptorData_1.SetSampler(2, sampler);
-            descriptorData_1.SetUniformBuffer(3, ConstBuffer4);
-            DescriptorSet_1 = new(PipelineState_1, descriptorData_1);
-
-
-
-
-            GraphicsPipelineDescription Pipelinedescription2 = new();
-            Pipelinedescription2.SetFramebuffer(Framebuffer);
-            Pipelinedescription2.SetShader(new ShaderBytecode(fragment, ShaderStage.Fragment));
-            Pipelinedescription2.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex)); 
-            Pipelinedescription2.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
-            Pipelinedescription2.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription2.SetVertexAttribute(VertexType.TextureCoordinate);
-            Pipelinedescription2.SetVertexAttribute(VertexType.Normal); 
-            PipelineState_2 = new(Pipelinedescription2);
-
-            DescriptorData descriptorData_2 = new();
-            descriptorData_2.SetUniformBuffer(0, ConstBuffer3);
-            descriptorData_2.SetImage(1, text3);
-            descriptorData_2.SetSampler(2, sampler);
-            descriptorData_2.SetUniformBuffer(3, ConstBuffer4);
-            DescriptorSet_2 = new(PipelineState_2, descriptorData_2);
         }
 
         public override void Update(ApplicationTime time)
         {
-            var timer = time.TotalMilliseconds / (3600);
+            var timer = time.TotalMilliseconds / (4600);
 
             Camera.Update();
-            //light.LightDirection.X = -14.0f + MathF.Abs(MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f);
+            light.LightDirection.X = -14.0f + MathF.Abs(MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f);
             light.LightDirection.X = 0.0f + MathF.Sin(MathUtil.Radians(timer * 360.0f)) * MathF.Cos(MathUtil.Radians(timer * 360.0f)) * 2.0f;
             light.LightDirection.Y = 0.0f + MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f;
             light.LightDirection.Z = 0.0f + MathF.Cos(MathUtil.Radians(timer * 360.0f)) * 2.0f;
@@ -198,29 +161,16 @@ namespace Samples.DiffuseLighting
 
 
 
-            ConstBuffer4.SetData(ref light);
+            ConstBuffer2.SetData(ref light);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(11.0f, .3f, 0.0f);
+            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, .0f, 0.0f);
             uniform.Update(Camera, Model);
             ConstBuffer.SetData(ref uniform);
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(-yaw, pitch, roll) * Matrix4x4.CreateTranslation(0, 1.0f, 0.0f);
-            uniform.Update(Camera, Model);
-            ConstBuffer2.SetData(ref uniform);
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(-11.0f, .3f, 0.0f);
-            uniform.Update(Camera, Model);
-            ConstBuffer3.SetData(ref uniform);
 
-            if (Input.Keyboards[0].IsKeyPressed(Key.T))
-            {
-                if (light.IsTexture == 1)
-                    light.IsTexture = 0;
-
-                else if (light.IsTexture == 0)
-                    light.IsTexture = 1;
-            }
+            //yaw = timer;
         }
    
 
@@ -240,15 +190,6 @@ namespace Samples.DiffuseLighting
             cmd.SetGraphicPipeline(PipelineState_0);
             GLTFModel.Draw(cmd, PipelineState_0);
 
-
-            cmd.BindDescriptorSets(DescriptorSet_1);
-            cmd.SetGraphicPipeline(PipelineState_1);
-            GLTFModel.Draw(cmd, PipelineState_1);
-
-
-            cmd.BindDescriptorSets(DescriptorSet_2);
-            cmd.SetGraphicPipeline(PipelineState_2);
-            GLTFModel.Draw(cmd, PipelineState_2);
 
 
             cmd.Close();
@@ -307,18 +248,21 @@ namespace Samples.DiffuseLighting
     [StructLayout(LayoutKind.Sequential)]
     public struct Light
     {
-    
+
+        public Vector4 AmbientColor;
+
         public Vector4 Diffuse;
 
         public Vector3 LightDirection;
 
-        public float IsTexture;
+        public float padding;
 
-        public Light(Vector4 D, Vector3 L)
+        public Light(Vector4 D, Vector3 DI, Vector4 AM)
         {
             Diffuse = D;
-            LightDirection = L;
-            IsTexture = 1;
+            LightDirection = DI;
+            AmbientColor = AM;
+            padding = 0;
         }
     }
 }
