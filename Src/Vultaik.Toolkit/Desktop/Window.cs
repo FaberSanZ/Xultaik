@@ -61,6 +61,7 @@ namespace Vultaik.Desktop
             Width = width;
             Height = height;
 
+            glfw.Init();
             glfw.WindowHint(WindowHintClientApi.ClientApi, ClientApi.NoApi);
             glfw.WindowHint(WindowHintBool.Visible, false);
 
