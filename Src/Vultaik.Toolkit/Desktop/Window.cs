@@ -61,6 +61,7 @@ namespace Vultaik.Desktop
             Width = width;
             Height = height;
 
+            glfw.WindowHint(WindowHintClientApi.ClientApi, ClientApi.NoApi);
             glfw.WindowHint(WindowHintBool.Visible, false);
 
             pWindowHandle = glfw.CreateWindow(width, height, _title, (Monitor*)IntPtr.Zero.ToPointer(), null);
