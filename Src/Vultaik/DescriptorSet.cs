@@ -13,9 +13,13 @@ namespace Vultaik
 
         internal VkDescriptorPool _descriptorPool;
         internal VkDescriptorSet _descriptorSet;
+        internal VkDescriptorSetLayout _descriptorSetLayout;
+        internal VkPipelineLayout _pipelineLayout;
+
+
         internal uint _count = 0;
         internal List<ResourceData> Resources = new();
-
+        internal VkPipelineBindPoint BindPoint;
 
         public DescriptorSet(GraphicsPipeline pipeline, DescriptorData data) : base(pipeline.NativeDevice)
         {
@@ -23,14 +27,29 @@ namespace Vultaik
             VkDescriptorSetLayout descriptor_set_layout = pipeline._descriptorSetLayout;
             NativeDevice._descriptorPoolManager_0.Allocate(descriptor_set_layout);
             _descriptorSet = NativeDevice._descriptorPoolManager_0.handle;
-
-            PipelineState = pipeline;
+            _pipelineLayout = pipeline._pipelineLayout;
+            GraphicsPipeline = pipeline;
             DescriptorData = data;
-
+            BindPoint = VkPipelineBindPoint.Graphics;
             Build();
         }
 
-        public GraphicsPipeline PipelineState { get; }
+
+        public DescriptorSet(ComputePipeline pipeline, DescriptorData data) : base(pipeline.NativeDevice)
+        {
+
+            VkDescriptorSetLayout descriptor_set_layout = pipeline._descriptorSetLayout;
+            NativeDevice._descriptorPoolManager_0.Allocate(descriptor_set_layout);
+            _descriptorSet = NativeDevice._descriptorPoolManager_0.handle;
+            _pipelineLayout = pipeline._pipelineLayout;
+            ComputePipeline = pipeline;
+            DescriptorData = data;
+            BindPoint = VkPipelineBindPoint.Compute;
+            Build();
+        }
+
+        public GraphicsPipeline GraphicsPipeline { get; }
+        public ComputePipeline ComputePipeline  { get; }
 
         public DescriptorData DescriptorData { get; }
 

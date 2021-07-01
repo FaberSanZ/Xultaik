@@ -18,6 +18,7 @@ namespace Vultaik
         internal VkDescriptorSetLayout _descriptorSetLayout;
         internal VkPipelineCache _pipelineCache;
         internal VkPipelineLayout _pipelineLayout;
+        internal List<ShaderResource> Resources { get; set; } = new();
 
         public GraphicsPipeline(GraphicsPipelineDescription description) : base(description.Framebuffer.NativeDevice)
         {
@@ -26,6 +27,7 @@ namespace Vultaik
         }
 
         public GraphicsPipelineDescription PipelineStateDescription { get; set; }
+
 
         private void Recreate()
         {
@@ -81,7 +83,6 @@ namespace Vultaik
 
         }
 
-        internal List<ShaderResource> Resources { get; set; } = new();
 
         internal void CreatePipelineLayout()
         {

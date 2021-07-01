@@ -39,7 +39,10 @@ namespace Vultaik
 
         public bool ForceExclusiveTransferQueue { get; set; }
 
-        public bool SwapChain { get; set; }
+        public bool SwapChain { get; set; } // TODO: Implement SwapChain 
+
+        public bool SamplerAnisotropy { get; set; } // TODO: Implement SamplerAnisotropy 
+
     }
 
 

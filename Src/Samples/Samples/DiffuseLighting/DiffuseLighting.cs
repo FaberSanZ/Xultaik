@@ -142,7 +142,7 @@ namespace Samples.DiffuseLighting
             descriptorData_0.SetSampler(2, sampler);
             descriptorData_0.SetUniformBuffer(3, ConstBuffer4);
             DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
-             
+
 
 
 

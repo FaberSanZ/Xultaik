@@ -372,15 +372,15 @@ namespace Vultaik
         }
 
 
-        public void SetGraphicPipeline(GraphicsPipeline pipelineState)
+        public void SetGraphicPipeline(GraphicsPipeline pipeline)
         {
-            vkCmdBindPipeline(handle, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
+            vkCmdBindPipeline(handle, VkPipelineBindPoint.Graphics, pipeline.graphicsPipeline);
         }
 
 
-        public void SetComputePipeline(GraphicsPipeline pipelineState)
+        public void SetComputePipeline(ComputePipeline pipeline)
         {
-            //vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.Compute, pipelineState.computesPipeline);
+            vkCmdBindPipeline(handle, VkPipelineBindPoint.Compute, pipeline.handle);
         }
 
         public void SetRayTracinPipeline(GraphicsPipeline pipelineState)
@@ -474,9 +474,9 @@ namespace Vultaik
         {
             // Bind descriptor sets describing shader binding points
             VkDescriptorSet descriptor_set = descriptor._descriptorSet;
-            VkPipelineLayout pipeline_layout = descriptor.PipelineState._pipelineLayout;
+            VkPipelineLayout pipeline_layout = descriptor._pipelineLayout;
 
-            vkCmdBindDescriptorSets(handle, VkPipelineBindPoint.Graphics, pipeline_layout, 0, 1, &descriptor_set, dynamicOffsetCount, &dynamicOffsets);
+            vkCmdBindDescriptorSets(handle, descriptor.BindPoint, pipeline_layout, 0, 1, &descriptor_set, dynamicOffsetCount, &dynamicOffsets);
         }
 
 
