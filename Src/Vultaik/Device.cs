@@ -113,7 +113,7 @@ namespace Vultaik
         public List<string> DeviceExtensionsNames { get; private set; } = new();
         public bool RayTracingSupport { get; private set; }
 
-
+        public bool SamplerAnisotropySupport { get; set; }
         public void Recreate()
         {
             queue_family_properties = Array.Empty<VkQueueFamilyProperties>();
@@ -309,21 +309,29 @@ namespace Vultaik
                 sType = VkStructureType.PhysicalDeviceFeatures2,
             };
 
-            storage_8bit_features = new() { sType = VkStructureType.PhysicalDevice8bitStorageFeatures, };
-            acceleration_structure_features = new() { sType = VkStructureType.PhysicalDeviceAccelerationStructureFeaturesKHR, };
-            descriptor_indexing_features = new() { sType = VkStructureType.PhysicalDeviceDescriptorIndexingFeatures, };
-            ubo_std430_features = new() { sType = VkStructureType.PhysicalDeviceUniformBufferStandardLayoutFeatures, };
+            storage_8bit_features = new() 
+            { 
+                sType = VkStructureType.PhysicalDevice8bitStorageFeatures, 
+            };
+            acceleration_structure_features = new() 
+            {
+                sType = VkStructureType.PhysicalDeviceAccelerationStructureFeaturesKHR, 
+            };
+            descriptor_indexing_features = new() 
+            { 
+                sType = VkStructureType.PhysicalDeviceDescriptorIndexingFeatures, 
+            };
+            ubo_std430_features = new() 
+            { 
+                sType = VkStructureType.PhysicalDeviceUniformBufferStandardLayoutFeatures, 
+            };
 
             bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
 
 
 
             void** ppNext = &features.pNext;
-
-            //foreach (var item in NativeAdapter.device_extensions_names) Console.WriteLine(item);
-
-
-            
+     
 
             if (has_pdf2)
             {
@@ -369,9 +377,9 @@ namespace Vultaik
 
                 //    fixed (VkPhysicalDeviceUniformBufferStandardLayoutFeatures* feature = &ubo_std430_features)
                 //    {
+                //        feature->uniformBufferStandardLayout = true;
                 //        *ppNext = feature;
                 //        ppNext = &feature->pNext;
-                //        feature->uniformBufferStandardLayout = true;
                 //    }
 
 
@@ -383,12 +391,11 @@ namespace Vultaik
 
 
 
-            //DeviceExtensionsNames.Add("VK_KHR_maintenance1");
+            if (NativeAdapter.device_extensions_names.Contains("VK_KHR_maintenance1"))
+                DeviceExtensionsNames.Add("VK_KHR_maintenance1");
 
             if (NativeAdapter.device_extensions_names.Contains("VK_KHR_swapchain"))
-            {
                 DeviceExtensionsNames.Add("VK_KHR_swapchain");
-            }
 
             VkDeviceCreateInfo deviceCreateInfo = new()
             {
