@@ -32,7 +32,7 @@ namespace Vultaik
 
         public override string ToString()
         {
-            return string.Format($"Vultaik Version: {Tools.ExtractVersion(value)}");
+            return string.Format($"Vultaik Version: {Helpers.ExtractVersion(value)}");
         }
 
     }

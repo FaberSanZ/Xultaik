@@ -23,17 +23,6 @@ namespace Vultaik
             HeapPool.Create();
 
             pool = HeapPool.handle;
-
-            if(HeapPool.MaxDescriptorTypeCounts.ContainsKey(VkDescriptorType.UniformTexelBuffer))
-            {
-                if (pool.IsNull && HeapPool.handle.Handle < HeapPool.MaxSets)
-                {
-                    HeapPool.Reset();
-                    Free();
-                    HeapPool.MaxDescriptorTypeCounts[VkDescriptorType.UniformTexelBuffer] = 255;
-                    pool = HeapPool.handle;
-                }
-            }
         }
 
 

@@ -4,24 +4,23 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using Vortice.Vulkan;
+
 
 
 namespace Vultaik
 {
     public class ComputePipelineDescription
     {
+        public ComputePipelineDescription()
+        {
 
-        //public VkPipelineCreateFlags flags;
+        }
+
+        public ComputePipelineDescription(ShaderBytecode shader)
+        {
+            Shader = shader;
+        }
+
         public ShaderBytecode Shader { get; set; }
-        public VkPipelineLayout layout;
-
-        public VkPipeline basePipelineHandle;
-        public int basePipelineIndex;
     }
 }

@@ -98,7 +98,7 @@ namespace Vultaik
 
         public ulong MinUniformBufferOffsetAlignment => device_properties.limits.minUniformBufferOffsetAlignment;
 
-        public VkSampleCountFlags MultisampleCount => Tools.ExtractMaxSampleCount(device_properties);
+        public VkSampleCountFlags MultisampleCount => Helpers.ExtractMaxSampleCount(device_properties);
 
         public bool SupportsPhysicalDeviceProperties2 { get; private set; }
 

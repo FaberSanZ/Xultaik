@@ -17,7 +17,7 @@ using SPIRVCross;
 
 namespace Vultaik
 {
-    public static unsafe class Tools
+    public static unsafe class Helpers
     {
         public static string ExtractVersion(uint _value)
         {
@@ -219,5 +219,41 @@ namespace Vultaik
                 //ImGui.GetIO().Fonts.AddFontFromMemoryTTF((IntPtr)ptr, 32, 15);
             }
         }
+
+
+        public static int Size(this VertexType element)
+        {
+            switch (element)
+            {
+                case VertexType.Position: return 12;
+
+                case VertexType.Normal: return 12;
+
+                case VertexType.TextureCoordinate: return 8;
+
+                case VertexType.Color: return 12;
+
+
+                default: return 0;
+            }
+        }
+
+
+        public static VkFormat ToPixelFormat(this VertexType element)
+        {
+            switch (element)
+            {
+                case VertexType.Position: return VkFormat.R32G32B32SFloat;
+
+                case VertexType.Normal: return VkFormat.R32G32B32SFloat;
+
+                case VertexType.TextureCoordinate: return VkFormat.R32G32SFloat;
+
+                case VertexType.Color: return VkFormat.R32G32B32SFloat;
+
+                default: return 0;
+            }
+        }
+
     }
 }

@@ -48,15 +48,17 @@ namespace Vultaik
 
             for (int i = 0; i < resources.Length; i++)
             {
-                bool is_dynamic = resources[i].is_dynamic;
-                layoutBinding[i] = new VkDescriptorSetLayoutBinding
+                if (resources[i].stage == ShaderStage.Compute)
                 {
-                    binding = resources[i].binding,
-                    descriptorCount = 4,
-                    descriptorType = resources[i].resource_type.StageTVkDescriptorType(is_dynamic),
-                    stageFlags = resources[i].stage.StageToVkShaderStageFlags(),
-                    pImmutableSamplers = null,
-                };
+                    layoutBinding[i] = new VkDescriptorSetLayoutBinding
+                    {
+                        binding = resources[i].binding,
+                        descriptorCount = 4,
+                        descriptorType = resources[i].resource_type.StageTVkDescriptorType(false),
+                        stageFlags = VkShaderStageFlags.Compute,
+                        pImmutableSamplers = null,
+                    };
+                }
             }
 
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
@@ -88,12 +90,15 @@ namespace Vultaik
 
             for (int i = 0; i < push_constants.Length; i++)
             {
-                push_constant[i] = new()
+                if (push_constants[i].stage == ShaderStage.Compute)
                 {
-                    offset = push_constants[i].offset,
-                    size = push_constants[i].size,
-                    stageFlags = (VkShaderStageFlags)push_constants[i].stage, //TODO: push_constants VkShaderStageFlags
-                };
+                    push_constant[i] = new()
+                    {
+                        offset = push_constants[i].offset,
+                        size = push_constants[i].size,
+                        stageFlags = VkShaderStageFlags.Compute,
+                    };
+                }
             }
             // Create the Pipeline layout that is used to generate the rendering pipelines that are based on this descriptor set layout
             // In a more complex scenario you would have different Pipeline layouts for different descriptor set layouts that could be reused
@@ -147,10 +152,10 @@ namespace Vultaik
                 flags = VkPipelineCreateFlags.None,
 
                 stage = shader_stage_create_info,
-                layout = _pipelineLayout
+                layout = _pipelineLayout,
 
                 //basePipelineIndex = -1
-                //basePipelineHandle = -1
+                //basePipelineHandle = handle_base
             };
 
             VkPipeline pipeline = VkPipeline.Null;
