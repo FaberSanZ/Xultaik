@@ -48,7 +48,7 @@ These extensions will likely become mandatory later.
 - [ ] Synchronization2
 - [x] Memory allocator
 - [x] GPU-Assisted Validation
-- [ ] Compute Shader
+- [x] Compute Shader
 - [ ] Geometry Shader
 - [ ] Tessellation Shader
 - [ ] Instancing, Indirect drawing
