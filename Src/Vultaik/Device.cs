@@ -143,6 +143,9 @@ namespace Vultaik
             CreateDevice();
 
 
+            if (!AdapterConfig.ForceExclusiveTransferQueue)
+                TransferFamily = GraphicsFamily;
+
 
             // Create CommandQueues
             CreateCommandQueues();
@@ -210,14 +213,18 @@ namespace Vultaik
 
         internal void CreateDevice()
         {
-            VkQueueFlags requestedQueueTypes = VkQueueFlags.Graphics | VkQueueFlags.Compute;
 
-            //if (AdapterConfig.ForceExclusiveTransferQueue)
-                requestedQueueTypes |= VkQueueFlags.Transfer;
+
+
+
+            VkQueueFlags requestedQueueTypes = VkQueueFlags.Graphics | VkQueueFlags.Compute | VkQueueFlags.Transfer;
 
             VkDeviceQueueCreateInfo* queue_create_infos = stackalloc VkDeviceQueueCreateInfo[3];
-            float defaultQueuePriority = 0.0f;
-
+            float default_queue_priority = 1.0f;
+            float graphics_queue_prio = 0.5f;
+            float transfer_queue_prio = 1.0f;
+            float compute_queue_prio = 1.0f;
+            uint queue_count = 0;
 
             // Graphics queue
             if ((requestedQueueTypes & VkQueueFlags.Graphics) is not 0)
@@ -229,10 +236,11 @@ namespace Vultaik
                     sType = VkStructureType.DeviceQueueCreateInfo,
                     queueFamilyIndex = GraphicsFamily,
                     queueCount = 1,
-                    pQueuePriorities = &defaultQueuePriority
+                    pQueuePriorities = &default_queue_priority
                 };
 
                 queue_create_infos[0] = queue_info;
+                queue_count++;
             }
             else
             {
@@ -254,10 +262,11 @@ namespace Vultaik
                         sType = VkStructureType.DeviceQueueCreateInfo,
                         queueFamilyIndex = ComputeFamily,
                         queueCount = 1,
-                        pQueuePriorities = &defaultQueuePriority
+                        pQueuePriorities = &default_queue_priority
                     };
 
                     queue_create_infos[1] = queue_info;
+                    queue_count++;
                 }
             }
             else
@@ -266,16 +275,6 @@ namespace Vultaik
                 ComputeFamily = GraphicsFamily;
             }
 
-            float graphics_queue_prio = 0.5f;
-            float compute_queue_prio = 1.0f;
-            float transfer_queue_prio = 1.0f;
-
-            float* pri = stackalloc float[3]
-            {
-                graphics_queue_prio,
-                compute_queue_prio,
-                transfer_queue_prio
-            };
 
             // Dedicated transfer queue
             if ((requestedQueueTypes & VkQueueFlags.Transfer) is not 0)
@@ -289,10 +288,11 @@ namespace Vultaik
                         sType = VkStructureType.DeviceQueueCreateInfo,
                         queueFamilyIndex = TransferFamily,
                         queueCount = 1,
-                        pQueuePriorities = pri + 2
+                        pQueuePriorities = &default_queue_priority
                     };
 
                     queue_create_infos[2] = queue_info;
+                    queue_count++;
                 }
             }
             else
@@ -371,19 +371,19 @@ namespace Vultaik
                 }
 
 
-                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_uniform_buffer_standard_layout"))
-                //{
-                //    DeviceExtensionsNames.Add("VK_KHR_uniform_buffer_standard_layout");
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_uniform_buffer_standard_layout"))
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_uniform_buffer_standard_layout");
 
-                //    fixed (VkPhysicalDeviceUniformBufferStandardLayoutFeatures* feature = &ubo_std430_features)
-                //    {
-                //        feature->uniformBufferStandardLayout = true;
-                //        *ppNext = feature;
-                //        ppNext = &feature->pNext;
-                //    }
+                    fixed (VkPhysicalDeviceUniformBufferStandardLayoutFeatures* feature = &ubo_std430_features)
+                    {
+                        feature->uniformBufferStandardLayout = true;
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
 
 
-                //}
+                }
 
 
 
@@ -401,7 +401,7 @@ namespace Vultaik
             {
                 sType = VkStructureType.DeviceCreateInfo,
                 flags = VkDeviceCreateFlags.None,
-                queueCreateInfoCount = 3,
+                queueCreateInfoCount = queue_count,
                 pQueueCreateInfos = queue_create_infos,
             };
 
@@ -742,19 +742,30 @@ namespace Vultaik
 
         public void Submit(CommandBuffer commandBuffer, Fence? fence = null)
         {
+            var force_exclusive_transfer_queue = AdapterConfig.ForceExclusiveTransferQueue; 
             VkPipelineStageFlags wait_stages = VkPipelineStageFlags.ColorAttachmentOutput;
             VkSemaphore signal_semaphore = render_finished_semaphore;
             VkSemaphore wait_semaphore = image_available_semaphore;
             VkQueue queue = get_queue_type_cmd(commandBuffer);
+            CommandBufferType cmd_type = commandBuffer.Type;
             VkCommandBuffer cmd = commandBuffer.handle;
             VkFence sync_fence = VkFence.Null;
             bool use_semaphore = true;
 
-
-            if (queue == transfer_queue)
+            if (queue == transfer_queue && force_exclusive_transfer_queue && cmd_type == CommandBufferType.AsyncTransfer)
             {
                 wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
                 wait_stages |= VkPipelineStageFlags.Transfer;
+                use_semaphore = false;
+            }
+
+
+            if (queue == graphics_queue && cmd_type == CommandBufferType.AsyncTransfer)
+            {
+                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+
+                if(force_exclusive_transfer_queue)
+                    wait_stages |= VkPipelineStageFlags.Transfer;
 
                 use_semaphore = false;
             }
