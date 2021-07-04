@@ -24,6 +24,7 @@ namespace Samples.ClearScreen
         {
             AdapterConfig = new()
             {
+                SwapChain = true,
                 VulkanDebug = false,
                 VultaikDebug = false,
                 Fullscreen = false,
@@ -37,6 +38,7 @@ namespace Samples.ClearScreen
                 ShadingRate = false,
                 SingleQueue = false,
                 ForceExclusiveTransferQueue = false,
+
             };
         }
 

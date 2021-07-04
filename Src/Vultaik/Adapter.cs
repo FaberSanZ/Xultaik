@@ -109,6 +109,7 @@ namespace Vultaik
 
         public bool SupportsValidationGpuAssisted { get; set; }
 
+        public DeviceExtension SwapChain { get; set; }
         public DeviceExtension Bindless { get; set; }
 
         public string DeviceName
@@ -184,14 +185,18 @@ namespace Vultaik
         internal void device_extension()
         {
 
-
+            SwapChain = new("", false);
+            Bindless = new("", false);
             foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
             {
                 string name = Interop.String.FromPointer(item.extensionName);
                 device_extensions_names.Add(name);
 
+                if (name == "VK_KHR_swapchain" && AdapterConfig.SwapChain)
+                    SwapChain = new(name, true);
+
                 if (name == "VK_EXT_descriptor_indexing" && AdapterConfig.Bindless)
-                    Bindless = new(Interop.String.FromPointer(item.extensionName), true);
+                    Bindless = new(name, true);
 
 
             }

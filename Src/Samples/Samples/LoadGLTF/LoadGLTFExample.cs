@@ -53,6 +53,7 @@ namespace Samples.LoadGLTF
 
             AdapterConfig = new()
             {
+                SwapChain = true,
                 VulkanDebug = false,
                 Fullscreen = false,
             };

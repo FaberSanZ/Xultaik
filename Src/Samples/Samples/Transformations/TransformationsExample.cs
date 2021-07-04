@@ -122,6 +122,7 @@ namespace Samples.Transformations
 
             AdapterConfig = new()
             {
+                SwapChain = true,
                 VulkanDebug = false,
                 Fullscreen = false,
             };

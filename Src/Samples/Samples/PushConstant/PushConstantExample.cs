@@ -120,6 +120,7 @@ namespace Samples.PushConstant
 
             AdapterConfig = new()
             {
+                SwapChain = true,
                 VulkanDebug = false,
                 Fullscreen = false,
                 //ForceExclusiveTransferQueue = true

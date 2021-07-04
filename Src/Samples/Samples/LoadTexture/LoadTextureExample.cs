@@ -46,6 +46,7 @@ namespace Samples.LoadTexture
 
             AdapterConfig = new()
             {
+                SwapChain = true,
                 VulkanDebug = false,
                 Fullscreen = false,
             };

@@ -407,8 +407,11 @@ namespace Vultaik
             if (NativeAdapter.device_extensions_names.Contains("VK_KHR_maintenance1"))
                 DeviceExtensionsNames.Add("VK_KHR_maintenance1");
 
-            if (NativeAdapter.device_extensions_names.Contains("VK_KHR_swapchain"))
-                DeviceExtensionsNames.Add("VK_KHR_swapchain");
+
+            if (NativeAdapter.SwapChain.Support)
+                DeviceExtensionsNames.Add(NativeAdapter.SwapChain.Name);
+
+
 
             VkDeviceCreateInfo deviceCreateInfo = new()
             {

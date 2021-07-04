@@ -51,6 +51,7 @@ namespace Samples.DiffuseLighting
 
             AdapterConfig = new()
             {
+                SwapChain = true,
                 VulkanDebug = false,
                 Fullscreen = false,
                 ForceExclusiveTransferQueue = true,
