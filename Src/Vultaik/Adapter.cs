@@ -189,31 +189,40 @@ namespace Vultaik
         internal void device_extension()
         {
 
-            SwapChain = new(string.Empty, false);
-            Bindless = new(string.Empty, false);
-            Maintenance1 = new(string.Empty, false); 
-            Maintenance2 = new(string.Empty, false); 
-            Maintenance2 = new(string.Empty, false);
+            SwapChain = new("VK_KHR_swapchain", false);
+            Bindless = new("VK_EXT_descriptor_indexing", false);
+            Maintenance1 = new("VK_KHR_maintenance1", false); 
+            Maintenance2 = new("VK_KHR_maintenance1", false); 
+            Maintenance2 = new("VK_KHR_maintenance1", false);
 
             foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
             {
                 string name = Interop.String.FromPointer(item.extensionName);
+
                 device_extensions_names.Add(name);
 
-                if (name == "VK_KHR_swapchain")
-                    SwapChain = new(name, true, AdapterConfig.SwapChain);
+                if (SwapChain.Name == name)
+                {
+                    SwapChain.Support = true;
+                    SwapChain.adapter_config = AdapterConfig.SwapChain;
+                }
 
-                if (name == "VK_EXT_descriptor_indexing")
-                    Bindless = new(name, true, AdapterConfig.Bindless);
 
-                if (name == "VK_KHR_maintenance1")
-                    Maintenance1 = new(name, true);
+                if (Bindless.Name == name)
+                {
+                    Bindless.Support = true;
+                    Bindless.adapter_config = AdapterConfig.Bindless;
+                }
 
-                if (name == "VK_KHR_maintenance2")
-                    Maintenance2 = new(name, true);
 
-                if (name == "VK_KHR_maintenance3")
-                    Maintenance3 = new(name, true);
+                if (Maintenance1.Name == name)
+                    Maintenance1.Support = true;
+
+                if (Maintenance2.Name == name)
+                    Maintenance2.Support = true;
+
+                if (Maintenance2.Name == name)
+                    Maintenance2.Support = true;
 
             }
         }
