@@ -300,8 +300,16 @@ namespace Vultaik
                 TransferFamily = GraphicsFamily;
             }
 
+            VkDeviceCreateInfo device_create_info = new()
+            {
+                sType = VkStructureType.DeviceCreateInfo,
+                flags = VkDeviceCreateFlags.None,
+                queueCreateInfoCount = queue_count,
+                pQueueCreateInfos = queue_create_infos,
+            };
 
-            bool has_physical_device_features2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
+            bool has_vulkan_1_1 = NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device;
+            bool has_physical_device_features2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || has_vulkan_1_1;
             bool has_maintenance1 = NativeAdapter.Maintenance1.Support;
             bool has_maintenance2 = NativeAdapter.Maintenance2.Support;
             bool has_maintenance3 = NativeAdapter.Maintenance3.Support;
@@ -310,7 +318,6 @@ namespace Vultaik
             bool has_conservative_raster = NativeAdapter.ConservativeRasterization.implement;
             bool has_storage_buffer_storage_class = NativeAdapter.StorageBufferStorageclass.Support;
             bool has_16_bit_storage = NativeAdapter.Arithmetic16BitStorage.Support && has_storage_buffer_storage_class;
-
 
 
             if (has_maintenance1)
@@ -432,18 +439,6 @@ namespace Vultaik
                 }
 
             }
-
-
-
-
-            VkDeviceCreateInfo device_create_info = new()
-            {
-                sType = VkStructureType.DeviceCreateInfo,
-                flags = VkDeviceCreateFlags.None,
-                queueCreateInfoCount = queue_count,
-                pQueueCreateInfos = queue_create_infos,
-            };
-
 
 
             if (NativeAdapter.SupportsVulkan11Device && NativeAdapter.SupportsVulkan11Instance)
