@@ -375,9 +375,9 @@ namespace Vultaik
                     }
                 }
 
-                if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing") && AdapterConfig.Bindless)
+                if (NativeAdapter.Bindless.Support)
                 {
-                    DeviceExtensionsNames.Add("VK_EXT_descriptor_indexing");
+                    DeviceExtensionsNames.Add(NativeAdapter.Bindless.Name);
                     fixed (VkPhysicalDeviceDescriptorIndexingFeatures* feature = &descriptor_indexing_features)
                     {
                         *ppNext = feature;
@@ -463,7 +463,7 @@ namespace Vultaik
 
             ppNext = &props.pNext;
 
-            if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing") && AdapterConfig.Bindless)
+            if (NativeAdapter.Bindless.Support)
             {
                 fixed (VkPhysicalDeviceDescriptorIndexingProperties* prop = &descriptor_indexing_properties)
                 {

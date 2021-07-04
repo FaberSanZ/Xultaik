@@ -14,21 +14,6 @@ using Interop = Vultaik.Interop;
 namespace Vultaik
 {
 
-    public enum VendorId
-    {
-        AMD = 0x1002,
-
-        ImgTec = 0x1010,
-
-        NVIDIA = 0x10DE,
-
-        ARM = 0x13B5,
-
-        Qualcomm = 0x5143,
-
-        Intel = 0x8086,
-    }
-
     public unsafe class Adapter : IDisposable
     {
         internal bool? _supportInitialized;
@@ -124,7 +109,7 @@ namespace Vultaik
 
         public bool SupportsValidationGpuAssisted { get; set; }
 
-        
+        public DeviceExtension Bindless { get; set; }
 
         public string DeviceName
         {
@@ -171,7 +156,7 @@ namespace Vultaik
 
 
         public void Recreate()
-        {;
+        {
 
             if (!IsSupported())
                 throw new NotSupportedException("Vulkan is not supported");
@@ -198,10 +183,17 @@ namespace Vultaik
 
         internal void device_extension()
         {
+
+
             foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
             {
-                //if (*item.extensionName != '\0')
-                device_extensions_names.Add(Interop.String.FromPointer(item.extensionName));
+                string name = Interop.String.FromPointer(item.extensionName);
+                device_extensions_names.Add(name);
+
+                if (name == "VK_EXT_descriptor_indexing" && AdapterConfig.Bindless)
+                    Bindless = new(Interop.String.FromPointer(item.extensionName), true);
+
+
             }
         }
 
