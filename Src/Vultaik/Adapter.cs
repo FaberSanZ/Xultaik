@@ -191,7 +191,9 @@ namespace Vultaik
 
             SwapChain = new(string.Empty, false);
             Bindless = new(string.Empty, false);
-
+            Maintenance1 = new(string.Empty, false); 
+            Maintenance2 = new(string.Empty, false); 
+            Maintenance2 = new(string.Empty, false);
 
             foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
             {
