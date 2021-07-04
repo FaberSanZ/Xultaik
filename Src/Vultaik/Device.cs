@@ -301,7 +301,6 @@ namespace Vultaik
                 TransferFamily = GraphicsFamily;
             }
 
-            bool device_bindless = NativeAdapter.Bindless.implement && NativeAdapter.Maintenance1.Support;
 
 
             if (NativeAdapter.Maintenance1.Support)
@@ -316,6 +315,11 @@ namespace Vultaik
 
             if (NativeAdapter.SwapChain.implement)
                 DeviceExtensionsNames.Add(NativeAdapter.SwapChain.Name);
+
+            if (NativeAdapter.Bindless.implement)
+                DeviceExtensionsNames.Add(NativeAdapter.ConservativeRasterization.Name);
+
+
 
             VkPhysicalDeviceFeatures2 features = new()
             {
@@ -388,7 +392,7 @@ namespace Vultaik
                     }
                 }
 
-                if (device_bindless)
+                if (NativeAdapter.Bindless.implement)
                 {
                     DeviceExtensionsNames.Add(NativeAdapter.Bindless.Name);
                     fixed (VkPhysicalDeviceDescriptorIndexingFeatures* feature = &descriptor_indexing_features)
@@ -471,7 +475,7 @@ namespace Vultaik
 
             ppNext = &props.pNext;
 
-            if (device_bindless)
+            if (NativeAdapter.Bindless.implement)
             {
                 fixed (VkPhysicalDeviceDescriptorIndexingProperties* prop = &descriptor_indexing_properties)
                 {
@@ -481,9 +485,8 @@ namespace Vultaik
             }
 
 
-            if (NativeAdapter.device_extensions_names.Contains("VK_EXT_conservative_rasterization") && AdapterConfig.ConservativeRasterization)
+            if (NativeAdapter.ConservativeRasterization.implement)
             {
-                DeviceExtensionsNames.Add("VK_EXT_conservative_rasterization");
                 fixed (VkPhysicalDeviceConservativeRasterizationPropertiesEXT* prop = &conservative_rasterization_properties)
                 {
                     *ppNext = prop;

@@ -111,6 +111,9 @@ namespace Vultaik
 
         public DeviceExtension SwapChain { get; set; }
         public DeviceExtension Bindless { get; set; }
+        public DeviceExtension ConservativeRasterization { get; set; }
+
+        
         public DeviceExtension Maintenance1 { get; set; }
         public DeviceExtension Maintenance2 { get; set; }
         public DeviceExtension Maintenance3 { get; set; }
@@ -192,8 +195,10 @@ namespace Vultaik
             SwapChain = new("VK_KHR_swapchain", false);
             Bindless = new("VK_EXT_descriptor_indexing", false);
             Maintenance1 = new("VK_KHR_maintenance1", false); 
-            Maintenance2 = new("VK_KHR_maintenance1", false); 
-            Maintenance2 = new("VK_KHR_maintenance1", false);
+            Maintenance2 = new("VK_KHR_maintenance2", false); 
+            Maintenance3 = new("VK_KHR_maintenance3", false);
+            ConservativeRasterization = new("VK_EXT_conservative_rasterization", false);
+            
 
             foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
             {
@@ -207,6 +212,11 @@ namespace Vultaik
                     SwapChain.adapter_config = AdapterConfig.SwapChain;
                 }
 
+                if (ConservativeRasterization.Name == name)
+                {
+                    ConservativeRasterization.Support = true;
+                    ConservativeRasterization.adapter_config = AdapterConfig.ConservativeRasterization;
+                }
 
                 if (Bindless.Name == name)
                 {
@@ -215,14 +225,9 @@ namespace Vultaik
                 }
 
 
-                if (Maintenance1.Name == name)
-                    Maintenance1.Support = true;
-
-                if (Maintenance2.Name == name)
-                    Maintenance2.Support = true;
-
-                if (Maintenance2.Name == name)
-                    Maintenance2.Support = true;
+                Maintenance1.Support = Maintenance1.Name == name;
+                Maintenance2.Support = Maintenance2.Name == name;
+                Maintenance3.Support = Maintenance3.Name == name;
 
             }
         }
