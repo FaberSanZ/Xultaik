@@ -111,6 +111,10 @@ namespace Vultaik
 
         public DeviceExtension SwapChain { get; set; }
         public DeviceExtension Bindless { get; set; }
+        public DeviceExtension Maintenance1 { get; set; }
+        public DeviceExtension Maintenance2 { get; set; }
+        public DeviceExtension Maintenance3 { get; set; }
+
 
         public string DeviceName
         {
@@ -199,6 +203,16 @@ namespace Vultaik
 
                 if (name == "VK_EXT_descriptor_indexing")
                     Bindless = new(name, true, AdapterConfig.Bindless);
+
+                if (name == "VK_KHR_maintenance1")
+                    Maintenance1 = new(name, true);
+
+                if (name == "VK_KHR_maintenance2")
+                    Maintenance2 = new(name, true);
+
+                if (name == "VK_KHR_maintenance3")
+                    Maintenance3 = new(name, true);
+
             }
         }
 

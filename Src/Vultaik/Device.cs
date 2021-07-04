@@ -301,8 +301,21 @@ namespace Vultaik
                 TransferFamily = GraphicsFamily;
             }
 
+            bool device_bindless = NativeAdapter.Bindless.implement && NativeAdapter.Maintenance1.Support;
 
 
+            if (NativeAdapter.Maintenance1.Support)
+                DeviceExtensionsNames.Add(NativeAdapter.Maintenance1.Name);
+
+            if (NativeAdapter.Maintenance2.Support)
+                DeviceExtensionsNames.Add(NativeAdapter.Maintenance2.Name);
+
+            if (NativeAdapter.Maintenance3.Support)
+                DeviceExtensionsNames.Add(NativeAdapter.Maintenance3.Name);
+
+
+            if (NativeAdapter.SwapChain.implement)
+                DeviceExtensionsNames.Add(NativeAdapter.SwapChain.Name);
 
             VkPhysicalDeviceFeatures2 features = new()
             {
@@ -375,7 +388,7 @@ namespace Vultaik
                     }
                 }
 
-                if (NativeAdapter.Bindless.implement)
+                if (device_bindless)
                 {
                     DeviceExtensionsNames.Add(NativeAdapter.Bindless.Name);
                     fixed (VkPhysicalDeviceDescriptorIndexingFeatures* feature = &descriptor_indexing_features)
@@ -402,14 +415,6 @@ namespace Vultaik
 
             }
 
-
-
-            if (NativeAdapter.device_extensions_names.Contains("VK_KHR_maintenance1"))
-                DeviceExtensionsNames.Add("VK_KHR_maintenance1");
-
-
-            if (NativeAdapter.SwapChain.implement)
-                DeviceExtensionsNames.Add(NativeAdapter.SwapChain.Name);
 
 
 
@@ -466,7 +471,7 @@ namespace Vultaik
 
             ppNext = &props.pNext;
 
-            if (NativeAdapter.Bindless.implement)
+            if (device_bindless)
             {
                 fixed (VkPhysicalDeviceDescriptorIndexingProperties* prop = &descriptor_indexing_properties)
                 {

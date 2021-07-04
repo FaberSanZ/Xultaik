@@ -5,12 +5,13 @@ namespace Vultaik
 {
     public class DeviceExtension
     {
+        internal bool adapter_config;
+        internal bool implement => adapter_config && Support;
+
         public DeviceExtension()
         {
 
         }
-        internal bool adapter_config;
-        internal bool implement => adapter_config && Support;
 
         internal DeviceExtension(string name, bool support, bool config)
         {
