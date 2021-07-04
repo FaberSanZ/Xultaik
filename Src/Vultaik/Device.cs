@@ -308,7 +308,10 @@ namespace Vultaik
             bool has_swapChain = NativeAdapter.SwapChain.implement;
             bool has_bindless = NativeAdapter.Bindless.implement && has_maintenance3;
             bool has_conservative_raster = NativeAdapter.ConservativeRasterization.implement;
-            bool has_StorageBufferStorageclass = NativeAdapter.StorageBufferStorageclass.Support;
+            bool has_storage_buffer_storage_class = NativeAdapter.StorageBufferStorageclass.Support;
+            bool has_16_bit_storage = NativeAdapter.Arithmetic16BitStorage.Support && has_storage_buffer_storage_class;
+
+
 
             if (has_maintenance1)
                 DeviceExtensionsNames.Add(NativeAdapter.Maintenance1.Name);
@@ -319,8 +322,7 @@ namespace Vultaik
             if (has_maintenance3)
                 DeviceExtensionsNames.Add(NativeAdapter.Maintenance3.Name);
 
-
-            if (has_StorageBufferStorageclass)
+            if (has_storage_buffer_storage_class)
                 DeviceExtensionsNames.Add(NativeAdapter.StorageBufferStorageclass.Name);
 
             if (has_swapChain)
@@ -331,6 +333,9 @@ namespace Vultaik
 
             if (has_conservative_raster)
                 DeviceExtensionsNames.Add(NativeAdapter.ConservativeRasterization.Name);
+
+            if (has_16_bit_storage)
+                DeviceExtensionsNames.Add(NativeAdapter.Arithmetic16BitStorage.Name);
 
 
 
@@ -367,11 +372,19 @@ namespace Vultaik
 
             if (has_physical_device_features2)
             {
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_8bit_storage"))
+                if (has_bindless)
                 {
-                    DeviceExtensionsNames.Add("VK_KHR_8bit_storage");
+                    fixed (VkPhysicalDeviceDescriptorIndexingFeatures* feature = &descriptor_indexing_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                }
 
-                    fixed (VkPhysicalDevice8BitStorageFeatures* feature = &storage_8bit_features)
+
+                if (has_16_bit_storage)
+                {
+                    fixed (VkPhysicalDevice16BitStorageFeatures* feature = &storage_16bit_features)
                     {
                         *ppNext = feature;
                         ppNext = &feature->pNext;
@@ -402,14 +415,7 @@ namespace Vultaik
                 }
 
 
-                if (has_bindless)
-                {
-                    fixed (VkPhysicalDeviceDescriptorIndexingFeatures* feature = &descriptor_indexing_features)
-                    {
-                        *ppNext = feature;
-                        ppNext = &feature->pNext;
-                    }
-                }
+
 
 
                 if (NativeAdapter.device_extensions_names.Contains("VK_KHR_uniform_buffer_standard_layout"))

@@ -43,6 +43,8 @@ namespace Vultaik
 
         public bool SamplerAnisotropy { get; set; } // TODO: Implement SamplerAnisotropy 
 
+        public bool Arithmetic16BitStorage { get; set; } 
+
     }
 
 
