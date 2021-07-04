@@ -217,8 +217,7 @@ namespace Vultaik
 
 
 
-            VkQueueFlags requestedQueueTypes = VkQueueFlags.Graphics | VkQueueFlags.Compute | VkQueueFlags.Transfer;
-
+            VkQueueFlags requested_queue_types = VkQueueFlags.Graphics | VkQueueFlags.Compute | VkQueueFlags.Transfer;
             VkDeviceQueueCreateInfo* queue_create_infos = stackalloc VkDeviceQueueCreateInfo[3];
             float default_queue_priority = 1.0f;
             float graphics_queue_prio = 0.5f;
@@ -227,7 +226,7 @@ namespace Vultaik
             uint queue_count = 0;
 
             // Graphics queue
-            if ((requestedQueueTypes & VkQueueFlags.Graphics) is not 0)
+            if ((requested_queue_types & VkQueueFlags.Graphics) is not 0)
             {
                 GraphicsFamily = GetQueueFamilyIndex(VkQueueFlags.Graphics, queue_family_properties);
 
@@ -250,7 +249,7 @@ namespace Vultaik
 
 
             // Dedicated compute queue
-            if ((requestedQueueTypes & VkQueueFlags.Compute) is not 0)
+            if ((requested_queue_types & VkQueueFlags.Compute) is not 0)
             {
                 ComputeFamily = GetQueueFamilyIndex(VkQueueFlags.Compute, queue_family_properties);
 
@@ -277,7 +276,7 @@ namespace Vultaik
 
 
             // Dedicated transfer queue
-            if ((requestedQueueTypes & VkQueueFlags.Transfer) is not 0)
+            if ((requested_queue_types & VkQueueFlags.Transfer) is not 0)
             {
                 TransferFamily = GetQueueFamilyIndex(VkQueueFlags.Transfer, queue_family_properties);
                 if (TransferFamily != GraphicsFamily && TransferFamily != ComputeFamily)
@@ -302,21 +301,32 @@ namespace Vultaik
             }
 
 
+            bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
+            bool has_maintenance1 = NativeAdapter.Maintenance1.Support;
+            bool has_maintenance2 = NativeAdapter.Maintenance2.Support;
+            bool has_maintenance3 = NativeAdapter.Maintenance3.Support;
+            bool has_swapChain = NativeAdapter.SwapChain.implement;
+            bool has_bindless = NativeAdapter.Bindless.implement && has_maintenance3;
+            bool has_conservative_raster = NativeAdapter.ConservativeRasterization.implement;
 
-            if (NativeAdapter.Maintenance1.Support)
+
+
+            if (has_maintenance1)
                 DeviceExtensionsNames.Add(NativeAdapter.Maintenance1.Name);
 
-            if (NativeAdapter.Maintenance2.Support)
+            if (has_maintenance2)
                 DeviceExtensionsNames.Add(NativeAdapter.Maintenance2.Name);
 
-            if (NativeAdapter.Maintenance3.Support)
+            if (has_maintenance3)
                 DeviceExtensionsNames.Add(NativeAdapter.Maintenance3.Name);
 
-
-            if (NativeAdapter.SwapChain.implement)
+            if (has_swapChain)
                 DeviceExtensionsNames.Add(NativeAdapter.SwapChain.Name);
 
-            if (NativeAdapter.Bindless.implement)
+            if (has_bindless)
+                DeviceExtensionsNames.Add(NativeAdapter.Bindless.Name);
+
+            if (has_conservative_raster)
                 DeviceExtensionsNames.Add(NativeAdapter.ConservativeRasterization.Name);
 
 
@@ -348,7 +358,6 @@ namespace Vultaik
                 sType = VkStructureType.PhysicalDeviceRayTracingPipelineFeaturesKHR
             };
 
-            bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
 
 
 
@@ -367,7 +376,6 @@ namespace Vultaik
                         ppNext = &feature->pNext;
                     }
                 }
-
 
 
                 if (NativeAdapter.device_extensions_names.Contains("VK_KHR_acceleration_structure") && AdapterConfig.RayTracing)
@@ -392,9 +400,9 @@ namespace Vultaik
                     }
                 }
 
-                if (NativeAdapter.Bindless.implement)
+
+                if (has_bindless)
                 {
-                    DeviceExtensionsNames.Add(NativeAdapter.Bindless.Name);
                     fixed (VkPhysicalDeviceDescriptorIndexingFeatures* feature = &descriptor_indexing_features)
                     {
                         *ppNext = feature;
@@ -414,7 +422,6 @@ namespace Vultaik
                         ppNext = &feature->pNext;
                     }
 
-
                 }
 
             }
@@ -422,7 +429,7 @@ namespace Vultaik
 
 
 
-            VkDeviceCreateInfo deviceCreateInfo = new()
+            VkDeviceCreateInfo device_create_info = new()
             {
                 sType = VkStructureType.DeviceCreateInfo,
                 flags = VkDeviceCreateFlags.None,
@@ -447,11 +454,11 @@ namespace Vultaik
 
             if (NativeAdapter.SupportsPhysicalDeviceProperties2)
             {
-                deviceCreateInfo.pNext = &features;
+                device_create_info.pNext = &features;
             }
             else
             {
-                deviceCreateInfo.pEnabledFeatures = &features.features;
+                device_create_info.pEnabledFeatures = &features.features;
             }
 
 
@@ -475,7 +482,7 @@ namespace Vultaik
 
             ppNext = &props.pNext;
 
-            if (NativeAdapter.Bindless.implement)
+            if (has_bindless)
             {
                 fixed (VkPhysicalDeviceDescriptorIndexingProperties* prop = &descriptor_indexing_properties)
                 {
@@ -485,7 +492,7 @@ namespace Vultaik
             }
 
 
-            if (NativeAdapter.ConservativeRasterization.implement)
+            if (has_conservative_raster)
             {
                 fixed (VkPhysicalDeviceConservativeRasterizationPropertiesEXT* prop = &conservative_rasterization_properties)
                 {
@@ -502,12 +509,12 @@ namespace Vultaik
 
             if (DeviceExtensionsNames.Any())
             {
-                deviceCreateInfo.enabledExtensionCount = (uint)DeviceExtensionsNames.Count;
-                deviceCreateInfo.ppEnabledExtensionNames = Interop.String.AllocToPointers(DeviceExtensionsNames.ToArray());
+                device_create_info.enabledExtensionCount = (uint)DeviceExtensionsNames.Count;
+                device_create_info.ppEnabledExtensionNames = Interop.String.AllocToPointers(DeviceExtensionsNames.ToArray());
             }
 
 
-            vkCreateDevice(NativeAdapter.handle, &deviceCreateInfo, null, out handle).CheckResult();
+            vkCreateDevice(NativeAdapter.handle, &device_create_info, null, out handle).CheckResult();
 
         }
 
