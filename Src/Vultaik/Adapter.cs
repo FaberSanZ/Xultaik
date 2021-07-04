@@ -31,7 +31,6 @@ namespace Vultaik
         internal VkPhysicalDevice handle;
         internal VkPhysicalDevice[] handles;
         internal VkPhysicalDeviceProperties device_properties;
-        internal bool vultaik_debug => AdapterConfig.VultaikDebug;
 
 
         public Adapter(AdapterConfig config)
@@ -41,26 +40,7 @@ namespace Vultaik
             Recreate();
 
 
-            if (vultaik_debug)
-            {
-                ConsoleLog.Info("Adapter", $"Handle = 0x{handle.Handle.ToString("X")}");
-                ConsoleLog.Info("Adapter", $"DepthFormat = {DepthFormat}");
-                ConsoleLog.Info("Adapter", $"MultisampleCount = {MultisampleCount}");
-                ConsoleLog.Info("Adapter", $"VendorId = {VendorId}");
-                ConsoleLog.Info("Adapter", $"DeviceType = {DeviceType}");
-                ConsoleLog.Info("Adapter", $"MaxDrawIndirectCount = {MaxDrawIndirectCount}");
-                ConsoleLog.Info("Adapter", $"MinUniformBufferOffsetAlignment = {MinUniformBufferOffsetAlignment}");
-                ConsoleLog.Info("Adapter", $"SupportsValidationGpuAssisted = {SupportsValidationGpuAssisted}");
-                ConsoleLog.Info("Adapter", $"SupportsDebugUtils = {SupportsDebugUtils}");
-                ConsoleLog.Info("Adapter", $"SupportsExternal = {SupportsExternal}");
-
-                ConsoleLog.Info("Adapter - ValidationLayer", $"ValidationLayer = {ValidationLayer.Count}");
-                foreach (var v in ValidationLayer)
-                    ConsoleLog.InfoNode("ValidationLayer - ValidationLayer", $"Layer = {v}", v == ValidationLayer.Last());
-
-                ConsoleLog.Info("Adapter", $"{EngineVersion.ToString()}");
-                ConsoleLog.Info("Adapter", $"TimestampPeriod = {TimestampPeriod}", true);
-            }
+            vultaik_debug();
         }
 
         public VkFormat DepthFormat => get_supported_depth_format(FormatExtensions.depth_formats);
@@ -372,14 +352,6 @@ namespace Vultaik
                         requested_validation_layers.Add("VK_LAYER_KHRONOS_validation");
 
 
-            if (vultaik_debug)
-                foreach (var layer in availableLayers)
-                    if ("VK_LAYER_KHRONOS_validation" == layer.GetLayerName())
-                        ValidationLayer.Add(layer.GetLayerName());
-
-
-
-
             if (requested_validation_layers.Any() && SupportsDebugUtils)
             {
                 inst_info.enabledLayerCount = (uint)requested_validation_layers.Count;
@@ -605,6 +577,31 @@ namespace Vultaik
                 vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
 
             vkDestroyInstance(instance, null);
+        }
+
+
+        private void vultaik_debug()
+        {
+            if (AdapterConfig.VultaikDebug)
+            {
+                ConsoleLog.Info("Adapter", $"Handle = 0x{handle.Handle.ToString("X")}");
+                ConsoleLog.Info("Adapter", $"DepthFormat = {DepthFormat}");
+                ConsoleLog.Info("Adapter", $"MultisampleCount = {MultisampleCount}");
+                ConsoleLog.Info("Adapter", $"VendorId = {VendorId}");
+                ConsoleLog.Info("Adapter", $"DeviceType = {DeviceType}");
+                ConsoleLog.Info("Adapter", $"MaxDrawIndirectCount = {MaxDrawIndirectCount}");
+                ConsoleLog.Info("Adapter", $"MinUniformBufferOffsetAlignment = {MinUniformBufferOffsetAlignment}");
+                ConsoleLog.Info("Adapter", $"SupportsValidationGpuAssisted = {SupportsValidationGpuAssisted}");
+                ConsoleLog.Info("Adapter", $"SupportsDebugUtils = {SupportsDebugUtils}");
+                ConsoleLog.Info("Adapter", $"SupportsExternal = {SupportsExternal}");
+
+                ConsoleLog.Info("Adapter - ValidationLayer", $"ValidationLayer = {ValidationLayer.Count}");
+                foreach (var v in ValidationLayer)
+                    ConsoleLog.InfoNode("ValidationLayer - ValidationLayer", $"Layer = {v}", v == ValidationLayer.Last());
+
+                ConsoleLog.Info("Adapter", $"{EngineVersion.ToString()}");
+                ConsoleLog.Info("Adapter", $"TimestampPeriod = {TimestampPeriod}", true);
+            }
         }
     }
 }
