@@ -50,6 +50,7 @@ namespace Samples.AmbientLighting
                 VulkanDebug = false,
                 Fullscreen = false,
                 ForceExclusiveTransferQueue = true,
+                Bindless = true
             };
 
 

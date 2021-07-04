@@ -326,6 +326,11 @@ namespace Vultaik
                 sType = VkStructureType.PhysicalDeviceUniformBufferStandardLayoutFeatures, 
             };
 
+            ray_tracing_features = new()
+            {
+                sType = VkStructureType.PhysicalDeviceRayTracingPipelineFeaturesKHR
+            };
+
             bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
 
 
@@ -359,6 +364,17 @@ namespace Vultaik
                     RayTracingSupport = true;
                 }
 
+
+                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing_pipeline") && AdapterConfig.RayTracing)
+                {
+                    DeviceExtensionsNames.Add("VK_KHR_ray_tracing_pipeline");
+                    fixed (VkPhysicalDeviceRayTracingPipelineFeaturesKHR* feature = &ray_tracing_features)
+                    {
+                        *ppNext = feature;
+                        ppNext = &feature->pNext;
+                    }
+                }
+
                 if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing") && AdapterConfig.Bindless)
                 {
                     DeviceExtensionsNames.Add("VK_EXT_descriptor_indexing");
@@ -367,7 +383,6 @@ namespace Vultaik
                         *ppNext = feature;
                         ppNext = &feature->pNext;
                     }
-
                 }
 
 
@@ -384,8 +399,6 @@ namespace Vultaik
 
 
                 }
-
-
 
             }
 
@@ -443,24 +456,19 @@ namespace Vultaik
                 sType = VkStructureType.PhysicalDeviceConservativeRasterizationPropertiesEXT,
             };
 
-            ray_tracing_features = new()
+            descriptor_indexing_properties = new()
             {
-                sType = VkStructureType.PhysicalDeviceRayTracingPipelineFeaturesKHR
+                sType = VkStructureType.PhysicalDeviceDescriptorIndexingProperties
             };
-
 
             ppNext = &props.pNext;
 
-            if (has_pdf2)
+            if (NativeAdapter.device_extensions_names.Contains("VK_EXT_descriptor_indexing") && AdapterConfig.Bindless)
             {
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_ray_tracing_pipeline") && AdapterConfig.RayTracing)
+                fixed (VkPhysicalDeviceDescriptorIndexingProperties* prop = &descriptor_indexing_properties)
                 {
-                    DeviceExtensionsNames.Add("VK_KHR_ray_tracing_pipeline");
-                    fixed (VkPhysicalDeviceRayTracingPipelineFeaturesKHR* feature = &ray_tracing_features)
-                    {
-                        *ppNext = feature;
-                        ppNext = &feature->pNext;
-                    }
+                    *ppNext = prop;
+                    ppNext = &prop->pNext;
                 }
             }
 
@@ -468,10 +476,10 @@ namespace Vultaik
             if (NativeAdapter.device_extensions_names.Contains("VK_EXT_conservative_rasterization") && AdapterConfig.ConservativeRasterization)
             {
                 DeviceExtensionsNames.Add("VK_EXT_conservative_rasterization");
-                fixed (VkPhysicalDeviceConservativeRasterizationPropertiesEXT* feature = &conservative_rasterization_properties)
+                fixed (VkPhysicalDeviceConservativeRasterizationPropertiesEXT* prop = &conservative_rasterization_properties)
                 {
-                    *ppNext = feature;
-                    ppNext = &feature->pNext;
+                    *ppNext = prop;
+                    ppNext = &prop->pNext;
                 }
             }
 
