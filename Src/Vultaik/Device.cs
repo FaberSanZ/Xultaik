@@ -375,7 +375,7 @@ namespace Vultaik
                     }
                 }
 
-                if (NativeAdapter.Bindless.Support)
+                if (NativeAdapter.Bindless.implement)
                 {
                     DeviceExtensionsNames.Add(NativeAdapter.Bindless.Name);
                     fixed (VkPhysicalDeviceDescriptorIndexingFeatures* feature = &descriptor_indexing_features)
@@ -408,7 +408,7 @@ namespace Vultaik
                 DeviceExtensionsNames.Add("VK_KHR_maintenance1");
 
 
-            if (NativeAdapter.SwapChain.Support)
+            if (NativeAdapter.SwapChain.implement)
                 DeviceExtensionsNames.Add(NativeAdapter.SwapChain.Name);
 
 
@@ -466,7 +466,7 @@ namespace Vultaik
 
             ppNext = &props.pNext;
 
-            if (NativeAdapter.Bindless.Support)
+            if (NativeAdapter.Bindless.implement)
             {
                 fixed (VkPhysicalDeviceDescriptorIndexingProperties* prop = &descriptor_indexing_properties)
                 {

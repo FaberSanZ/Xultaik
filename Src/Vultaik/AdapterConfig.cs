@@ -33,7 +33,7 @@ namespace Vultaik
 
         public bool ShadingRate { get; set; } // TODO: Implement ShadingRate 
 
-        public bool Bindless { get; set; } // TODO: Implement Bindless 
+        public bool Bindless { get; set; }
 
         public bool SingleQueue { get; set; } // TODO: Implement SingleQueue 
 

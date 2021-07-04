@@ -185,20 +185,20 @@ namespace Vultaik
         internal void device_extension()
         {
 
-            SwapChain = new("", false);
-            Bindless = new("", false);
+            SwapChain = new(string.Empty, false);
+            Bindless = new(string.Empty, false);
+
+
             foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
             {
                 string name = Interop.String.FromPointer(item.extensionName);
                 device_extensions_names.Add(name);
 
-                if (name == "VK_KHR_swapchain" && AdapterConfig.SwapChain)
-                    SwapChain = new(name, true);
+                if (name == "VK_KHR_swapchain")
+                    SwapChain = new(name, true, AdapterConfig.SwapChain);
 
-                if (name == "VK_EXT_descriptor_indexing" && AdapterConfig.Bindless)
-                    Bindless = new(name, true);
-
-
+                if (name == "VK_EXT_descriptor_indexing")
+                    Bindless = new(name, true, AdapterConfig.Bindless);
             }
         }
 
