@@ -301,14 +301,13 @@ namespace Vultaik
             }
 
 
-            bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
+            bool has_physical_device_features2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
             bool has_maintenance1 = NativeAdapter.Maintenance1.Support;
             bool has_maintenance2 = NativeAdapter.Maintenance2.Support;
             bool has_maintenance3 = NativeAdapter.Maintenance3.Support;
             bool has_swapChain = NativeAdapter.SwapChain.implement;
             bool has_bindless = NativeAdapter.Bindless.implement && has_maintenance3;
             bool has_conservative_raster = NativeAdapter.ConservativeRasterization.implement;
-
 
 
             if (has_maintenance1)
@@ -359,12 +358,10 @@ namespace Vultaik
             };
 
 
-
-
             void** ppNext = &features.pNext;
      
 
-            if (has_pdf2)
+            if (has_physical_device_features2)
             {
                 if (NativeAdapter.device_extensions_names.Contains("VK_KHR_8bit_storage"))
                 {

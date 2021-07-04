@@ -146,6 +146,7 @@ namespace Vultaik
         public void Recreate()
         {
 
+
             if (!IsSupported())
                 throw new NotSupportedException("Vulkan is not supported");
 
@@ -171,14 +172,12 @@ namespace Vultaik
 
         internal void device_extension()
         {
-
-            SwapChain = new("VK_KHR_swapchain", false);
-            Bindless = new("VK_EXT_descriptor_indexing", false);
-            Maintenance1 = new("VK_KHR_maintenance1", false); 
-            Maintenance2 = new("VK_KHR_maintenance2", false); 
+            Maintenance1 = new("VK_KHR_maintenance1", false);
+            Maintenance2 = new("VK_KHR_maintenance2", false);
             Maintenance3 = new("VK_KHR_maintenance3", false);
-            ConservativeRasterization = new("VK_EXT_conservative_rasterization", false);
-            
+            SwapChain = new("VK_KHR_swapchain", false, AdapterConfig.SwapChain);
+            Bindless = new("VK_EXT_descriptor_indexing", false, AdapterConfig.Bindless);
+            ConservativeRasterization = new("VK_EXT_conservative_rasterization", AdapterConfig.ConservativeRasterization);
 
             foreach (VkExtensionProperties item in vkEnumerateDeviceExtensionProperties(handle))
             {
@@ -186,28 +185,24 @@ namespace Vultaik
 
                 device_extensions_names.Add(name);
 
-                if (SwapChain.Name == name)
-                {
-                    SwapChain.Support = true;
-                    SwapChain.adapter_config = AdapterConfig.SwapChain;
-                }
 
-                if (ConservativeRasterization.Name == name)
-                {
-                    ConservativeRasterization.Support = true;
-                    ConservativeRasterization.adapter_config = AdapterConfig.ConservativeRasterization;
-                }
+                if (Maintenance1.Name == name)
+                    Maintenance1.Support = true;
+
+                if (Maintenance2.Name == name)
+                    Maintenance2.Support = true;
+
+                if (Maintenance3.Name == name)
+                    Maintenance3.Support = true;
+
+                if (SwapChain.Name == name)
+                    SwapChain.Support = true;
 
                 if (Bindless.Name == name)
-                {
                     Bindless.Support = true;
-                    Bindless.adapter_config = AdapterConfig.Bindless;
-                }
 
-
-                Maintenance1.Support = Maintenance1.Name == name;
-                Maintenance2.Support = Maintenance2.Name == name;
-                Maintenance3.Support = Maintenance3.Name == name;
+                if (ConservativeRasterization.Name == name)
+                    ConservativeRasterization.Support = true;
 
             }
         }

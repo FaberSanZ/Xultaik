@@ -123,8 +123,6 @@ namespace Samples.AmbientLighting
 
             Image text1 = ImageFile.Load2DFromFile(Device, images + "large_red_bricks_diff_2k.jpg");
 
-            var te = GLTFModel.ImageCount;
-            Console.WriteLine(te);
             Sampler sampler = new Sampler(Device);
 
 

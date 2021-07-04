@@ -13,6 +13,12 @@ namespace Vultaik
 
         }
 
+        internal DeviceExtension(string name, bool support, bool config)
+        {
+            Name = name;
+            Support = support;
+            adapter_config = config;
+        }
 
         public DeviceExtension(string name, bool support)
         {
