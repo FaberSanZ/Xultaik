@@ -92,8 +92,7 @@ namespace Vultaik
         public DeviceExtension SwapChain { get; set; }
         public DeviceExtension Bindless { get; set; }
         public DeviceExtension ConservativeRasterization { get; set; }
-
-        
+        public DeviceExtension StorageBufferStorageclass { get; set; }
         public DeviceExtension Maintenance1 { get; set; }
         public DeviceExtension Maintenance2 { get; set; }
         public DeviceExtension Maintenance3 { get; set; }
@@ -175,6 +174,7 @@ namespace Vultaik
             Maintenance1 = new("VK_KHR_maintenance1", false);
             Maintenance2 = new("VK_KHR_maintenance2", false);
             Maintenance3 = new("VK_KHR_maintenance3", false);
+            StorageBufferStorageclass = new("VK_KHR_storage_buffer_storage_class", false);
             SwapChain = new("VK_KHR_swapchain", false, AdapterConfig.SwapChain);
             Bindless = new("VK_EXT_descriptor_indexing", false, AdapterConfig.Bindless);
             ConservativeRasterization = new("VK_EXT_conservative_rasterization", AdapterConfig.ConservativeRasterization);
@@ -203,6 +203,10 @@ namespace Vultaik
 
                 if (ConservativeRasterization.Name == name)
                     ConservativeRasterization.Support = true;
+
+                if (StorageBufferStorageclass.Name == name)
+                    StorageBufferStorageclass.Support = true;
+                
 
             }
         }

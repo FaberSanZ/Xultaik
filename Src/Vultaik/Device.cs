@@ -308,7 +308,7 @@ namespace Vultaik
             bool has_swapChain = NativeAdapter.SwapChain.implement;
             bool has_bindless = NativeAdapter.Bindless.implement && has_maintenance3;
             bool has_conservative_raster = NativeAdapter.ConservativeRasterization.implement;
-
+            bool has_StorageBufferStorageclass = NativeAdapter.StorageBufferStorageclass.Support;
 
             if (has_maintenance1)
                 DeviceExtensionsNames.Add(NativeAdapter.Maintenance1.Name);
@@ -318,6 +318,10 @@ namespace Vultaik
 
             if (has_maintenance3)
                 DeviceExtensionsNames.Add(NativeAdapter.Maintenance3.Name);
+
+
+            if (has_StorageBufferStorageclass)
+                DeviceExtensionsNames.Add(NativeAdapter.StorageBufferStorageclass.Name);
 
             if (has_swapChain)
                 DeviceExtensionsNames.Add(NativeAdapter.SwapChain.Name);
