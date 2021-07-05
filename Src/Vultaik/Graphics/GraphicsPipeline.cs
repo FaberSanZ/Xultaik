@@ -81,14 +81,14 @@ namespace Vultaik
 
             VkDescriptorBindingFlags* descriptorBindingFlags = stackalloc VkDescriptorBindingFlags[2]
             {
-                0,
+                VkDescriptorBindingFlags.UpdateUnusedWhilePending,
                 VkDescriptorBindingFlags.VariableDescriptorCountEXT
             };
 
             VkDescriptorSetLayoutBindingFlagsCreateInfo setLayoutBindingFlags = new()
             {
                 sType = VkStructureType.DescriptorSetLayoutBindingCreateInfoEXT,
-                bindingCount = 8,
+                bindingCount = 2,
                 pBindingFlags = descriptorBindingFlags,
             };
 

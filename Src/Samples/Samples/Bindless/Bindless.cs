@@ -27,9 +27,7 @@ namespace Samples.Bindless
         private SwapChain SwapChain;
         private GraphicsContext Context;
         private GraphicsPipeline PipelineState_0;
-        private GraphicsPipeline PipelineState_1;
         private DescriptorSet DescriptorSet_0;
-        private DescriptorSet DescriptorSet_1;
         private Dictionary<string, Buffer> Buffers = new();
         private TransformUniform uniform;
 
@@ -70,31 +68,58 @@ namespace Samples.Bindless
             Framebuffer = new(SwapChain);
 
 
-            Camera.SetPosition(0, 0.34f, -2.5f);
-            uniform = new(Camera.Projection, Model, Camera.View);
+            Camera.SetPosition(0, 0.34f, -18.5f);
+            uniform = new(Camera.Projection, Camera.View);
 
 
             CreateBuffers();
             CreatePipelineState();
         }
 
+        int[] Indices = new[]
+        {
+               0,1,2, 0,2,3, 4,5,6,  4,6,7, 8,9,10, 8,10,11, 12,13,14, 12,14,15, 16,17,18, 16,18,19, 20,21,22, 20,22,23
+        };
+
+        VertexPositionTexture[] Vertices = new VertexPositionTexture[]
+        {
+                new(new(-0.5f, -0.5f,  0.5f), new(0.0f, 0.0f)),
+                new(new(0.5f, -0.5f,  0.5f), new(1.0f, 0.0f)),
+                new(new(0.5f,  0.5f,  0.5f),  new(1.0f, 1.0f)),
+                new(new(-0.5f, 0.5f,  0.5f ),  new(0.0f, 1.0f)),
+
+                new(new(0.5f,  0.5f,  0.5f), new(0.0f, 0.0f)),
+                new(new(0.5f,  0.5f, -0.5f), new(1.0f, 0.0f)),
+                new(new(0.5f, -0.5f, -0.5f),  new(1.0f, 1.0f)),
+                new(new(0.5f, -0.5f, -0.5f ),  new(0.0f, 1.0f)),
+
+                new(new(0.5f, -0.5f, -0.5f ), new(0.0f, 0.0f)),
+                new(new( 0.5f, -0.5f, -0.5f ), new(1.0f, 0.0f)),
+                new(new( 0.5f,  0.5f, -0.5f),  new(1.0f, 1.0f)),
+                new(new(-1.0f,  1.0f, -1.0f),  new(0.0f, 1.0f)),
+
+
+                new(new(-0.5f, -0.5f, -0.5f ), new(0.0f, 0.0f)),
+                new(new(-0.5f, -0.5f,  0.5f ), new(1.0f, 0.0f)),
+                new(new( -0.5f,  0.5f,  0.5f ),  new(1.0f, 1.0f)),
+                new(new(-0.5f,  0.5f, -0.5f ),  new(0.0f, 1.0f)),
+
+                new(new( 0.5f,  0.5f,  0.5f), new(0.0f, 0.0f)),
+                new(new(-0.5f,  0.5f,  0.5f ), new(1.0f, 0.0f)),
+                new(new( -0.5f,  0.5f, -0.5f  ),  new(1.0f, 1.0f)),
+                new(new( 1.0f,  1.0f, -1.0f ),  new(0.0f, 1.0f)),
+
+                new(new( -0.5f, -0.5f, -0.5f), new(0.0f, 0.0f)),
+                new(new(0.5f, 0.5f, -0.5f), new(1.0f, 0.0f)),
+                new(new(0.5f, -0.5f,  0.5f ),  new(1.0f, 1.0f)),
+                new(new( -0.5f, -0.5f,  0.5f ),  new(0.0f, 1.0f)),
+        };
 
 
         public void CreateBuffers()
         {
 
-            int[] Indices = new[]
-            {
-                0, 1, 2, 2, 3, 0
-            };
 
-            VertexPositionTexture[] Vertices = new VertexPositionTexture[]
-            {
-                new(new(0.5f, 0.5f, -0.5f), new(1.0f, 1.0f)) ,
-                new(new(-0.5f, 0.5f, -0.5f), new(0.0f, 1.0f)) ,
-                new(new(-0.5f, -0.5f, -0.5f),  new(0.0f, 0.0f)) ,
-                new(new(0.5f,  -0.5f, -0.5f),  new(1.0f, 0.0f)) ,
-            };
 
 
             Buffers["VertexBuffer"] = new(Device, new()
@@ -129,7 +154,73 @@ namespace Samples.Bindless
                 SizeInBytes = Interop.SizeOf<TransformUniform>(),
             });
 
+
+
+
+
+
+            // Prepare per-object matrices with random rotations
+            Random rndGen = new Random();
+            Func<Random, float> rndDist = rand => (float)(rand.NextDouble() * 2 - 1.0);
+
+            for (uint i = 0; i < OBJECT_INSTANCES; i++)
+            {
+                random_texture[i] = random.Next(0, 8);
+                rotationSpeeds[i] = new Vector3(rndDist(rndGen), rndDist(rndGen), rndDist(rndGen));
+
+            }
         }
+        Random random = new();
+        private Vector3[] rotationSpeeds = new Vector3[OBJECT_INSTANCES]; // Store random per-object rotations
+
+        int[] random_texture = new int[OBJECT_INSTANCES]; // random.Next(0, 3);
+        private const uint OBJECT_INSTANCES = 75;
+
+        public void AddCube(CommandBuffer cmd, Vector3 position, Vector3 rotation, bool r, int text)
+        {
+
+            Matrix4x4 model = Matrix4x4.Identity;
+
+
+            model = Matrix4x4.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z) * Matrix4x4.CreateTranslation(position) * Matrix4x4.CreateScale(0.8f);
+
+
+            cmd.PushConstant(PipelineState_0, ShaderStage.Vertex, model);
+            cmd.PushConstant<int>(PipelineState_0, ShaderStage.Fragment, text);
+            cmd.BindDescriptorSets(DescriptorSet_0);
+            cmd.DrawIndexed(Indices.Length, 1, 0, 0, 0);
+            //cmd.DrawIndexed(6, 1, 0, 0, 0);
+
+        }
+
+
+        public void GenerateCubes(CommandBuffer cmd, bool r)
+        {
+
+
+            float rotation = Time.TotalMilliseconds / 600;
+
+            uint dim = (uint)(Math.Pow(OBJECT_INSTANCES, (1.0f / 3.0f)));
+            Vector3 offset = new Vector3(5.0f);
+
+            for (uint x = 0; x < dim; x++)
+            {
+                for (uint y = 0; y < dim; y++)
+                {
+                    for (uint z = 0; z < dim; z++)
+                    {
+                        uint index = x * dim * dim + y * dim + z;
+
+                        Vector3 rotations = rotation * rotationSpeeds[index];
+                        int r_t = random_texture[index];
+                        Vector3 pos = new Vector3(-((dim * offset.X) / 2.0f) + offset.X / 2.0f + x * offset.X, -((dim * offset.Y) / 2.0f) + offset.Y / 2.0f + y * offset.Y, -((dim * offset.Z) / 2.0f) + offset.Z / 2.0f + z * offset.Z);
+                        Console.WriteLine(r_t);
+                        AddCube(cmd, pos, rotations, r, r_t);
+                    }
+                }
+            }
+        }
+
 
         public void CreatePipelineState()
         {
@@ -150,6 +241,9 @@ namespace Samples.Bindless
             Image text3 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap05-512.png");
             Image text4 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap13-512.png");
             Image text5 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap10-512.png");
+            Image text6 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap12-1024.png");
+            Image text7 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png");
+            Image text8 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap11-512.png");
             Sampler sampler = new Sampler(Device);
 
 
@@ -160,32 +254,15 @@ namespace Samples.Bindless
             Pipelinedescription_0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionTexture.Size);
             Pipelinedescription_0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription_0.SetVertexAttribute(VertexType.TextureCoordinate);
+            //Pipelinedescription_0.SetCullMode(VkCullModeFlags.None);
             PipelineState_0 = new(Pipelinedescription_0);
 
             DescriptorData descriptorData_0 = new();
             descriptorData_0.SetUniformBuffer(0, Buffers["ConstBuffer1"]);
-            descriptorData_0.SetBindlessImage(1, new[] { text1, text2, text3, text4, text5 });
+            descriptorData_0.SetBindlessImage(1, new[] { text1, text2, text3, text4, text5, text6, text7, text7 });
             descriptorData_0.SetSampler(2, sampler);
             DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
 
-
-
-            GraphicsPipelineDescription Pipelinedescription_1 = new();
-            Pipelinedescription_1.SetFramebuffer(Framebuffer);
-            Pipelinedescription_1.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment));
-            Pipelinedescription_1.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex));
-            Pipelinedescription_1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionTexture.Size);
-            Pipelinedescription_1.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription_1.SetVertexAttribute(VertexType.TextureCoordinate);
-            PipelineState_1 = new(Pipelinedescription_1);
-
-            DescriptorData descriptorData_1 = new();
-            descriptorData_1.SetUniformBuffer(0, Buffers["ConstBuffer2"]);
-            descriptorData_1.SetBindlessImage(1, new[] { text1, text2, text3, text4, text5 });
-            descriptorData_1.SetBindlessImage(3, new[] { text1, text2, text3, text4, text5 });
-
-            descriptorData_1.SetSampler(2, sampler);
-            DescriptorSet_1 = new(PipelineState_1, descriptorData_1);
         }
 
 
@@ -193,20 +270,11 @@ namespace Samples.Bindless
         public override void Update(ApplicationTime time)
         {
             Camera.Update();
-
-
-            Model = Matrix4x4.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix4x4.CreateTranslation(-0.8f, -0.4f, 0.0f);
-            uniform.Update(Camera, Model);
+            uniform.Update(Camera);
             Buffers["ConstBuffer1"].SetData(ref uniform);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, -Rotation.Z) * Matrix4x4.CreateTranslation(0.8f, -0.4f, 0.0f);
-            uniform.Update(Camera, Model);
-            Buffers["ConstBuffer2"].SetData(ref uniform);
-
-
-
-            Rotation.Z -= 0.0004f * MathF.PI;
+            Rotation.Z += 0.010f * MathF.PI;
 
         }
 
@@ -234,14 +302,12 @@ namespace Samples.Bindless
 
 
             commandBuffer.SetGraphicPipeline(PipelineState_0);
-            commandBuffer.PushConstant<int>(PipelineState_0, ShaderStage.Fragment, 0);
-            commandBuffer.BindDescriptorSets(DescriptorSet_0);
-            commandBuffer.DrawIndexed(6, 1, 0, 0, 0);
+            //commandBuffer.PushConstant(PipelineState_0, ShaderStage.Vertex, Model);
+            //commandBuffer.PushConstant<int>(PipelineState_0, ShaderStage.Fragment, 1);
 
-            commandBuffer.SetGraphicPipeline(PipelineState_1);
-            commandBuffer.PushConstant<int>(PipelineState_0, ShaderStage.Fragment, 4);
-            commandBuffer.BindDescriptorSets(DescriptorSet_1);
-            commandBuffer.DrawIndexed(6, 1, 0, 0, 0);
+            GenerateCubes(commandBuffer, true);
+
+
 
 
 
@@ -325,23 +391,20 @@ namespace Samples.Bindless
     [StructLayout(LayoutKind.Sequential)]
     public struct TransformUniform
     {
-        public TransformUniform(Matrix4x4 p, Matrix4x4 m, Matrix4x4 v)
+        public TransformUniform(Matrix4x4 p,Matrix4x4 v)
         {
             P = p;
-            M = m;
             V = v;
         }
 
-        public Matrix4x4 M;
         public Matrix4x4 V;
         public Matrix4x4 P;
 
 
 
-        public void Update(Camera camera, Matrix4x4 m)
+        public void Update(Camera camera)
         {
             P = camera.Projection;
-            M = m;
             V = camera.View;
         }
     }
