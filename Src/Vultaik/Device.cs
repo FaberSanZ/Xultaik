@@ -316,8 +316,8 @@ namespace Vultaik
             bool has_swapChain = NativeAdapter.SwapChain.implement;
             bool has_bindless = NativeAdapter.Bindless.implement && has_maintenance3;
             bool has_conservative_raster = NativeAdapter.ConservativeRasterization.implement;
-            bool has_storage_buffer_storage_class = NativeAdapter.StorageBufferStorageclass.Support;
-            bool has_16_bit_storage = NativeAdapter.Arithmetic16BitStorage.Support && has_storage_buffer_storage_class;
+            bool has_storage_buffer_storage_class = !NativeAdapter.StorageBufferStorageclass.Support; //TODO: StorageBufferStorageclass
+            bool has_16_bit_storage = NativeAdapter.Arithmetic16BitStorage.implement && has_storage_buffer_storage_class;
 
 
             if (has_maintenance1)
@@ -345,7 +345,7 @@ namespace Vultaik
                 DeviceExtensionsNames.Add(NativeAdapter.Arithmetic16BitStorage.Name);
 
 
-
+            Console.WriteLine(has_conservative_raster);
             VkPhysicalDeviceFeatures2 features = new()
             {
                 sType = VkStructureType.PhysicalDeviceFeatures2,
@@ -425,18 +425,18 @@ namespace Vultaik
 
 
 
-                if (NativeAdapter.device_extensions_names.Contains("VK_KHR_uniform_buffer_standard_layout"))
-                {
-                    DeviceExtensionsNames.Add("VK_KHR_uniform_buffer_standard_layout");
+                //if (NativeAdapter.device_extensions_names.Contains("VK_KHR_uniform_buffer_standard_layout"))
+                //{
+                //    DeviceExtensionsNames.Add("VK_KHR_uniform_buffer_standard_layout");
 
-                    fixed (VkPhysicalDeviceUniformBufferStandardLayoutFeatures* feature = &ubo_std430_features)
-                    {
-                        feature->uniformBufferStandardLayout = true;
-                        *ppNext = feature;
-                        ppNext = &feature->pNext;
-                    }
+                //    fixed (VkPhysicalDeviceUniformBufferStandardLayoutFeatures* feature = &ubo_std430_features)
+                //    {
+                //        feature->uniformBufferStandardLayout = true;
+                //        *ppNext = feature;
+                //        ppNext = &feature->pNext;
+                //    }
 
-                }
+                //}
 
             }
 

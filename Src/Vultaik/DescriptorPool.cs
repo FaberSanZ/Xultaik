@@ -30,11 +30,25 @@ namespace Vultaik
 
         public void Allocate(VkDescriptorSetLayout setLayout)
         {
+            uint* variableDescCounts = stackalloc uint[1]
+            {
+                30
+            };
+
+
+            VkDescriptorSetVariableDescriptorCountAllocateInfo variableDescriptorCountAllocInfo = new() 
+            {
+                sType = VkStructureType.DescriptorSetVariableDescriptorCountAllocateInfo,
+                descriptorSetCount = 1,
+                pDescriptorCounts = variableDescCounts,
+            };
+
+
 
             VkDescriptorSetAllocateInfo descriptor_set_allocate_info = new()
             {
                 sType = VkStructureType.DescriptorSetAllocateInfo,
-                pNext = null,
+                pNext = &variableDescriptorCountAllocInfo,
                 descriptorSetCount = 1,
                 pSetLayouts = &setLayout,
                 descriptorPool = pool,

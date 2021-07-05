@@ -33,6 +33,28 @@ namespace Vultaik
     }
 
 
+    public class ResourceDataBindless
+    {
+
+        public ResourceDataBindless()
+        {
+
+        }
+
+        public Buffer[] Buffer { get; set; }
+        public Image[] Images { get; set; }
+        public Sampler[] Sampler { get; set; }
+
+
+        public int Offset { get; set; }
+        public int Binding { get; set; }
+
+
+        public VkDescriptorType DescriptorType { get; set; }
+
+    }
+
+
     public class DescriptorData
     {
         public DescriptorData()
@@ -41,7 +63,34 @@ namespace Vultaik
         }
 
         public List<ResourceData> Data = new();
+        public List<ResourceDataBindless> DataBindless = new();
 
+
+
+        public void SetBindlessImage(int _binding, Image[] image)
+        {
+            ResourceData[] data = new ResourceData[image.Length];
+            for (int i = 0; i < image.Length; i++)
+            {
+                data[i] = new()
+                {
+                    Binding = _binding,
+                    Texture = image[i],
+                    DescriptorType = VkDescriptorType.SampledImage,
+                };
+   
+            }
+
+
+
+            DataBindless.Add(new ResourceDataBindless 
+            {
+                Binding = _binding,
+                Images = image,
+                DescriptorType = VkDescriptorType.SampledImage,
+            });
+
+        }
 
 
         public void SetImage(int _binding, Image image)

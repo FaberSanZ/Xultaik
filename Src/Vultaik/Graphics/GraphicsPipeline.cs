@@ -49,6 +49,16 @@ namespace Vultaik
 
         private void SetupDescriptorSetLayout()
         {
+            var indexing_features = NativeDevice.descriptor_indexing_features;
+            var indexing_properties = NativeDevice.descriptor_indexing_properties;
+
+            bool supports_descriptor_indexing = indexing_features.descriptorBindingSampledImageUpdateAfterBind &&
+                indexing_features.descriptorBindingPartiallyBound &&
+                indexing_features.runtimeDescriptorArray &&
+                indexing_features.shaderSampledImageArrayNonUniformIndexing;
+
+
+
 
             ShaderResource[] resources = Resources.Where(x => x.resource_type != SPIRVCross.spvc_resource_type.PushConstant).ToArray();
 
@@ -62,18 +72,33 @@ namespace Vultaik
                 layoutBinding[i] = new VkDescriptorSetLayoutBinding
                 {
                     binding = resources[i].binding,
-                    descriptorCount = 4,
+                    descriptorCount = 5,
                     descriptorType = resources[i].resource_type.StageTVkDescriptorType(is_dynamic),
                     stageFlags = resources[i].stage.StageToVkShaderStageFlags(),
                     pImmutableSamplers = null,
                 };
             }
 
+            VkDescriptorBindingFlags* descriptorBindingFlags = stackalloc VkDescriptorBindingFlags[2]
+            {
+                0,
+                VkDescriptorBindingFlags.VariableDescriptorCountEXT
+            };
+
+            VkDescriptorSetLayoutBindingFlagsCreateInfo setLayoutBindingFlags = new()
+            {
+                sType = VkStructureType.DescriptorSetLayoutBindingCreateInfoEXT,
+                bindingCount = 8,
+                pBindingFlags = descriptorBindingFlags,
+            };
+
+
+
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
             {
                 sType = VkStructureType.DescriptorSetLayoutCreateInfo,
                 flags = VkDescriptorSetLayoutCreateFlags.None,
-                pNext = null,
+                pNext = &supports_descriptor_indexing,
                 bindingCount = (uint)resources.Length,
                 pBindings = layoutBinding
             };

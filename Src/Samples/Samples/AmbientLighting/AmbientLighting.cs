@@ -47,10 +47,10 @@ namespace Samples.AmbientLighting
 
             AdapterConfig = new()
             {
-                VulkanDebug = false,
-                Fullscreen = false,
+                VulkanDebug = true,
                 ForceExclusiveTransferQueue = true,
-                SwapChain = true
+                SwapChain = true,
+                Bindless = true
             };
 
 
