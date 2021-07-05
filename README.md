@@ -43,7 +43,7 @@ These extensions will likely become mandatory later.
 - [ ] Multiview rendering
 - [ ] Conditional rendering 
 - [ ] Shading rate
-- [ ] Descriptor indexing
+- [x] Descriptor indexing
 - [ ] Timeline semaphore
 - [ ] Synchronization2
 - [x] Memory allocator
