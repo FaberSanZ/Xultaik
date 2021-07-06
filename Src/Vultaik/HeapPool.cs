@@ -1,9 +1,6 @@
-﻿// Copyright (c) 2019-2020 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+﻿// Copyright (c) 2019-2021 Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
-/*=============================================================================
-	HeapPool.cs
-=============================================================================*/
 
 using System;
 using System.Collections.Generic;
@@ -46,6 +43,7 @@ namespace Vultaik
 
 
 
+
         internal VkDescriptorPool handle;
 
         public HeapPool(Device device) : base(device)
@@ -63,11 +61,12 @@ namespace Vultaik
             VkDescriptorPoolSize* sizes = stackalloc VkDescriptorPoolSize[(int)pool_size];
 
 
+
             for (int index = 0; index < pool_size; index++)
             {
                 KeyValuePair<VkDescriptorType, uint> item = MaxDescriptorTypeCounts.ElementAt(index);
 
-                
+
                 sizes[index] = new()
                 {
                     type = item.Key,
@@ -81,7 +80,7 @@ namespace Vultaik
             {
                 sType = VkStructureType.DescriptorPoolCreateInfo,
                 pNext = null,
-                flags = VkDescriptorPoolCreateFlags.None,
+                flags = VkDescriptorPoolCreateFlags.UpdateAfterBind,
                 poolSizeCount = pool_size,
                 pPoolSizes = sizes,
                 maxSets = MaxSets,

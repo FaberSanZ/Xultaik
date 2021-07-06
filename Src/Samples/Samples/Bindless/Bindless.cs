@@ -28,9 +28,16 @@ namespace Samples.Bindless
         private GraphicsContext Context;
         private GraphicsPipeline PipelineState_0;
         private DescriptorSet DescriptorSet_0;
-        private Dictionary<string, Buffer> Buffers = new();
-        private TransformUniform uniform;
+        private Buffer VertexBuffer;
+        private Buffer IndexBuffer;
+        private Buffer CameraBuffer;
 
+        
+        private TransformUniform uniform;
+        private Vector3[] rotationSpeeds = new Vector3[OBJECT_INSTANCES];
+
+        private int[] random_texture = new int[OBJECT_INSTANCES]; 
+        private const uint OBJECT_INSTANCES = 75;
 
 
         public Bindless() : base()
@@ -122,32 +129,25 @@ namespace Samples.Bindless
 
 
 
-            Buffers["VertexBuffer"] = new(Device, new()
+            VertexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.VertexBuffer,
                 Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf(Vertices),
             });
-            Buffers["VertexBuffer"].SetData(Vertices);
+            VertexBuffer.SetData(Vertices);
 
 
-            Buffers["IndexBuffer"] = new(Device, new()
+            IndexBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.IndexBuffer,
                 Usage = ResourceUsage.CPU_To_GPU,
                 SizeInBytes = Interop.SizeOf(Indices),
             });
-            Buffers["IndexBuffer"].SetData(Indices);
+            IndexBuffer.SetData(Indices);
 
 
-            Buffers["ConstBuffer1"] = new(Device, new()
-            {
-                BufferFlags = BufferFlags.ConstantBuffer,
-                Usage = ResourceUsage.CPU_To_GPU,
-                SizeInBytes = Interop.SizeOf<TransformUniform>(),
-            });
-
-            Buffers["ConstBuffer2"] = new(Device, new()
+            CameraBuffer = new(Device, new()
             {
                 BufferFlags = BufferFlags.ConstantBuffer,
                 Usage = ResourceUsage.CPU_To_GPU,
@@ -159,22 +159,20 @@ namespace Samples.Bindless
 
 
 
-            // Prepare per-object matrices with random rotations
-            Random rndGen = new Random();
-            Func<Random, float> rndDist = rand => (float)(rand.NextDouble() * 2 - 1.0);
+
+
+            // Prepare per-object matrices with random rotations and texture index
+            Random random = new();
+            Func<Random, float> rnd_dist = rand => (float)(rand.NextDouble() * 2 - 1.0);
 
             for (uint i = 0; i < OBJECT_INSTANCES; i++)
             {
-                random_texture[i] = random.Next(0, 8);
-                rotationSpeeds[i] = new Vector3(rndDist(rndGen), rndDist(rndGen), rndDist(rndGen));
+                random_texture[i] = random.Next(0, 9);
+                rotationSpeeds[i] = new Vector3(rnd_dist(random), rnd_dist(random), rnd_dist(random));
 
             }
         }
-        Random random = new();
-        private Vector3[] rotationSpeeds = new Vector3[OBJECT_INSTANCES]; // Store random per-object rotations
 
-        int[] random_texture = new int[OBJECT_INSTANCES]; // random.Next(0, 3);
-        private const uint OBJECT_INSTANCES = 75;
 
         public void AddCube(CommandBuffer cmd, Vector3 position, Vector3 rotation, bool r, int text)
         {
@@ -214,7 +212,6 @@ namespace Samples.Bindless
                         Vector3 rotations = rotation * rotationSpeeds[index];
                         int r_t = random_texture[index];
                         Vector3 pos = new Vector3(-((dim * offset.X) / 2.0f) + offset.X / 2.0f + x * offset.X, -((dim * offset.Y) / 2.0f) + offset.Y / 2.0f + y * offset.Y, -((dim * offset.Z) / 2.0f) + offset.Z / 2.0f + z * offset.Z);
-                        Console.WriteLine(r_t);
                         AddCube(cmd, pos, rotations, r, r_t);
                     }
                 }
@@ -244,6 +241,7 @@ namespace Samples.Bindless
             Image text6 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap12-1024.png");
             Image text7 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png");
             Image text8 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap11-512.png");
+            Image text9 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap17-512.png");
             Sampler sampler = new Sampler(Device);
 
 
@@ -258,8 +256,8 @@ namespace Samples.Bindless
             PipelineState_0 = new(Pipelinedescription_0);
 
             DescriptorData descriptorData_0 = new();
-            descriptorData_0.SetUniformBuffer(0, Buffers["ConstBuffer1"]);
-            descriptorData_0.SetBindlessImage(1, new[] { text1, text2, text3, text4, text5, text6, text7, text7 });
+            descriptorData_0.SetUniformBuffer(0, CameraBuffer);
+            descriptorData_0.SetBindlessImage(1, new[] { text1, text2, text3, text4, text5, text6, text7, text8, text9 });
             descriptorData_0.SetSampler(2, sampler);
             DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
 
@@ -271,11 +269,10 @@ namespace Samples.Bindless
         {
             Camera.Update();
             uniform.Update(Camera);
-            Buffers["ConstBuffer1"].SetData(ref uniform);
+            CameraBuffer.SetData(ref uniform);
 
 
             Rotation.Z += 0.010f * MathF.PI;
-
         }
 
 
@@ -297,8 +294,8 @@ namespace Samples.Bindless
 
 
 
-            commandBuffer.SetVertexBuffers(new Buffer[] { Buffers["VertexBuffer"] });
-            commandBuffer.SetIndexBuffer(Buffers["IndexBuffer"]);
+            commandBuffer.SetVertexBuffers(new Buffer[] { VertexBuffer });
+            commandBuffer.SetIndexBuffer(IndexBuffer);
 
 
             commandBuffer.SetGraphicPipeline(PipelineState_0);
@@ -316,7 +313,6 @@ namespace Samples.Bindless
             SwapChain.Present();
         }
 
-        Random Random = new();
         public override void Resize(int width, int height)
         {
             Device.WaitIdle();
@@ -326,7 +322,75 @@ namespace Samples.Bindless
             Camera.AspectRatio = (float)width / height;
         }
 
+        //private unsafe void GenerateTextureData(uint* buffer, uint height, uint width, int image_seed)
+        //{
+        //    for (uint y = 0; y < height; y++)
+        //    {
+        //        for (uint x = 0; x < width; x++)
+        //        {
+        //            uint* rgba = buffer + 4 * (y * width + x);
 
+        //            uint float_to_unorm8(float v) 
+        //            {
+        //                v *= 255.0f;
+        //                int rounded = (int)(v + 0.5f);
+        //                if (rounded < 0)
+        //                {
+        //                    return 0;
+        //                }
+        //                else if (rounded > 255)
+        //                {
+        //                    return 255;
+        //                }
+        //                else
+        //                {
+        //                    return (uint)rounded;
+        //                }
+        //            };
+
+        //            uint pattern;
+        //            switch (image_seed & 3u)
+        //            {
+        //                default:
+        //                    {
+        //                        // Checkerboard
+        //                        pattern = (((x >> 2)) ^ (y >> 2)) & 1;
+        //                        break;
+        //                    }
+
+        //                case 1:
+        //                    {
+        //                        // Horizontal stripes
+        //                        pattern = (x >> 2) & 1u;
+        //                        break;
+        //                    }
+
+        //                case 2:
+        //                    {
+        //                        // Vertical stripes
+        //                        pattern = (y >> 2) & 1u;
+        //                        break;
+        //                    }
+
+        //                case 3:
+        //                    {
+        //                        // Diagonal stripes
+        //                        pattern = ((x + y) >> 2) & 1u;
+        //                        break;
+        //                    }
+        //            }
+
+        //            float pattern_color = true ? 0.25f : 1.0f;
+
+        //            //for (unsigned i = 0; i < 3; i++)
+        //            //{
+        //            //    // Add in some random noise for good measure so we're sure we're not sampling the exact same texture over and over.
+        //            //    rgba[i] = float_to_unorm8(pattern_color * rgb[i] + distribution(rnd));
+        //            //}
+        //            rgba[3] = 0xff;
+        //        }
+        //    }
+        //}
         internal byte[] GenerateTextureData()
         {
             byte r = 255;

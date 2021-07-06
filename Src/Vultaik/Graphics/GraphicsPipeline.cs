@@ -47,58 +47,63 @@ namespace Vultaik
 
         }
 
+
+
+
         private void SetupDescriptorSetLayout()
         {
             var indexing_features = NativeDevice.descriptor_indexing_features;
             var indexing_properties = NativeDevice.descriptor_indexing_properties;
 
-            bool supports_descriptor_indexing = indexing_features.descriptorBindingSampledImageUpdateAfterBind &&
-                indexing_features.descriptorBindingPartiallyBound &&
-                indexing_features.runtimeDescriptorArray &&
-                indexing_features.shaderSampledImageArrayNonUniformIndexing;
-
-
-
 
             ShaderResource[] resources = Resources.Where(x => x.resource_type != SPIRVCross.spvc_resource_type.PushConstant).ToArray();
 
-
-
             VkDescriptorSetLayoutBinding* layoutBinding = stackalloc VkDescriptorSetLayoutBinding[resources.Length];
+            bool is_array = resources.Where(x => x.is_array).Any();
+
+            bool is_bindless = NativeDevice.supports_descriptor_indexing();
 
             for (int i = 0; i < resources.Length; i++)
             {
                 bool is_dynamic = resources[i].is_dynamic;
+
+
                 layoutBinding[i] = new VkDescriptorSetLayoutBinding
                 {
                     binding = resources[i].binding,
-                    descriptorCount = 5,
+                    descriptorCount = 1,
                     descriptorType = resources[i].resource_type.StageTVkDescriptorType(is_dynamic),
                     stageFlags = resources[i].stage.StageToVkShaderStageFlags(),
                     pImmutableSamplers = null,
                 };
+
+                if (is_bindless)
+                    layoutBinding[i].descriptorCount = NativeDevice.VulkanNumSetsPerPool;
+
+
             }
 
-            VkDescriptorBindingFlags* descriptorBindingFlags = stackalloc VkDescriptorBindingFlags[2]
+            VkDescriptorBindingFlags* descriptorBindingFlags = stackalloc VkDescriptorBindingFlags[4]
             {
+                VkDescriptorBindingFlags.VariableDescriptorCount,
+                VkDescriptorBindingFlags.PartiallyBound,
+                VkDescriptorBindingFlags.UpdateAfterBind,
                 VkDescriptorBindingFlags.UpdateUnusedWhilePending,
-                VkDescriptorBindingFlags.VariableDescriptorCountEXT
             };
 
             VkDescriptorSetLayoutBindingFlagsCreateInfo setLayoutBindingFlags = new()
             {
                 sType = VkStructureType.DescriptorSetLayoutBindingCreateInfoEXT,
-                bindingCount = 2,
+                bindingCount = 4,
                 pBindingFlags = descriptorBindingFlags,
             };
-
 
 
             VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
             {
                 sType = VkStructureType.DescriptorSetLayoutCreateInfo,
                 flags = VkDescriptorSetLayoutCreateFlags.None,
-                pNext = &supports_descriptor_indexing,
+                pNext = NativeDevice.supports_descriptor_indexing() ? &setLayoutBindingFlags : null,
                 bindingCount = (uint)resources.Length,
                 pBindings = layoutBinding
             };

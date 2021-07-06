@@ -87,20 +87,22 @@ namespace Vultaik
 
             Recreate();
         }
+        public uint VulkanNumSetsPerPool = 16 * 16;
+        public uint VulkanNumBindingsBindlessVarying = 16 * 1024;
 
-        public const long SmallHeapMaxSize = 1024L * 1024 * 1024;
+        public long SmallHeapMaxSize = 1024L * 1024 * 1024;
 
-        public const long MinFreeSuballocationSizeToRegister = 16;
-        public const int FrameIndexLost = -1;
-        public const uint CorruptionDetectionMagicValue = 0x7F84E666;
+        public long MinFreeSuballocationSizeToRegister = 16;
+        public int FrameIndexLost = -1;
+        public uint CorruptionDetectionMagicValue = 0x7F84E666;
 
-        public const byte AllocationFillPattern_Created = 0xDC;
-        public const byte AllocationFillPattern_Destroyed = 0xEF;
-        public const bool DebugInitializeAllocations = false;
+        public byte AllocationFillPattern_Created = 0xDC;
+        public byte AllocationFillPattern_Destroyed = 0xEF;
+        public bool DebugInitializeAllocations = false;
 
-        public const long DebugMargin = 0;
-        public const long DebugAlignment = 1;
-        public const long DebugMinBufferImageGranularity = 1;
+        public long DebugMargin = 0;
+        public long DebugAlignment = 1;
+        public long DebugMinBufferImageGranularity = 1;
 
 
 
@@ -345,7 +347,6 @@ namespace Vultaik
                 DeviceExtensionsNames.Add(NativeAdapter.Arithmetic16BitStorage.Name);
 
 
-            Console.WriteLine(has_conservative_raster);
             VkPhysicalDeviceFeatures2 features = new()
             {
                 sType = VkStructureType.PhysicalDeviceFeatures2,
@@ -975,6 +976,16 @@ namespace Vultaik
         {
             if(queue != VkQueue.Null)
                 vkQueueWaitIdle(queue).CheckResult();
+        }
+
+        internal bool supports_descriptor_indexing()
+        {
+            bool supports_descriptor_indexing = descriptor_indexing_features.descriptorBindingSampledImageUpdateAfterBind &&
+                                                descriptor_indexing_features.descriptorBindingPartiallyBound &&
+                                                descriptor_indexing_features.runtimeDescriptorArray &&
+                                                descriptor_indexing_features.shaderSampledImageArrayNonUniformIndexing;
+
+            return supports_descriptor_indexing;
         }
 
         public void WaitIdle()

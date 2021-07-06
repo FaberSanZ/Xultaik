@@ -52,7 +52,6 @@ namespace Vultaik
                 descriptorSetCount = 1,
                 pSetLayouts = &setLayout,
                 descriptorPool = pool,
-                
             };
 
 

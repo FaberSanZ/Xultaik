@@ -18,10 +18,6 @@ struct VSOutput
 float4 main(VSOutput input) : SV_TARGET
 {
     float4 color = textureColor[NonUniformResourceIndex(index.i)].Sample(samplerColor, input.UV);
-    //float4 colo2 = textureColor[NonUniformResourceIndex(index.i + 1)].Sample(samplerColor, input.UV);
-    //float4 colo3 = textureColor[NonUniformResourceIndex(index.i + 2)].Sample(samplerColor, input.UV);
-    //colo3 = colo2 / colo3;
-    
     
     return color;
 }

@@ -2,6 +2,7 @@
 // This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 
 
+using System;
 using System.Collections.Generic;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
@@ -17,7 +18,6 @@ namespace Vultaik
         internal VkPipelineLayout _pipelineLayout;
 
 
-        internal uint _count = 0;
         internal List<ResourceData> Resources = new();
         internal VkPipelineBindPoint BindPoint;
 
@@ -59,14 +59,11 @@ namespace Vultaik
 
 
             int resources_count = Resources.Count;
-            int count = 0;
 
-            VkWriteDescriptorSet* ptr = stackalloc VkWriteDescriptorSet[resources_count + 12];
+            List<VkWriteDescriptorSet> writes = new();// stackalloc VkWriteDescriptorSet[resources_count + 12];
             VkDescriptorBufferInfo* bufferInfos = stackalloc VkDescriptorBufferInfo[resources_count];
             VkDescriptorImageInfo* imageInfos = stackalloc VkDescriptorImageInfo[resources_count];
 
-
-            List<VkWriteDescriptorSet> descriptorSets = new();
 
             for (int i = 0; i < resources_count; i++)
             {
@@ -94,8 +91,7 @@ namespace Vultaik
                     };
 
 
-                    ptr[i] = write_descriptor;
-                    count++;
+                    writes.Add(write_descriptor);
                 }
 
 
@@ -121,7 +117,7 @@ namespace Vultaik
                     };
 
 
-                    ptr[i] = write_descriptor; count++;
+                    writes.Add(write_descriptor);
 
                 }
 
@@ -146,8 +142,7 @@ namespace Vultaik
 
                     };
 
-
-                    ptr[i] = write_descriptor; count++;
+                    writes.Add(write_descriptor);
 
 
                 }
@@ -173,7 +168,7 @@ namespace Vultaik
                     };
 
 
-                    ptr[i] = write_descriptor; count++;
+                    writes.Add(write_descriptor);
 
 
                 }
@@ -197,27 +192,22 @@ namespace Vultaik
                     };
 
 
-                    ptr[i] = write_descriptor; count++;
+                    writes.Add(write_descriptor);
 
                 }
             }
 
             var bind_resources = DescriptorData.DataBindless;
 
-            VkDescriptorImageInfo[][] image_info_bind = new VkDescriptorImageInfo[bind_resources.Count][];
-
-
             for (int i = 0; i < bind_resources.Count; i++)
             {
                 if (bind_resources[i].DescriptorType == VkDescriptorType.SampledImage)
                 {
-                    VkDescriptorImageInfo* image_infos = stackalloc VkDescriptorImageInfo[bind_resources.Count];
-
-                    image_info_bind[i] = new VkDescriptorImageInfo[bind_resources[i].Images.Length];
+                    VkDescriptorImageInfo* image_infos = stackalloc VkDescriptorImageInfo[bind_resources[i].Images.Length];
 
                     for (int b = 0; b < bind_resources[i].Images.Length; b++)
                     {
-                        image_info_bind[i][b] = new VkDescriptorImageInfo()
+                        image_infos[b] = new VkDescriptorImageInfo()
                         {
                             imageLayout = VkImageLayout.ShaderReadOnlyOptimal,
                             imageView = bind_resources[i].Images[b].image_view,
@@ -230,17 +220,20 @@ namespace Vultaik
                         dstBinding = (uint)bind_resources[i].Binding,
                         descriptorType = VkDescriptorType.SampledImage,
                         descriptorCount = (uint)bind_resources[i].Images.Length,
-                        pImageInfo = Interop.AllocToPointer(image_info_bind[i]),
-                        dstArrayElement = (uint)i,
+                        pImageInfo = image_infos,
                     };
-                    ptr[i + resources_count - 1] = write_descriptor_bind;
-                    count++;
+
+                    writes.Add(write_descriptor_bind);
 
                 }
 
             }
 
-            vkUpdateDescriptorSets(NativeDevice.handle, (uint)count - 1, ptr, 0, null);
+
+
+            ReadOnlySpan<VkWriteDescriptorSet> readOnlySpan = new ReadOnlySpan<VkWriteDescriptorSet>(writes.ToArray());
+
+            vkUpdateDescriptorSets(NativeDevice.handle, readOnlySpan);
         }
 
 

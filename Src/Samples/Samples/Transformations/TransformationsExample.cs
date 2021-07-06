@@ -245,7 +245,6 @@ namespace Samples.Transformations
 
             float rotation = time.TotalMilliseconds / 800;
 
-            Console.WriteLine(rotation);
             Model = Matrix4x4.CreateFromYawPitchRoll(-rotation, -rotation, -rotation) * Matrix4x4.CreateTranslation(-0.45f, 0.0f, 0.0f);
             uniform.Update(Camera, Model);
             ConstBuffer.SetData(ref uniform);

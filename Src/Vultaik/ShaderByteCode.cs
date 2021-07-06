@@ -65,6 +65,7 @@ namespace Vultaik
         internal uint offset { get; set; }
         internal bool is_dynamic { get; set; }
         internal uint set { get; set; }
+        internal bool is_array { get; set; }
         internal uint binding { get; set; }
         internal uint size { get; set; }
         internal uint location { get; set; }
@@ -174,8 +175,10 @@ namespace Vultaik
             List<string> args = new()
             {
                 "-spirv",
-                "-T", profile,
-                "-E", entryPoint,
+                "-T",
+                profile,
+                "-E",
+                entryPoint,
                 "-fspv-target-env=vulkan1.2",
                 "-fspv-extension=SPV_KHR_multiview",
                 "-fspv-extension=SPV_KHR_shader_draw_parameters",
@@ -183,8 +186,9 @@ namespace Vultaik
             };
 
             if (ray_tracing)
+            {
                 args.Add("SPV_KHR_ray_tracing");
-
+            }
 
             string source = File.ReadAllText(path);
             using IDxcIncludeHandler includeHandler = new ShaderIncludeHandler(directory);
@@ -261,9 +265,10 @@ namespace Vultaik
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.UniformBuffer, (spvc_reflected_resource*)&uniformBufferList, &uniformBufferCount);
             for (uint i = 0; i < uniformBufferCount; i++)
             {
-                uint set = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)uniformBufferList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
-                uint binding = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)uniformBufferList[i].id, SpvDecoration.SpvDecorationBinding);
-                string name = Interop.String.FromPointer(spvc_compiler_get_name(compiler_hlsl, (SpvId)uniformBufferList[i].id));
+                uint set = spvc_compiler_get_decoration(compiler_hlsl, uniformBufferList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_hlsl, uniformBufferList[i].id, SpvDecoration.SpvDecorationBinding);
+
+                string name = Interop.String.FromPointer(spvc_compiler_get_name(compiler_hlsl, uniformBufferList[i].id));
 
                 Resources.Add(new()
                 {
@@ -280,8 +285,11 @@ namespace Vultaik
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SeparateImage, (spvc_reflected_resource*)&separateImageList, &separateImageCount);
             for (uint i = 0; i < separateImageCount; i++)
             {
-                uint set = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)separateImageList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
-                uint binding = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)separateImageList[i].id, SpvDecoration.SpvDecorationBinding);
+                uint set = spvc_compiler_get_decoration(compiler_hlsl, separateImageList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_hlsl, separateImageList[i].id, SpvDecoration.SpvDecorationBinding);
+                bool hasbind = spvc_compiler_has_decoration(compiler_hlsl, separateImageList[i].id, SpvDecoration.SpvDecorationNonUniform);
+                spvc_type type = spvc_compiler_get_type_handle(compiler_hlsl, (SpvId)separateImageList[i].type_id);
+                var num_array = spvc_type_get_num_array_dimensions(type);
 
                 Resources.Add(new()
                 {
@@ -289,6 +297,7 @@ namespace Vultaik
                     binding = binding,
                     resource_type = spvc_resource_type.SeparateImage,
                     stage = Stage,
+                    is_array = num_array >= 0,
                 });
 
             }
@@ -300,9 +309,9 @@ namespace Vultaik
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SeparateSamplers, (spvc_reflected_resource*)&SeparateSamplersList, &SeparateSamplersCount);
             for (uint i = 0; i < SeparateSamplersCount; i++)
             {
-                uint set = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)SeparateSamplersList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
-                uint binding = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)SeparateSamplersList[i].id, SpvDecoration.SpvDecorationBinding);
-
+                uint set = spvc_compiler_get_decoration(compiler_hlsl, SeparateSamplersList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_hlsl, SeparateSamplersList[i].id, SpvDecoration.SpvDecorationBinding);
+                
                 Resources.Add(new()
                 {
                     set = set,
@@ -316,8 +325,8 @@ namespace Vultaik
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.SampledImage, (spvc_reflected_resource*)&sampledImageList, &sampledImageCount);
             for (uint i = 0; i < sampledImageCount; i++)
             {
-                uint set = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)sampledImageList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
-                uint binding = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)sampledImageList[i].id, SpvDecoration.SpvDecorationBinding);
+                uint set = spvc_compiler_get_decoration(compiler_hlsl, sampledImageList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_hlsl, sampledImageList[i].id, SpvDecoration.SpvDecorationBinding);
 
                 Resources.Add(new()
                 {
@@ -332,9 +341,9 @@ namespace Vultaik
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.PushConstant, (spvc_reflected_resource*)&pushConstantList, &pushConstantCount);
             for (uint i = 0; i < pushConstantCount; i++)
             {
-                uint set = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)pushConstantList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
-                uint binding = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)pushConstantList[i].id, SpvDecoration.SpvDecorationBinding);
-                uint offset = spvc_compiler_get_decoration(compiler_hlsl, (SpvId)pushConstantList[i].id, SpvDecoration.SpvDecorationOffset);
+                uint set = spvc_compiler_get_decoration(compiler_hlsl, pushConstantList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_hlsl, pushConstantList[i].id, SpvDecoration.SpvDecorationBinding);
+                uint offset = spvc_compiler_get_decoration(compiler_hlsl, pushConstantList[i].id, SpvDecoration.SpvDecorationOffset);
                 spvc_type type = spvc_compiler_get_type_handle(compiler_hlsl, (SpvId)pushConstantList[i].type_id);
 
                 nuint size = 0;
