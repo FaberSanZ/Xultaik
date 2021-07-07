@@ -64,6 +64,8 @@ These extensions will likely become mandatory later.
 
 ## LowLevelAPI
 ### 
+> ℹ️ These examples will be part of a series of tutorials of the documentation, therefore these examples have specific things of hlsl
+
 
 
 Example | Details
