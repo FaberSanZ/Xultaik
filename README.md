@@ -66,7 +66,7 @@ These extensions will likely become mandatory later.
 ### 
 
 
-Example | Details
+LowLevelAPI | Details
 ---------|--------
 <img src="Screenshots/ClearScreen.PNG" width=380> | [Clear Screen](Src/Samples/Samples/ClearScreen.cs)<br> This example shows how to configure the device and clear the color.
 <img src="Screenshots/Triangle.PNG" width=380> | [Triangle](Src/Samples/Samples/Triangle.cs)<br> This example shows how to render simple triangle.
@@ -81,6 +81,12 @@ Example | Details
 
 <hr>
 <br>
+
+
+Effects | Details
+---------|--------
+<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/DiffuseLighting.PNG" width=380> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create diffuse lighting. 
+<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/AmbientLighting.PNG" width=380> | [Ambient Lighting](Src/Samples/Samples/AmbientLighting)<br> This example shows how to create ambient lighting. 
 
 
 Additionally, **Vultaik** uses NuGet packages or code from the following repositories:
