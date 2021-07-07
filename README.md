@@ -75,18 +75,11 @@ LowLevelAPI | Details
 <img src="Screenshots/LoadGLTF.PNG" width=380> | [Load GLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs)<br> This example shows how to load GLTF models.
 <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/LoadTexture.PNG" width=380> | [Load Texture](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadTexture.cs)<br> This example shows how to load 2D texture from disk (including all mip levels). 
 <img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/Bindless.PNG" width=380> | [Bindless](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Bindless.cs)<br> This example demonstrates the use of VK_EXT_descriptor_indexing for creating descriptor sets with a variable size that can be dynamically indexed in a shader using `SPV_EXT_descriptor_indexing`.
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/DiffuseLighting.PNG" width=380> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create diffuse lighting. 
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/AmbientLighting.PNG" width=380> | [Ambient Lighting](Src/Samples/Samples/AmbientLighting)<br> This example shows how to create ambient lighting. 
-
-
+****
 <hr>
 <br>
 
 
-Effects | Details
----------|--------
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/DiffuseLighting.PNG" width=380> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create diffuse lighting. 
-<img src="https://github.com/Zeckoxe/Zeckoxe-Engine/blob/master/Screenshots/AmbientLighting.PNG" width=380> | [Ambient Lighting](Src/Samples/Samples/AmbientLighting)<br> This example shows how to create ambient lighting. 
 
 
 Additionally, **Vultaik** uses NuGet packages or code from the following repositories:
