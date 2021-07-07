@@ -66,7 +66,7 @@ These extensions will likely become mandatory later.
 ### 
 
 
-Examples | Details
+Example | Details
 ---------|--------
 <img src="Screenshots/ClearScreen.PNG" width=380> | [Clear Screen](Src/Samples/Samples/ClearScreen.cs)<br> This example shows how to configure the device and clear the color.
 <img src="Screenshots/Triangle.PNG" width=380> | [Triangle](Src/Samples/Samples/Triangle.cs)<br> This example shows how to render simple triangle.
