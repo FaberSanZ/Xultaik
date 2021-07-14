@@ -185,7 +185,6 @@ namespace Samples.Bindless
 
             cmd.PushConstant(PipelineState_0, ShaderStage.Vertex, model);
             cmd.PushConstant<int>(PipelineState_0, ShaderStage.Fragment, text);
-            cmd.BindDescriptorSets(DescriptorSet_0);
             cmd.DrawIndexed(Indices.Length, 1, 0, 0, 0);
             //cmd.DrawIndexed(6, 1, 0, 0, 0);
 
@@ -252,7 +251,6 @@ namespace Samples.Bindless
             Pipelinedescription_0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionTexture.Size);
             Pipelinedescription_0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription_0.SetVertexAttribute(VertexType.TextureCoordinate);
-            //Pipelinedescription_0.SetCullMode(VkCullModeFlags.None);
             PipelineState_0 = new(Pipelinedescription_0);
 
             DescriptorData descriptorData_0 = new();
@@ -299,13 +297,9 @@ namespace Samples.Bindless
 
 
             commandBuffer.SetGraphicPipeline(PipelineState_0);
-            //commandBuffer.PushConstant(PipelineState_0, ShaderStage.Vertex, Model);
-            //commandBuffer.PushConstant<int>(PipelineState_0, ShaderStage.Fragment, 1);
+            commandBuffer.BindDescriptorSets(DescriptorSet_0);
 
             GenerateCubes(commandBuffer, true);
-
-
-
 
 
             commandBuffer.Close();

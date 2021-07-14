@@ -226,13 +226,17 @@ namespace Vultaik
         {
             switch (element)
             {
-                case VertexType.Position: return Interop.SizeOf<Vector3>();
+                case VertexType.Position: 
+                    return Interop.SizeOf<Vector3>();
 
-                case VertexType.Normal: return 12;
+                case VertexType.Normal: 
+                    return Interop.SizeOf<Vector3>();
 
-                case VertexType.TextureCoordinate: return 8;
+                case VertexType.TextureCoordinate: 
+                    return Interop.SizeOf<Vector2>();
 
-                case VertexType.Color: return 12;
+                case VertexType.Color: 
+                    return Interop.SizeOf<Vector3>();
 
 
                 default: return 0;

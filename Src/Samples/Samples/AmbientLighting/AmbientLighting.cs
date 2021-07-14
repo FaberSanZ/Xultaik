@@ -99,7 +99,7 @@ namespace Samples.AmbientLighting
             });
 
 
-            GLTFModel = new(Device, Constants.ModelsFile + "untitled.gltf");
+            GLTFModel = new(Device, Constants.ModelsFile + "chinesedragon.gltf");
 
             CreatePipelineState();
 
