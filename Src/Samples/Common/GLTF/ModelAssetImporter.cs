@@ -330,7 +330,6 @@ namespace Vultaik.GLTF
                     {
                         AccTan = gltf.Accessors[accessorIdx];
                         EnsureBufferIsLoaded(gltf.BufferViews[(int)AccTan.BufferView].Buffer);
-                        ColorType = AccColor.Type is GltfType.Vec3 ? ColorType.Vec3 : ColorType.Vec4;
                     }
 
                     if (Options.Skinning)
@@ -512,10 +511,10 @@ namespace Vultaik.GLTF
 
                                 if (inUvPtr is not null && attribute.Type is VertexType.TextureCoordinate)
                                 {
-                                    if (propertyInfos.First().GetCustomAttribute<VertexAttribute>()!.Type == attribute.Type)
+                                    if (propertyInfos.First().GetCustomAttribute<VertexAttribute>().Type == attribute.Type)
                                         pad += 0;
                                     else
-                                        pad += 8;
+                                        pad += 12;
 
                                     System.Buffer.MemoryCopy(inUvPtr, stagVertPtr + pad, 8, 8);
                                     inUvPtr += 8;

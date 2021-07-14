@@ -47,14 +47,13 @@ namespace Samples.AmbientLighting
 
             AdapterConfig = new()
             {
-                VulkanDebug = true,
+                VulkanDebug = false,
                 ForceExclusiveTransferQueue = true,
                 SwapChain = true,
-                Bindless = true
             };
 
 
-            Camera.SetPosition(0, -7.15f, -30.0f);
+            Camera.SetPosition(0, -0.55f, -10.0f);
             Camera.Update();
 
             Adapter = new(AdapterConfig);
@@ -100,7 +99,7 @@ namespace Samples.AmbientLighting
             });
 
 
-            GLTFModel = new(Device, Constants.ModelsFile + "mesh_mat.gltf");
+            GLTFModel = new(Device, Constants.ModelsFile + "untitled.gltf");
 
             CreatePipelineState();
 
@@ -121,7 +120,7 @@ namespace Samples.AmbientLighting
             string fragment = Constants.ShadersFile + @"AmbientLighting\Fragment.hlsl";
             string vertex = Constants.ShadersFile + @"AmbientLighting\Vertex.hlsl";
 
-            Image text1 = ImageFile.Load2DFromFile(Device, images + "large_red_bricks_diff_2k.jpg");
+            Image text1 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap16-1024.png");
 
             Sampler sampler = new Sampler(Device);
 
@@ -130,10 +129,10 @@ namespace Samples.AmbientLighting
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.SetShader(new ShaderBytecode(fragment, ShaderStage.Fragment));
             Pipelinedescription0.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex));
-            Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
+            Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size );
             Pipelinedescription0.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription0.SetVertexAttribute(VertexType.Normal);
+            Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_0 = new(Pipelinedescription0);
 
             DescriptorData descriptorData_0 = new();

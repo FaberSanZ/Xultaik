@@ -103,7 +103,7 @@ namespace Vultaik
             {
                 sType = VkStructureType.DescriptorSetLayoutCreateInfo,
                 flags = VkDescriptorSetLayoutCreateFlags.None,
-                pNext = NativeDevice.supports_descriptor_indexing() ? &setLayoutBindingFlags : null,
+                pNext = is_bindless ? &setLayoutBindingFlags : null,
                 bindingCount = (uint)resources.Length,
                 pBindings = layoutBinding
             };

@@ -148,6 +148,9 @@ namespace Vultaik
         }
         public void SetVertexAttribute(VertexType element, int binding = 0)
         {
+
+            Console.WriteLine(VertexAttributeLocation);
+            Console.WriteLine(element);
             PipelineVertexInput.VertexAttributeDescriptions.Add(new()
             {
                 Binding = binding,
@@ -158,6 +161,7 @@ namespace Vultaik
 
             VertexAttributeLocation++;
             VertexAttributeOffset += element.Size();
+
         }
 
 

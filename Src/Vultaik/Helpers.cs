@@ -14,6 +14,7 @@ using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using Interop = Vultaik.Interop;
 using SPIRVCross;
+using System.Numerics;
 
 namespace Vultaik
 {
@@ -225,7 +226,7 @@ namespace Vultaik
         {
             switch (element)
             {
-                case VertexType.Position: return 12;
+                case VertexType.Position: return Interop.SizeOf<Vector3>();
 
                 case VertexType.Normal: return 12;
 
@@ -243,13 +244,17 @@ namespace Vultaik
         {
             switch (element)
             {
-                case VertexType.Position: return VkFormat.R32G32B32SFloat;
+                case VertexType.Position: 
+                    return VkFormat.R32G32B32SFloat;
 
-                case VertexType.Normal: return VkFormat.R32G32B32SFloat;
+                case VertexType.Normal: 
+                    return VkFormat.R32G32B32SFloat;
 
-                case VertexType.TextureCoordinate: return VkFormat.R32G32SFloat;
+                case VertexType.TextureCoordinate: 
+                    return VkFormat.R32G32SFloat;
 
-                case VertexType.Color: return VkFormat.R32G32B32SFloat;
+                case VertexType.Color: 
+                    return VkFormat.R32G32B32SFloat;
 
                 default: return 0;
             }
