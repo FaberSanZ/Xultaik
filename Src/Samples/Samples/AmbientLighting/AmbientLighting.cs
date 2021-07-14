@@ -120,7 +120,7 @@ namespace Samples.AmbientLighting
             string fragment = Constants.ShadersFile + @"AmbientLighting\Fragment.hlsl";
             string vertex = Constants.ShadersFile + @"AmbientLighting\Vertex.hlsl";
 
-            Image text1 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap16-1024.png");
+            Image text1 = ImageFile.Load2DFromFile(Device, images + "UV_Grid_Sm.jpg");
 
             Sampler sampler = new Sampler(Device);
 

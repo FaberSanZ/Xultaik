@@ -383,7 +383,7 @@ namespace Vultaik
             vkCmdBindPipeline(handle, VkPipelineBindPoint.Compute, pipeline.handle);
         }
 
-        public void SetRayTracinPipeline(GraphicsPipeline pipelineState)
+        public void SetRayTracingPipeline(GraphicsPipeline pipelineState)
         {
             //vkCmdBindPipeline(NativeCommandBuffer, VkPipelineBindPoint.RayTracingNV, pipelineState.rayTracinPipeline);
         }
