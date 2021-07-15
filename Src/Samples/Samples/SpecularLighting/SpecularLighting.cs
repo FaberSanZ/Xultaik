@@ -79,11 +79,15 @@ namespace Samples.SpecularLighting
         public Vector3 Position { get; set; }
         public Vector3 Rotation { get; set; }
         public Vector3 Size { get; set; } = new Vector3(1);
+
         public Matrix4x4 Model { get; set; }
+
         private void UpdateModel()
         {
             Model = Matrix4x4.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix4x4.CreateTranslation(Position) * Matrix4x4.CreateScale(Size);
         }
+
+
         public void Draw(CommandBuffer cmd, GraphicsPipeline pipeline)
         {
             UpdateModel();
@@ -159,6 +163,8 @@ namespace Samples.SpecularLighting
                 Ambient = new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
                 Diffuse = new Vector4(0.8f, 0.8f, 0.8f, 1.0f),
                 Direction = new Vector3(1, 1, -1.05f),
+                Specular = new(1,1,1),
+                SpecularPower = 25,
             };
 
 
@@ -258,11 +264,11 @@ namespace Samples.SpecularLighting
             ConstBuffer.SetData(ref uniform);
 
 
-            Sphere.Rotation = new(yaw);
-            Torus.Rotation = new(yaw);
-            Pyramid.Rotation = new(yaw);
-            Cube.Rotation = new(yaw);
-            Capsule.Rotation = new(yaw);
+            Sphere.Rotation = new(yaw, -yaw, yaw);
+            Torus.Rotation = new(-yaw, yaw, -yaw);
+            Pyramid.Rotation = new(-yaw,- yaw, yaw);
+            Cube.Rotation = new(yaw, -yaw, -yaw);
+            Capsule.Rotation = new(-yaw, yaw, -yaw);
 
 
             yaw = timer;
@@ -350,14 +356,16 @@ namespace Samples.SpecularLighting
 
         public Vector3 Direction;
 
-        public float padding;
+        public float SpecularPower;
+        public Vector3 Specular;
 
-        public Light(Vector4 D, Vector3 DI, Vector4 AM)
+        public Light(Vector4 D, Vector3 DI, Vector4 AM, float sp, Vector3 s)
         {
             Diffuse = D;
             Direction = DI;
             Ambient = AM;
-            padding = 0;
+            SpecularPower = sp;
+            Specular = s;
         }
     }
 }

@@ -2,6 +2,8 @@ struct VSOutput
 {
 	[[vk::location(0)]] float3 Normal : NORMAL0;
 	[[vk::location(1)]] float2 UV : TEXCOORD0;
+    [[vk::location(2)]] float3 ViewDirection : TEXCOORD1;
+
 };
 
 
@@ -17,7 +19,8 @@ struct LightBuffer
 	float4 ambientColor;
 	float4 diffuseColor;
 	float3 lightDirection;
-	float padding;
+    float specularPower;
+    float4 specularColor;
 };
 ConstantBuffer<LightBuffer> light : register(b3);
 
@@ -30,7 +33,8 @@ float4 main(VSOutput input) : SV_TARGET
 	float3 lightDir;
 	float lightIntensity;
 	float4 color;
-
+    float3 reflection;
+    float4 specular;
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	texture_color = Texture.Sample(Sampler, input.UV);
@@ -38,6 +42,7 @@ float4 main(VSOutput input) : SV_TARGET
 
 	// Set the default output color to the ambient light value for all pixels.
 	color = light.ambientColor;
+    specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Invert the light direction for calculations.
 	lightDir = -light.lightDirection;
@@ -49,6 +54,11 @@ float4 main(VSOutput input) : SV_TARGET
 	{
 		// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
 		color += (light.diffuseColor * lightIntensity);
+		
+        color = saturate(color);
+        reflection = normalize(2 * lightIntensity * input.Normal - lightDir);
+        specular = pow(saturate(dot(reflection, input.ViewDirection)), light.specularPower);
+
 	}
 
 	// Saturate the final light color.
@@ -57,6 +67,8 @@ float4 main(VSOutput input) : SV_TARGET
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
 	// EX 2: for seeing only the lighting effect.
 	color = color * texture_color;
+	
+    color = saturate(color + specular);
 
 
 	return color;
