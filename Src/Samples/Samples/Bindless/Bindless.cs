@@ -52,7 +52,7 @@ namespace Samples.Bindless
             AdapterConfig = new()
             {
                 SwapChain = true,
-                VulkanDebug = false,
+                VulkanDebug = true,
                 Fullscreen = false,
                 Bindless = true,
             };
@@ -240,7 +240,7 @@ namespace Samples.Bindless
             Image text6 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap12-1024.png");
             Image text7 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png");
             Image text8 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap11-512.png");
-            Image text9 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap17-512.png");
+            Image text9 = ImageFile.Load2DFromFile(Device, images + "texture-sheet.jpg");
             Sampler sampler = new Sampler(Device);
 
 

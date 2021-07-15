@@ -123,7 +123,16 @@ namespace Vultaik
 
             InitializePlatformDevice();
 
+            // Create Semaphores
+            image_available_semaphore = create_semaphore();
+            render_finished_semaphore = create_semaphore();
 
+
+            transfer_cmd_pool = create_command_pool(TransferFamily);
+
+            GraphicsCommandBuffer = new(this, CommandBufferType.AsyncGraphics);
+
+            _descriptorPoolManager_0 = new(this);
         }
 
         public void InitializePlatformDevice()
@@ -153,25 +162,7 @@ namespace Vultaik
             CreateCommandQueues();
 
 
-            // Create Semaphores
-            image_available_semaphore = create_semaphore();
-            render_finished_semaphore = create_semaphore();
 
-
-            transfer_cmd_pool = create_command_pool(TransferFamily);
-
-            //command_buffer_primary = create_command_buffer_primary(graphics_cmd_pool);
-            //command_buffer_secondary = CreateCommandBufferSecondary();
-
-
-            GraphicsCommandBuffer = new(this, CommandBufferType.AsyncGraphics);
-
-
-
-            _descriptorPoolManager_0 = new(this);
-
-            //_descriptorPoolManager_1 = _descriptorPoolManager_0;
-            //_descriptorPoolManager_1.HeapPool.Reset();
         }
 
 

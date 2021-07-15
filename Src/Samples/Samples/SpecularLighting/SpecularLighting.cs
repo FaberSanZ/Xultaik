@@ -11,13 +11,92 @@ using Buffer = Vultaik.Buffer;
 using Interop = Vultaik.Interop;
 using Samples.Common;
 using Vultaik.Toolkit;
+using Vultaik.Toolkit.GeometricPrimitives;
 
-namespace Samples.AmbientLighting
+namespace Samples.SpecularLighting
 {
-    public class AmbientLighting : ExampleBase, IDisposable
+    public class Primitive
     {
 
-        private ModelAssetImporter<VertexPositionNormalTexture> GLTFModel;
+
+        List<VertexPositionNormalTexture> vertices = new();
+        List<ushort> indices = new();
+        public Primitive(Device device, PrimitiveType type)
+        {
+
+            switch (type)
+            {
+                case PrimitiveType.Sphere:
+                    Primitives.Sphere(2.0f, 32, out vertices, out indices);
+                    break;
+
+                case PrimitiveType.Torus:
+                    Primitives.Torus(2.0f, 0.6f, 32, out vertices, out indices);
+                    break;
+
+                case PrimitiveType.Capsule:
+                    Primitives.Capsule(3.0f, 2.0f, 32, out vertices, out indices);
+                    break;
+                case PrimitiveType.Cube:
+                    Primitives.Cube(1.5f, out vertices, out indices);
+                    break;
+                case PrimitiveType.Quad:
+                    Primitives.Quad(1.5f, out vertices, out indices);
+                    break;
+
+                case PrimitiveType.Pyramid:
+                    Primitives.Pyramid(1.5f, out vertices, out indices);
+                    break;
+                case PrimitiveType.Plane:
+                    Primitives.Plane(1.0f, out vertices, out indices);
+                    break;
+                default:
+                    break;
+            }
+
+
+            VertexBuffer = new(device, new()
+            {
+                BufferFlags = BufferFlags.VertexBuffer,
+                Usage = ResourceUsage.CPU_To_GPU,
+                SizeInBytes = Interop.SizeOf<VertexPositionNormalTexture>(vertices.ToArray()),
+            });
+            VertexBuffer.SetData(vertices.ToArray());
+
+
+            IndexBuffer = new(device, new()
+            {
+                BufferFlags = BufferFlags.IndexBuffer,
+                Usage = ResourceUsage.CPU_To_GPU,
+                SizeInBytes = Interop.SizeOf<ushort>(indices.ToArray()),
+            });
+            IndexBuffer.SetData(indices.ToArray());
+
+        }
+
+        public Buffer VertexBuffer;
+        public Buffer IndexBuffer;
+        public Vector3 Position { get; set; }
+        public Vector3 Rotation { get; set; }
+        public Vector3 Size { get; set; } = new Vector3(1);
+        public Matrix4x4 Model { get; set; }
+        private void UpdateModel()
+        {
+            Model = Matrix4x4.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix4x4.CreateTranslation(Position) * Matrix4x4.CreateScale(Size);
+        }
+        public void Draw(CommandBuffer cmd, GraphicsPipeline pipeline)
+        {
+            UpdateModel();
+
+            cmd.PushConstant(pipeline, ShaderStage.Vertex, Model);
+            cmd.SetVertexBuffer(VertexBuffer);
+            cmd.SetIndexBuffer(IndexBuffer, indexType: VkIndexType.Uint16);
+            cmd.DrawIndexed(indices.Count, 1, 0, 0, 0);
+        }
+    }
+    public class SpecularLighting : ExampleBase, IDisposable
+    {
+
         private AdapterConfig AdapterConfig;
         private Adapter Adapter;
         private Device Device;
@@ -29,14 +108,18 @@ namespace Samples.AmbientLighting
         private Buffer ConstBuffer;
         private Buffer ConstBuffer2;
         private GraphicsPipeline PipelineState_0;
-
-
+        Primitive Sphere;
+        Primitive Torus;
+        Primitive Cube;
+        Primitive Pyramid;
+        Primitive Capsule;
+        
         private TransformUniform uniform;
         private Light light;
         private float yaw, pitch, roll = 0;
 
 
-        public AmbientLighting() : base()
+        public SpecularLighting() : base()
         {
 
         }
@@ -51,7 +134,7 @@ namespace Samples.AmbientLighting
             };
 
 
-            Camera.SetPosition(0, -0.55f, -8.0f);
+            Camera.SetPosition(0, 0, -8.0f);
             Camera.Update();
 
             Adapter = new(AdapterConfig);
@@ -69,7 +152,7 @@ namespace Samples.AmbientLighting
             Context = new(Device);
             Framebuffer = new(SwapChain);
 
-            uniform = new(Camera.Projection, Model, Camera.View);
+            uniform = new(Camera.Projection, Camera.View);
 
             light = new()
             {
@@ -95,8 +178,21 @@ namespace Samples.AmbientLighting
                 SizeInBytes = Interop.SizeOf<Light>(),
             });
 
+            Sphere = new(Device, PrimitiveType.Sphere);
+            Sphere.Position = new(-2.5f, 1.5f, 0.0f);
 
-            GLTFModel = new(Device, Constants.ModelsFile + "chinesedragon.gltf");
+            Torus = new(Device, PrimitiveType.Torus);
+            Torus.Position = new(2.5f, 1.5f, 0.0f);
+
+            Pyramid = new(Device, PrimitiveType.Pyramid);
+            Pyramid.Position = new(-2.5f, -1.5f, 0.0f);
+
+            Cube = new(Device, PrimitiveType.Cube);
+            Cube.Position = new(2.5f, -1.5f, 0.0f);
+
+            Capsule = new(Device, PrimitiveType.Capsule);
+            Capsule.Position = new(0, 0, 0.0f);
+            Capsule.Size = new(0.4f, 0.4f, 0.4f);
 
             CreatePipelineState();
 
@@ -114,8 +210,8 @@ namespace Samples.AmbientLighting
         {
 
             string images = Constants.ImagesFile;
-            string fragment = Constants.ShadersFile + @"AmbientLighting\Fragment.hlsl";
-            string vertex = Constants.ShadersFile + @"AmbientLighting\Vertex.hlsl";
+            string fragment = Constants.ShadersFile + @"SpecularLighting\Fragment.hlsl";
+            string vertex = Constants.ShadersFile + @"SpecularLighting\Vertex.hlsl";
 
             Image text1 = ImageFile.Load2DFromFile(Device, images + "UV_Grid_Sm.jpg");
 
@@ -130,6 +226,7 @@ namespace Samples.AmbientLighting
             Pipelinedescription0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription0.SetVertexAttribute(VertexType.Normal);
             Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
+            //Pipelinedescription0.SetFillMode(VkPolygonMode.Line);
             PipelineState_0 = new(Pipelinedescription0);
 
             DescriptorData descriptorData_0 = new();
@@ -154,16 +251,18 @@ namespace Samples.AmbientLighting
             light.Direction.Y = 0.0f + MathF.Sin(MathUtil.Radians(timer * 360.0f)) * 2.0f;
             light.Direction.Z = 0.0f + MathF.Cos(MathUtil.Radians(timer * 360.0f)) * 2.0f;
 
-
-
-
             ConstBuffer2.SetData(ref light);
 
 
-            Model = Matrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix4x4.CreateTranslation(0.0f, .0f, 0.0f);
-            uniform.Update(Camera, Model);
+            uniform.Update(Camera);
             ConstBuffer.SetData(ref uniform);
 
+
+            Sphere.Rotation = new(yaw);
+            Torus.Rotation = new(yaw);
+            Pyramid.Rotation = new(yaw);
+            Cube.Rotation = new(yaw);
+            Capsule.Rotation = new(yaw);
 
 
             yaw = timer;
@@ -184,7 +283,12 @@ namespace Samples.AmbientLighting
 
             cmd.BindDescriptorSets(DescriptorSet_0);
             cmd.SetGraphicPipeline(PipelineState_0);
-            GLTFModel.Draw(cmd, PipelineState_0);
+
+            Sphere.Draw(cmd, PipelineState_0);
+            Torus.Draw(cmd, PipelineState_0);
+            Pyramid.Draw(cmd, PipelineState_0);
+            Cube.Draw(cmd, PipelineState_0);
+            Capsule.Draw(cmd, PipelineState_0);
 
 
             cmd.Close();
@@ -218,23 +322,19 @@ namespace Samples.AmbientLighting
     [StructLayout(LayoutKind.Sequential)]
     public struct TransformUniform
     {
-        public TransformUniform(Matrix4x4 p, Matrix4x4 m, Matrix4x4 v)
+        public TransformUniform(Matrix4x4 p, Matrix4x4 v)
         {
             P = p;
-            M = m;
             V = v;
         }
-
-        public Matrix4x4 M;
 
         public Matrix4x4 V;
 
         public Matrix4x4 P;
 
-        public void Update(Camera camera, Matrix4x4 m)
+        public void Update(Camera camera)
         {
             P = camera.Projection;
-            M = m;
             V = camera.View;
         }
     }
