@@ -70,16 +70,16 @@ These extensions will likely become mandatory later.
 
 Example | Details
 ---------|--------
-<img src="Screenshots/ClearScreen.PNG" width=380> | [Clear Screen](Src/Samples/Samples/ClearScreen.cs)<br> This example shows how to configure the device and clear the color.
-<img src="Screenshots/Triangle.PNG" width=380> | [Triangle](Src/Samples/Samples/Triangle.cs)<br> This example shows how to render simple triangle.
-<img src="Screenshots/Transformations.PNG" width=380> | [Transformations](Src/Samples/Samples/Transformations.cs)<br> This example how to transform the world space for each object.
-<img src="Screenshots/PushConstant.PNG" width=380> | [Push Constant](Src/Samples/Samples/PushConstant.cs)<br> This example use push constants, small blocks of uniform data stored within a command buffer, to pass data to a shader without the need for uniform buffers.
-<img src="Screenshots/LoadGLTF.PNG" width=380> | [Load GLTF](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadGLTF.cs)<br> This example shows how to load GLTF models.
-<img src="Screenshots/LoadTexture.PNG" width=380> | [Load Texture](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/LoadTexture.cs)<br> This example shows how to load 2D texture from disk (including all mip levels). 
-<img src="Screenshots/Bindless.PNG" width=380> | [Bindless](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Bindless.cs)<br> This example demonstrates the use of VK_EXT_descriptor_indexing for creating descriptor sets with a variable size that can be dynamically indexed in a shader using `SPV_EXT_descriptor_indexing`.
-<img src="Screenshots/DiffuseLighting.PNG" width=380> | [Diffuse Lighting](https://github.com/FaberSanZ/Zeckoxe-Engine/blob/master/Src/Samples/Samples/Lighting.cs)<br> This example shows how to create diffuse lighting. 
-<img src="Screenshots/AmbientLighting.PNG" width=380> | [Ambient Lighting](Src/Samples/Samples/AmbientLighting)<br> This example shows how to create ambient lighting. 
-<img src="Screenshots/SpecularLighting.PNG" width=380> | [Specular Lighting](Src/Samples/Samples/SpecularLighting)<br> This example shows how to create specular lighting. 
+<img src="Screenshots/ClearScreen.PNG" width=380> | [Clear Screen](Src/Samples/Samples/ClearScreen/ClearScreen.cs)<br> This example shows how to configure the device and clear the color.
+<img src="Screenshots/Triangle.PNG" width=380> | [Triangle](Src/Samples/Samples/Triangle/Triangle.cs)<br> This example shows how to render simple triangle.
+<img src="Screenshots/Transformations.PNG" width=380> | [Transformations](Src/Samples/Samples/Transformations/Transformations.cs)<br> This example how to transform the world space for each object.
+<img src="Screenshots/PushConstant.PNG" width=380> | [Push Constant](Src/Samples/Samples/PushConstant/PushConstant.cs)<br> This example use push constants, small blocks of uniform data stored within a command buffer, to pass data to a shader without the need for uniform buffers.
+<img src="Screenshots/LoadGLTF.PNG" width=380> | [Load GLTF](Src/Samples/Samples/LoadGLTF/LoadGLTF.cs)<br> This example shows how to load GLTF models.
+<img src="Screenshots/LoadTexture.PNG" width=380> | [Load Texture](Src/Samples/Samples/LoadTexture/LoadTexture.cs)<br> This example shows how to load 2D texture from disk (including all mip levels). 
+<img src="Screenshots/Bindless.PNG" width=380> | [Bindless](Src/Samples/Samples/Bindless/Bindless.cs)<br> This example demonstrates the use of VK_EXT_descriptor_indexing for creating descriptor sets with a variable size that can be dynamically indexed in a shader using `SPV_EXT_descriptor_indexing`.
+<img src="Screenshots/DiffuseLighting.PNG" width=380> | [Diffuse Lighting](Src/Samples/Samples/Lighting/Lighting.cs)<br> This example shows how to create diffuse lighting. 
+<img src="Screenshots/AmbientLighting.PNG" width=380> | [Ambient Lighting](Src/Samples/Samples/AmbientLighting/AmbientLighting.cs)<br> This example shows how to create ambient lighting. 
+<img src="Screenshots/SpecularLighting.PNG" width=380> | [Specular Lighting](Src/Samples/Samples/SpecularLighting/SpecularLighting.cs)<br> This example shows how to create specular lighting. 
 <hr>
 <br>
 
