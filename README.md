@@ -49,8 +49,8 @@ These extensions will likely become mandatory later.
 - [x] Memory allocator
 - [x] GPU-Assisted Validation
 - [x] Compute Shader
-- [ ] Geometry Shader
-- [ ] Tessellation Shader
+- [x] Geometry Shader
+- [x] Tessellation Shader
 - [ ] Instancing, Indirect drawing
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [ ] Multithreaded rendering
