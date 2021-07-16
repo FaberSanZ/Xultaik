@@ -64,7 +64,7 @@ These extensions will likely become mandatory later.
 
 ## LowLevelAPI
 ### 
-> ℹ️ These examples will be part of a series of tutorials of the documentation, therefore these examples have specific things of HLSL (Lighting, Mapping, Reflections...)
+> ℹ️ The examples not only show how to use the API but also show things specific to HLSL and its mapping with vulkan, (Lighting, AMD effects, Ray Tracing ...)
 
 
 
