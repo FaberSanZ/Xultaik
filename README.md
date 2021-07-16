@@ -64,7 +64,7 @@ These extensions will likely become mandatory later.
 
 ## LowLevelAPI
 ### 
-> ℹ️ The examples not only show how to use the API, but also show things specific to HLSL and its mapping with Vultaik, (Lighting, [AMD effects](https://gpuopen.com/effects/), Ray Tracing) and can be used as a guide on how to use techniques independent of Vulkan.
+> ℹ️ The examples not only show how to use the API, but also show things specific to HLSL and its mapping with Vultaik, (Variable Rate Shading, [AMD effects](https://gpuopen.com/effects/), Ray Tracing) and can be used as a guide on how to use techniques independent of Vulkan.
 
 
 
