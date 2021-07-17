@@ -67,6 +67,7 @@ float4 main(VSOutput input) : SV_TARGET
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
 	// EX 2: for seeing only the lighting effect.
 	color = color * texture_color;
+    //color = color * float4(1,0,0,0);
 	
     color = saturate(color + specular);
 

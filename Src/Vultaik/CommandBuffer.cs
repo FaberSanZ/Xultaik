@@ -372,6 +372,12 @@ namespace Vultaik
         }
 
 
+        public void Dispatch(uint threadGroupCountX,uint threadGroupCountY,uint threadGroupCountZ)
+        {
+            vkCmdDispatch(handle, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+        }
+
+
         public void SetGraphicPipeline(GraphicsPipeline pipeline)
         {
             vkCmdBindPipeline(handle, VkPipelineBindPoint.Graphics, pipeline.graphicsPipeline);

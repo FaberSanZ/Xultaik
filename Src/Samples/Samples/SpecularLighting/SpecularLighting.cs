@@ -164,7 +164,7 @@ namespace Samples.SpecularLighting
                 Diffuse = new Vector4(0.8f, 0.8f, 0.8f, 1.0f),
                 Direction = new Vector3(1, 1, -1.05f),
                 Specular = new(1,1,1),
-                SpecularPower = 25,
+                SpecularPower = 30,
             };
 
 
