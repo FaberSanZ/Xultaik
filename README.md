@@ -81,6 +81,7 @@ Example | Details
 <img src="Screenshots/DiffuseLighting.PNG" width=380> | [Diffuse Lighting](Src/Samples/Samples/Lighting/Lighting.cs)<br> This example shows how to create diffuse lighting. 
 <img src="Screenshots/AmbientLighting.PNG" width=380> | [Ambient Lighting](Src/Samples/Samples/AmbientLighting/AmbientLighting.cs)<br> This example shows how to create ambient lighting. 
 <img src="Screenshots/SpecularLighting.PNG" width=380> | [Specular Lighting](Src/Samples/Samples/SpecularLighting/SpecularLighting.cs)<br> This example shows how to create specular lighting. 
+<img src="Screenshots/ComputeTexture.PNG" width=380> | [Compute Texture](Src/Samples/Samples/SpecularLighting/ComputeTexture.cs)<br> Use a calculation shader in conjunction with a separate calculation queue to modify a full screen image.
 <hr>
 <br>
 
