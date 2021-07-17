@@ -92,6 +92,13 @@ namespace Vultaik
                     buffer_info.usage |= VkBufferUsageFlags.StorageTexelBuffer;
                     access |= VkAccessFlags.ShaderWrite;
                 }
+
+
+                if ((Flags & BufferFlags.StructuredBuffer) is not 0)
+                {
+                    buffer_info.usage |= VkBufferUsageFlags.StorageBuffer;
+                    access |= VkAccessFlags.ShaderWrite;
+                }
             }
 
             vkCreateBuffer(NativeDevice.handle, &buffer_info, null, out handle);

@@ -69,20 +69,6 @@ namespace Vultaik
 
         public void SetBindlessImage(int _binding, Image[] image)
         {
-            ResourceData[] data = new ResourceData[image.Length];
-            for (int i = 0; i < image.Length; i++)
-            {
-                data[i] = new()
-                {
-                    Binding = _binding,
-                    Texture = image[i],
-                    DescriptorType = VkDescriptorType.SampledImage,
-                };
-   
-            }
-
-
-
             DataBindless.Add(new ResourceDataBindless 
             {
                 Binding = _binding,
@@ -90,6 +76,25 @@ namespace Vultaik
                 DescriptorType = VkDescriptorType.SampledImage,
             });
 
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="binding"></param>
+        /// <param name="buffer"></param>
+        /// <param name="offset"></param>
+        public void SetStructuredBuffer(int binding, Buffer buffer, int offset = 0)
+        {
+
+            Data.Add(new()
+            {
+                Offset = offset,
+                Binding = binding,
+                Buffer = buffer,
+                DescriptorType = VkDescriptorType.StorageBuffer,
+            });
         }
 
 

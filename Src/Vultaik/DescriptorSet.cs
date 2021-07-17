@@ -95,6 +95,32 @@ namespace Vultaik
                 }
 
 
+                if (r.DescriptorType == VkDescriptorType.StorageBuffer)
+                {
+
+                    bufferInfos[i] = new()
+                    {
+                        buffer = r.Buffer.handle,
+                        offset = (ulong)r.Offset,
+                        range = (ulong)r.Buffer.SizeInBytes,
+                    };
+
+                    VkWriteDescriptorSet write_descriptor = new()
+                    {
+                        sType = VkStructureType.WriteDescriptorSet,
+                        pNext = null,
+                        dstSet = _descriptorSet,
+                        descriptorCount = 1,
+                        descriptorType = r.DescriptorType,
+                        pBufferInfo = &bufferInfos[i],
+                        dstBinding = (uint)r.Binding,
+                    };
+
+
+                    writes.Add(write_descriptor);
+                }
+
+
                 else if (r.DescriptorType == VkDescriptorType.UniformBufferDynamic)
                 {
 

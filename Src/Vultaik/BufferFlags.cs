@@ -31,5 +31,8 @@ namespace Vultaik
 
 
         UnorderedAccess = 32,
+
+
+        StructuredBuffer = 64,
     }
 }

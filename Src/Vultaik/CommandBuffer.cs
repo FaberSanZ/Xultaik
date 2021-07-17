@@ -482,6 +482,13 @@ namespace Vultaik
             VkDescriptorSet descriptor_set = descriptor._descriptorSet;
             VkPipelineLayout pipeline_layout = descriptor._pipelineLayout;
 
+            // TODO: TransitionImageLayout
+            //for (int i = 0; i < descriptor.DescriptorData.Data.Count; i++)
+            //{
+            //    var ver = descriptor.DescriptorData.Data[i];
+            //    if (ver.DescriptorType == VkDescriptorType.StorageImage)
+            //}
+
             vkCmdBindDescriptorSets(handle, descriptor.BindPoint, pipeline_layout, 0, 1, &descriptor_set, dynamicOffsetCount, &dynamicOffsets);
         }
 
