@@ -77,7 +77,7 @@ namespace Samples.ComputeTexture
 
             string fragment = Constants.ShadersFile + @"ComputeTexture\Fragment.hlsl";
             string vertex = Constants.ShadersFile + @"ComputeTexture\Vertex.hlsl";
-            string Compute = Constants.ShadersFile + @"ComputeTexture\Compute.hlsl";
+            string compute = Constants.ShadersFile + @"ComputeTexture\Compute.hlsl";
 
             Image image = new(Device, new()
             {
@@ -99,7 +99,7 @@ namespace Samples.ComputeTexture
 
 
             ComputePipelineDescription ComputePipelineDescription = new();
-            ComputePipelineDescription.Shader = new ShaderBytecode(Compute, ShaderStage.Compute);
+            ComputePipelineDescription.Shader = new ShaderBytecode(compute, ShaderStage.Compute);
             PipelineState_1 = new(Device, ComputePipelineDescription);
 
             DescriptorData descriptorData_1 = new();
@@ -112,7 +112,6 @@ namespace Samples.ComputeTexture
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.SetShader(new ShaderBytecode(fragment, ShaderStage.Fragment));
             Pipelinedescription0.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex));
-            Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_0 = new(Pipelinedescription0);
 
             DescriptorData descriptorData_0 = new();
@@ -133,10 +132,7 @@ namespace Samples.ComputeTexture
 
         public override void Draw(ApplicationTime time)
         {
-
             Device.WaitIdle();
-
-
 
             cmd_compute.Begin();
             cmd_compute.SetComputePipeline(PipelineState_1);

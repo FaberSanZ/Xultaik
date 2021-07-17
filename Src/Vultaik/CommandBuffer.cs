@@ -381,10 +381,9 @@ namespace Vultaik
 
         public void Dispatch2D(uint threadCountX, uint threadCountY, uint groupSizeX = 8, uint groupSizeY = 8)
         {
-            Dispatch(DivideByMultiple(threadCountX, groupSizeX), DivideByMultiple(threadCountY, groupSizeY), 1U);
+            Dispatch(Helpers.DivideByMultiple(threadCountX, groupSizeX), Helpers.DivideByMultiple(threadCountY, groupSizeY), 1U);
         }
 
-        public static uint DivideByMultiple(uint value, uint alignment) => (uint)((int)value + (int)alignment - 1) / alignment;
 
         public void SetGraphicPipeline(GraphicsPipeline pipeline)
         {

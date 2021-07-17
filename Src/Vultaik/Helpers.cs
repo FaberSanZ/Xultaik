@@ -32,7 +32,8 @@ namespace Vultaik
 
 
 
-        
+        public static uint DivideByMultiple(uint value, uint alignment) => (uint)((int)value + (int)alignment - 1) / alignment;
+
 
         internal static VkDescriptorType StageTVkDescriptorType(this spvc_resource_type stage, bool is_dynamic)
         {
