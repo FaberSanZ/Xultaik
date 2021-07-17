@@ -199,6 +199,33 @@ namespace Vultaik
 
                 }
 
+
+                else if (r.DescriptorType == VkDescriptorType.StorageImage)
+                {
+                    imageInfos[i] = new()
+                    {
+                        imageLayout = VkImageLayout.ShaderReadOnlyOptimal,
+                        imageView = r.Texture.image_view,
+                    };
+
+                    VkWriteDescriptorSet write_descriptor = new()
+                    {
+                        sType = VkStructureType.WriteDescriptorSet,
+                        dstSet = _descriptorSet,
+                        dstBinding = (uint)r.Binding,
+                        dstArrayElement = 0,
+                        descriptorType = r.DescriptorType,
+                        descriptorCount = 1,
+                        pImageInfo = &imageInfos[i],
+
+                    };
+
+
+                    writes.Add(write_descriptor);
+
+
+                }
+
                 else if (r.DescriptorType == VkDescriptorType.Sampler)
                 {
                     imageInfos[i] = new()

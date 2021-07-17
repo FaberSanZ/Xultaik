@@ -25,6 +25,7 @@ namespace Vultaik
 
         public ComputePipeline(Device device, ComputePipelineDescription description) : base(device)
         {
+            Description = description;
             Resources = description.Shader.Resources;
             SetupDescriptorSetLayout();
             CreatePipelineLayout();

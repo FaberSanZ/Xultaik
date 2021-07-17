@@ -98,6 +98,17 @@ namespace Vultaik
         }
 
 
+        public void SetReadWriteImage(int _binding, Image image)
+        {
+
+            Data.Add(new()
+            {
+                Binding = _binding,
+                Texture = image,
+                DescriptorType = VkDescriptorType.StorageImage,
+            });
+        }
+
         public void SetImage(int _binding, Image image)
         {
 

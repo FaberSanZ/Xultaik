@@ -240,7 +240,9 @@ namespace Vultaik
             spvc_reflected_resource* pushConstantList = default;
             nuint pushConstantCount = default;
 
-
+            spvc_reflected_resource* storageImagetList = default;
+            nuint storageImagetCount = default;
+            
 
             byte* result_ = null;
             spvc_error_callback error_callback = default;
@@ -336,6 +338,24 @@ namespace Vultaik
                     stage = Stage,
                 });
             }
+
+
+            spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.StorageImage, (spvc_reflected_resource*)&storageImagetList, &storageImagetCount);
+            for (uint i = 0; i < storageImagetCount; i++)
+            {
+                uint set = spvc_compiler_get_decoration(compiler_hlsl, storageImagetList[i].id, SpvDecoration.SpvDecorationDescriptorSet);
+                uint binding = spvc_compiler_get_decoration(compiler_hlsl, storageImagetList[i].id, SpvDecoration.SpvDecorationBinding);
+
+                Resources.Add(new()
+                {
+                    set = set,
+                    binding = binding,
+                    resource_type = spvc_resource_type.StorageImage,
+                    stage = Stage,
+                });
+            }
+
+
 
 
             spvc_resources_get_resource_list_for_type(resources, spvc_resource_type.PushConstant, (spvc_reflected_resource*)&pushConstantList, &pushConstantCount);

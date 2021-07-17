@@ -27,6 +27,9 @@ namespace Vultaik
 
 
         DepthStencil = 8,
+
+
+        ReadWriteImage = 16,
     }
 
 
@@ -133,9 +136,10 @@ namespace Vultaik
         public bool IsShaderResource => (ViewFlags & ImageFlags.ShaderResource) != 0;
 
         public bool IsUnorderedAccess => (ViewFlags & ImageFlags.UnorderedAccess) != 0;
+        public bool IsReadWriteImage => (ViewFlags & ImageFlags.ReadWriteImage) != 0;
 
         public bool IsMultisample => MultisampleCount > VkSampleCountFlags.None;
-
+        
 
 
         public VkSampleCountFlags MultisampleCount { get; private set; }
@@ -191,16 +195,7 @@ namespace Vultaik
 
         internal void create_buffer_image()
         {
-            buffer = new Buffer(NativeDevice, new()
-            {
-                BufferFlags = BufferFlags.ShaderResource,
-                SizeInBytes = Size,
-                ByteStride = Size,
-                Usage = ResourceUsage.CPU_To_GPU
-            });
 
-
-            buffer.SetData(Data);
 
         }
 
@@ -246,6 +241,8 @@ namespace Vultaik
                 image_create_info.usage |= VkImageUsageFlags.Storage;
 
 
+            if (IsReadWriteImage)
+                image_create_info.usage |= VkImageUsageFlags.Storage;
 
 
 
@@ -257,13 +254,14 @@ namespace Vultaik
             VkMemoryPropertyFlags memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
 
             uint imageHeapIndex = NativeDevice.GetMemoryTypeIndex(imageMemReq.memoryTypeBits, memoryProperties);
-
+            Console.WriteLine(imageMemReq.size);
             VkMemoryAllocateInfo allocInfo = new VkMemoryAllocateInfo
             {
                 sType = VkStructureType.MemoryAllocateInfo,
                 pNext = null,
                 allocationSize = imageMemReq.size,
                 memoryTypeIndex = imageHeapIndex,
+                
             };
 
             VkDeviceMemory _memory = default;
@@ -273,6 +271,9 @@ namespace Vultaik
 
 
             vkBindImageMemory(NativeDevice.handle, handle, memory, 0).CheckResult();
+
+
+
 
 
         }
@@ -359,6 +360,16 @@ namespace Vultaik
         public void Image2D()
         {
 
+            buffer = new Buffer(NativeDevice, new()
+            {
+                BufferFlags = BufferFlags.ShaderResource,
+                SizeInBytes = Size,
+                ByteStride = Size,
+                Usage = ResourceUsage.CPU_To_GPU
+            });
+
+
+            buffer.SetData(Data);
 
             CommandBuffer cmd = new(NativeDevice, CommandBufferType.AsyncTransfer);
             cmd.BeginOneTimeSubmit();

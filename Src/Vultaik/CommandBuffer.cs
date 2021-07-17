@@ -19,6 +19,7 @@ namespace Vultaik
 
 
         internal VkCommandPool cmd_command_pool;
+        private bool set_render_pass;
 
         public CommandBuffer(Device graphicsDevice, CommandBufferType type) : base(graphicsDevice)
         {
@@ -109,6 +110,7 @@ namespace Vultaik
             };
 
             vkCmdBeginRenderPass(handle, &renderPassBeginInfo, VkSubpassContents.SecondaryCommandBuffers);
+            set_render_pass = true;
         }
 
 
@@ -377,6 +379,12 @@ namespace Vultaik
             vkCmdDispatch(handle, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
         }
 
+        public void Dispatch2D(uint threadCountX, uint threadCountY, uint groupSizeX = 8, uint groupSizeY = 8)
+        {
+            Dispatch(DivideByMultiple(threadCountX, groupSizeX), DivideByMultiple(threadCountY, groupSizeY), 1U);
+        }
+
+        public static uint DivideByMultiple(uint value, uint alignment) => (uint)((int)value + (int)alignment - 1) / alignment;
 
         public void SetGraphicPipeline(GraphicsPipeline pipeline)
         {
@@ -465,7 +473,9 @@ namespace Vultaik
 
         public void Close()
         {
-            CleanupRenderPass();
+            if(set_render_pass)
+                CleanupRenderPass();
+
             vkEndCommandBuffer(handle);
         }
 
