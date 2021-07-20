@@ -204,6 +204,15 @@ namespace Samples.Triangle
 
         public void Dispose()
         {
+            ConstBuffer.Dispose();
+            VertexBuffer.Dispose();
+            IndexBuffer.Dispose();
+            PipelineState.Dispose();
+            DescriptorSet.Dispose();
+            Framebuffer.Dispose();
+            Device.GraphicsCommandBuffer.Dispose();
+            SwapChain.Dispose();
+            Device.Dispose();
             Adapter.Dispose();
         }
     }

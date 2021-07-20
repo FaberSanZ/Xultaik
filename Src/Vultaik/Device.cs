@@ -45,7 +45,6 @@ namespace Vultaik
 
 
         internal DescriptorPool _descriptorPoolManager_0;
-        internal DescriptorPool _descriptorPoolManager_1;
 
 
 
@@ -1009,7 +1008,13 @@ namespace Vultaik
         }
         public void Dispose()
         {
-
+            _descriptorPoolManager_0.DestroyAll();
+            vkDestroySemaphore(handle, image_available_semaphore, null);
+            vkDestroySemaphore(handle, render_finished_semaphore, null);
+            vkDestroyCommandPool(handle, transfer_cmd_pool, null);
+            _descriptorPoolManager_0.Free();
+            vkDeviceWaitIdle(handle);
+            vkDestroyDevice(handle, null);
         }
     }
 

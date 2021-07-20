@@ -9,7 +9,7 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Vultaik
 {
-    public unsafe class DescriptorSet : GraphicsResource
+    public unsafe class DescriptorSet : GraphicsResource, IDisposable
     {
 
         internal VkDescriptorPool _descriptorPool;
@@ -24,8 +24,8 @@ namespace Vultaik
         public DescriptorSet(GraphicsPipeline pipeline, DescriptorData data) : base(pipeline.NativeDevice)
         {
 
-            VkDescriptorSetLayout descriptor_set_layout = pipeline._descriptorSetLayout;
-            NativeDevice._descriptorPoolManager_0.Allocate(descriptor_set_layout);
+            _descriptorSetLayout = pipeline._descriptorSetLayout;
+            NativeDevice._descriptorPoolManager_0.Allocate(_descriptorSetLayout);
             _descriptorSet = NativeDevice._descriptorPoolManager_0.handle;
             _pipelineLayout = pipeline._pipelineLayout;
             GraphicsPipeline = pipeline;
@@ -38,8 +38,8 @@ namespace Vultaik
         public DescriptorSet(ComputePipeline pipeline, DescriptorData data) : base(pipeline.NativeDevice)
         {
 
-            VkDescriptorSetLayout descriptor_set_layout = pipeline._descriptorSetLayout;
-            NativeDevice._descriptorPoolManager_0.Allocate(descriptor_set_layout);
+            _descriptorSetLayout = pipeline._descriptorSetLayout;
+            NativeDevice._descriptorPoolManager_0.Allocate(_descriptorSetLayout);
             _descriptorSet = NativeDevice._descriptorPoolManager_0.handle;
             _pipelineLayout = pipeline._pipelineLayout;
             ComputePipeline = pipeline;
@@ -293,7 +293,15 @@ namespace Vultaik
         public void Free()
         {
             //vkFreeDescriptorSets()
+
         }
+
+        public void Dispose()
+        {
+            vkDestroyDescriptorSetLayout(NativeDevice.handle, _descriptorSetLayout, null);
+        }
+
+
 
     }
 

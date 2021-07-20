@@ -3,6 +3,7 @@
 
 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vortice.Vulkan;
@@ -11,7 +12,7 @@ using Interop = Vultaik.Interop;
 
 namespace Vultaik
 {
-    public unsafe class CommandBuffer : GraphicsResource
+    public unsafe class CommandBuffer : GraphicsResource, IDisposable
     {
 
         internal uint imageIndex;
@@ -532,8 +533,17 @@ namespace Vultaik
 
         public void Free()
         {
+
+
             vkFreeCommandBuffers(NativeDevice.handle, cmd_command_pool, handle);
         }
+
+        public void Dispose()
+        {
+            WaitFence.Dispose();
+            vkDestroyCommandPool(NativeDevice.handle, cmd_command_pool, null);
+        }
+
 
         public void End()
         {

@@ -95,14 +95,10 @@ namespace Vultaik
             vkResetDescriptorPool(NativeDevice.handle, handle, VkDescriptorPoolResetFlags.None);
         }
 
-        public void Destroy()
-        {
-            vkDestroyDescriptorPool(NativeDevice.handle, handle, null);
-        }
 
         public void Dispose()
         {
-            // Destroy();
+            vkDestroyDescriptorPool(NativeDevice.handle, handle, null);
         }
     }
 }

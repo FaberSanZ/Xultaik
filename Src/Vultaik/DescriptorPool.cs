@@ -19,7 +19,7 @@ namespace Vultaik
 
         public DescriptorPool(Device device) : base(device)
         {
-            HeapPool = new HeapPool(device);
+            HeapPool = new(device);
             HeapPool.Create();
 
             pool = HeapPool.handle;
@@ -63,7 +63,7 @@ namespace Vultaik
 
         public void Free()
         {
-            
+            HeapPool.Dispose();
         }
 
 

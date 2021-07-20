@@ -462,6 +462,8 @@ namespace Vultaik
             VkImageViewCreateInfo createInfo = new VkImageViewCreateInfo
             {
                 sType = VkStructureType.ImageViewCreateInfo,
+                flags = VkImageViewCreateFlags.None,
+                pNext = null,
                 viewType = VkImageViewType.Image2D,
                 format = Format,
                 image = handle,

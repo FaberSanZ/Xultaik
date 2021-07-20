@@ -3,6 +3,7 @@
 
 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vortice.Vulkan;
@@ -11,7 +12,7 @@ using Interop = Vultaik.Interop;
 
 namespace Vultaik
 {
-    public unsafe class GraphicsPipeline : GraphicsResource
+    public unsafe class GraphicsPipeline : GraphicsResource, IDisposable
     {
 
         internal VkPipeline graphicsPipeline;
@@ -177,11 +178,11 @@ namespace Vultaik
             //vkCreatePipelineCache(NativeDevice.handle, &pipelineCacheCreateInfo, null, out _pipelineCache);
         }
 
-
-
-
-
-
+        public void Dispose()
+        {
+            vkDestroyPipeline(NativeDevice.handle, graphicsPipeline, null);
+            vkDestroyPipelineLayout(NativeDevice.handle, _pipelineLayout, null);
+        }
 
         private void CreateGraphicsPipeline(GraphicsPipelineDescription description)
         {

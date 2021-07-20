@@ -47,11 +47,13 @@ namespace Vultaik
             for (uint i = 0; i < SwapChainImageViews.Length; i++)
             {
 
+#pragma warning disable CA2014 
                 VkImageView* attachments = stackalloc VkImageView[2]
                 {
                     SwapChainImageViews[i],                          	
                     SwapChain.DepthStencil.image_view,
                 };
+#pragma warning restore CA2014 
 
 
                 VkFramebufferCreateInfo frameBufferInfo = new VkFramebufferCreateInfo()
@@ -198,7 +200,7 @@ namespace Vultaik
                 attachmentCount = 2,                                             // Number of attachments used by this render pass
                 pAttachments = attachments,                                      // Descriptions of the attachments used by the render pass
                 subpassCount = 1,                                                // We only use one subpass in this example
-                pSubpasses = *&subpass_description,                              // Description of that subpass
+                pSubpasses = subpass_description,                                // Description of that subpass
                 dependencyCount = 2,                                             // Number of subpass dependencies
                 pDependencies = dependencies,
             };
@@ -234,6 +236,8 @@ namespace Vultaik
                 vkDestroyImageView(NativeDevice.handle, SwapChain.swapChain_image_views[i], null);
                 vkDestroyFramebuffer(NativeDevice.handle, framebuffers[i], null);
             }
+            SwapChain.DepthStencil.Dispose();
+
 
             vkDestroyRenderPass(NativeDevice.handle, renderPass, null);
         }
