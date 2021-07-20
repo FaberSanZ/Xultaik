@@ -415,12 +415,13 @@ namespace Vultaik
                 0x8189c842u,
                 0x3d492883u,
                 0x1608dec0u,
+
                 0x9b4c6071u,    // TODO: VkDebugUtilsObjectNameInfoEXT
                 0x90ef715du,    // TODO: UNASSIGNED-CoreValidation-DrawState-InvalidImageAspect
                 0xf27b16au,     // TODO: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL: when using a Depth or Stencil format
                 0x34f84ef4u,    // TODO: vkCmdBeginRenderPass-initialLayout: If any of the initialLayout or finalLayout member of the VkAttachmentDescription
                 0x4d08326du,    // TODO: vkEndCommandBuffer-commandBuffer  
-                0xc7aabc16u,    // TODO: -VkPresentInfoKHR-pImageIndices 
+                0xc7aabc16u,    // TODO: VkPresentInfoKHR-pImageIndices 
             };
 
             for (int i = 0; i < ignored_ids.Length; i++)
@@ -481,7 +482,7 @@ namespace Vultaik
 
             handles = new VkPhysicalDevice[device_count];
 
-            if (device_count >= 1 )
+            if (device_count == 1 )
                 handle = physicalDevicesptr[0];
 
             for (int i = 0; i < device_count; i++)

@@ -143,6 +143,7 @@ namespace Samples.ComputeTexture
 
             cmd_compute.Close();
             Device.Submit(cmd_compute);
+            Device.ComputeQueueWaitIdle();
 
 
             CommandBuffer cmd = Context.CommandBuffer;

@@ -19,7 +19,10 @@ namespace Vultaik
         internal VkFramebuffer[] framebuffers;
 
 
+        public Framebuffer(FramebufferDescription description)
+        {
 
+        }
 
 
         public Framebuffer(SwapChain swapChain) : base(swapChain.NativeDevice)
@@ -206,6 +209,36 @@ namespace Vultaik
             };
 
             vkCreateRenderPass(NativeDevice.handle, &render_pass_info, null, out renderPass).CheckResult();
+        }
+
+
+
+
+        private (VkAttachmentDescription, VkAttachmentReference) CreateAttachment(
+          VkFormat format,
+          VkSampleCountFlags samples,
+          uint index,
+          VkAttachmentLoadOp loadOp,
+          VkAttachmentStoreOp storeOp,
+          VkAttachmentStoreOp stencilStoreOp,
+          VkImageLayout initialLayout,
+          VkImageLayout finalLayout)
+        {
+            return (new VkAttachmentDescription()
+            {
+                format = format,
+                samples = samples,
+                loadOp = loadOp,
+                storeOp = storeOp,
+                stencilLoadOp = VkAttachmentLoadOp.Load,
+                stencilStoreOp = stencilStoreOp,
+                initialLayout = initialLayout,
+                finalLayout = finalLayout
+            }, new VkAttachmentReference()
+            {
+                attachment = index,
+                layout = finalLayout
+            });
         }
 
 

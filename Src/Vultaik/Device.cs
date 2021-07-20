@@ -992,6 +992,18 @@ namespace Vultaik
         }
 
 
+        public void ComputeQueueWaitIdle()
+        {
+            vkQueueWaitIdle(compute_queue);
+        }
+
+        public void TransferQueueWaitIdle()
+        {
+            vkQueueWaitIdle(transfer_queue);
+        }
+
+
+
         public TDelegate? GetInstanceProcAddr<TDelegate>(string name) where TDelegate : class
         {
             delegate* unmanaged[Stdcall]<void> funcPtr = vkGetInstanceProcAddr(NativeAdapter.instance, Interop.String.ToPointer(name));
