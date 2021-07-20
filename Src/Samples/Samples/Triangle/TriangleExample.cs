@@ -37,14 +37,11 @@ namespace Samples.Triangle
 
         public override void Initialize()
         {
-            Window = new Window("Vultaik", 1200, 800);
 
             AdapterConfig = new()
             {
                 SwapChain = true,
                 VulkanDebug = true,
-                VultaikDebug = false,
-                Fullscreen = false,
             };
 
 

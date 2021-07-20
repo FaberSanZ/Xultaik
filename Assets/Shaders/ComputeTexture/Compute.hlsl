@@ -31,7 +31,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
     kernel[5] = 0.0;
     kernel[6] = 0.0;
     kernel[7] = 0.1;
-    kernel[8] = -2.0;
+    kernel[8] = -5.0;
     
     float2 size = float2(1200, 800);
     float2 uv = threadID.xy / size + 0.9 / size;

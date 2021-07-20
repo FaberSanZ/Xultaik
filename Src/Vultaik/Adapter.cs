@@ -397,12 +397,32 @@ namespace Vultaik
             }
         }
 
+
+
+
         [UnmanagedCallersOnly]
-        private static uint DebugMessengerCallback(VkDebugUtilsMessageSeverityFlagsEXT messageSeverity,
-                                                           VkDebugUtilsMessageTypeFlagsEXT messageTypes,
-                                                           VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                           void* userData)
+        private static uint DebugMessengerCallback(VkDebugUtilsMessageSeverityFlagsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+                                                           VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* userData)
         {
+
+
+            uint[] ignored_ids = new[]
+            {
+                0xc05b3a9du,
+                0x2864340eu,
+                0xbfcfaec2u,
+                0x96f03c1cu,
+                0x8189c842u,
+                0x3d492883u,
+                0x1608dec0u,
+                0x9b4c6071u, // VkDebugUtilsObjectNameInfoEXT
+                0x90ef715du, // UNASSIGNED-CoreValidation-DrawState-InvalidImageAspect
+            };
+
+            for (int i = 0; i < ignored_ids.Length; i++)
+                if ((uint)pCallbackData->messageIdNumber == ignored_ids[i])
+                    return VK_FALSE;
+
             string? message = Interop.String.FromPointer(pCallbackData->pMessage);
 
             if (messageTypes == VkDebugUtilsMessageTypeFlagsEXT.Validation)
@@ -440,9 +460,6 @@ namespace Vultaik
 
             return VK_FALSE;
         }
-
-
-        
 
 
 

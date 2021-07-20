@@ -40,7 +40,7 @@ namespace Samples.ComputeTexture
 
             AdapterConfig = new()
             {
-                SwapChain = true,
+                SwapChain = true,VulkanDebug = true
             };
 
 

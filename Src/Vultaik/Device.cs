@@ -791,6 +791,13 @@ namespace Vultaik
             }
 
 
+            if (queue == graphics_queue && cmd_type == CommandBufferType.AsyncTransfer)
+            {
+                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+                wait_stages |= VkPipelineStageFlags.ComputeShader;
+
+                use_semaphore = false;
+            }
 
             if (queue == compute_queue)
             {
