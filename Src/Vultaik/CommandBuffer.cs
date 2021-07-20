@@ -378,7 +378,32 @@ namespace Vultaik
         public void Dispatch(uint threadGroupCountX,uint threadGroupCountY,uint threadGroupCountZ)
         {
             vkCmdDispatch(handle, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+
+            VkMemoryBarrier barrier = new()
+            {
+                sType = VkStructureType.MemoryBarrier,
+                pNext = null,
+                dstAccessMask = VkAccessFlags.ShaderRead,
+                srcAccessMask = VkAccessFlags.ShaderWrite
+            };
+            vkCmdPipelineBarrier(handle, VkPipelineStageFlags.ComputeShader, VkPipelineStageFlags.AllGraphics, 0, 1, &barrier, 0, null, 0, null);
         }
+
+
+
+        private void barrier(VkPipelineStageFlags src_stages, VkAccessFlags src_access, VkPipelineStageFlags dst_stages,
+                            VkAccessFlags dst_access)
+        {
+            VkMemoryBarrier barrier = new()
+            {
+                sType = VkStructureType.MemoryBarrier,
+            };
+            barrier.srcAccessMask = src_access;
+            barrier.dstAccessMask = dst_access;
+            vkCmdPipelineBarrier(handle, src_stages, dst_stages, 0, 1, &barrier, 0, null, 0, null);
+        }
+
+
 
         public void Dispatch2D(uint threadCountX, uint threadCountY, uint groupSizeX = 8, uint groupSizeY = 8)
         {
