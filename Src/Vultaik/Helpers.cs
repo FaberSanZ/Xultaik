@@ -15,6 +15,7 @@ using static Vortice.Vulkan.Vulkan;
 using Interop = Vultaik.Interop;
 using SPIRVCross;
 using System.Numerics;
+using System.Diagnostics;
 
 namespace Vultaik
 {
@@ -35,6 +36,76 @@ namespace Vultaik
         public static int ComputeWorkGroupCount(int threadCount, int workGroupSize)
         {
             return (threadCount + workGroupSize - 1) / workGroupSize;
+        }
+
+
+
+        public static int ConvertToSignedDelta(int start_ticks, int end_ticks, int valid_bits)
+        {
+            int shamt = 64 - valid_bits;
+            start_ticks <<= shamt;
+            end_ticks <<= shamt;
+            int ticks_delta = end_ticks - start_ticks;
+            ticks_delta >>= shamt;
+            return ticks_delta;
+        }
+
+        public static bool IsPow2(int v)
+        {
+            return BitOperations.PopCount((uint)v) == 1;
+        }
+
+        public static bool IsPow2(long v)
+        {
+            return BitOperations.PopCount((ulong)v) == 1;
+        }
+
+        public static int NextPow2(int v)
+        {
+            if (IsPow2(v))
+                return v;
+
+            return 1 << (32 - BitOperations.LeadingZeroCount((uint)v));
+        }
+
+        public static long NextPow2(long v)
+        {
+            if (IsPow2(v))
+                return v;
+
+            return 1L << (64 - BitOperations.LeadingZeroCount((ulong)v));
+        }
+
+        public static int PrevPow(int v)
+        {
+            return 1 << (31 - BitOperations.LeadingZeroCount((uint)v));
+        }
+
+        public static long PrevPow(long v)
+        {
+            return 1L << (63 - BitOperations.LeadingZeroCount((ulong)v));
+        }
+
+        public static bool BlocksOnSamePage(long resourceAOffset, long resourceASize, long resourceBOffset, long pageSize)
+        {
+            Debug.Assert(resourceAOffset + resourceASize <= resourceBOffset && resourceASize > 0 && pageSize > 0);
+
+            long resourceAEnd = resourceAOffset + resourceASize - 1;
+            long resourceAEndPage = resourceAEnd & ~(pageSize - 1);
+            long resourceBStart = resourceBOffset;
+            long resourceBStartPage = resourceBStart & ~(pageSize - 1);
+
+            return resourceAEndPage == resourceBStartPage;
+        }
+
+        public static long AlignUp(long value, long alignment)
+        {
+            return (value + alignment - 1) / alignment * alignment;
+        }
+
+        public static long AlignDown(long value, long alignment)
+        {
+            return (long)((ulong)value / (ulong)alignment * (ulong)alignment);
         }
 
 

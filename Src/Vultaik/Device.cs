@@ -115,6 +115,7 @@ namespace Vultaik
         public bool RayTracingSupport { get; private set; }
 
         public bool SamplerAnisotropySupport { get; set; }
+
         public void Recreate()
         {
             queue_family_properties = Array.Empty<VkQueueFamilyProperties>();
@@ -901,73 +902,6 @@ namespace Vultaik
         }
 
 
-        public int ConvertToSignedDelta(int start_ticks, int end_ticks, int valid_bits)
-        {
-            int shamt = 64 - valid_bits;
-            start_ticks <<= shamt;
-            end_ticks <<= shamt;
-            int ticks_delta = end_ticks - start_ticks;
-            ticks_delta >>= shamt;
-            return ticks_delta;
-        }
-
-        public bool IsPow2(int v)
-        {
-            return BitOperations.PopCount((uint)v) == 1;
-        }
-
-        public bool IsPow2(long v)
-        {
-            return BitOperations.PopCount((ulong)v) == 1;
-        }
-
-        public int NextPow2(int v)
-        {
-            if (IsPow2(v))
-                return v;
-
-            return 1 << (32 - BitOperations.LeadingZeroCount((uint)v));
-        }
-
-        public long NextPow2(long v)
-        {
-            if (IsPow2(v))
-                return v;
-
-            return 1L << (64 - BitOperations.LeadingZeroCount((ulong)v));
-        }
-
-        public int PrevPow(int v)
-        {
-            return 1 << (31 - BitOperations.LeadingZeroCount((uint)v));
-        }
-
-        public long PrevPow(long v)
-        {
-            return 1L << (63 - BitOperations.LeadingZeroCount((ulong)v));
-        }
-
-        public bool BlocksOnSamePage(long resourceAOffset, long resourceASize, long resourceBOffset, long pageSize)
-        {
-            Debug.Assert(resourceAOffset + resourceASize <= resourceBOffset && resourceASize > 0 && pageSize > 0);
-
-            long resourceAEnd = resourceAOffset + resourceASize - 1;
-            long resourceAEndPage = resourceAEnd & ~(pageSize - 1);
-            long resourceBStart = resourceBOffset;
-            long resourceBStartPage = resourceBStart & ~(pageSize - 1);
-
-            return resourceAEndPage == resourceBStartPage;
-        }
-
-        public long AlignUp(long value, long alignment)
-        {
-            return (value + alignment - 1) / alignment * alignment;
-        }
-
-        public long AlignDown(long value, long alignment)
-        {
-            return (long)((ulong)value / (ulong)alignment * (ulong)alignment);
-        }
 
         public void QueueWaitIdleIdle(VkQueue queue)
         {
