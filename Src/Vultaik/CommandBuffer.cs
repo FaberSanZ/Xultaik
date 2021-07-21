@@ -375,9 +375,9 @@ namespace Vultaik
         }
 
 
-        public void Dispatch(uint threadGroupCountX,uint threadGroupCountY,uint threadGroupCountZ)
+        public void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ)
         {
-            vkCmdDispatch(handle, threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+            vkCmdDispatch(handle, (uint)threadGroupCountX, (uint)threadGroupCountY, (uint)threadGroupCountZ);
 
             VkMemoryBarrier barrier = new()
             {
@@ -386,7 +386,28 @@ namespace Vultaik
                 dstAccessMask = VkAccessFlags.ShaderRead,
                 srcAccessMask = VkAccessFlags.ShaderWrite
             };
-            vkCmdPipelineBarrier(handle, VkPipelineStageFlags.ComputeShader, VkPipelineStageFlags.AllGraphics, 0, 1, &barrier, 0, null, 0, null);
+            //vkCmdPipelineBarrier(handle, VkPipelineStageFlags.ComputeShader, VkPipelineStageFlags.AllGraphics, 0, 1, &barrier, 0, null, 0, null);
+        }
+
+
+
+        private void full_barrier()
+        {
+
+        }
+
+
+        private void fixup_src_stage(ref VkPipelineStageFlags src_stages, bool fixup)
+        {
+            // ALL_GRAPHICS_BIT waits for vertex as well which causes performance issues on some drivers.
+            // It shouldn't matter, but hey.
+            //
+            // We aren't using vertex with side-effects on relevant hardware so dropping VERTEX_SHADER_BIT is fine.
+            if ((src_stages & VkPipelineStageFlags.AllGraphics) != 0 && fixup)
+            {
+                src_stages &= ~ VkPipelineStageFlags.AllGraphics;
+                src_stages |= VkPipelineStageFlags.ColorAttachmentOutput | VkPipelineStageFlags.FragmentShader | VkPipelineStageFlags.LateFragmentTests;
+            }
         }
 
 
@@ -405,9 +426,9 @@ namespace Vultaik
 
 
 
-        public void Dispatch2D(uint threadCountX, uint threadCountY, uint groupSizeX = 8, uint groupSizeY = 8)
+        public void Dispatch2D(int threadCountX, int threadCountY, int groupSizeX = 8, int groupSizeY = 8)
         {
-            Dispatch(Helpers.DivideByMultiple(threadCountX, groupSizeX), Helpers.DivideByMultiple(threadCountY, groupSizeY), 1U);
+            Dispatch(Helpers.ComputeWorkGroupCount(threadCountX, groupSizeX), Helpers.ComputeWorkGroupCount(threadCountY, groupSizeY), 1);
         }
 
 

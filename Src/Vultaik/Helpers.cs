@@ -31,8 +31,12 @@ namespace Vultaik
         }
 
 
+        // https://github.com/HansKristian-Work/vkd3d-proton/blob/master/libs/vkd3d/vkd3d_private.h#L2954
+        public static int ComputeWorkGroupCount(int threadCount, int workGroupSize)
+        {
+            return (threadCount + workGroupSize - 1) / workGroupSize;
+        }
 
-        public static uint DivideByMultiple(uint value, uint alignment) => (uint)((int)value + (int)alignment - 1) / alignment;
 
 
         internal static VkDescriptorType StageTVkDescriptorType(this spvc_resource_type stage, bool is_dynamic)

@@ -139,7 +139,7 @@ namespace Samples.ComputeTexture
             cmd_compute.SetComputePipeline(PipelineState_1);
             cmd_compute.BindDescriptorSets(DescriptorSet_1);
 
-            cmd_compute.Dispatch2D((uint)Window.FramebufferSize.Width, (uint)Window.FramebufferSize.Height, 8, 8);
+            cmd_compute.Dispatch2D(Window.FramebufferSize.Width, Window.FramebufferSize.Height, 8, 8);
 
             cmd_compute.Close();
             Device.Submit(cmd_compute);
