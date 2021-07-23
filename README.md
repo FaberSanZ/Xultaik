@@ -26,7 +26,7 @@ Due to the parallel nature of GPUs, Vultaik can use [GPGPU](https://en.wikipedia
 
 ## Low-level rendering backend
 
-The rendering backend focuses entirely on Vulkan and HLSL, so it reuses Vulkan enums where appropriate. However, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Vultaik/wiki/Extension) and [features](#Features) are aggressively made use of to improve performance
+The rendering backend focuses entirely on Vulkan and HLSL, however, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Vultaik/wiki/Extension) and [features](#Features) are aggressively made use of to improve performance
 
 Some notable extensions that **should** be supported for optimal or correct behavior.
 These extensions will likely become mandatory later.
