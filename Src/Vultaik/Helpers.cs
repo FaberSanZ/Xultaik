@@ -131,6 +131,23 @@ namespace Vultaik
 
 
 
+        internal static VkVertexInputRate ConvertVertexInputRate(this VertexInputRate rate)
+        {
+
+            switch (rate)
+            {
+                case VertexInputRate.Vertex:
+                    return VkVertexInputRate.Vertex;
+
+                case VertexInputRate.Instance:
+                    return VkVertexInputRate.Instance;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(rate));
+            }
+        }
+
+
         internal static VkFrontFace ConvertFrontFace(this FrontFace frontFace)
         {
 

@@ -213,7 +213,7 @@ namespace Samples.PushConstant
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.SetShader(Fragment);
             Pipelinedescription0.SetShader(Vertex);
-            Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription0.SetVertexBinding(VertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription0.AddVertexAttribute<VertexPositionColor>();
             PipelineState = new(Pipelinedescription0);
 

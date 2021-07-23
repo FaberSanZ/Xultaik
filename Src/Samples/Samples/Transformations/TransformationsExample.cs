@@ -210,7 +210,7 @@ namespace Samples.Transformations
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.SetShader(Fragment);
             Pipelinedescription0.SetShader(Vertex);
-            Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription0.SetVertexBinding(VertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription0.AddVertexAttribute<VertexPositionColor>();
             PipelineState_0 = new(Pipelinedescription0);
 
@@ -225,7 +225,7 @@ namespace Samples.Transformations
             Pipelinedescription1.SetFramebuffer(Framebuffer);
             Pipelinedescription1.SetShader(Fragment);
             Pipelinedescription1.SetShader(Vertex);
-            Pipelinedescription1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
+            Pipelinedescription1.SetVertexBinding(VertexInputRate.Vertex, VertexPositionColor.Size);
             Pipelinedescription1.AddVertexAttribute<VertexPositionColor>();
             PipelineState_1 = new(Pipelinedescription1);
 

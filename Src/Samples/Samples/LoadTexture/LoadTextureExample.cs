@@ -153,7 +153,7 @@ namespace Samples.LoadTexture
             Pipelinedescription_0.SetFramebuffer(Framebuffer);
             Pipelinedescription_0.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment));
             Pipelinedescription_0.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex));
-            Pipelinedescription_0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionTexture.Size);
+            Pipelinedescription_0.SetVertexBinding(VertexInputRate.Vertex, VertexPositionTexture.Size);
             Pipelinedescription_0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription_0.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_0 = new(Pipelinedescription_0);
@@ -170,7 +170,7 @@ namespace Samples.LoadTexture
             Pipelinedescription_1.SetFramebuffer(Framebuffer);
             Pipelinedescription_1.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment));
             Pipelinedescription_1.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex));
-            Pipelinedescription_1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionTexture.Size);
+            Pipelinedescription_1.SetVertexBinding(VertexInputRate.Vertex, VertexPositionTexture.Size);
             Pipelinedescription_1.SetVertexAttribute(VertexType.Position);
             Pipelinedescription_1.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_1 = new(Pipelinedescription_1);

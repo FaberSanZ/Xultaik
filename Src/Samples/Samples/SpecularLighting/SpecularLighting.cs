@@ -228,7 +228,7 @@ namespace Samples.SpecularLighting
             Pipelinedescription0.SetFramebuffer(Framebuffer);
             Pipelinedescription0.SetShader(new ShaderBytecode(fragment, ShaderStage.Fragment));
             Pipelinedescription0.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex));
-            Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size );
+            Pipelinedescription0.SetVertexBinding(VertexInputRate.Vertex, VertexPositionNormalTexture.Size );
             Pipelinedescription0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription0.SetVertexAttribute(VertexType.Normal);
             Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);

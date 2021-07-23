@@ -248,7 +248,7 @@ namespace Samples.Bindless
             Pipelinedescription_0.SetFramebuffer(Framebuffer);
             Pipelinedescription_0.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment));
             Pipelinedescription_0.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex));
-            Pipelinedescription_0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionTexture.Size);
+            Pipelinedescription_0.SetVertexBinding(VertexInputRate.Vertex, VertexPositionTexture.Size);
             Pipelinedescription_0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription_0.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_0 = new(Pipelinedescription_0);

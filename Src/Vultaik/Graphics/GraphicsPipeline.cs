@@ -228,7 +228,7 @@ namespace Vultaik
                 vertexBindingDesc[i] = new VkVertexInputBindingDescription
                 {
                     binding = (uint)vertexBinding[i].Binding,
-                    inputRate = vertexBinding[i].InputRate,
+                    inputRate = vertexBinding[i].InputRate.ConvertVertexInputRate(),
                     stride = (uint)vertexBinding[i].Stride
                 };
             }

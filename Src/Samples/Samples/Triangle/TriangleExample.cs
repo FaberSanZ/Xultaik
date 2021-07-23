@@ -146,7 +146,7 @@ namespace Samples.Triangle
                 {
                     VertexBindingDescriptions =
                     {
-                        new(0, VertexPositionColor.Size, VkVertexInputRate.Vertex),
+                        new(0, VertexPositionColor.Size, VertexInputRate.Vertex),
                     },
                 },
                 InputAssemblyState =

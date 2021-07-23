@@ -136,7 +136,7 @@ namespace Vultaik
         }
 
 
-        public void SetVertexBinding(VkVertexInputRate rate, int stride, int binding = 0)
+        public void SetVertexBinding(VertexInputRate rate, int stride, int binding = 0)
         {
             PipelineVertexInput.VertexBindingDescriptions.Add(new()
             {
