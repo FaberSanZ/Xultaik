@@ -52,11 +52,7 @@ namespace Vultaik
         public int Binding { get; set; }
 
 
-        /// <summary>
-        /// The size and type of the vertex attribute data.
-        /// <para>
-        /// Must be allowed as a vertex buffer format, as specified by the <see
-        /// </summary>
+
         public VkFormat Format { get; set; }
 
         /// <summary>

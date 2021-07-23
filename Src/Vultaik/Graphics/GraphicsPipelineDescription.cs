@@ -130,9 +130,9 @@ namespace Vultaik
         public void SetShader(ShaderBytecode bytecode)
         {
             if (bytecode.Data.Any())
-            {
                 Shaders.Add(bytecode);
-            }
+            else
+                Shaders.Add(new(new byte[] { 0, 255 }, ShaderStage.None, ShaderBackend.None));
         }
 
 
@@ -145,19 +145,22 @@ namespace Vultaik
                 Stride = stride,
             });
         }
-        public void SetVertexAttribute(VertexType element, int binding = 0)
+        public void SetVertexAttribute(VertexType type, int binding = 0)
         {
             PipelineVertexInput.VertexAttributeDescriptions.Add(new()
             {
                 Binding = binding,
                 Location = VertexAttributeLocation,
-                Format = element.ToPixelFormat(),
+                Format = type.ToPixelFormat(),
                 Offset = VertexAttributeOffset,
             });
 
             VertexAttributeLocation++;
-            VertexAttributeOffset += element.Size();
+            VertexAttributeOffset += type.Size();
 
+            //if(VertexAttributeLocation > Adapter.MaxVertexInputAttributes)
+            //if(VertexAttributeOffset > Adapter.MaxVertexInputAttributeOffset)
+            
         }
 
 
