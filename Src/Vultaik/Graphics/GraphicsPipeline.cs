@@ -249,7 +249,7 @@ namespace Vultaik
 
 
 
-            VkPipelineInputAssemblyStateCreateInfo input_ass_state_create_info = new VkPipelineInputAssemblyStateCreateInfo()
+            VkPipelineInputAssemblyStateCreateInfo input_ass_state_info = new VkPipelineInputAssemblyStateCreateInfo()
             {
                 sType = VkStructureType.PipelineInputAssemblyStateCreateInfo,
                 pNext = null,
@@ -260,43 +260,25 @@ namespace Vultaik
 
 
 
-            VkPipelineRasterizationStateCreateInfo rasterizerState = new VkPipelineRasterizationStateCreateInfo()
+            VkPipelineRasterizationStateCreateInfo rasterizer_state_info = new VkPipelineRasterizationStateCreateInfo()
             {
                 sType = VkStructureType.PipelineRasterizationStateCreateInfo,
                 pNext = null,
-
+                flags = VkPipelineRasterizationStateCreateFlags.None,
+                //depthBiasSlopeFactor = ~0,
+                polygonMode = PipelineStateDescription.RasterizationState.FillMode.FillModeToVkPolygonMode(),
+                cullMode = PipelineStateDescription.RasterizationState.CullMode.ConvertCullMode(),
+                frontFace = PipelineStateDescription.RasterizationState.FrontFace,
+                lineWidth = PipelineStateDescription.RasterizationState.LineWidth,
+                depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable,
+                depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable,
+                rasterizerDiscardEnable = false,
+                depthBiasClamp = PipelineStateDescription.RasterizationState.DepthBiasClamp,
+                depthBiasConstantFactor = PipelineStateDescription.RasterizationState.DepthBiasConstantFactor,
             };
 
-            if (PipelineStateDescription.RasterizationState != null)
-            {
-                rasterizerState.polygonMode = PipelineStateDescription.RasterizationState.FillMode.FillModeToVkPolygonMode();
-                rasterizerState.cullMode = PipelineStateDescription.RasterizationState.CullMode.ConvertCullMode();
-                rasterizerState.frontFace = PipelineStateDescription.RasterizationState.FrontFace;
-                rasterizerState.lineWidth = PipelineStateDescription.RasterizationState.LineWidth;
-                rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable;
-                rasterizerState.depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable;
-                rasterizerState.rasterizerDiscardEnable = false;
-                if (PipelineStateDescription.RasterizationState.DepthBiasClamp != 0)
-                {
-                    rasterizerState.depthBiasClamp = PipelineStateDescription.RasterizationState.DepthBiasClamp;
-                }
+                
 
-                if (PipelineStateDescription.RasterizationState.DepthBiasConstantFactor != 0)
-                {
-                    rasterizerState.depthBiasConstantFactor = PipelineStateDescription.RasterizationState.DepthBiasConstantFactor;
-                }
-
-
-            }
-            else
-            {
-                rasterizerState.polygonMode = VkPolygonMode.Fill;
-                rasterizerState.cullMode = VkCullModeFlags.None;
-                rasterizerState.frontFace = VkFrontFace.CounterClockwise;
-                rasterizerState.lineWidth = 1.0F;
-                rasterizerState.rasterizerDiscardEnable = false;
-
-            }
 
 
             VkPipelineMultisampleStateCreateInfo multisampleState_info = new VkPipelineMultisampleStateCreateInfo()
@@ -394,8 +376,8 @@ namespace Vultaik
                 stageCount = (uint)shaders.Count,
                 pStages = shaderStageCreateInfos,
                 pVertexInputState = &vertexInputStateCreate_info,
-                pInputAssemblyState = &input_ass_state_create_info,
-                pRasterizationState = &rasterizerState,
+                pInputAssemblyState = &input_ass_state_info,
+                pRasterizationState = &rasterizer_state_info,
                 pMultisampleState = &multisampleState_info,
                 pColorBlendState = &colorBlendState,
                 layout = _pipelineLayout,

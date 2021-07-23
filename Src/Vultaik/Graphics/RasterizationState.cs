@@ -16,8 +16,8 @@ namespace Vultaik
         public CullMode CullMode { get; set; }
         public VkFrontFace FrontFace { get; set; }
         public bool DepthBiasEnable { get; set; }
-        public float DepthBiasConstantFactor { get; set; }
-        public float DepthBiasClamp { get; set; }
+        public float DepthBiasConstantFactor { get; set; } = 0;
+        public float DepthBiasClamp { get; set; } = 0;
         public float DepthBiasSlopeFactor { get; set; }
         public float LineWidth { get; set; } = 1.0F;
 
@@ -27,6 +27,8 @@ namespace Vultaik
             FillMode = FillMode.Solid,
             CullMode = CullMode.None,
             FrontFace = VkFrontFace.Clockwise,
+            DepthBiasClamp = 0,
+            DepthBiasConstantFactor = 0,
         };
     }
 }
