@@ -133,8 +133,8 @@ namespace Samples.DiffuseLighting
             Pipelinedescription0.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex));
             Pipelinedescription0.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription0.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription0.SetVertexAttribute(VertexType.Normal);
+            Pipelinedescription0.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_0 = new(Pipelinedescription0);
 
             DescriptorData descriptorData_0 = new();
@@ -154,8 +154,8 @@ namespace Samples.DiffuseLighting
             Pipelinedescription1.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex)); 
             Pipelinedescription1.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription1.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription1.SetVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription1.SetVertexAttribute(VertexType.Normal);
+            Pipelinedescription1.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_1 = new(Pipelinedescription1);
 
             DescriptorData descriptorData_1 = new();
@@ -174,8 +174,8 @@ namespace Samples.DiffuseLighting
             Pipelinedescription2.SetShader(new ShaderBytecode(vertex, ShaderStage.Vertex)); 
             Pipelinedescription2.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionNormalTexture.Size);
             Pipelinedescription2.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription2.SetVertexAttribute(VertexType.TextureCoordinate);
             Pipelinedescription2.SetVertexAttribute(VertexType.Normal); 
+            Pipelinedescription2.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_2 = new(Pipelinedescription2);
 
             DescriptorData descriptorData_2 = new();

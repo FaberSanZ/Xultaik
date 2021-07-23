@@ -14,10 +14,10 @@ namespace Samples
             //using var App = new LoadGLTF.LoadGLTFExample();
             //using var App = new LoadTexture.LoadTextureExample();
             //using var App = new Bindless.Bindless();
-            //using var App = new DiffuseLighting.DiffuseLightingExample();
+            using var App = new DiffuseLighting.DiffuseLightingExample();
             //using var App = new AmbientLighting.AmbientLighting();
             //using var App = new SpecularLighting.SpecularLighting();
-            using var App = new ComputeTexture.ComputeTexture();
+            //using var App = new ComputeTexture.ComputeTexture();
             //using var App = new Skinning.SkinningExample();
 
             App.Run();
