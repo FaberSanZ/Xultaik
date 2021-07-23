@@ -127,6 +127,33 @@ namespace Vultaik
             }
         }
 
+        internal static VkPrimitiveTopology ConvertPrimitiveType(this PrimitiveType primitiveType)
+        {
+            switch (primitiveType)
+            {
+                case PrimitiveType.PointList:
+                    return VkPrimitiveTopology.PointList;
+                case PrimitiveType.LineList:
+                    return VkPrimitiveTopology.LineList;
+                case PrimitiveType.LineStrip:
+                    return VkPrimitiveTopology.LineStrip;
+                case PrimitiveType.TriangleList:
+                    return VkPrimitiveTopology.TriangleList;
+                case PrimitiveType.TriangleStrip:
+                    return VkPrimitiveTopology.TriangleStrip;
+                case PrimitiveType.LineListWithAdjacency:
+                    return VkPrimitiveTopology.LineListWithAdjacency;
+                case PrimitiveType.LineStripWithAdjacency:
+                    return VkPrimitiveTopology.LineStripWithAdjacency;
+                case PrimitiveType.TriangleListWithAdjacency:
+                    return VkPrimitiveTopology.TriangleListWithAdjacency;
+                case PrimitiveType.TriangleStripWithAdjacency:
+                    return VkPrimitiveTopology.TriangleStripWithAdjacency;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(primitiveType));
+            }
+        }
+
 
         internal static VkPolygonMode FillModeToVkPolygonMode(this FillMode fillMode)
         {

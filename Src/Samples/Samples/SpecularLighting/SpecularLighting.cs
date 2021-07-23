@@ -21,33 +21,33 @@ namespace Samples.SpecularLighting
 
         List<VertexPositionNormalTexture> vertices = new();
         List<ushort> indices = new();
-        public Primitive(Device device, PrimitiveType type)
+        public Primitive(Device device, Vultaik.Toolkit.GeometricPrimitives.PrimitiveType type)
         {
 
             switch (type)
             {
-                case PrimitiveType.Sphere:
+                case Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Sphere:
                     Primitives.Sphere(2.0f, 32, out vertices, out indices);
                     break;
 
-                case PrimitiveType.Torus:
+                case Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Torus:
                     Primitives.Torus(2.0f, 0.6f, 32, out vertices, out indices);
                     break;
 
-                case PrimitiveType.Capsule:
+                case Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Capsule:
                     Primitives.Capsule(3.0f, 2.0f, 32, out vertices, out indices);
                     break;
-                case PrimitiveType.Cube:
+                case Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Cube:
                     Primitives.Cube(1.5f, out vertices, out indices);
                     break;
-                case PrimitiveType.Quad:
+                case Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Quad:
                     Primitives.Quad(1.5f, out vertices, out indices);
                     break;
 
-                case PrimitiveType.Pyramid:
+                case Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Pyramid:
                     Primitives.Pyramid(1.5f, out vertices, out indices);
                     break;
-                case PrimitiveType.Plane:
+                case Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Plane:
                     Primitives.Plane(1.0f, out vertices, out indices);
                     break;
                 default:
@@ -184,19 +184,19 @@ namespace Samples.SpecularLighting
                 SizeInBytes = Interop.SizeOf<Light>(),
             });
 
-            Sphere = new(Device, PrimitiveType.Sphere);
+            Sphere = new(Device, Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Sphere);
             Sphere.Position = new(-2.5f, 1.5f, 0.0f);
 
-            Torus = new(Device, PrimitiveType.Torus);
+            Torus = new(Device, Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Torus);
             Torus.Position = new(2.5f, 1.5f, 0.0f);
 
-            Pyramid = new(Device, PrimitiveType.Pyramid);
+            Pyramid = new(Device, Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Pyramid);
             Pyramid.Position = new(-2.5f, -1.5f, 0.0f);
 
-            Cube = new(Device, PrimitiveType.Cube);
+            Cube = new(Device, Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Cube);
             Cube.Position = new(2.5f, -1.5f, 0.0f);
 
-            Capsule = new(Device, PrimitiveType.Capsule);
+            Capsule = new(Device, Vultaik.Toolkit.GeometricPrimitives.PrimitiveType.Capsule);
             Capsule.Position = new(0, 0, 0.0f);
             Capsule.Size = new(0.4f, 0.4f, 0.4f);
 

@@ -23,7 +23,7 @@ namespace Vultaik
 
         public GraphicsPipelineDescription()
         {
-            SetPrimitiveType(VkPrimitiveTopology.TriangleList);
+            SetPrimitiveType(PrimitiveType.TriangleList);
             SetFillMode(FillMode.Solid);
             SetCullMode(CullMode.None);
         }
@@ -122,7 +122,7 @@ namespace Vultaik
             RasterizationState.FillMode = mode;
         }
 
-        public void SetPrimitiveType(VkPrimitiveTopology type)
+        public void SetPrimitiveType(PrimitiveType type)
         {
             InputAssemblyState.PrimitiveType = type;
         }

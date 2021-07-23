@@ -10,10 +10,10 @@ namespace Vultaik
 {
     public class InputAssemblyState
     {
-        public VkPrimitiveTopology PrimitiveType { get; set; }
+        public PrimitiveType PrimitiveType { get; set; }
         public bool PrimitiveRestartEnable { get; set; }
 
-        public InputAssemblyState(VkPrimitiveTopology Type, bool RestartEnable = false)
+        public InputAssemblyState(PrimitiveType Type, bool RestartEnable = false)
         {
             PrimitiveType = Type;
             PrimitiveRestartEnable = RestartEnable;
@@ -21,7 +21,7 @@ namespace Vultaik
 
         public InputAssemblyState()
         {
-            PrimitiveType = VkPrimitiveTopology.TriangleList;
+            PrimitiveType = PrimitiveType.TriangleList;
             PrimitiveRestartEnable = false;
         }
 
@@ -29,7 +29,7 @@ namespace Vultaik
         public static InputAssemblyState Default() => new InputAssemblyState()
         {
             PrimitiveRestartEnable = false,
-            PrimitiveType = VkPrimitiveTopology.TriangleList
+            PrimitiveType = PrimitiveType.TriangleList
         };
 
     }

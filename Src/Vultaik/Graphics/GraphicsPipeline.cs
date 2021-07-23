@@ -249,27 +249,14 @@ namespace Vultaik
 
 
 
-            VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo = new VkPipelineInputAssemblyStateCreateInfo()
+            VkPipelineInputAssemblyStateCreateInfo input_ass_state_create_info = new VkPipelineInputAssemblyStateCreateInfo()
             {
                 sType = VkStructureType.PipelineInputAssemblyStateCreateInfo,
                 pNext = null,
-                topology = VkPrimitiveTopology.TriangleList,
-                primitiveRestartEnable = false,
+                flags = VkPipelineInputAssemblyStateCreateFlags.None,
+                primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable,
+                topology = PipelineStateDescription.InputAssemblyState.PrimitiveType.ConvertPrimitiveType(),
             };
-
-            //if (PipelineStateDescription.InputAssemblyState != null)
-            //{
-            //    pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = PipelineStateDescription.InputAssemblyState.PrimitiveRestartEnable;
-            //    pipelineInputAssemblyStateCreateInfo.topology = PipelineStateDescription.InputAssemblyState.PrimitiveType;
-            //}
-            //else
-            //{
-            //    pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = true;
-            //    pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology.PointList;
-            //}
-
-
-
 
 
 
@@ -400,14 +387,14 @@ namespace Vultaik
                 viewportCount = 1,
             };
 
-            VkGraphicsPipelineCreateInfo graphicsPipelineCI = new VkGraphicsPipelineCreateInfo()
+            VkGraphicsPipelineCreateInfo pipeline_create_info = new VkGraphicsPipelineCreateInfo()
             {
                 sType = VkStructureType.GraphicsPipelineCreateInfo,
                 pNext = null,
                 stageCount = (uint)shaders.Count,
                 pStages = shaderStageCreateInfos,
                 pVertexInputState = &vertexInputStateCreate_info,
-                pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo,
+                pInputAssemblyState = &input_ass_state_create_info,
                 pRasterizationState = &rasterizerState,
                 pMultisampleState = &multisampleState_info,
                 pColorBlendState = &colorBlendState,
@@ -423,7 +410,7 @@ namespace Vultaik
 
 
             VkPipeline pipeline;
-            vkCreateGraphicsPipelines(NativeDevice.handle, VkPipelineCache.Null, 1, &graphicsPipelineCI, null, &pipeline);
+            vkCreateGraphicsPipelines(NativeDevice.handle, VkPipelineCache.Null, 1, &pipeline_create_info, null, &pipeline);
             graphicsPipeline = pipeline;
 
 

@@ -146,13 +146,12 @@ namespace Samples.Triangle
                 {
                     VertexBindingDescriptions =
                     {
-                        new()
-                        {
-                            Binding = 0,
-                            InputRate = VkVertexInputRate.Vertex,
-                            Stride = VertexPositionColor.Size
-                        }
+                        new(0, VertexPositionColor.Size, VkVertexInputRate.Vertex),
                     },
+                },
+                InputAssemblyState =
+                {
+                    PrimitiveType = PrimitiveType.TriangleList
                 },
 
             };

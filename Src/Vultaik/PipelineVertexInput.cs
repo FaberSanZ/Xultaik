@@ -16,9 +16,24 @@ namespace Vultaik
 
         }
 
+        public VertexInputBinding(int binding, int stride, VkVertexInputRate inputRate)
+        {
+            Binding = binding;
+            Stride = stride;
+            InputRate = inputRate;
+        }
+
         public int Binding { get; set; }
         public int Stride { get; set; }
         public VkVertexInputRate InputRate { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is VertexInputBinding binding &&
+                   Binding == binding.Binding &&
+                   Stride == binding.Stride &&
+                   InputRate == binding.InputRate;
+        }
     }
 
 
