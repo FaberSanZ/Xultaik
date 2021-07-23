@@ -9,27 +9,6 @@ using Vortice.Vulkan;
 
 namespace Vultaik
 {
-    public class VertexInputBinding
-    {
-        public VertexInputBinding()
-        {
-
-        }
-
-        public VertexInputBinding(int binding, int stride, VertexInputRate inputRate)
-        {
-            Binding = binding;
-            Stride = stride;
-            InputRate = inputRate;
-        }
-
-        public int Binding { get; set; }
-        public int Stride { get; set; }
-        public VertexInputRate InputRate { get; set; }
-
-    }
-
-
 
     public class VertexInputAttribute
     {
