@@ -127,6 +127,24 @@ namespace Vultaik
             }
         }
 
+
+        public static bool PrimitiveRestart(this PrimitiveType primitiveType)
+        {
+            switch (primitiveType)
+            {
+                case PrimitiveType.PointList:
+                case PrimitiveType.LineList:
+                case PrimitiveType.TriangleList:
+                case PrimitiveType.LineListWithAdjacency:
+                case PrimitiveType.TriangleListWithAdjacency:
+                case PrimitiveType.PatchList:
+                    return false;
+
+                default:
+                    return true;
+            }
+        }
+
         internal static VkPrimitiveTopology ConvertPrimitiveType(this PrimitiveType primitiveType)
         {
             switch (primitiveType)
