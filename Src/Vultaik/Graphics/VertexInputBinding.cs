@@ -16,7 +16,7 @@ namespace Vultaik
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VertexInputBinding"/> structure.
+        /// Initializes a new instance of the <see cref="VertexInputBinding"/> class.
         /// </summary>
         /// <param name="binding">The binding number that this structure describes.</param>
         /// <param name="stride">
