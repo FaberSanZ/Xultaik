@@ -109,6 +109,23 @@ namespace Vultaik
         }
 
 
+        internal static VkPolygonMode FillModeToVkPolygonMode(this FillMode fillMode)
+        {
+            // TODO: Vulkan's PolygonMode.Point is not exposed
+
+            switch (fillMode)
+            {
+                case FillMode.Solid:
+                    return VkPolygonMode.Fill;
+
+                case FillMode.Wireframe:
+                    return VkPolygonMode.Line;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(fillMode));
+            }
+        }
+
 
         internal static VkDescriptorType StageTVkDescriptorType(this spvc_resource_type stage, bool is_dynamic)
         {
@@ -303,17 +320,12 @@ namespace Vultaik
             switch (element)
             {
                 case VertexType.Position: 
-                    return Interop.SizeOf<Vector3>();
-
                 case VertexType.Normal: 
+                case VertexType.Color: 
                     return Interop.SizeOf<Vector3>();
 
                 case VertexType.TextureCoordinate: 
                     return Interop.SizeOf<Vector2>();
-
-                case VertexType.Color: 
-                    return Interop.SizeOf<Vector3>();
-
 
                 default: return 0;
             }

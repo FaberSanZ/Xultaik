@@ -12,7 +12,7 @@ namespace Vultaik
     {
         public bool DepthClampEnable { get; set; }
         public bool RasterizerDiscardEnable { get; set; }
-        public VkPolygonMode FillMode { get; set; }
+        public FillMode FillMode { get; set; }
         public VkCullModeFlags CullMode { get; set; }
         public VkFrontFace FrontFace { get; set; }
         public bool DepthBiasEnable { get; set; }
@@ -22,9 +22,9 @@ namespace Vultaik
         public float LineWidth { get; set; } = 1.0F;
 
 
-        public static RasterizationState Default() => new RasterizationState()
+        public static RasterizationState Default() => new()
         {
-            FillMode = VkPolygonMode.Fill,
+            FillMode = FillMode.Solid,
             CullMode = VkCullModeFlags.None,
             FrontFace = VkFrontFace.Clockwise,
         };

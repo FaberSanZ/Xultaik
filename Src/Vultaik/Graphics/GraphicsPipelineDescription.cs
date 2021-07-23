@@ -16,7 +16,6 @@ namespace Vultaik
 {
 
 
-
     public class GraphicsPipelineDescription
     {
         internal int VertexAttributeLocation = 0;
@@ -25,7 +24,7 @@ namespace Vultaik
         public GraphicsPipelineDescription()
         {
             SetPrimitiveType(VkPrimitiveTopology.TriangleList);
-            SetFillMode(VkPolygonMode.Fill);
+            SetFillMode(FillMode.Solid);
             SetCullMode(VkCullModeFlags.None);
         }
 
@@ -91,19 +90,19 @@ namespace Vultaik
             { 
                 VertexAttribute? attribute = info.GetCustomAttribute<VertexAttribute>();
 
-                if (attribute?.Type is VertexType.Position)
+                if (attribute?.Type == VertexType.Position)
                     SetVertexAttribute(VertexType.Position);
 
 
-                if (attribute.Type is VertexType.Color)
+                if (attribute?.Type == VertexType.Color)
                     SetVertexAttribute(VertexType.Color);
 
 
-                if (attribute.Type is VertexType.TextureCoordinate)
+                if (attribute?.Type == VertexType.TextureCoordinate)
                     SetVertexAttribute(VertexType.TextureCoordinate);
 
 
-                if (attribute.Type is VertexType.Normal)
+                if (attribute?.Type == VertexType.Normal)
                     SetVertexAttribute(VertexType.Normal);
             }
         }
@@ -118,7 +117,7 @@ namespace Vultaik
             RasterizationState.CullMode = mode;
         }
 
-        public void SetFillMode(VkPolygonMode mode)
+        public void SetFillMode(FillMode mode)
         {
             RasterizationState.FillMode = mode;
         }

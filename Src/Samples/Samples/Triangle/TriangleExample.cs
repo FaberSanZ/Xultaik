@@ -132,18 +132,32 @@ namespace Samples.Triangle
         public void CreatePipelineState()
         {
 
-            var file = Constants.ShadersFile;
+            GraphicsPipelineDescription Pipelinedescription = new()
+            {
+                Shaders =
+                {
+                    new(Constants.ShadersFile + "Triangle/Fragment.hlsl", ShaderStage.Fragment),
+                    new(Constants.ShadersFile + "Triangle/Vertex.hlsl", ShaderStage.Vertex),
+                },
 
-            GraphicsPipelineDescription Pipelinedescription = new();
-            Pipelinedescription.SetFramebuffer(Framebuffer);
-            Pipelinedescription.SetShader(new ShaderBytecode(file + "Triangle/Fragment.hlsl", ShaderStage.Fragment));
-            Pipelinedescription.SetShader(new ShaderBytecode(file + "Triangle/Vertex.hlsl", ShaderStage.Vertex));
-            Pipelinedescription.SetVertexBinding(VkVertexInputRate.Vertex, VertexPositionColor.Size);
+                Framebuffer = Framebuffer,
+
+                PipelineVertexInput = 
+                {
+                    VertexBindingDescriptions =
+                    {
+                        new()
+                        {
+                            Binding = 0,
+                            InputRate = VkVertexInputRate.Vertex,
+                            Stride = VertexPositionColor.Size
+                        }
+                    },
+                },
+
+            };
             Pipelinedescription.SetVertexAttribute(VertexType.Position);
             Pipelinedescription.SetVertexAttribute(VertexType.Color);
-            Pipelinedescription.SetFillMode(VkPolygonMode.Fill);
-            Pipelinedescription.SetCullMode(VkCullModeFlags.None);
-            Pipelinedescription.SetPrimitiveType(VkPrimitiveTopology.TriangleList);
 
             PipelineState = new(Pipelinedescription);
 
