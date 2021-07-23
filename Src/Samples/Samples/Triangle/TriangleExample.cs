@@ -156,8 +156,7 @@ namespace Samples.Triangle
                 },
 
             };
-            Pipelinedescription.SetVertexAttribute(VertexType.Position);
-            Pipelinedescription.SetVertexAttribute(VertexType.Color);
+            Pipelinedescription.AddVertexAttribute<VertexPositionColor>();
 
             PipelineState = new(Pipelinedescription);
 

@@ -283,7 +283,7 @@ namespace Vultaik
             if (PipelineStateDescription.RasterizationState != null)
             {
                 rasterizerState.polygonMode = PipelineStateDescription.RasterizationState.FillMode.FillModeToVkPolygonMode();
-                rasterizerState.cullMode = PipelineStateDescription.RasterizationState.CullMode;
+                rasterizerState.cullMode = PipelineStateDescription.RasterizationState.CullMode.ConvertCullMode();
                 rasterizerState.frontFace = PipelineStateDescription.RasterizationState.FrontFace;
                 rasterizerState.lineWidth = PipelineStateDescription.RasterizationState.LineWidth;
                 rasterizerState.depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable;

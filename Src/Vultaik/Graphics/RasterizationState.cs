@@ -13,7 +13,7 @@ namespace Vultaik
         public bool DepthClampEnable { get; set; }
         public bool RasterizerDiscardEnable { get; set; }
         public FillMode FillMode { get; set; }
-        public VkCullModeFlags CullMode { get; set; }
+        public CullMode CullMode { get; set; }
         public VkFrontFace FrontFace { get; set; }
         public bool DepthBiasEnable { get; set; }
         public float DepthBiasConstantFactor { get; set; }
@@ -25,7 +25,7 @@ namespace Vultaik
         public static RasterizationState Default() => new()
         {
             FillMode = FillMode.Solid,
-            CullMode = VkCullModeFlags.None,
+            CullMode = CullMode.None,
             FrontFace = VkFrontFace.Clockwise,
         };
     }

@@ -25,7 +25,7 @@ namespace Vultaik
         {
             SetPrimitiveType(VkPrimitiveTopology.TriangleList);
             SetFillMode(FillMode.Solid);
-            SetCullMode(VkCullModeFlags.None);
+            SetCullMode(CullMode.None);
         }
 
 
@@ -112,7 +112,7 @@ namespace Vultaik
             Framebuffer = framebuffer;
         }
 
-        public void SetCullMode(VkCullModeFlags mode)
+        public void SetCullMode(CullMode mode)
         {
             RasterizationState.CullMode = mode;
         }

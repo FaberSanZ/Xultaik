@@ -109,6 +109,25 @@ namespace Vultaik
         }
 
 
+
+        internal static VkCullModeFlags ConvertCullMode(this CullMode cullMode)
+        {
+            // TODO: Vulkan's VkCullModeFlags.FrontAndBack is not exposed
+
+            switch (cullMode)
+            {
+                case CullMode.Back:
+                    return VkCullModeFlags.Back;
+                case CullMode.Front:
+                    return VkCullModeFlags.Front;
+                case CullMode.None:
+                    return VkCullModeFlags.None;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(cullMode));
+            }
+        }
+
+
         internal static VkPolygonMode FillModeToVkPolygonMode(this FillMode fillMode)
         {
             // TODO: Vulkan's PolygonMode.Point is not exposed

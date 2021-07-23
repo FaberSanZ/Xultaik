@@ -7,7 +7,7 @@ namespace Vultaik
     /// <p>Determines the fill mode to use when rendering triangles.</p>
     /// </summary>
     /// <remarks>
-    /// <p>This enumeration is part of a rasterizer-state object description (see <strong><see cref="RasterizationState"/></strong>).</p>
+    /// <p>This enumeration is part of a rasterization-state object description (see <strong><see cref="RasterizationState"/></strong>).</p>
     /// </remarks>
     public enum FillMode : int
     {
