@@ -268,7 +268,7 @@ namespace Vultaik
                 //depthBiasSlopeFactor = ~0,
                 polygonMode = PipelineStateDescription.RasterizationState.FillMode.FillModeToVkPolygonMode(),
                 cullMode = PipelineStateDescription.RasterizationState.CullMode.ConvertCullMode(),
-                frontFace = PipelineStateDescription.RasterizationState.FrontFace,
+                frontFace = PipelineStateDescription.RasterizationState.FrontFace.ConvertFrontFace(),
                 lineWidth = PipelineStateDescription.RasterizationState.LineWidth,
                 depthBiasEnable = PipelineStateDescription.RasterizationState.DepthBiasEnable,
                 depthClampEnable = PipelineStateDescription.RasterizationState.DepthClampEnable,

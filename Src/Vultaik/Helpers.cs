@@ -118,8 +118,10 @@ namespace Vultaik
             {
                 case CullMode.Back:
                     return VkCullModeFlags.Back;
+
                 case CullMode.Front:
                     return VkCullModeFlags.Front;
+
                 case CullMode.None:
                     return VkCullModeFlags.None;
                 default:
@@ -127,6 +129,25 @@ namespace Vultaik
             }
         }
 
+
+
+        internal static VkFrontFace ConvertFrontFace(this FrontFace frontFace)
+        {
+
+            switch (frontFace)
+            {
+                case FrontFace.Clockwise:
+                    return VkFrontFace.Clockwise;
+
+                case FrontFace.CounterClockwise:
+                    return VkFrontFace.CounterClockwise;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(frontFace));
+            }
+        }
+
+        
 
         public static bool PrimitiveRestart(this PrimitiveType primitiveType)
         {
