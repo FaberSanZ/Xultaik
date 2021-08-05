@@ -355,7 +355,98 @@ namespace Vultaik
         }
 
 
+        public void SetData(byte[] data)
+        {
 
+            buffer = new Buffer(NativeDevice, new()
+            {
+                BufferFlags = BufferFlags.ShaderResource,
+                SizeInBytes = Size,
+                ByteStride = Size,
+                Usage = ResourceUsage.CPU_To_GPU
+            });
+
+
+            buffer.SetData(data);
+
+            CommandBuffer cmd = new(NativeDevice, CommandBufferType.AsyncTransfer);
+            cmd.BeginOneTimeSubmit();
+
+
+            VkImageSubresourceRange subresource_range = new(VkImageAspectFlags.Color, 0, (uint)MipLevels, 0, 1);
+
+            VkImageMemoryBarrier memory_barrier = new()
+            {
+                sType = VkStructureType.ImageMemoryBarrier,
+                pNext = null,
+                image = handle,
+                subresourceRange = subresource_range,
+                srcAccessMask = VkAccessFlags.None,
+                dstAccessMask = VkAccessFlags.TransferWrite,
+                oldLayout = VkImageLayout.Undefined,
+                newLayout = VkImageLayout.TransferDstOptimal,
+                srcQueueFamilyIndex = QueueFamilyIgnored,
+                dstQueueFamilyIndex = QueueFamilyIgnored
+            };
+
+            cmd.PipelineBarrier(VkPipelineStageFlags.TopOfPipe, VkPipelineStageFlags.Transfer, VkDependencyFlags.None, 0, null, 0, null, memory_barrier);
+
+
+
+            uint num_blits = (uint)1;
+            int offset = 0;
+
+            VkBufferImageCopy* blits = stackalloc VkBufferImageCopy[MipLevels]; // Setup buffer copy regions for each mip level.
+
+            for (uint i = 0; i < num_blits; i++)
+            {
+                blits[i] = new()
+                {
+                    imageSubresource = new(VkImageAspectFlags.Color, i, 0, 1),
+                    imageExtent = new(Width, Height, 1),
+                    bufferOffset = (ulong)offset
+                };
+
+                offset += Size;
+            }
+            cmd.copy_buffer_to_image(handle, buffer.handle, num_blits, blits, VkImageLayout.TransferDstOptimal);
+
+
+
+            VkImageMemoryBarrier memory_barrier_read = new()
+            {
+                sType = VkStructureType.ImageMemoryBarrier,
+                pNext = null,
+                image = handle,
+                subresourceRange = subresource_range,
+                srcAccessMask = VkAccessFlags.TransferWrite,
+                dstAccessMask = VkAccessFlags.ShaderRead,
+                oldLayout = VkImageLayout.TransferDstOptimal,
+                newLayout = VkImageLayout.ShaderReadOnlyOptimal,
+                srcQueueFamilyIndex = QueueFamilyIgnored,
+                dstQueueFamilyIndex = QueueFamilyIgnored
+            };
+
+            cmd.PipelineBarrier(VkPipelineStageFlags.Transfer, VkPipelineStageFlags.FragmentShader, VkDependencyFlags.None, 0, null, 0, null, memory_barrier_read);
+
+            cmd.End();
+
+
+            Fence fence = new Fence(NativeDevice);
+
+            NativeDevice.Submit(cmd, fence);
+
+            fence.Wait();
+
+            //if (fence.IsSignaled)
+
+
+            // Cleanup staging resources.
+            fence.Dispose();
+            vkFreeMemory(NativeDevice.handle, buffer_memory, null);
+            vkDestroyBuffer(NativeDevice.handle, buffer.handle, null);
+
+        }
 
         public void Image2D()
         {

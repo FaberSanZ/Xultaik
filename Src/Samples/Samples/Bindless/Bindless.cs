@@ -10,13 +10,14 @@ using Vortice.Vulkan;
 using Interop = Vultaik.Interop;
 using Samples.Common;
 using Vultaik.Toolkit;
+using System.Linq;
 
 namespace Samples.Bindless
 {
     public class Bindless : ExampleBase, IDisposable
     {
-        private const int TextureWidth = 256; //Texture Data
-        private const int TextureHeight = 256; //Texture Data
+        private const int TextureWidth = 64; //Texture Data
+        private const int TextureHeight = 64; //Texture Data
         private const int TexturePixelSize = 4;  // The number of bytes used to represent a pixel in the texture. RGBA
 
 
@@ -167,7 +168,7 @@ namespace Samples.Bindless
 
             for (uint i = 0; i < OBJECT_INSTANCES; i++)
             {
-                random_texture[i] = random.Next(0, 1024);
+                random_texture[i] = random.Next(0, 64);
                 rotationSpeeds[i] = new Vector3(rnd_dist(random), rnd_dist(random), rnd_dist(random));
 
             }
@@ -177,7 +178,7 @@ namespace Samples.Bindless
         public void AddCube(CommandBuffer cmd, Vector3 position, Vector3 rotation, bool r, int text)
         {
 
-            var model = Matrix4x4.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z) * Matrix4x4.CreateTranslation(position) * Matrix4x4.CreateScale(0.8f);
+            var model = Matrix4x4.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z) * Matrix4x4.CreateTranslation(position) * Matrix4x4.CreateScale(.8f);
 
 
             cmd.PushConstant(PipelineState_0, ShaderStage.Vertex, model);
@@ -216,73 +217,40 @@ namespace Samples.Bindless
 
         public unsafe void CreatePipelineState()
         {
-
-
-            string shaders = Constants.ShadersFile;
-            string images = Constants.ImagesFile;
-
-
-            string Fragment = shaders + "Bindless/Fragment.hlsl";
-            string Vertex = shaders + "Bindless/Vertex.hlsl";
-            Sampler sampler = new Sampler(Device);
-
-
-            Image[] random_images = new Image[16];
-
             Random random = new();
+
+            Image[] random_images = new Image[64];
+
+            Console.WriteLine(TextureHeight * TextureWidth * 4);
+            ImageDescription image_description = new ImageDescription()
+            {
+                Flags = ImageFlags.ShaderResource,
+                Usage = ResourceUsage.GPU_Only,
+                Width = TextureWidth,
+                Height = TextureHeight,
+                Size = 16384, // TextureHeight * TextureWidth * R8G8B8A8UNorm
+                Format = VkFormat.R8G8B8A8UNorm,
+                ImageType = VkImageType.Image2D,
+
+            };
 
 
             for (int i = 0; i < random_images.Length; i++)
             {
-                random_images[i] = new(Device, new ImageDescription()
-                {
-                    Flags = ImageFlags.ShaderResource,
-                    Usage = ResourceUsage.GPU_Only,
-                    Width = TextureWidth,
-                    Height = TextureHeight,
-                    Size = TextureHeight * TextureWidth * 4,
-                    Data = GenerateTextureData((byte)random.Next(0, 254), (byte)random.Next(0, 254), (byte)random.Next(0, 254)),
-                    Format = VkFormat.R8G8B8A8UNorm,
-                    ImageType = VkImageType.Image2D,
+                byte[] data = GenerateTextureData((byte)random.Next(0, 254), (byte)random.Next(0, 254), (byte)random.Next(0, 254), 
+                                                  (byte)random.Next(0, 256), (byte)random.Next(0, 256), (byte)random.Next(0, 256));
 
-                });
-
-                random_images[i].Image2D(); // copy data
+                random_images[i] = new(Device, image_description);
+                random_images[i].SetData(data); // set and copy data
 
             }
 
 
-
-
-            Image[] imgs = new Image[1024];
-
-            List<Image> imgr = new()
-            {
-                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap09-512.png"),
-                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap05-512.png"),
-                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap13-512.png"),
-                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap10-512.png"),
-                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap12-1024.png"),
-                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png"),
-                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap11-512.png"),
-            };
-
-            imgr.AddRange(random_images);
-
-            for (int i = 0; i < imgs.Length; i++)
-            {
-                imgs[i] = imgr[random.Next(0, imgr.Count)];
-            }
-
-            for (int i = 0; i < imgs.Length; i++)
-            {
-                imgs[i] = imgs[random.Next(0, imgs.Length)];
-            }
 
             GraphicsPipelineDescription Pipelinedescription_0 = new();
             Pipelinedescription_0.SetFramebuffer(Framebuffer);
-            Pipelinedescription_0.SetShader(new ShaderBytecode(Fragment, ShaderStage.Fragment));
-            Pipelinedescription_0.SetShader(new ShaderBytecode(Vertex, ShaderStage.Vertex));
+            Pipelinedescription_0.SetShader(new ShaderBytecode(Constants.ShadersFile + "Bindless/Fragment.hlsl", ShaderStage.Fragment));
+            Pipelinedescription_0.SetShader(new ShaderBytecode(Constants.ShadersFile + "Bindless/Vertex.hlsl", ShaderStage.Vertex));
             Pipelinedescription_0.SetVertexBinding(VertexInputRate.Vertex, VertexPositionTexture.Size);
             Pipelinedescription_0.SetVertexAttribute(VertexType.Position);
             Pipelinedescription_0.SetVertexAttribute(VertexType.TextureCoordinate);
@@ -299,15 +267,13 @@ namespace Samples.Bindless
             // .SetImageSampler(4, image, sampler1);
             // .SetStructuredBuffer(5, structured_buffer)
             // .SetReadWriteImage(6, image_read)
-            // .SetBindlessImage(7, images_color);
-            // .SetBindlessImage(8, images_grid);
+            // .SetBindlessImage(7, images);
 
             // Incorrect use
             // .SetUniformBuffer(0, buffer);
             // .SetSampler(1, sampler1);
             // .SetSampler(2, sampler2);
-            // .SetBindlessImage(3, images_color);
-            // .SetBindlessImage(4, images_grid);
+            // .SetBindlessImage(3, images);
             // .SetSampler(5, sampler3);
             // .SetImageSampler(6, image, sampler1);
             // .SetStructuredBuffer(7, structured_buffer)
@@ -316,8 +282,8 @@ namespace Samples.Bindless
 
             DescriptorData descriptorData_0 = new();
             descriptorData_0.SetUniformBuffer(0, CameraBuffer);
-            descriptorData_0.SetSampler(1, sampler);
-            descriptorData_0.SetBindlessImage(2, imgs);
+            descriptorData_0.SetSampler(1, new Sampler(Device));
+            descriptorData_0.SetBindlessImage(2, random_images);
 
             DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
 
@@ -378,82 +344,15 @@ namespace Samples.Bindless
             Camera.AspectRatio = (float)width / height;
         }
 
-        //private unsafe void GenerateTextureData(uint* buffer, uint height, uint width, int image_seed)
-        //{
-        //    for (uint y = 0; y < height; y++)
-        //    {
-        //        for (uint x = 0; x < width; x++)
-        //        {
-        //            uint* rgba = buffer + 4 * (y * width + x);
 
-        //            uint float_to_unorm8(float v)
-        //            {
-        //                v *= 255.0f;
-        //                int rounded = (int)(v + 0.5f);
-        //                if (rounded < 0)
-        //                {
-        //                    return 0;
-        //                }
-        //                else if (rounded > 255)
-        //                {
-        //                    return 255;
-        //                }
-        //                else
-        //                {
-        //                    return (uint)rounded;
-        //                }
-        //            };
-
-        //            uint pattern;
-        //            switch (image_seed & 3u)
-        //            {
-        //                default:
-        //                    {
-        //                        // Checkerboard
-        //                        pattern = (((x >> 2)) ^ (y >> 2)) & 1;
-        //                        break;
-        //                    }
-
-        //                case 1:
-        //                    {
-        //                        // Horizontal stripes
-        //                        pattern = (x >> 2) & 1u;
-        //                        break;
-        //                    }
-
-        //                case 2:
-        //                    {
-        //                        // Vertical stripes
-        //                        pattern = (y >> 2) & 1u;
-        //                        break;
-        //                    }
-
-        //                case 3:
-        //                    {
-        //                        // Diagonal stripes
-        //                        pattern = ((x + y) >> 2) & 1u;
-        //                        break;
-        //                    }
-        //            }
-
-        //            float pattern_color = true ? 0.25f : 1.0f;
-
-        //            for (uint i = 0; i < 3; i++)
-        //            {
-        //                rgba[i] = float_to_unorm8(pattern_color);
-        //            }
-        //            rgba[3] = 0xff;
-        //        }
-        //    }
-        //}
-        internal byte[] GenerateTextureData(byte r = 255, byte g = 255,byte b = 255, byte a = 255)
+        internal byte[] GenerateTextureData(byte r = 255, byte g = 255,byte b = 255, byte r2 = 255, byte g2 = 255, byte b2 = 255)
         {
 
             int color = default;
             color |= r << 24;
             color |= g << 16;
             color |= b << 8;
-            color |= a;
+            color |= 0xff;
 
             uint color_value = (uint)color; // RBGA
 
@@ -463,9 +362,10 @@ namespace Samples.Bindless
             byte color_a = (byte)(color_value & 0xFF);
 
 
+            Random random = new();
             int row_pitch = TextureWidth * TexturePixelSize;
-            int cell_pitch = row_pitch >> 3;       // The width of a cell in the checkboard texture.
-            int cell_height = TextureWidth >> 3;  // The height of a cell in the checkerboard texture.
+            int cell_pitch = row_pitch >> 2;       // The width of a cell in the checkboard texture.
+            int cell_height = TextureWidth >> 2;  // The height of a cell in the checkerboard texture.
             int texture_size = row_pitch * TextureHeight; // w * h * rgba = 4
             byte[] data = new byte[texture_size];
 
@@ -481,14 +381,14 @@ namespace Samples.Bindless
                     data[n + 0] = color_r; // R
                     data[n + 1] = color_g; // G
                     data[n + 2] = color_b; // B
-                    data[n + 3] = color_a; // A
+                    data[n + 3] = 0xff; // A
                 }
                 else
                 {
-                    data[n + 0] = 0xff; // R
-                    data[n + 1] = 0xff; // G
-                    data[n + 2] = 0xff; // B
-                    data[n + 3] = 0xff; // A
+                    data[n + 3] = r2; // R
+                    data[n + 2] = g2; // G
+                    data[n + 1] = b2; // B
+                    data[n + 0] = 0xff; // A
                 }
             }
 

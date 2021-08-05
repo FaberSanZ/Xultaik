@@ -39,7 +39,7 @@ namespace Vultaik
             VkDescriptorSetVariableDescriptorCountAllocateInfo variable_descriptor_count_alloc_info = new() 
             {
                 sType = VkStructureType.DescriptorSetVariableDescriptorCountAllocateInfo,
-                descriptorSetCount = 1,
+                descriptorSetCount = 2,
                 pDescriptorCounts = variable_desc_counts,
             };
 
