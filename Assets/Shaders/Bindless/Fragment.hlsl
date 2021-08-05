@@ -1,7 +1,7 @@
 
 
-Texture2D textureColor[] : register(t1);
-SamplerState samplerColor : register(s2);
+SamplerState samplerColor : register(s1);
+Texture2D textureColor[] : register(t2);
 
 
 struct PushConsts

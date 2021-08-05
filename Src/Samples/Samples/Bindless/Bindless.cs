@@ -52,8 +52,7 @@ namespace Samples.Bindless
             AdapterConfig = new()
             {
                 SwapChain = true,
-                VulkanDebug = true,
-                Fullscreen = false,
+                VulkanDebug = false,
                 Bindless = true,
             };
 
@@ -167,7 +166,7 @@ namespace Samples.Bindless
 
             for (uint i = 0; i < OBJECT_INSTANCES; i++)
             {
-                random_texture[i] = random.Next(0, 9);
+                random_texture[i] = random.Next(0, 1024);
                 rotationSpeeds[i] = new Vector3(rnd_dist(random), rnd_dist(random), rnd_dist(random));
 
             }
@@ -177,16 +176,12 @@ namespace Samples.Bindless
         public void AddCube(CommandBuffer cmd, Vector3 position, Vector3 rotation, bool r, int text)
         {
 
-            Matrix4x4 model = Matrix4x4.Identity;
-
-
-            model = Matrix4x4.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z) * Matrix4x4.CreateTranslation(position) * Matrix4x4.CreateScale(0.8f);
+            var model = Matrix4x4.CreateFromYawPitchRoll(rotation.X, rotation.Y, rotation.Z) * Matrix4x4.CreateTranslation(position) * Matrix4x4.CreateScale(0.8f);
 
 
             cmd.PushConstant(PipelineState_0, ShaderStage.Vertex, model);
             cmd.PushConstant<int>(PipelineState_0, ShaderStage.Fragment, text);
             cmd.DrawIndexed(Indices.Length, 1, 0, 0, 0);
-            //cmd.DrawIndexed(6, 1, 0, 0, 0);
 
         }
 
@@ -218,7 +213,7 @@ namespace Samples.Bindless
         }
 
 
-        public void CreatePipelineState()
+        public unsafe void CreatePipelineState()
         {
 
 
@@ -228,21 +223,60 @@ namespace Samples.Bindless
 
             string Fragment = shaders + "Bindless/Fragment.hlsl";
             string Vertex = shaders + "Bindless/Vertex.hlsl";
-
-
-
-            //var img0 = Image(GenerateTextureData(), TextureWidth, TextureWidth, 1, 1, TextureWidth * TextureWidth * 4, false, vkf.R8G8B8A8UNorm);
-            Image text1 = ImageFile.Load2DFromFile(Device, images + "IndustryForgedDark512.ktx");
-            Image text2 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap09-512.png");
-            Image text3 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap05-512.png");
-            Image text4 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap13-512.png");
-            Image text5 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap10-512.png");
-            Image text6 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap12-1024.png");
-            Image text7 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png");
-            Image text8 = ImageFile.Load2DFromFile(Device, images + "UVCheckerMap11-512.png");
-            Image text9 = ImageFile.Load2DFromFile(Device, images + "texture-sheet.jpg");
             Sampler sampler = new Sampler(Device);
 
+
+            Image[] random_images = new Image[16];
+
+            Random random = new();
+
+
+            for (int i = 0; i < random_images.Length; i++)
+            {
+                random_images[i] = new(Device, new ImageDescription()
+                {
+                    Flags = ImageFlags.ShaderResource,
+                    Usage = ResourceUsage.GPU_Only,
+                    Width = TextureWidth,
+                    Height = TextureHeight,
+                    Size = TextureHeight * TextureWidth * 4,
+                    Data = GenerateTextureData((byte)random.Next(0, 254), (byte)random.Next(0, 254), (byte)random.Next(0, 254)),
+                    Format = VkFormat.R8G8B8A8UNorm,
+                    ImageType = VkImageType.Image2D,
+
+                });
+
+                random_images[i].Image2D(); // copy data
+
+            }
+
+
+
+
+            Image[] imgs = new Image[1024];
+
+            List<Image> imgr = new()
+            {
+                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap09-512.png"),
+                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap05-512.png"),
+                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap13-512.png"),
+                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap10-512.png"),
+                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap12-1024.png"),
+                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap08-512.png"),
+                ImageFile.Load2DFromFile(Device, images + "UVCheckerMap11-512.png"),
+            };
+
+            imgr.AddRange(random_images);
+
+            for (int i = 0; i < imgs.Length; i++)
+            {
+                imgs[i] = imgr[random.Next(0, imgr.Count)];
+            }
+
+            for (int i = 0; i < imgs.Length; i++)
+            {
+                imgs[i] = imgs[random.Next(0, imgs.Length)];
+            }
 
             GraphicsPipelineDescription Pipelinedescription_0 = new();
             Pipelinedescription_0.SetFramebuffer(Framebuffer);
@@ -253,10 +287,37 @@ namespace Samples.Bindless
             Pipelinedescription_0.SetVertexAttribute(VertexType.TextureCoordinate);
             PipelineState_0 = new(Pipelinedescription_0);
 
+            // Set image without binding last allows to use the same DescriptorSet for all types,
+            // Otherwise use a different DescriptorSet.
+
+            // Correct use
+            // .SetUniformBuffer(0, buffer);
+            // .SetSampler(1, sampler1);
+            // .SetSampler(2, sampler2);
+            // .SetSampler(3, sampler3);
+            // .SetImageSampler(4, image, sampler1);
+            // .SetStructuredBuffer(5, structured_buffer)
+            // .SetReadWriteImage(6, image_read)
+            // .SetBindlessImage(7, images_color);
+            // .SetBindlessImage(8, images_grid);
+
+            // Incorrect use
+            // .SetUniformBuffer(0, buffer);
+            // .SetSampler(1, sampler1);
+            // .SetSampler(2, sampler2);
+            // .SetBindlessImage(3, images_color);
+            // .SetBindlessImage(4, images_grid);
+            // .SetSampler(5, sampler3);
+            // .SetImageSampler(6, image, sampler1);
+            // .SetStructuredBuffer(7, structured_buffer)
+            // .SetReadWriteImage(8, image_read)
+
+
             DescriptorData descriptorData_0 = new();
             descriptorData_0.SetUniformBuffer(0, CameraBuffer);
-            descriptorData_0.SetBindlessImage(1, new[] { text1, text2, text3, text4, text5, text6, text7, text8, text9 });
-            descriptorData_0.SetSampler(2, sampler);
+            descriptorData_0.SetSampler(1, sampler);
+            descriptorData_0.SetBindlessImage(2, imgs);
+
             DescriptorSet_0 = new(PipelineState_0, descriptorData_0);
 
         }
@@ -324,7 +385,7 @@ namespace Samples.Bindless
         //        {
         //            uint* rgba = buffer + 4 * (y * width + x);
 
-        //            uint float_to_unorm8(float v) 
+        //            uint float_to_unorm8(float v)
         //            {
         //                v *= 255.0f;
         //                int rounded = (int)(v + 0.5f);
@@ -376,21 +437,16 @@ namespace Samples.Bindless
 
         //            float pattern_color = true ? 0.25f : 1.0f;
 
-        //            //for (unsigned i = 0; i < 3; i++)
-        //            //{
-        //            //    // Add in some random noise for good measure so we're sure we're not sampling the exact same texture over and over.
-        //            //    rgba[i] = float_to_unorm8(pattern_color * rgb[i] + distribution(rnd));
-        //            //}
+        //            for (uint i = 0; i < 3; i++)
+        //            {
+        //                rgba[i] = float_to_unorm8(pattern_color);
+        //            }
         //            rgba[3] = 0xff;
         //        }
         //    }
         //}
-        internal byte[] GenerateTextureData()
+        internal byte[] GenerateTextureData(byte r = 255, byte g = 255,byte b = 255, byte a = 255)
         {
-            byte r = 255;
-            byte g = 255;
-            byte b = 255;
-            byte a = 255;
 
             int color = default;
             color |= r << 24;
@@ -421,10 +477,10 @@ namespace Samples.Bindless
 
                 if (i % 2 == j % 2)
                 {
-                    data[n + 0] = 1; // R
-                    data[n + 1] = 1; // G
-                    data[n + 2] = 1; // B
-                    data[n + 3] = 1; // A
+                    data[n + 0] = color_r; // R
+                    data[n + 1] = color_g; // G
+                    data[n + 2] = color_b; // B
+                    data[n + 3] = color_a; // A
                 }
                 else
                 {

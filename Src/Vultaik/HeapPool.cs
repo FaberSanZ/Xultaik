@@ -17,11 +17,11 @@ namespace Vultaik
 
         internal readonly Dictionary<VkDescriptorType, uint> MaxDescriptorTypeCounts = new()
         {
-            [VkDescriptorType.Sampler] = (MaxSets * 2),
+            [VkDescriptorType.Sampler] = (MaxSets * 4),
 
             [VkDescriptorType.CombinedImageSampler] = (MaxSets * 3),
 
-            [VkDescriptorType.SampledImage] = (MaxSets / 2),
+            [VkDescriptorType.SampledImage] = (MaxSets * 4),
 
             [VkDescriptorType.StorageImage] = (MaxSets / 64),
 
@@ -80,7 +80,7 @@ namespace Vultaik
             {
                 sType = VkStructureType.DescriptorPoolCreateInfo,
                 pNext = null,
-                flags = VkDescriptorPoolCreateFlags.UpdateAfterBind,
+                flags = VkDescriptorPoolCreateFlags.UpdateAfterBindEXT,
                 poolSizeCount = pool_size,
                 pPoolSizes = sizes,
                 maxSets = MaxSets,

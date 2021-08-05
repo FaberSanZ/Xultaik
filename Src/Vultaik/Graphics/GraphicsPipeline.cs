@@ -78,13 +78,15 @@ namespace Vultaik
                     pImmutableSamplers = null,
                 };
 
-                if (is_bindless)
-                    layoutBinding[i].descriptorCount = NativeDevice.VulkanNumSetsPerPool;
+                if (is_bindless && layoutBinding[i].descriptorType == VkDescriptorType.SampledImage)
+                    layoutBinding[i].descriptorCount = NativeDevice.descriptor_indexing_properties.maxDescriptorSetUpdateAfterBindSampledImages;
 
+                //if (is_bindless && layoutBinding[i].descriptorType == VkDescriptorType.UniformBuffer)
+                //    layoutBinding[i].descriptorCount = NativeDevice.descriptor_indexing_properties.maxDescriptorSetUpdateAfterBindUniformBuffers;
 
             }
 
-            VkDescriptorBindingFlags* descriptorBindingFlags = stackalloc VkDescriptorBindingFlags[4]
+            VkDescriptorBindingFlags* descriptor_binding_flags = stackalloc VkDescriptorBindingFlags[4]
             {
                 VkDescriptorBindingFlags.VariableDescriptorCount,
                 VkDescriptorBindingFlags.PartiallyBound,
@@ -92,24 +94,24 @@ namespace Vultaik
                 VkDescriptorBindingFlags.UpdateUnusedWhilePending,
             };
 
-            VkDescriptorSetLayoutBindingFlagsCreateInfo setLayoutBindingFlags = new()
+            VkDescriptorSetLayoutBindingFlagsCreateInfo set_layout_binding_flags_info = new()
             {
                 sType = VkStructureType.DescriptorSetLayoutBindingCreateInfoEXT,
                 bindingCount = 4,
-                pBindingFlags = descriptorBindingFlags,
+                pBindingFlags = descriptor_binding_flags,
             };
 
 
-            VkDescriptorSetLayoutCreateInfo descriptorLayout = new VkDescriptorSetLayoutCreateInfo
+            VkDescriptorSetLayoutCreateInfo descriptor_layout = new VkDescriptorSetLayoutCreateInfo
             {
                 sType = VkStructureType.DescriptorSetLayoutCreateInfo,
                 flags = VkDescriptorSetLayoutCreateFlags.None,
-                pNext = is_bindless ? &setLayoutBindingFlags : null,
+                pNext = is_bindless ? &set_layout_binding_flags_info : null,
                 bindingCount = (uint)resources.Length,
                 pBindings = layoutBinding
             };
 
-            vkCreateDescriptorSetLayout(NativeDevice.handle, &descriptorLayout, null, out _descriptorSetLayout);
+            vkCreateDescriptorSetLayout(NativeDevice.handle, &descriptor_layout, null, out _descriptorSetLayout);
 
 
         }

@@ -11,28 +11,28 @@ using System.Text;
 
 namespace Vultaik
 {
-    public class DeviceLimits 
+    public static class DeviceLimits 
     {
 
-        public int DescriptorSets => 8;
+        public static int DescriptorSets => 8;
 
-        public int Bindings => 16;
+        public static int Bindings => 16;
 
-        public int BindingsBindlessVarying => 64 * 1024;
+        public static  int BindingsBindlessVarying => 64 * 1024;
 
-        public int BindingsBindless => 4 * 1024;
+        public static int BindingsBindless => 4 * 1024;
 
-        public int Attachments => 8;
+        public static int Attachments => 8;
 
-        public int VertexAttribs => 16;
+        public static int VertexAttribs => 16;
 
-        public int VertexBuffers => 4;
+        public static int VertexBuffers => 4;
 
-        public int ConstantSize => 128;
+        public static int ConstantSize => 128;
 
-        public int MaxUboSize => 16 * 1024;
+        public static int MaxUboSize => 16 * 1024;
 
-        public int SpecConstants => 8;
+        public static int SpecConstants => 8;
 
     }
 }

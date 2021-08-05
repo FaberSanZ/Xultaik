@@ -86,7 +86,7 @@ namespace Vultaik
 
             Recreate();
         }
-        public uint VulkanNumSetsPerPool = 16 * 16;
+        public uint VulkanNumBindingsBindless = 1024;
         public uint VulkanNumBindingsBindlessVarying = 16 * 1024;
 
         public long SmallHeapMaxSize = 1024L * 1024 * 1024;
@@ -911,6 +911,7 @@ namespace Vultaik
 
         internal bool supports_descriptor_indexing()
         {
+
             bool supports_descriptor_indexing = descriptor_indexing_features.descriptorBindingSampledImageUpdateAfterBind &&
                                                 descriptor_indexing_features.descriptorBindingPartiallyBound &&
                                                 descriptor_indexing_features.runtimeDescriptorArray &&

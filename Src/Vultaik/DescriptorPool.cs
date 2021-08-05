@@ -32,7 +32,7 @@ namespace Vultaik
         {
             uint* variable_desc_counts = stackalloc uint[1]
             {
-                30
+                (uint)DeviceLimits.BindingsBindless
             };
 
 
@@ -53,6 +53,7 @@ namespace Vultaik
                 descriptorSetCount = 1,
                 pSetLayouts = &setLayout,
                 descriptorPool = pool,
+                
             };
 
 
