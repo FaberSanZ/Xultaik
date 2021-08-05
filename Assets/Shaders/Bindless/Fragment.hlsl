@@ -1,6 +1,6 @@
 
 
-SamplerState samplerColor : register(s1);
+SamplerState samplerColor[] : register(s1);
 Texture2D textureColor[] : register(t2);
 
 
@@ -17,7 +17,7 @@ struct VSOutput
 
 float4 main(VSOutput input) : SV_TARGET
 {
-    float4 color = textureColor[NonUniformResourceIndex(index.i)].Sample(samplerColor, input.UV);
+    float4 color = textureColor[NonUniformResourceIndex(index.i)].Sample(samplerColor[0], input.UV);
     
     return color;
 }

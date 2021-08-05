@@ -54,6 +54,7 @@ namespace Samples.Bindless
                 SwapChain = true,
                 VulkanDebug = false,
                 Bindless = true,
+                ForceExclusiveTransferQueue = true,
             };
 
 

@@ -339,7 +339,6 @@ namespace Vultaik
                         dstBinding = (uint)r.Binding,
                     };
                     vkUpdateDescriptorSets(NativeDevice.handle, write_descriptor);
-                    Console.WriteLine(r.DescriptorType);
                 }
 
 
