@@ -154,10 +154,6 @@ namespace Vultaik
             CreateDevice();
 
 
-            if (!AdapterConfig.ForceExclusiveTransferQueue)
-                TransferFamily = GraphicsFamily;
-
-
             // Create CommandQueues
             CreateCommandQueues();
 
@@ -762,7 +758,7 @@ namespace Vultaik
 
         public void Submit(CommandBuffer commandBuffer, Fence? fence = null)
         {
-            var force_exclusive_transfer_queue = AdapterConfig.ForceExclusiveTransferQueue; 
+            var force_exclusive_transfer_queue = false; 
             VkPipelineStageFlags wait_stages = VkPipelineStageFlags.ColorAttachmentOutput;
             VkSemaphore signal_semaphore = render_finished_semaphore;
             VkSemaphore wait_semaphore = image_available_semaphore;
@@ -772,7 +768,7 @@ namespace Vultaik
             VkFence sync_fence = VkFence.Null;
             bool use_semaphore = true;
 
-            if (queue == transfer_queue && force_exclusive_transfer_queue && cmd_type == CommandBufferType.AsyncTransfer)
+            if (queue == transfer_queue && cmd_type == CommandBufferType.AsyncTransfer)
             {
                 wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
                 wait_stages |= VkPipelineStageFlags.Transfer;

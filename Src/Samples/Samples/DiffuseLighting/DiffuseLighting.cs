@@ -54,7 +54,6 @@ namespace Samples.DiffuseLighting
                 SwapChain = true,
                 VulkanDebug = false,
                 Fullscreen = false,
-                ForceExclusiveTransferQueue = true,
             };
 
 

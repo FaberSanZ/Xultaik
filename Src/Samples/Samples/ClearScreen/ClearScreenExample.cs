@@ -37,8 +37,6 @@ namespace Samples.ClearScreen
                 RayTracing = false,
                 ShadingRate = false,
                 SingleQueue = false,
-                ForceExclusiveTransferQueue = false,
-
             };
         }
 

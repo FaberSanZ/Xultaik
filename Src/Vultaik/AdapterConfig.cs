@@ -37,9 +37,7 @@ namespace Vultaik
 
         public bool SingleQueue { get; set; } // TODO: Implement SingleQueue 
 
-        public bool ForceExclusiveTransferQueue { get; set; }
-
-        public bool SwapChain { get; set; } // TODO: Implement SwapChain 
+        public bool SwapChain { get; set; } 
 
         public bool SamplerAnisotropy { get; set; } // TODO: Implement SamplerAnisotropy 
 
