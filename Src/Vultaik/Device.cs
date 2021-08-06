@@ -758,20 +758,23 @@ namespace Vultaik
 
         public void Submit(CommandBuffer commandBuffer, Fence? fence = null)
         {
-            var force_exclusive_transfer_queue = false; 
             VkPipelineStageFlags wait_stages = VkPipelineStageFlags.ColorAttachmentOutput;
             VkSemaphore signal_semaphore = render_finished_semaphore;
             VkSemaphore wait_semaphore = image_available_semaphore;
             VkQueue queue = get_queue_type_cmd(commandBuffer);
             CommandBufferType cmd_type = commandBuffer.Type;
             VkCommandBuffer cmd = commandBuffer.handle;
+            var force_exclusive_transfer_queue = false; 
             VkFence sync_fence = VkFence.Null;
             bool use_semaphore = true;
 
             if (queue == transfer_queue && cmd_type == CommandBufferType.AsyncTransfer)
             {
                 wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
-                wait_stages |= VkPipelineStageFlags.Transfer;
+
+                if (force_exclusive_transfer_queue)
+                    wait_stages |= VkPipelineStageFlags.Transfer;
+
                 use_semaphore = false;
             }
 
@@ -787,7 +790,7 @@ namespace Vultaik
             }
 
 
-            if (queue == graphics_queue && cmd_type == CommandBufferType.AsyncTransfer)
+            if (queue == graphics_queue && cmd_type == CommandBufferType.AsyncCompute)
             {
                 wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
                 wait_stages |= VkPipelineStageFlags.ComputeShader;
@@ -795,7 +798,7 @@ namespace Vultaik
                 use_semaphore = false;
             }
 
-            if (queue == compute_queue)
+            if (queue == compute_queue && cmd_type == CommandBufferType.AsyncCompute)
             {
                 wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
                 wait_stages |= VkPipelineStageFlags.ComputeShader;
