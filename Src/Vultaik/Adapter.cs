@@ -43,6 +43,8 @@ namespace Vultaik
             vultaik_debug();
         }
 
+        public bool IsSupported { get; private set; }
+
         public VkFormat DepthFormat => get_supported_depth_format(FormatExtensions.depth_formats);
 
         public Version EngineVersion { get; internal set; } = new Version(1, 2, 155);
@@ -120,12 +122,10 @@ namespace Vultaik
 
 
 
-        public IntPtr GetInstance()
-        {
-            return instance.Handle;
-        }
+        public IntPtr Instance => instance.Handle;
+        public bool IsNull => instance.IsNull || instance == VkInstance.Null;
 
-        public bool IsSupported()
+        private bool is_supported()
         {
             if (_supportInitialized.HasValue)
                 return _supportInitialized.Value;
@@ -146,10 +146,10 @@ namespace Vultaik
 
         public void Recreate()
         {
+            IsSupported = is_supported();
 
-
-            if (!IsSupported())
-                throw new NotSupportedException("Vulkan is not supported");
+            if (!IsSupported)
+                return;
 
             supports_extensions();
 
@@ -604,6 +604,7 @@ namespace Vultaik
                 vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
 
             vkDestroyInstance(instance, null);
+            instance = VkInstance.Null;
         }
 
 

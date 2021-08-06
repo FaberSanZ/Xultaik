@@ -834,24 +834,25 @@ namespace Vultaik
                 vkQueueSubmit(queue, 1, &submit_info, sync_fence).CheckResult();
         }
 
-        internal VkMemoryType GetMemoryTypeExt(VkPhysicalDeviceMemoryProperties memory, uint index)
+        internal VkMemoryType memory_prop_ext(VkPhysicalDeviceMemoryProperties memory, uint index)
         {
-            //VkMemoryType* ptr = &memory.memoryTypes_0;
-            //if ((*ptr).propertyFlags == VkMemoryPropertyFlags.DeviceCoherentAMD)
+            VkMemoryType* ptr = &memory.memoryTypes_0;
 
+            if (ptr[index].propertyFlags == VkMemoryPropertyFlags.DeviceCoherentAMD)
+            { }
 
-            return (&memory.memoryTypes_0)[index];
+            return ptr[index];
         }
 
 
-        internal uint get_memory_type(uint typeBits, VkMemoryPropertyFlags properties)
+        internal uint select_memory_type(uint typeBits, VkMemoryPropertyFlags properties)
         {
 
             for (uint i = 0; i < _memoryProperties.memoryTypeCount; i++)
             {
                 if ((typeBits & 1) is 1)
                 {
-                    if ((GetMemoryTypeExt(_memoryProperties, i).propertyFlags & properties) == properties)
+                    if ((memory_prop_ext(_memoryProperties, i).propertyFlags & properties) == properties)
                     {
                         return i;
                     }
