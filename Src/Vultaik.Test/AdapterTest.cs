@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace Vultaik.Test
@@ -28,7 +27,6 @@ namespace Vultaik.Test
 
         }
 
-
         [Fact]
         public void SwapChainSupport()
         {
@@ -38,5 +36,16 @@ namespace Vultaik.Test
 
             Assert.True(support, "SwapChain is not supported.");
         }
+
+
+
+        //public void MultisampleQualityLevels()
+        //{
+        //    AdapterConfig config = new();
+        //    using Adapter adapter = new(config);
+        //    var sample = adapter.MultisampleCount;
+
+        //    Assert.True(sample != Vortice.Vulkan.VkSampleCountFlags.None, "Multisample is not supported.");
+        //}
     }
 }

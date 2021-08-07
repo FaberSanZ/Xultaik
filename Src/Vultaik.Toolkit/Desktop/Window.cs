@@ -223,6 +223,7 @@ namespace Vultaik.Desktop
             }
         }
 
+
         public string Title
         {
             get => _title;
@@ -322,7 +323,7 @@ namespace Vultaik.Desktop
 
 
 
-            while (!glfw.WindowShouldClose(pWindowHandle))
+            while (!glfw.WindowShouldClose(pWindowHandle) && !Input.Keyboards[0].IsKeyPressed(Key.Escape))
             {
                 is_render = true;
                 render();
@@ -362,7 +363,7 @@ namespace Vultaik.Desktop
 
         public void Dispose()
         {
-
+            glfw.DestroyWindow(pWindowHandle);
         }
     }
 
