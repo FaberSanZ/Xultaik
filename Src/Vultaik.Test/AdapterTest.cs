@@ -23,8 +23,7 @@ namespace Vultaik.Test
             Assert.False(adapter.IsNull, "Adapter is not disposed.");
 
             adapter.Dispose();
-            Assert.True(adapter.IsNull, "Adapter is disposed.");
-
+            Assert.True(adapter.IsNull, "Adapter is not disposed.");
         }
 
         [Fact]
@@ -33,12 +32,13 @@ namespace Vultaik.Test
             AdapterConfig config = new();
             using Adapter adapter = new(config);
             bool support = adapter.SwapChain.Support;
+            string name = adapter.SwapChain.Name;
 
-            Assert.True(support, "SwapChain is not supported.");
+            Assert.True(support, $"SwapChain is not supported. {name}");
         }
 
 
-
+        //[Fact]
         //public void MultisampleQualityLevels()
         //{
         //    AdapterConfig config = new();
