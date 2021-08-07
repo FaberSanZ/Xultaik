@@ -5,7 +5,7 @@ namespace Vultaik.Test
     public class AdapterTest
     {
         [Fact]
-        public void CreateAdapter()
+        public void Create()
         {
             AdapterConfig config = new();
             using Adapter adapter = new(config);
@@ -15,7 +15,7 @@ namespace Vultaik.Test
         }
 
         [Fact]
-        public void DisposeAdapter()
+        public void Dispose()
         {
             AdapterConfig config = new();
             Adapter adapter = new(config);
