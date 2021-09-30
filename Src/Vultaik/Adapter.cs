@@ -482,9 +482,22 @@ namespace Vultaik
 
             handles = new VkPhysicalDevice[device_count];
 
-            if (device_count == 1 )
-                handle = physicalDevicesptr[0];
 
+            for (int i = 0; i < device_count; i++)
+            {
+                vkGetPhysicalDeviceProperties(physicalDevicesptr[i], out var properties);
+
+                if (properties.deviceType != VkPhysicalDeviceType.IntegratedGpu && !AdapterConfig.IntegratedGpu)
+                {
+                    handle = physicalDevicesptr[i];
+                    break;
+                }
+
+                handle = physicalDevicesptr[0];
+            }
+
+
+            // TODO: Multi GPU
             for (int i = 0; i < device_count; i++)
                 handles[i] = physicalDevicesptr[i];
 
