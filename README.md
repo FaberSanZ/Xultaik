@@ -33,6 +33,12 @@ These extensions will likely become mandatory later.
 
 - `VK_EXT_descriptor_indexing`
 - `VK_KHR_timeline_semaphore`
+- `VK_KHR_ray_tracing_pipeline`
+- `VK_KHR_acceleration_structure`
+- `VK_KHR_ray_query`
+- `VK_KHR_buffer_device_address`
+- `VK_KHR_fragment_shading_rate`
+
 
 <br>
 
