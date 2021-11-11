@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silk.NET.GLFW" Version="2.5.0" />
+    <PackageReference Include="Silk.NET.GLFW" Version="2.10.1" />
   </ItemGroup>
 
 

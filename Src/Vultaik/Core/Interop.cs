@@ -125,6 +125,8 @@ namespace Vultaik
 
             public static void* AsPointer<T>(ref T value)
             {
+                //bool is_array = value!.GetType().IsArray;
+
                 return Unsafe.AsPointer(ref value);
             }
             public static void Write<T>(IntPtr dstPointer, T[] values)

@@ -493,7 +493,7 @@ namespace Vultaik
                     break;
                 }
 
-                handle = physicalDevicesptr[0];
+                handle = physicalDevicesptr[i];
             }
 
 
