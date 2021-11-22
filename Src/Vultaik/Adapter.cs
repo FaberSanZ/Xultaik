@@ -367,7 +367,6 @@ namespace Vultaik
                 debug_utils_create_info.pfnUserCallback = &DebugMessengerCallback;
 
                 inst_info.pNext = &debug_utils_create_info;
-
             }
 
             VkValidationFeaturesEXT validation_features_info = new() { sType = VkStructureType.ValidationFeaturesEXT };
@@ -409,19 +408,19 @@ namespace Vultaik
             uint[] ignored_ids = new[]
             {
                 0xc05b3a9du,
-                0x2864340eu,
-                0xbfcfaec2u,
-                0x96f03c1cu,
-                0x8189c842u,
-                0x3d492883u,
-                0x1608dec0u,
+                //0x2864340eu,
+                //0xbfcfaec2u,
+                //0x96f03c1cu,
+                //0x8189c842u,
+                //0x3d492883u,
+                //0x1608dec0u,
 
                 0x9b4c6071u,    // TODO: VkDebugUtilsObjectNameInfoEXT
-                0x90ef715du,    // TODO: UNASSIGNED-CoreValidation-DrawState-InvalidImageAspect
-                0xf27b16au,     // TODO: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL: when using a Depth or Stencil format
-                0x34f84ef4u,    // TODO: vkCmdBeginRenderPass-initialLayout: If any of the initialLayout or finalLayout member of the VkAttachmentDescription
-                0x4d08326du,    // TODO: vkEndCommandBuffer-commandBuffer  
-                0xc7aabc16u,    // TODO: VkPresentInfoKHR-pImageIndices 
+                //0x90ef715du,    // TODO: UNASSIGNED-CoreValidation-DrawState-InvalidImageAspect
+                //0xf27b16au,     // TODO: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL: when using a Depth or Stencil format
+                //0x34f84ef4u,    // TODO: vkCmdBeginRenderPass-initialLayout: If any of the initialLayout or finalLayout member of the VkAttachmentDescription
+                //0x4d08326du,    // TODO: vkEndCommandBuffer-commandBuffer  
+                //0xc7aabc16u,    // TODO: VkPresentInfoKHR-pImageIndices 
             };
 
             for (int i = 0; i < ignored_ids.Length; i++)
@@ -430,37 +429,38 @@ namespace Vultaik
 
             string? message = Interop.String.FromPointer(pCallbackData->pMessage);
 
-            if (messageTypes == VkDebugUtilsMessageTypeFlagsEXT.Validation)
+            switch (messageTypes)
             {
-                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Info)
-                {
-                    ConsoleLog.Info($"Vulkan", $" {message}");
-                }
-                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
-                {
-                    ConsoleLog.Warn("Vulkan", $" {message}");
-                }
-                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
-                {
-                    ConsoleLog.Error($"Vulkan", $" {message}");
-                }
+                case VkDebugUtilsMessageTypeFlagsEXT.Validation:
+                    switch (messageSeverity)
+                    {
+                        case VkDebugUtilsMessageSeverityFlagsEXT.Info:
+                            ConsoleLog.Info($"Vulkan", $" {message}");
+                            break;
+                        case VkDebugUtilsMessageSeverityFlagsEXT.Warning:
+                            ConsoleLog.Warn("Vulkan", $" {message}");
+                            break;
+                        case VkDebugUtilsMessageSeverityFlagsEXT.Error:
+                            ConsoleLog.Error($"Vulkan", $" {message}");
+                            break;
+                    }
 
-            }
-            else
-            {
-                if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Info)
-                {
-                    ConsoleLog.Info($"Vulkan", $" {message}");
-                }
-                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Warning)
-                {
-                    ConsoleLog.Warn("Vulkan", $" {message}");
-                }
-                else if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)
-                {
-                    ConsoleLog.Error($"Vulkan", $" {message}");
-                }
+                    break;
+                default:
+                    switch (messageSeverity)
+                    {
+                        case VkDebugUtilsMessageSeverityFlagsEXT.Info:
+                            ConsoleLog.Info($"Vulkan", $" {message}");
+                            break;
+                        case VkDebugUtilsMessageSeverityFlagsEXT.Warning:
+                            ConsoleLog.Warn("Vulkan", $" {message}");
+                            break;
+                        case VkDebugUtilsMessageSeverityFlagsEXT.Error:
+                            ConsoleLog.Error($"Vulkan", $" {message}");
+                            break;
+                    }
 
+                    break;
             }
 
             return VK_FALSE;
@@ -551,13 +551,11 @@ namespace Vultaik
                 }
             }
 
-             
-
             return depthFormat;
         }
 
 
-        public VkFormat GetSupportedDepthFormat(IEnumerable<VkFormat> depthFormats)
+        public PixelFormat GetSupportedDepthFormat(IEnumerable<VkFormat> depthFormats)
         {
             // Since all depth formats may be optional, we need to find a suitable depth format to use
             // Start with the highest precision packed format
@@ -577,7 +575,7 @@ namespace Vultaik
 
 
 
-            return depthFormat;
+            return (PixelFormat)depthFormat;
         }
 
 

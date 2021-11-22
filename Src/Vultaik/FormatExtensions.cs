@@ -283,15 +283,15 @@ namespace Vultaik
 
 
 
-		public static IEnumerable<VkFormat> DepthFormats 
+		public static IEnumerable<PixelFormat> DepthFormats 
         {
             get
             {
-				yield return VkFormat.D32SFloatS8UInt;
-				yield return VkFormat.D32SFloat;
-				yield return VkFormat.D24UNormS8UInt;
-				yield return VkFormat.D16UNormS8UInt;
-				yield return VkFormat.D16UNorm;
+				yield return PixelFormat.D32SFloatS8UInt;
+				yield return PixelFormat.D32SFloat;
+				yield return PixelFormat.D24UNormS8UInt;
+				yield return PixelFormat.D16UNormS8UInt;
+				yield return PixelFormat.D16UNorm;
 			}
 		}
 
@@ -307,6 +307,7 @@ namespace Vultaik
                 yield return VkFormat.D16UNorm;
             }
         }
+
 
 
 

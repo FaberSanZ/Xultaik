@@ -432,17 +432,17 @@ namespace Vultaik
             cmd.End();
 
 
-            Fence fence = new Fence(NativeDevice);
+            //Fence fence = new Fence(NativeDevice);
 
-            NativeDevice.Submit(cmd, fence);
+            NativeDevice.SubmitTransfer(cmd, null);
 
-            fence.Wait();
+            //fence.Wait();
 
             //if (fence.IsSignaled)
 
 
             // Cleanup staging resources.
-            fence.Dispose();
+            //fence.Dispose();
             vkFreeMemory(NativeDevice.handle, buffer_memory, null);
             vkDestroyBuffer(NativeDevice.handle, buffer.handle, null);
 

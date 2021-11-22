@@ -25,8 +25,8 @@ namespace Samples.ClearScreen
             AdapterConfig = new()
             {
                 SwapChain = true,
-                VulkanDebug = false,
-                VultaikDebug = false,
+                VulkanDebug = true,
+                //VultaikDebug = true,
                 Fullscreen = false,
                 Bindless = false,
                 BindMemory2 = false,

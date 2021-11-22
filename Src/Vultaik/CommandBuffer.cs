@@ -4,11 +4,8 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
-using Interop = Vultaik.Interop;
 
 namespace Vultaik
 {
@@ -29,17 +26,17 @@ namespace Vultaik
 
             Recreate();
 
-            WaitFence = new(NativeDevice, true);
+            //WaitFence = new(NativeDevice, true);
         }
 
         public CommandBufferType Type { get; set; }
-        public Fence WaitFence { get; set; }
+        //public Fence WaitFence { get; set; }
 
         public void Recreate()
         {
-            
+
             // TODO: Reuse the same VkCommandPool only for transfer, compute and graphics use an independent one per thread
-            
+
             switch (Type)
             {
                 case CommandBufferType.Generic:
@@ -63,7 +60,7 @@ namespace Vultaik
                     break;
             }
 
-            handle = NativeDevice.create_command_buffer_primary(cmd_command_pool); 
+            handle = NativeDevice.create_command_buffer_primary(cmd_command_pool);
 
 
         }
@@ -73,8 +70,8 @@ namespace Vultaik
         {
             BeginRenderPassContinue();
 
-            WaitFence.Wait();
-            WaitFence.Reset();
+            //WaitFence.Wait();
+            //WaitFence.Reset();
         }
 
 
@@ -405,7 +402,7 @@ namespace Vultaik
             // We aren't using vertex with side-effects on relevant hardware so dropping VERTEX_SHADER_BIT is fine.
             if ((src_stages & VkPipelineStageFlags.AllGraphics) != 0 && fixup)
             {
-                src_stages &= ~ VkPipelineStageFlags.AllGraphics;
+                src_stages &= ~VkPipelineStageFlags.AllGraphics;
                 src_stages |= VkPipelineStageFlags.ColorAttachmentOutput | VkPipelineStageFlags.FragmentShader | VkPipelineStageFlags.LateFragmentTests;
             }
         }
@@ -519,7 +516,7 @@ namespace Vultaik
 
         public void Close()
         {
-            if(set_render_pass)
+            if (set_render_pass)
                 CleanupRenderPass();
 
             vkEndCommandBuffer(handle);
@@ -588,7 +585,7 @@ namespace Vultaik
 
         public void Dispose()
         {
-            WaitFence.Dispose();
+            //WaitFence.Dispose();
             vkDestroyCommandPool(NativeDevice.handle, cmd_command_pool, null);
         }
 
