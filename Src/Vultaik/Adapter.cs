@@ -555,27 +555,9 @@ namespace Vultaik
         }
 
 
-        public PixelFormat GetSupportedDepthFormat(IEnumerable<VkFormat> depthFormats)
+        public PixelFormat GetSupportedDepthFormat(IEnumerable<PixelFormat> formats)
         {
-            // Since all depth formats may be optional, we need to find a suitable depth format to use
-            // Start with the highest precision packed format
-
-            VkFormat depthFormat = VkFormat.Undefined;
-
-            foreach (VkFormat format in depthFormats)
-            {
-                vkGetPhysicalDeviceFormatProperties(handle, format, out VkFormatProperties formatProps);
-
-                // Format must support depth stencil attachment for optimal tiling
-                if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) is not 0)
-                {
-                    depthFormat = format;
-                }
-            }
-
-
-
-            return (PixelFormat)depthFormat;
+            return (PixelFormat)get_supported_depth_format((IEnumerable<VkFormat>)formats);
         }
 
 
@@ -589,22 +571,6 @@ namespace Vultaik
         {
             vkGetPhysicalDeviceProperties(handle, out device_properties);
         }
-
-
-
-
-        //internal string VendorNameString(uint vendorId)
-        //{
-        //    var id = VendorId.AMD;
-        //    switch (vendorId, id)
-        //    {
-        //        case (0x1002, VendorId.AMD):
-        //            return "AMD";
-        //    }
-        //}
-
-
-
 
 
 

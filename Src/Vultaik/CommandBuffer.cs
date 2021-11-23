@@ -127,7 +127,7 @@ namespace Vultaik
             {
                 sType = VkStructureType.RenderPassBeginInfo,
                 renderArea = new(x, y, w, h),
-
+                pNext = null,
                 renderPass = framebuffer.renderPass,
                 clearValueCount = 2,
                 pClearValues = clearValues,
