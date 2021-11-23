@@ -225,7 +225,7 @@ namespace Vultaik
                                                     .Select(_ => Interop.String.FromPointer(_.extensionName));
 
 
-            if (AdapterConfig.VulkanDebug && instance_extensions_names.Contains("VK_EXT_debug_utils"));
+            if (AdapterConfig.Debug && instance_extensions_names.Contains("VK_EXT_debug_utils"));
             {
                 InstanceExtensionsNames.Add("VK_EXT_debug_utils");
                 SupportsDebugUtils = true;
@@ -351,7 +351,7 @@ namespace Vultaik
 
             ReadOnlySpan<VkLayerProperties> availableLayers = vkEnumerateInstanceLayerProperties();
 
-            if (AdapterConfig.VulkanDebug)
+            if (AdapterConfig.Debug)
                 foreach (var layer in availableLayers)
                     if ("VK_LAYER_KHRONOS_validation" == layer.GetLayerName())
                         requested_validation_layers.Add("VK_LAYER_KHRONOS_validation");
@@ -408,19 +408,19 @@ namespace Vultaik
             uint[] ignored_ids = new[]
             {
                 0xc05b3a9du,
-                //0x2864340eu,
-                //0xbfcfaec2u,
-                //0x96f03c1cu,
-                //0x8189c842u,
-                //0x3d492883u,
-                //0x1608dec0u,
+                0x2864340eu,
+                0xbfcfaec2u,
+                0x96f03c1cu,
+                0x8189c842u,
+                0x3d492883u,
+                0x1608dec0u,
 
                 0x9b4c6071u,    // TODO: VkDebugUtilsObjectNameInfoEXT
-                //0x90ef715du,    // TODO: UNASSIGNED-CoreValidation-DrawState-InvalidImageAspect
-                //0xf27b16au,     // TODO: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL: when using a Depth or Stencil format
-                //0x34f84ef4u,    // TODO: vkCmdBeginRenderPass-initialLayout: If any of the initialLayout or finalLayout member of the VkAttachmentDescription
-                //0x4d08326du,    // TODO: vkEndCommandBuffer-commandBuffer  
-                //0xc7aabc16u,    // TODO: VkPresentInfoKHR-pImageIndices 
+                0x90ef715du,    // TODO: UNASSIGNED-CoreValidation-DrawState-InvalidImageAspect
+                0xf27b16au,     // TODO: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL: when using a Depth or Stencil format
+                0x34f84ef4u,    // TODO: vkCmdBeginRenderPass-initialLayout: If any of the initialLayout or finalLayout member of the VkAttachmentDescription
+                0x4d08326du,    // TODO: vkEndCommandBuffer-commandBuffer  
+                0xc7aabc16u,    // TODO: VkPresentInfoKHR-pImageIndices 
             };
 
             for (int i = 0; i < ignored_ids.Length; i++)
@@ -587,7 +587,7 @@ namespace Vultaik
 
         private void vultaik_debug()
         {
-            if (AdapterConfig.VultaikDebug)
+            if (AdapterConfig.Debug)
             {
                 ConsoleLog.Info("Adapter", $"Handle = 0x{handle.Handle.ToString("X")}");
                 ConsoleLog.Info("Adapter", $"DepthFormat = {DepthFormat}");

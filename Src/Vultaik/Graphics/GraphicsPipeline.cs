@@ -60,8 +60,8 @@ namespace Vultaik
             ShaderResource[] resources = Resources.Where(x => x.resource_type != SPIRVCross.spvc_resource_type.PushConstant).ToArray();
 
             VkDescriptorSetLayoutBinding* layoutBinding = stackalloc VkDescriptorSetLayoutBinding[resources.Length];
-            bool is_array = resources.Where(x => x.is_array).Any();
 
+            bool is_array = resources.Where(x => x.is_array).Any();
             bool is_bindless = NativeDevice.supports_descriptor_indexing();
 
             for (int i = 0; i < resources.Length; i++)
@@ -190,11 +190,11 @@ namespace Vultaik
         {
 
             List<ShaderBytecode> shaders = description.Shaders;
-            VkPipelineShaderStageCreateInfo* shaderStageCreateInfos = stackalloc VkPipelineShaderStageCreateInfo[shaders.Count];
+            VkPipelineShaderStageCreateInfo* shader_stage_infos = stackalloc VkPipelineShaderStageCreateInfo[shaders.Count];
 
             for (int i = 0; i < shaders.Count; i++)
             {
-                shaderStageCreateInfos[i] = new VkPipelineShaderStageCreateInfo
+                shader_stage_infos[i] = new VkPipelineShaderStageCreateInfo
                 {
                     sType = VkStructureType.PipelineShaderStageCreateInfo,
                     pNext = null,
@@ -238,7 +238,7 @@ namespace Vultaik
 
 
 
-            VkPipelineVertexInputStateCreateInfo vertexInputStateCreate_info = new VkPipelineVertexInputStateCreateInfo()
+            VkPipelineVertexInputStateCreateInfo vertex_input_state_info = new VkPipelineVertexInputStateCreateInfo()
             {
                 sType = VkStructureType.PipelineVertexInputStateCreateInfo,
                 pNext = null,
@@ -376,8 +376,8 @@ namespace Vultaik
                 sType = VkStructureType.GraphicsPipelineCreateInfo,
                 pNext = null,
                 stageCount = (uint)shaders.Count,
-                pStages = shaderStageCreateInfos,
-                pVertexInputState = &vertexInputStateCreate_info,
+                pStages = shader_stage_infos,
+                pVertexInputState = &vertex_input_state_info,
                 pInputAssemblyState = &input_ass_state_info,
                 pRasterizationState = &rasterizer_state_info,
                 pMultisampleState = &multisampleState_info,
@@ -388,7 +388,7 @@ namespace Vultaik
                 pDepthStencilState = &depthStencilState,
                 pDynamicState = &dynamicState,
                 //flags = VkPipelineCreateFlags.None
-                pViewportState = &vkPipelineViewportStateCreateInfo
+                pViewportState = &vkPipelineViewportStateCreateInfo,
             };
 
 
@@ -400,9 +400,9 @@ namespace Vultaik
 
             for (int i = 0; i < shaders.Count; i++)
             {
-                if (shaderStageCreateInfos[i].module != VkShaderModule.Null)
+                if (shader_stage_infos[i].module != VkShaderModule.Null)
                 {
-                    vkDestroyShaderModule(NativeDevice.handle, shaderStageCreateInfos[i].module, null);
+                    vkDestroyShaderModule(NativeDevice.handle, shader_stage_infos[i].module, null);
                     //shaderStageCreateInfos[i] = *(VkPipelineShaderStageCreateInfo*)null;
                 }
             }

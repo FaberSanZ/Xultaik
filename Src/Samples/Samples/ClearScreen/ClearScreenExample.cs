@@ -25,18 +25,13 @@ namespace Samples.ClearScreen
             AdapterConfig = new()
             {
                 SwapChain = true,
-                VulkanDebug = true,
-                //VultaikDebug = true,
+                Debug = true,
                 Fullscreen = false,
                 Bindless = false,
-                BindMemory2 = false,
                 ConditionalRendering = false,
                 ConservativeRasterization = false,
-                CopyCommands2 = false,
-                Multiview = false,
                 RayTracing = false,
                 ShadingRate = false,
-                SingleQueue = false,
             };
         }
 

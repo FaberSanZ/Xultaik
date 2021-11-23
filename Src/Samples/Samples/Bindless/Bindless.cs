@@ -53,7 +53,7 @@ namespace Samples.Bindless
             AdapterConfig = new()
             {
                 SwapChain = true,
-                VulkanDebug = false,
+                Debug = false,
                 Bindless = true,
                 //SingleQueue
             };

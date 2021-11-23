@@ -7,8 +7,8 @@ namespace Samples
     {
         static void Main(string[] args)
         {
-            using var App = new ClearScreen.ClearScreenExample();
-            //using var App = new Triangle.TriangleExample();
+            //using var App = new ClearScreen.ClearScreenExample();
+            using var App = new Triangle.TriangleExample();
             //using var App = new Transformations.TransformationsExample();
             //using var App = new PushConstant.PushConstantExample();
             //using var App = new LoadGLTF.LoadGLTFExample();

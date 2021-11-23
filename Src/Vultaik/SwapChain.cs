@@ -27,7 +27,7 @@ namespace Vultaik
         internal VkImage[] images;
         internal VkImageView[] swapChain_image_views;
 
-        internal bool vultaik_debug => AdapterConfig.VultaikDebug;
+        internal bool vultaik_debug => AdapterConfig.Debug;
 
 
         public SwapChain(Device device, SwapchainDescription description) : base(device)

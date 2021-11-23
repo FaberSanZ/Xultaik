@@ -11,11 +11,9 @@ namespace Vultaik
 {
     public class AdapterConfig
     {
-        public bool VulkanDebug { get; set; }
+        public bool Debug { get; set; }
 
         public bool ValidationGpuAssisted { get; set; }
-
-        public bool VultaikDebug { get; set; } // TODO: Implement VultaikDebug 
 
         public bool Fullscreen { get; set; } // TODO: Implement Fullscreen 
 
@@ -23,23 +21,13 @@ namespace Vultaik
 
         public bool ConservativeRasterization { get; set; } // TODO: Implement ConservativeRasterization 
 
-        public bool CopyCommands2 { get; set; } // TODO: Implement CopyCommands2 
-
-        public bool BindMemory2 { get; set; } // TODO: Implement BindMemory2 
-
-        public bool Multiview { get; set; } // TODO: Implement Multiview 
-
         public bool ConditionalRendering { get; set; } // TODO: Implement ConditionalRendering 
 
         public bool ShadingRate { get; set; } // TODO: Implement ShadingRate 
 
         public bool Bindless { get; set; }
 
-        public bool SingleQueue { get; set; } // TODO: Implement SingleQueue 
-
         public bool SwapChain { get; set; } 
-
-        public bool SamplerAnisotropy { get; set; } // TODO: Implement SamplerAnisotropy 
 
         public bool Arithmetic16BitStorage { get; set; }
 
