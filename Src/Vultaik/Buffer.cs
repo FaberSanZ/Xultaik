@@ -125,7 +125,7 @@ namespace Vultaik
                 sType = VkStructureType.MemoryAllocateInfo,
                 pNext = null,
                 allocationSize = memReqs.size,
-                memoryTypeIndex = NativeDevice.GetMemoryTypeIndex(memReqs.memoryTypeBits, memoryProperties),
+                memoryTypeIndex = NativeDevice.get_memory_type(memReqs.memoryTypeBits, memoryProperties),
             };
 
 

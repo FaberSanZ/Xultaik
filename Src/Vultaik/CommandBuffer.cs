@@ -26,11 +26,11 @@ namespace Vultaik
 
             Recreate();
 
-            //WaitFence = new(NativeDevice, true);
+            WaitFence = new(NativeDevice, true);
         }
 
         public CommandBufferType Type { get; set; }
-        //public Fence WaitFence { get; set; }
+        public Fence WaitFence { get; set; }
 
         public void Recreate()
         {
@@ -70,8 +70,8 @@ namespace Vultaik
         {
             BeginRenderPassContinue();
 
-            //WaitFence.Wait();
-            //WaitFence.Reset();
+            WaitFence.Wait();
+            WaitFence.Reset();
         }
 
 
@@ -585,7 +585,7 @@ namespace Vultaik
 
         public void Dispose()
         {
-            //WaitFence.Dispose();
+            WaitFence.Dispose();
             vkDestroyCommandPool(NativeDevice.handle, cmd_command_pool, null);
         }
 

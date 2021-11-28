@@ -41,7 +41,7 @@ namespace Samples.Triangle
             AdapterConfig = new()
             {
                 SwapChain = true,
-                VulkanDebug = true,
+                Debug = true,
             };
 
 

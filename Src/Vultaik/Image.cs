@@ -253,7 +253,7 @@ namespace Vultaik
 
             VkMemoryPropertyFlags memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
 
-            uint imageHeapIndex = NativeDevice.GetMemoryTypeIndex(imageMemReq.memoryTypeBits, memoryProperties);
+            uint imageHeapIndex = NativeDevice.get_memory_type(imageMemReq.memoryTypeBits, memoryProperties);
             Console.WriteLine(imageMemReq.size);
             VkMemoryAllocateInfo allocInfo = new VkMemoryAllocateInfo
             {
@@ -328,7 +328,7 @@ namespace Vultaik
 
             VkMemoryPropertyFlags memoryProperties = VkMemoryPropertyFlags.DeviceLocal;
 
-            uint imageHeapIndex = NativeDevice.GetMemoryTypeIndex(imageMemReq.memoryTypeBits, memoryProperties);
+            uint imageHeapIndex = NativeDevice.get_memory_type(imageMemReq.memoryTypeBits, memoryProperties);
 
             VkMemoryAllocateInfo allocInfo = new VkMemoryAllocateInfo
             {
@@ -432,17 +432,17 @@ namespace Vultaik
             cmd.End();
 
 
-            //Fence fence = new Fence(NativeDevice);
+            Fence fence = new Fence(NativeDevice);
 
-            NativeDevice.SubmitTransfer(cmd, null);
+            NativeDevice.Submit(cmd, fence);
 
-            //fence.Wait();
+            fence.Wait();
 
             //if (fence.IsSignaled)
 
 
             // Cleanup staging resources.
-            //fence.Dispose();
+            fence.Dispose();
             vkFreeMemory(NativeDevice.handle, buffer_memory, null);
             vkDestroyBuffer(NativeDevice.handle, buffer.handle, null);
 

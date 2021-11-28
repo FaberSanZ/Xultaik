@@ -199,7 +199,7 @@ namespace Vultaik
                     sType = VkStructureType.PipelineShaderStageCreateInfo,
                     pNext = null,
                     stage = (VkShaderStageFlags)shaders[i].Stage,
-                    module = NativeDevice.LoadSpir_V_Shader(shaders[i].Data),
+                    module = NativeDevice.load_spirv_shader(shaders[i].Data),
                     pName = Interop.String.ToPointer(shaders[i].EntryPoint),
                 };
             }

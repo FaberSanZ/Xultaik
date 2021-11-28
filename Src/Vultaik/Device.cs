@@ -525,7 +525,7 @@ namespace Vultaik
 
 
 
-        internal VkShaderModule LoadSpir_V_Shader(Span<byte> bytes)
+        internal VkShaderModule load_spirv_shader(Span<byte> bytes)
         {
 
             fixed (byte* ptr = bytes)
@@ -546,7 +546,7 @@ namespace Vultaik
         }
 
 
-        internal uint GetMemoryTypeIndex(uint typeBits, VkMemoryPropertyFlags properties)
+        internal uint get_memory_type(uint typeBits, VkMemoryPropertyFlags properties)
         {
             // Iterate over all memory types available for the Device used in this example
             for (uint i = 0; i < _memoryProperties.memoryTypeCount; i++)
@@ -753,127 +753,127 @@ namespace Vultaik
             return VkQueue.Null;
         }
 
-        public void SubmitTransfer(CommandBuffer commandBuffer, Fence? fence = null)
-        {
-            VkQueue queue = get_queue_type_cmd(commandBuffer);
-            VkCommandBuffer cmd = commandBuffer.handle;
-
-
-            VkSubmitInfo submit_info = new()
-            {
-                sType = VkStructureType.SubmitInfo,
-                commandBufferCount = 1,
-                pCommandBuffers = &cmd,
-            };
-
-            vkQueueSubmit(queue, 1, &submit_info, VkFence.Null);
-        }
-
-
-        public void Submit(CommandBuffer commandBuffer, Fence? fence = null)
-        {
-            VkQueue queue = get_queue_type_cmd(commandBuffer);
-            VkCommandBuffer cmd = commandBuffer.handle;
-            VkSemaphore signal_semaphore = render_finished_semaphore;
-            VkSemaphore wait_semaphore = image_available_semaphore;
-
-
-            VkSubmitInfo submit_info = new()
-            {
-                sType = VkStructureType.SubmitInfo,
-                commandBufferCount = 1,
-                pCommandBuffers = &cmd,
-            };
-
-
-            submit_info.waitSemaphoreCount = 1;
-            submit_info.pWaitSemaphores = &wait_semaphore;
-
-            submit_info.signalSemaphoreCount = 1;
-            submit_info.pSignalSemaphores = &signal_semaphore;
-
-            vkQueueSubmit(queue, 1, &submit_info, VkFence.Null);
-        }
-
-
-
-        //public void Submit(CommandBuffer commandBuffer, Fence? fence = null)
+        //public void SubmitTransfer(CommandBuffer commandBuffer, Fence? fence = null)
         //{
-        //    VkPipelineStageFlags wait_stages = VkPipelineStageFlags.ColorAttachmentOutput;
-        //    VkSemaphore signal_semaphore = render_finished_semaphore;
-        //    VkSemaphore wait_semaphore = image_available_semaphore;
         //    VkQueue queue = get_queue_type_cmd(commandBuffer);
-        //    CommandBufferType cmd_type = commandBuffer.Type;
         //    VkCommandBuffer cmd = commandBuffer.handle;
-        //    var force_exclusive_transfer_queue = false; 
-        //    VkFence sync_fence = VkFence.Null;
-        //    bool use_semaphore = true;
 
-        //    if (queue == transfer_queue && cmd_type == CommandBufferType.AsyncTransfer)
-        //    {
-        //        wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
-
-        //        if (force_exclusive_transfer_queue)
-        //            wait_stages |= VkPipelineStageFlags.Transfer;
-
-        //        use_semaphore = false;
-        //    }
-
-
-        //    if (queue == graphics_queue && cmd_type == CommandBufferType.AsyncTransfer)
-        //    {
-        //        wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
-
-        //        if(force_exclusive_transfer_queue)
-        //            wait_stages |= VkPipelineStageFlags.Transfer;
-
-        //        use_semaphore = false;
-        //    }
-
-
-        //    if (queue == graphics_queue && cmd_type == CommandBufferType.AsyncCompute)
-        //    {
-        //        wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
-        //        wait_stages |= VkPipelineStageFlags.ComputeShader;
-
-        //        use_semaphore = false;
-        //    }
-
-        //    if (queue == compute_queue && cmd_type == CommandBufferType.AsyncCompute)
-        //    {
-        //        wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
-        //        wait_stages |= VkPipelineStageFlags.ComputeShader;
-
-        //        use_semaphore = false;
-        //    }
 
         //    VkSubmitInfo submit_info = new()
         //    {
         //        sType = VkStructureType.SubmitInfo,
-        //        pWaitDstStageMask = &wait_stages,
-        //        pNext = null,
         //        commandBufferCount = 1,
         //        pCommandBuffers = &cmd,
         //    };
 
-        //    if (use_semaphore)
-        //    {
-        //        submit_info.waitSemaphoreCount = 1;
-        //        submit_info.pWaitSemaphores = &wait_semaphore;
-
-        //        submit_info.signalSemaphoreCount = 1;
-        //        submit_info.pSignalSemaphores = &signal_semaphore;
-        //    }
-
-
-        //    //if (fence is not null)
-        //    //    sync_fence = fence.handle;
-        //    //else
-        //    //    sync_fence = commandBuffer.WaitFence.handle;
-
-        //    //if (sync_fence != VkFence.Null && queue != VkQueue.Null)
-        //        vkQueueSubmit(queue, 1, &submit_info, sync_fence);
+        //    vkQueueSubmit(queue, 1, &submit_info, VkFence.Null);
         //}
+
+
+        //public void Submit(CommandBuffer commandBuffer, Fence? fence = null)
+        //{
+        //    VkQueue queue = get_queue_type_cmd(commandBuffer);
+        //    VkCommandBuffer cmd = commandBuffer.handle;
+        //    VkSemaphore signal_semaphore = render_finished_semaphore;
+        //    VkSemaphore wait_semaphore = image_available_semaphore;
+
+
+        //    VkSubmitInfo submit_info = new()
+        //    {
+        //        sType = VkStructureType.SubmitInfo,
+        //        commandBufferCount = 1,
+        //        pCommandBuffers = &cmd,
+        //    };
+
+
+        //    submit_info.waitSemaphoreCount = 1;
+        //    submit_info.pWaitSemaphores = &wait_semaphore;
+
+        //    submit_info.signalSemaphoreCount = 1;
+        //    submit_info.pSignalSemaphores = &signal_semaphore;
+
+        //    vkQueueSubmit(queue, 1, &submit_info, VkFence.Null);
+        //}
+
+
+
+        public void Submit(CommandBuffer commandBuffer, Fence? fence = null)
+        {
+            VkPipelineStageFlags wait_stages = VkPipelineStageFlags.ColorAttachmentOutput;
+            VkSemaphore signal_semaphore = render_finished_semaphore;
+            VkSemaphore wait_semaphore = image_available_semaphore;
+            VkQueue queue = get_queue_type_cmd(commandBuffer);
+            CommandBufferType cmd_type = commandBuffer.Type;
+            VkCommandBuffer cmd = commandBuffer.handle;
+            var force_exclusive_transfer_queue = false;
+            VkFence sync_fence = VkFence.Null;
+            bool use_semaphore = true;
+
+            if (queue == transfer_queue && cmd_type == CommandBufferType.AsyncTransfer)
+            {
+                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+
+                if (force_exclusive_transfer_queue)
+                    wait_stages |= VkPipelineStageFlags.Transfer;
+
+                use_semaphore = false;
+            }
+
+
+            if (queue == graphics_queue && cmd_type == CommandBufferType.AsyncTransfer)
+            {
+                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+
+                if (force_exclusive_transfer_queue)
+                    wait_stages |= VkPipelineStageFlags.Transfer;
+
+                use_semaphore = false;
+            }
+
+
+            if (queue == graphics_queue && cmd_type == CommandBufferType.AsyncCompute)
+            {
+                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+                wait_stages |= VkPipelineStageFlags.ComputeShader;
+
+                use_semaphore = false;
+            }
+
+            if (queue == compute_queue && cmd_type == CommandBufferType.AsyncCompute)
+            {
+                wait_stages &= ~VkPipelineStageFlags.ColorAttachmentOutput;
+                wait_stages |= VkPipelineStageFlags.ComputeShader;
+
+                use_semaphore = false;
+            }
+
+            VkSubmitInfo submit_info = new()
+            {
+                sType = VkStructureType.SubmitInfo,
+                pWaitDstStageMask = &wait_stages,
+                pNext = null,
+                commandBufferCount = 1,
+                pCommandBuffers = &cmd,
+            };
+
+            if (use_semaphore)
+            {
+                submit_info.waitSemaphoreCount = 1;
+                submit_info.pWaitSemaphores = &wait_semaphore;
+
+                submit_info.signalSemaphoreCount = 1;
+                submit_info.pSignalSemaphores = &signal_semaphore;
+            }
+
+
+            if (fence is not null)
+                sync_fence = fence.handle;
+            else
+                sync_fence = commandBuffer.WaitFence.handle;
+
+            if (sync_fence != VkFence.Null && queue != VkQueue.Null)
+                vkQueueSubmit(queue, 1, &submit_info, sync_fence);
+        }
 
         internal VkMemoryType memory_prop_ext(VkPhysicalDeviceMemoryProperties memory, uint index)
         {

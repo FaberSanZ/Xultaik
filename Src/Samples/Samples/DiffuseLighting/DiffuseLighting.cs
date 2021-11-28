@@ -52,7 +52,7 @@ namespace Samples.DiffuseLighting
             AdapterConfig = new()
             {
                 SwapChain = true,
-                VulkanDebug = false,
+                Debug = false,
                 Fullscreen = false,
             };
 
