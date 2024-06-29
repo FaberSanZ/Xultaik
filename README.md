@@ -11,9 +11,8 @@
 </h1>
 
 
-[![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Vultaik/actions)
-[![NuGet](https://img.shields.io/nuget/v/Vultaik.svg)](https://www.nuget.org/packages?q=Tags%3A%22Vultaik%22)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FaberSanZ/Vultaik/blob/master/LICENSE) 
+[![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Xultaik/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FaberSanZ/Xultaik/blob/master/LICENSE) 
 
 <br>
 
@@ -57,7 +56,7 @@ The rendering backend focuses entirely on Vulkan and HLSL, however, the API grea
 
 
 
-Additionally, **Vultaik** uses NuGet packages or code from the following repositories:
+Additionally, **Xultaik** uses NuGet packages or code from the following repositories:
 
 - [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan)
 - [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows)
