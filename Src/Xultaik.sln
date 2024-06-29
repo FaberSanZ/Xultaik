@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xultaik", "Xultaik\Xultaik.csproj", "{D2E7CAA9-1442-4A95-A736-7D580ACAB076}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xultaik.Graphics", "Xultaik.Graphics\Xultaik.Graphics.csproj", "{B56CFC17-1BBF-40EC-B453-B9B5C001CA32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xultaik.Editor", "Xultaik.Editor\Xultaik.Editor.csproj", "{5DA81645-9EF7-4DE8-BB72-67FEBE33C6FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xultaik.Physics", "Xultaik.Physics\Xultaik.Physics.csproj", "{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2E7CAA9-1442-4A95-A736-7D580ACAB076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2E7CAA9-1442-4A95-A736-7D580ACAB076}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2E7CAA9-1442-4A95-A736-7D580ACAB076}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2E7CAA9-1442-4A95-A736-7D580ACAB076}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B56CFC17-1BBF-40EC-B453-B9B5C001CA32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B56CFC17-1BBF-40EC-B453-B9B5C001CA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B56CFC17-1BBF-40EC-B453-B9B5C001CA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B56CFC17-1BBF-40EC-B453-B9B5C001CA32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DA81645-9EF7-4DE8-BB72-67FEBE33C6FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DA81645-9EF7-4DE8-BB72-67FEBE33C6FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DA81645-9EF7-4DE8-BB72-67FEBE33C6FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DA81645-9EF7-4DE8-BB72-67FEBE33C6FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B9C0D33E-70FD-4C05-91C0-0703C5BAF039}
+	EndGlobalSection
+EndGlobal
