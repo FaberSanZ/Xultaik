@@ -10,6 +10,7 @@
   
 </h1>
 
+NOTE: The engine is being written from scratch and the previous project was obsolete and discarded
 
 [![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Xultaik/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FaberSanZ/Xultaik/blob/master/LICENSE) 
