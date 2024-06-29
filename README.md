@@ -3,7 +3,7 @@
 
 
 <h1 align="center">
-   <img src="Logo/XULTAIK.png" width=410>
+   <img src="Logo/XULTAIK-2.png" width=410>
 
   
   ##               Xultaik is a 2D/3D Game Engine implemented in [Vulkan®](https://www.khronos.org/vulkan/)
