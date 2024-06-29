@@ -3,7 +3,7 @@
 
 
 <h1 align="center">
-   <img src="Logo/vultaik-logo.png" width=410>
+   <img src="Logo/XULTAIK.png" width=410>
 
   
   ##               Vultaik is a 2D/3D renderer implemented in [Vulkan®](https://www.khronos.org/vulkan/)
