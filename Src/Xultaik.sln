@@ -5,11 +5,17 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xultaik", "Xultaik\Xultaik.csproj", "{D2E7CAA9-1442-4A95-A736-7D580ACAB076}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xultaik.Graphics", "Xultaik.Graphics\Xultaik.Graphics.csproj", "{B56CFC17-1BBF-40EC-B453-B9B5C001CA32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xultaik.Graphics", "Xultaik.Graphics\Xultaik.Graphics.csproj", "{B56CFC17-1BBF-40EC-B453-B9B5C001CA32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xultaik.Editor", "Xultaik.Editor\Xultaik.Editor.csproj", "{5DA81645-9EF7-4DE8-BB72-67FEBE33C6FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xultaik.Editor", "Xultaik.Editor\Xultaik.Editor.csproj", "{5DA81645-9EF7-4DE8-BB72-67FEBE33C6FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xultaik.Physics", "Xultaik.Physics\Xultaik.Physics.csproj", "{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xultaik.Physics", "Xultaik.Physics\Xultaik.Physics.csproj", "{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xultaik.Desktop", "Xultaik.Desktop\Xultaik.Desktop.csproj", "{669EECC7-AF82-4527-A9E6-5E8629562961}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Games", "Games\Games.csproj", "{F2311456-A3BF-4DF6-9555-1382B593DDAB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{F5DC335D-CA46-4879-A30E-85A7B177ADBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +39,20 @@ Global
 		{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF5E2C0D-F9F3-4E82-805A-D338AEEA5A3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{669EECC7-AF82-4527-A9E6-5E8629562961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{669EECC7-AF82-4527-A9E6-5E8629562961}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{669EECC7-AF82-4527-A9E6-5E8629562961}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{669EECC7-AF82-4527-A9E6-5E8629562961}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2311456-A3BF-4DF6-9555-1382B593DDAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2311456-A3BF-4DF6-9555-1382B593DDAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2311456-A3BF-4DF6-9555-1382B593DDAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2311456-A3BF-4DF6-9555-1382B593DDAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F2311456-A3BF-4DF6-9555-1382B593DDAB} = {F5DC335D-CA46-4879-A30E-85A7B177ADBB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B9C0D33E-70FD-4C05-91C0-0703C5BAF039}

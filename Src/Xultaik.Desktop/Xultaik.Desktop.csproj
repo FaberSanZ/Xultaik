@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Silk.NET.GLFW" Version="2.20.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xultaik\Xultaik.csproj" />
+  </ItemGroup>
+
+
+</Project>

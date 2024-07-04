@@ -1,0 +1,3 @@
+﻿using Games;
+
+new FPSTest();
