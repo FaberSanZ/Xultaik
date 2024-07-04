@@ -24,7 +24,7 @@ Xultaik is an open-source C# game engine for realistic rendering. The engine is 
 
 ## Low-level rendering backend
 
-The rendering backend focuses entirely on DirectX 12 and HLSL, however, the API greatly simplifies the more painful points of writing straight DirectX 12. Modern DirectX 12
+The rendering backend focuses entirely on DirectX 12, however, the API greatly simplifies the more painful points of writing straight DirectX 12.
 
 
 <br>
