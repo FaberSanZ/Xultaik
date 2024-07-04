@@ -6,7 +6,7 @@
    <img src="Logo/XULTAIK-2.png" width=410>
 
   
-  ##               Xultaik is a 2D/3D Game Engine implemented in [Vulkan®](https://www.khronos.org/vulkan/)
+  ##               Xultaik is a 2D/3D Game Engine implemented in [DirectX12®]([https://www.khronos.org/vulkan/](https://learn.microsoft.com/en-us/windows/win32/direct3d12/directx-12-programming-guide))
   
 </h1>
 
@@ -24,8 +24,7 @@ Xultaik is an open-source C# game engine for realistic rendering. The engine is 
 
 ## Low-level rendering backend
 
-The rendering backend focuses entirely on Vulkan and HLSL, however, the API greatly simplifies the more painful points of writing straight Vulkan. Modern Vulkan [extensions](https://github.com/FaberSanZ/Vultaik/wiki/Extension) and [features](#Features) are aggressively made use of to improve performance
-
+The rendering backend focuses entirely on DirectX 12 and HLSL, however, the API greatly simplifies the more painful points of writing straight DirectX 12. Modern DirectX 12
 
 
 <br>
@@ -33,25 +32,18 @@ The rendering backend focuses entirely on Vulkan and HLSL, however, the API grea
 ## Features:
 
 - [ ] Ray Tracing
-- [ ] Conservative rasterization
-- [ ] Multiview rendering
-- [ ] Conditional rendering 
-- [ ] Shading rate
-- [x] Descriptor indexing
-- [ ] Timeline semaphore
-- [ ] Synchronization2
-- [x] Memory allocator
-- [x] GPU-Assisted Validation
-- [x] Compute Shader
-- [x] Geometry Shader
-- [x] Tessellation Shader
+- [ ] Variable Rate Shading
+- [ ] Mesh Shader
+- [ ] Sampler Feedback
+- [ ] Work Graphs
+- [ ] Memory allocator
+- [ ] Compute Shader
+- [ ] Geometry Shader
+- [ ] Tessellation Shader
 - [ ] Instancing, Indirect drawing
 - [ ] Post-AA (FXAA, SMAA and TAA)
 - [ ] Multithreaded rendering
-- [x] Automatic descriptor set management
-- [x] Shader reflection with [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross)
-- [x] Vulkan HLSL for shaders, shaders are compiled in runtime with [DirectXShaderCompiler](https://github.com/microsoft/DirectXShaderCompiler)
-- [x] GLTF 2.0 for samples
+- [ ] Automatic descriptor set management
 
 <br>
 
@@ -59,9 +51,6 @@ The rendering backend focuses entirely on Vulkan and HLSL, however, the API grea
 
 Additionally, **Xultaik** uses NuGet packages or code from the following repositories:
 
-- [Vortice.Vulkan](https://github.com/amerkoleci/Vortice.Vulkan)
 - [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows)
-- [Silk.NET](https://github.com/dotnet/Silk.NET)
-- [VMASharp](https://github.com/sunkin351/VMASharp)
 
 
