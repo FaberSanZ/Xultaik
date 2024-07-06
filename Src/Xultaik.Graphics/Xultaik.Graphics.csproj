@@ -4,6 +4,18 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
+
+
+  <ItemGroup>
+    <PackageReference Include="Vortice.Direct2D1" Version="3.5.0" />
+    <PackageReference Include="Vortice.Direct3D12" Version="3.5.9-beta" />
+    <PackageReference Include="Vortice.DirectX" Version="3.5.9-beta" />
+    <PackageReference Include="Vortice.Dxc" Version="3.5.9-beta" />
+    <PackageReference Include="Vortice.DXGI" Version="3.5.9-beta" />
+  </ItemGroup>
+
 
 </Project>

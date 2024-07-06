@@ -1,3 +1,4 @@
 ﻿using Games;
 
-new FPSTest();
+using (var App = new FPSTest())
+    App.Run();

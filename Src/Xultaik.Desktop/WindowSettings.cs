@@ -11,8 +11,8 @@ public struct WindowSettings
 {
     public static WindowSettings Default => new WindowSettings
     {
-        Title = "Default",
-        Size = new(600, 400),
+        Title = "Xultaik",
+        Size = new(800, 600),
         Position = new(0, 0),
         State = WindowState.Normal,
         Border = WindowBorder.Resizable,
