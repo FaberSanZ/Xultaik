@@ -24,15 +24,13 @@
 <br>
 
 ## 📝 Overview
-**Xultaik: AAA Game Engine**
-
-**Overview**
-
 Welcome to Xultaik, the game engine designed to deliver AAA experiences with cutting-edge performance and advanced technologies. Centrally based on Vulkan, Xultaik harnesses the full capabilities of this low-level graphics API to provide direct control over the GPU and exceptional performance. It integrates Steam Audio for immersive audio effects and JoltPhysics for realistic physical simulations, ensuring a powerful and comprehensive platform for next-generation game creation.
 
-**Key Features**
+<br>
 
-**Cutting-Edge Graphics with Vulkan 🚀**:
+## Key Features 🚀
+
+**Cutting-Edge Graphics with Vulkan**:
 Xultaik maximizes Vulkan's capabilities, a low-level graphics API that offers direct GPU control. Built exclusively for Vulkan, Xultaik delivers superior performance and full access to advanced API features. It implements the following extensions and key features:
 
 - **Multi-Threading**: Vulkan is designed to leverage multi-core processors, allowing simultaneous execution of multiple graphics tasks. This translates to significantly improved performance and more efficient utilization of system resources.
