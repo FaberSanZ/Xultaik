@@ -82,7 +82,7 @@ Xultaik optimizes loading and manipulation of textures using formats like KTX, s
 
 <br>
 
-# Dependencies: 📦 **Xultaik** uses NuGet packages or code from the following repositories:
+**Xultaik** uses NuGet packages or code from the following repositories 📦:
 - [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows)
 - [Stride Engine](https://github.com/stride3d/stride)
 - [Prowl](https://github.com/ProwlEngine/Prowl)
