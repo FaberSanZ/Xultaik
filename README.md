@@ -10,7 +10,8 @@
   
 </h1>
 
-NOTE: The engine is being written from scratch and the previous project was obsolete and discarded
+> [!IMPORTANT]
+> The engine is being written from scratch and is being completely moved to vulkan.
 
 [![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Xultaik/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FaberSanZ/Xultaik/blob/master/LICENSE) 
