@@ -7,14 +7,19 @@
 
   
   ##               Xultaik is a 2D/3D Game Engine implemented in [DirectX12®]([https://www.khronos.org/vulkan/](https://learn.microsoft.com/en-us/windows/win32/direct3d12/directx-12-programming-guide))
+
   
 </h1>
+
+
+[![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Xultaik/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FaberSanZ/Xultaik/blob/master/LICENSE) 
+
+<br>
 
 > [!IMPORTANT]
 > The engine is being written from scratch and is being completely moved to vulkan.
 
-[![Build status](https://github.com/FaberSanZ/Zeckoxe/workflows/ci/badge.svg)](https://github.com/FaberSanZ/Xultaik/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FaberSanZ/Xultaik/blob/master/LICENSE) 
 
 <br>
 
