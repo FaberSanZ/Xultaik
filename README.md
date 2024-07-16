@@ -6,7 +6,7 @@
    <img src="Logo/XULTAIK-2.png" width=410>
 
   
-  ##              🎮 Xultaik is a 2D/3D Game Engine implemented in [Vulkan®](https://www.khronos.org/vulkan/)
+  ##              🎮 Xultaik is a 3D Game Engine implemented in [Direct3D 12®](https://learn.microsoft.com/en-us/windows/win32/direct3d12/directx-12-programming-guide)
 
   
 </h1>
@@ -18,32 +18,34 @@
 <br>
 
 > [!IMPORTANT]
-> The engine is being written from scratch and is being completely moved to vulkan.
+> The engine is being written from scratch.
 
 
 <br>
 
 ## 📝 Overview
-Welcome to Xultaik, the game engine designed to deliver AAA experiences with cutting-edge performance and advanced technologies. Centrally based on Vulkan, Xultaik harnesses the full capabilities of this low-level graphics API to provide direct control over the GPU and exceptional performance. It integrates Steam Audio for immersive audio effects and JoltPhysics for realistic physical simulations, ensuring a powerful and comprehensive platform for next-generation game creation.
+Welcome to Xultaik, the game engine designed to deliver AAA experiences with cutting-edge performance and advanced technologies. Centrally based on Direct3D 12, Xultaik harnesses the full capabilities of this low-level graphics API to provide direct control over the GPU and exceptional performance. It integrates Steam Audio for immersive audio effects and JoltPhysics for realistic physical simulations, ensuring a powerful and comprehensive platform for next-generation game creation.
 
 <br>
 
 ## Key Features 🚀
 
-**Cutting-Edge Graphics with Vulkan**:
-Xultaik maximizes Vulkan's capabilities, a low-level graphics API that offers direct GPU control. Built exclusively for Vulkan, Xultaik delivers superior performance and full access to advanced API features. It implements the following extensions and key features:
+**Cutting-Edge Graphics with Direct3D 12**:
+Xultaik maximizes Direct3D 12 capabilities, a low-level graphics API that offers direct GPU control. Built exclusively for Direct3D 12, Xultaik delivers superior performance and full access to advanced API features. It implements the following extensions and key features:
 
-- [ ]  **Multi-Threading**: Vulkan is designed to leverage multi-core processors, allowing simultaneous execution of multiple graphics tasks. This translates to significantly improved performance and more efficient utilization of system resources.
-- [ ]  **Multi-GPU**: Vulkan natively supports multi-GPU configurations, enabling developers to distribute graphics workload across multiple graphics cards. This not only enhances performance but also allows for the creation of more complex and detailed graphics.
-- [ ]  **Ray Tracing**: Enables advanced lighting and shading effects for realistic graphics and immersive visual experiences. Vulkan Ray Tracing supports both hardware acceleration and software-based implementation, providing flexibility and performance.
+- [ ]  **Multi-Threading**: Direct3D 12 is designed to leverage multi-core processors, allowing simultaneous execution of multiple graphics tasks. This translates to significantly improved performance and more efficient utilization of system resources.
+- [ ]  **Multi-GPU**: Direct3D 12 natively supports multi-GPU configurations, enabling developers to distribute graphics workload across multiple graphics cards. This not only enhances performance but also allows for the creation of more complex and detailed graphics.
+- [ ]  **Ray Tracing**: Enables advanced lighting and shading effects for realistic graphics and immersive visual experiences. Direct3D 12 Ray Tracing supports both hardware acceleration and software-based implementation, providing flexibility and performance.
 - [ ]  **Variable Rate Shading**: Enhances performance efficiency by adjusting shading rate based on scene complexity, maintaining visual quality. This technique allows developers to optimize GPU usage and improve frame rates without sacrificing important details.
-- [ ]  **Mesh Shaders**: Facilitates efficient rendering of complex models by allowing geometry manipulation at the shader level. Vulkan Mesh Shaders provide greater flexibility and control in geometry rendering, enhancing both performance and visual quality.
-- [ ]  **Vulkan Video**: Allows playback and manipulation of high-quality video content directly on the GPU, seamlessly integrating with the engine's graphic capabilities. This is ideal for games incorporating cinematics or interactive videos.
-- [ ]  **Advanced Vulkan Extensions**: Xultaik implements a variety of advanced Vulkan extensions such as VK_EXT_descriptor_indexing, VK_EXT_buffer_device_address, and VK_EXT_memory_budget, providing more granular control over graphics resources and optimizing application performance.
+- [ ]  **Mesh Shaders**: Facilitates efficient rendering of complex models by allowing geometry manipulation at the shader level. Direct3D 12 Mesh Shaders provide greater flexibility and control in geometry rendering, enhancing both performance and visual quality.
+- [ ]  **Video**: Allows playback and manipulation of high-quality video content directly on the GPU, seamlessly integrating with the engine's graphic capabilities. This is ideal for games incorporating cinematics or interactive videos.
+- [ ]  **Sampler Feedback**: Texture Optimization: This feature allows for more efficient handling of textures, improving performance by using only the necessary parts of a texture during rendering.
+- [ ]  **¿Work Graphs?**:
+
 
 <br>
 
-**Immersive Audio with Steam Audio and OpenAL**:
+**Immersive Audio with Steam Audio and XAudio**:
 Xultaik utilizes Steam Audio for advanced spatialized audio effects. Steam Audio offers a range of features that significantly enhance the game's auditory experience:
 
 - [ ]  **Spatialized Audio**: Allows precise placement of sound effects in three-dimensional space, enhancing player immersion.
@@ -68,7 +70,7 @@ Xultaik's editor provides an intuitive graphical interface for real-time manipul
 <br>
 
 **Realistic Physics with JoltPhysics**:
-Integrated to deliver dynamic and precise real-time physics simulations, JoltPhysics ensures realistic interactions between objects in the game, from collisions to complex behaviors. This physics engine is highly optimized to work efficiently alongside Vulkan.
+Integrated to deliver dynamic and precise real-time physics simulations, JoltPhysics ensures realistic interactions between objects in the game, from collisions to complex behaviors. This physics engine is highly optimized to work efficiently alongside Direct3D 12.
 
 - [ ]  **Advanced Collision Simulation**: JoltPhysics offers precise and fast collision detection, ensuring that physical interactions in the game are realistic and error-free. This includes the ability to handle complex collisions between multiple dynamic and static objects.
 - [ ]  **Rigid and Soft Body Dynamics**: Supports both rigid and soft bodies, allowing simulation of a wide range of materials and physical behaviors. This includes simulation of objects such as rocks, liquids, fabrics, and more.
@@ -77,9 +79,10 @@ Integrated to deliver dynamic and precise real-time physics simulations, JoltPhy
 
 <br>
 
-**Advanced Texture Optimization with KTX**:
-Xultaik optimizes loading and manipulation of textures using formats like KTX, specifically designed to maximize graphic performance without compromising visual quality. KTX is ideal for handling compressed textures essential for high-quality real-time rendering.
-
+**Advanced Texture Optimization**:
+Xultaik optimizes loading and manipulation of textures using formats like DDS, specifically designed to maximize graphic performance without compromising visual quality. DDS is ideal for handling compressed textures essential for high-quality real-time rendering.
+- [x]  **WIC**
+- [x]  **DDS**
 <br>
 
 **Xultaik** uses NuGet packages or code from the following repositories 📦:
