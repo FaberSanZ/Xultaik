@@ -141,10 +141,6 @@ namespace Xultaik.Graphics
             Console.WriteLine($"WorkGraphsTier {Options21.WorkGraphsTier}");
 
 
-
-
-            Console.WriteLine();
-            Console.WriteLine();
             return true;
 
 
