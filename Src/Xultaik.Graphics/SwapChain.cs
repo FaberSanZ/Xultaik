@@ -20,7 +20,9 @@ namespace Xultaik.Graphics
     {
         public RenderDescriptor Description { get; private set; }
 
-        public Texture BackBuffer { get; set; }
+        //public Texture BackBuffer { get; set; }
+        public Texture[] BackBuffers { get; set; }
+        public Texture BackBuffer => BackBuffers[BackBufferIndex];
 
         public int BackBufferIndex { get; private set; } = 0;
 
@@ -29,7 +31,7 @@ namespace Xultaik.Graphics
 
         internal IDXGISwapChain3 NativeSwapChain;
         internal GraphicsDevice GraphicsDevice;
-        private int bufferCount = 3;
+        private int bufferCount = 2;
 
         public SwapChain(GraphicsDevice graphicsDevice)
         {
@@ -38,11 +40,21 @@ namespace Xultaik.Graphics
 
             CreateSwapChain();
 
-            BackBufferIndex = NativeSwapChain.CurrentBackBufferIndex;
+            //BackBufferIndex = NativeSwapChain.CurrentBackBufferIndex;
 
 
-            BackBuffer = new Texture(GraphicsDevice);
-            BackBuffer.InitializeFromImpl(NativeSwapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
+
+            BackBuffers = new Texture[bufferCount];
+
+            for (int i = 0; i < bufferCount; i++)
+            {
+                BackBuffers[i] = new Texture(GraphicsDevice);
+                BackBuffers[i].InitializeFromImpl(NativeSwapChain.GetBuffer<ID3D12Resource>(i));
+            }
+
+
+            //BackBuffer = new Texture(GraphicsDevice);
+            //BackBuffer.InitializeFromImpl(NativeSwapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
         }
 
 
@@ -68,11 +80,26 @@ namespace Xultaik.Graphics
 
         public void Present()
         {
-            NativeSwapChain.Present(1, PresentFlags.None);
-            BackBufferIndex = NativeSwapChain.CurrentBackBufferIndex;
 
-            BackBuffer.Resource.Dispose();
-            BackBuffer.InitializeFromImpl(NativeSwapChain.GetBuffer<ID3D12Resource>(BackBufferIndex));
+            if (!Description.Settings.AllowTearing && !Description.Settings.VSync)
+            {
+                NativeSwapChain.Present(0, PresentFlags.None); // TODO: Defaul Full Screen ?
+            }
+
+
+            if (Description.Settings.AllowTearing && !Description.Settings.VSync)
+            {
+                NativeSwapChain.Present(0, PresentFlags.AllowTearing);
+            }
+
+
+            if (Description.Settings.VSync && !Description.Settings.AllowTearing)
+            {
+                NativeSwapChain.Present(1, PresentFlags.None);
+            }
+
+
+            BackBufferIndex = NativeSwapChain.CurrentBackBufferIndex;
 
         }     
 
@@ -80,6 +107,25 @@ namespace Xultaik.Graphics
 
         private void CreateSwapChainForDesktop()
         {
+            SwapChainFlags Flags =  SwapChainFlags.None; // TODO: Defaul Full Screen ?
+
+
+            if (Description.Settings.AllowTearing)
+            {
+                Flags = SwapChainFlags.AllowTearing;
+
+                Description.Settings.VSync = false;
+            }
+
+
+
+            if (Description.Settings.VSync)
+            {
+                Flags = SwapChainFlags.None;
+
+                Description.Settings.AllowTearing = false;
+            }
+
 
             ModeDescription BackBufferDesc = new ModeDescription()
             {
@@ -101,20 +147,19 @@ namespace Xultaik.Graphics
                 Quality = 0
             };
 
-            SwapChainFlags Flags = Description.Settings.Fullscreen ? SwapChainFlags.None : SwapChainFlags.AllowModeSwitch;
             
 
 
-            SwapChainDescription swapChainDesc = new SwapChainDescription()   // Initialize the swap chain description.
+            SwapChainDescription swapChainDesc = new SwapChainDescription()   
             {
-                BufferCount = bufferCount,                                    // Set to a single back buffer.
-                BufferDescription = BackBufferDesc,                           // Set the width and height of the back buffer.
-                BufferUsage = Usage.Backbuffer | Usage.RenderTargetOutput,          // Set the usage of the back buffer.
-                OutputWindow = Description.DeviceHandle,                      // Set the handle for the window to render to.
-                SampleDescription = sampleDescription,                        // Turn multisampling off.
-                Windowed = true,                                            // Set to full screen or windowed mode.
-                Flags = Flags,                                                // Don't set the advanced flags.
-                SwapEffect = SwapEffect.FlipDiscard,                          // Discard the back buffer content after presenting.
+                BufferCount = bufferCount,                                      // Set to a single back buffer.
+                BufferDescription = BackBufferDesc,                             // Set the width and height of the back buffer.
+                BufferUsage = Usage.RenderTargetOutput,                         // Set the usage of the back buffer.
+                OutputWindow = Description.DeviceHandle,                        // Set the handle for the window to render to.
+                SampleDescription = sampleDescription,                          // Turn multisampling off.
+                Windowed = true,                                                // Set to full screen or windowed mode.
+                Flags = Flags,                                                  // Don't set the advanced flags.
+                SwapEffect = SwapEffect.FlipDiscard,                            // Discard the back buffer content after presenting.
 
                 
             };
@@ -137,7 +182,7 @@ namespace Xultaik.Graphics
                 swapChain.SetFullscreenState(true, default);
 
                 // This is really important to call ResizeBuffers AFTER switching to IsFullScreen 
-                swapChain.ResizeBuffers(3, Description.BackBufferWidth, Description.BackBufferHeight, Format.R8G8B8A8_UNorm, SwapChainFlags.AllowModeSwitch);
+                swapChain.ResizeBuffers(bufferCount, Description.BackBufferWidth, Description.BackBufferHeight, Format.R8G8B8A8_UNorm, Flags);
             }
 
 

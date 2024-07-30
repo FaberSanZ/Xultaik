@@ -103,11 +103,23 @@ namespace Xultaik.Graphics
 
         public void ClearTargetColor(Texture texture, float r, float g, float b, float a)
         {
-            ResourceTransition(texture, ResourceStates.RenderTarget, ResourceStates.Present);
+            //ResourceTransition(texture, ResourceStates.RenderTarget, ResourceStates.Present);
 
             nativeCommandList.ClearRenderTargetView(texture.NativeRenderTargetView, new Vortice.Mathematics.Color4(r, g, b, a));
             nativeCommandList.OMSetRenderTargets(texture.NativeRenderTargetView);
 
+        }
+
+
+
+        public void ClearTargetColor(SwapChain swapChain, float r, float g, float b, float a)
+        {
+            var texture = swapChain.BackBuffer ;
+            //var texture = swapChain.BackBuffers[swapChain.BackBufferIndex];
+            ResourceTransition(texture, ResourceStates.RenderTarget, ResourceStates.Present);
+
+            nativeCommandList.ClearRenderTargetView(texture.NativeRenderTargetView, new Vortice.Mathematics.Color4(r, g, b, a));
+            nativeCommandList.OMSetRenderTargets(texture.NativeRenderTargetView);
         }
 
 

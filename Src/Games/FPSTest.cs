@@ -42,6 +42,7 @@ namespace Games
                 {
                     Fullscreen = false,
                     VSync = false,
+                    AllowTearing = true,
                 },
             };
         }
@@ -101,9 +102,9 @@ namespace Games
         {
             CommandList.Reset();
 
-            CommandList.SetViewport(0, 0, 800, 600);
-            CommandList.SetScissor(0, 0, 800, 600);
-            CommandList.ClearTargetColor(SwapChain.BackBuffer, 0.0f, 0.2f, 0.4f, 1.0f);
+            //CommandList.SetViewport(0, 0, 800, 600);
+            //CommandList.SetScissor(0, 0, 800, 600);
+            CommandList.ClearTargetColor(SwapChain, 0.0f, 0.2f, 0.4f, 1.0f);
 
             CommandList.ExecuteCommandList();
 

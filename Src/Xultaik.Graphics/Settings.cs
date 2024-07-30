@@ -15,5 +15,7 @@ namespace Xultaik.Graphics
 
         public bool VSync { get; set; }
 
+        public bool AllowTearing { get; set; }
+
     }
 }
