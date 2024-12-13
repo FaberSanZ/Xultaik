@@ -24,7 +24,9 @@
 <br>
 
 ## 📝 Overview
-Welcome to Xultaik, the game engine designed to deliver AAA experiences with cutting-edge performance and advanced technologies. Centrally based on Direct3D 12, Xultaik harnesses the full capabilities of this low-level graphics API to provide direct control over the GPU and exceptional performance. It integrates Steam Audio for immersive audio effects and JoltPhysics for realistic physical simulations, ensuring a powerful and comprehensive platform for next-generation game creation.
+Welcome to Xultaik, the game engine based centrally on Direct3D 12, Xultaik Integrates Steam Audio for immersive audio effects and JoltPhysics for realistic physics simulations, this is a toy engine and I use it both to experiment with graphical techniques and for my own games.
+
+The code is licensed by MIT. Feel free to use it for any purpose.
 
 <br>
 
