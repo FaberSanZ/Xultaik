@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{F7A68B14-9C15-4D2E-82D2-41E02B6D5D20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{F7A68B14-9C15-4D2E-82D2-41E02B6D5D21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Image">
+      <UniqueIdentifier>{F7A68B14-9C15-4D2E-82D2-41E02B6D5D22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MeshOptimizer">
+      <UniqueIdentifier>{F7A68B14-9C15-4D2E-82D2-41E02B6D5D23}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Buffer.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="BufferDescription.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="CommandList.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="CommandQueue.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="ConvertExtensions.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="DescriptorAllocator.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="Fence.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="GraphicsAdapter.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="GraphicsDevice.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="GraphicsResource.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="Interop.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="PipelineState.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="PipelineStateDescription.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="RenderDescriptor.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="Settings.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="ShaderByteCode.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="SwapChain.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="Texture.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="TextureData.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="Image\DDSLoader.cpp"><Filter>Image</Filter></ClCompile>
+    <ClCompile Include="Image\WICLoader.cpp"><Filter>Image</Filter></ClCompile>
+    <ClCompile Include="MeshOptimizer\*.cpp"><Filter>MeshOptimizer</Filter></ClCompile>
+    <ClInclude Include="Buffer.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="BufferDescription.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="BufferFlags.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="CommandList.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="CommandListType.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="CommandQueue.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="ConvertExtensions.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="CullMode.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="DescriptorAllocator.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="Fence.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="FillMode.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="GraphicsAdapter.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="GraphicsDevice.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="GraphicsResource.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="HeapType.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="IndexType.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="Interop.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="PipelineState.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="PipelineStateDescription.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="PixelFormat.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="PrimitiveType.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="RenderDescriptor.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="Settings.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="ShaderByteCode.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="ShaderModel.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="ShaderStage.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="SwapChain.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="Texture.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="TextureData.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="Image\DDSLoader.h"><Filter>Image</Filter></ClInclude>
+    <ClInclude Include="Image\WICLoader.h"><Filter>Image</Filter></ClInclude>
+    <ClInclude Include="MeshOptimizer\*.h"><Filter>MeshOptimizer</Filter></ClInclude>
+  </ItemGroup>
+</Project>

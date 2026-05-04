@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64"><Configuration>Release</Configuration><Platform>x64</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64"><Configuration>MinSizeRel</Configuration><Platform>x64</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64"><Configuration>RelWithDebInfo</Configuration><Platform>x64</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9D2B4B82-4B71-4C50-8A3D-2A2D4E8F34C2}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>Xultaik.Graphics</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration"><ConfigurationType>StaticLibrary</ConfigurationType><CharacterSet>MultiByte</CharacterSet><PlatformToolset>v143</PlatformToolset></PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration"><ConfigurationType>StaticLibrary</ConfigurationType><CharacterSet>MultiByte</CharacterSet><PlatformToolset>v143</PlatformToolset></PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration"><ConfigurationType>StaticLibrary</ConfigurationType><CharacterSet>MultiByte</CharacterSet><PlatformToolset>v143</PlatformToolset></PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration"><ConfigurationType>StaticLibrary</ConfigurationType><CharacterSet>MultiByte</CharacterSet><PlatformToolset>v143</PlatformToolset></PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\bin\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\bin\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(SolutionDir)..\bin\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(SolutionDir)..\bin\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)x64\Debug\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)x64\Release\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(ProjectDir)x64\MinSizeRel\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(ProjectDir)x64\RelWithDebInfo\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Image;$(ProjectDir)MeshOptimizer;$(SolutionDir)Xultaik\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /utf-8 /FS</AdditionalOptions>
+      <ConformanceMode>true</ConformanceMode>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="BufferDescription.cpp" />
+    <ClCompile Include="CommandList.cpp" />
+    <ClCompile Include="CommandQueue.cpp" />
+    <ClCompile Include="ConvertExtensions.cpp" />
+    <ClCompile Include="DescriptorAllocator.cpp" />
+    <ClCompile Include="Fence.cpp" />
+    <ClCompile Include="GraphicsAdapter.cpp" />
+    <ClCompile Include="GraphicsDevice.cpp" />
+    <ClCompile Include="GraphicsResource.cpp" />
+    <ClCompile Include="Interop.cpp" />
+    <ClCompile Include="PipelineState.cpp" />
+    <ClCompile Include="PipelineStateDescription.cpp" />
+    <ClCompile Include="RenderDescriptor.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="ShaderByteCode.cpp" />
+    <ClCompile Include="SwapChain.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureData.cpp" />
+    <ClCompile Include="Image\DDSLoader.cpp" />
+    <ClCompile Include="Image\WICLoader.cpp" />
+    <ClCompile Include="MeshOptimizer\*.cpp" />
+    <ClInclude Include="Buffer.h" />
+    <ClInclude Include="BufferDescription.h" />
+    <ClInclude Include="BufferFlags.h" />
+    <ClInclude Include="CommandList.h" />
+    <ClInclude Include="CommandListType.h" />
+    <ClInclude Include="CommandQueue.h" />
+    <ClInclude Include="ConvertExtensions.h" />
+    <ClInclude Include="CullMode.h" />
+    <ClInclude Include="DescriptorAllocator.h" />
+    <ClInclude Include="Fence.h" />
+    <ClInclude Include="FillMode.h" />
+    <ClInclude Include="GraphicsAdapter.h" />
+    <ClInclude Include="GraphicsDevice.h" />
+    <ClInclude Include="GraphicsResource.h" />
+    <ClInclude Include="HeapType.h" />
+    <ClInclude Include="IndexType.h" />
+    <ClInclude Include="Interop.h" />
+    <ClInclude Include="PipelineState.h" />
+    <ClInclude Include="PipelineStateDescription.h" />
+    <ClInclude Include="PixelFormat.h" />
+    <ClInclude Include="PrimitiveType.h" />
+    <ClInclude Include="RenderDescriptor.h" />
+    <ClInclude Include="Settings.h" />
+    <ClInclude Include="ShaderByteCode.h" />
+    <ClInclude Include="ShaderModel.h" />
+    <ClInclude Include="ShaderStage.h" />
+    <ClInclude Include="SwapChain.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureData.h" />
+    <ClInclude Include="Image\DDSLoader.h" />
+    <ClInclude Include="Image\WICLoader.h" />
+    <ClInclude Include="MeshOptimizer\*.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

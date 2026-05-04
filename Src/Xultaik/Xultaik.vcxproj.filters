@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{A52B7D60-5D8A-4D2B-9E75-9B9E4D0D5A10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{A52B7D60-5D8A-4D2B-9E75-9B9E4D0D5A11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{A52B7D60-5D8A-4D2B-9E75-9B9E4D0D5A12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\imgui">
+      <UniqueIdentifier>{A52B7D60-5D8A-4D2B-9E75-9B9E4D0D5A13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\imgui\backends">
+      <UniqueIdentifier>{A52B7D60-5D8A-4D2B-9E75-9B9E4D0D5A14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\tinygltf">
+      <UniqueIdentifier>{A52B7D60-5D8A-4D2B-9E75-9B9E4D0D5A15}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Interop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui.cpp">
+      <Filter>Dependencies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui_demo.cpp">
+      <Filter>Dependencies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp">
+      <Filter>Dependencies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp">
+      <Filter>Dependencies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
+      <Filter>Dependencies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\backends\imgui_impl_dx12.cpp">
+      <Filter>Dependencies\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>Dependencies\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\tinygltf\tiny_gltf.cc">
+      <Filter>Dependencies\tinygltf</Filter>
+    </ClCompile>
+    <ClInclude Include="Interop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imconfig.h">
+      <Filter>Dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imgui.h">
+      <Filter>Dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imgui_internal.h">
+      <Filter>Dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h">
+      <Filter>Dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imstb_textedit.h">
+      <Filter>Dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imstb_truetype.h">
+      <Filter>Dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_dx12.h">
+      <Filter>Dependencies\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_win32.h">
+      <Filter>Dependencies\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\tinygltf\json.hpp">
+      <Filter>Dependencies\tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\tinygltf\stb_image.h">
+      <Filter>Dependencies\tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\tinygltf\stb_image_write.h">
+      <Filter>Dependencies\tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\tinygltf\tiny_gltf.h">
+      <Filter>Dependencies\tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\tinygltf\tiny_gltf_v3.h">
+      <Filter>Dependencies\tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\tinygltf\tinygltf_json.h">
+      <Filter>Dependencies\tinygltf</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

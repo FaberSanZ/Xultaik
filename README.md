@@ -1,12 +1,11 @@
 
 
 
-
 <h1 align="center">
    <img src="Logo/XULTAIK-2.png" width=410>
 
   
-  ##              🎮 Xultaik is a 3D Game Engine implemented in [Direct3D 12®](https://learn.microsoft.com/en-us/windows/win32/direct3d12/directx-12-programming-guide)
+  ##              🎮 Xultaik is a 3D Game Engine implemented in C++ and [Direct3D 12®](https://learn.microsoft.com/en-us/windows/win32/direct3d12/directx-12-programming-guide)
 
   
 </h1>
@@ -18,13 +17,13 @@
 <br>
 
 > [!IMPORTANT]
-> The engine is being written from scratch.
+> The engine is being rewritten from scratch in C++.
 
 
 <br>
 
 ## 📝 Overview
-Welcome to Xultaik, the game engine based centrally on Direct3D 12, Xultaik Integrates Steam Audio for immersive audio effects and JoltPhysics for realistic physics simulations, this is a toy engine and I use it both to experiment with graphical techniques and for my own games.
+Welcome to Xultaik, the game engine based centrally on Direct3D 12 and written in C++. It is a toy engine I use both to experiment with graphical techniques and to build my own games.
 
 The code is licensed by MIT. Feel free to use it for any purpose.
 
@@ -87,9 +86,4 @@ Xultaik optimizes loading and manipulation of textures using formats like DDS, s
 - [x]  **DDS**
 <br>
 
-**Xultaik** uses NuGet packages or code from the following repositories 📦:
-- [Vortice.Windows](https://github.com/amerkoleci/Vortice.Windows)
-- [Stride Engine](https://github.com/stride3d/stride)
-- [Prowl](https://github.com/ProwlEngine/Prowl)
-
-
+**Xultaik** uses native Windows and Direct3D 12 APIs in C++.
